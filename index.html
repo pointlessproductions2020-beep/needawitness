@@ -1,2 +1,222 @@
-<h1>Need A Witness</h1>
-<p>Website coming soon!</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Need A Witness UK</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background: #faf8f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Georgia', serif;
+            color: #2b2b2b;
+        }
+
+        header {
+            background: white;
+            padding: 60px 20px;
+            text-align: center;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        .tagline {
+            font-size: 1.3rem;
+            margin-top: 10px;
+            color: #555;
+        }
+
+        .btn {
+            display: inline-block;
+            background: #d4a762;
+            color: white;
+            padding: 14px 28px;
+            margin-top: 25px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        section {
+            max-width: 900px;
+            margin: 60px auto;
+            padding: 0 20px;
+        }
+
+        .pricing-box, .addon-box {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            border: 1px solid #e5e5e5;
+            margin-bottom: 20px;
+        }
+
+        .faq-item {
+            margin-bottom: 20px;
+        }
+
+        form {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            border: 1px solid #e5e5e5;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            background: #f1eee9;
+            margin-top: 60px;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Need A Witness UK</h1>
+    <p class="tagline">“Witnesses You Can Depend On, When It Matters Most”</p>
+    <a href="#booking" class="btn">Book Your Witnesses</a>
+</header>
+
+<section>
+    <h2>How It Works</h2>
+    <p>We keep things simple, professional, and stress‑free:</p>
+    <ol>
+        <li>Fill out the booking form below.</li>
+        <li>We confirm availability for your ceremony.</li>
+        <li>You choose your preferred payment method.</li>
+        <li>Once paid, your booking is secured.</li>
+        <li>We attend your registry office, sign as witnesses, and take photos if requested.</li>
+    </ol>
+</section>
+
+<section>
+    <h2>Pricing</h2>
+
+    <div class="pricing-box">
+        <h3>One Witness — £100</h3>
+        <p>Professional, punctual, and reliable. Ideal if you only need a single witness.</p>
+    </div>
+
+    <div class="pricing-box">
+        <h3>Two Witnesses — £150</h3>
+        <p>Both of us attend your registry office for a complete, stress‑free solution.</p>
+    </div>
+
+    <h3>Add‑Ons</h3>
+
+    <div class="addon-box">
+        <strong>Confetti Moment — £20</strong><br>
+        We bring biodegradable confetti and capture the moment.
+    </div>
+
+    <div class="addon-box">
+        <strong>Photo & Video Add‑On — £30</strong><br>
+        We take photos and short videos on our phone and send them digitally.
+    </div>
+
+    <div class="addon-box">
+        <strong>Travel Outside Kent — £1 per mile</strong><br>
+        Calculated round‑trip.
+    </div>
+
+    <div class="addon-box">
+        <strong>Last‑Minute Booking (within 48 hours) — £25</strong><br>
+        Guaranteed availability for urgent ceremonies.
+    </div>
+</section>
+
+<section>
+    <h2>Payment Options</h2>
+    <p>We offer flexible payment methods to suit your needs:</p>
+    <ul>
+        <li><strong>PayPal</strong> — Ideal if you prefer PayPal for secure payments.</li>
+        <li><strong>Card (Stripe)</strong> — Fast, secure card checkout.</li>
+        <li><strong>Bank Transfer</strong> — Available on request. Bookings are confirmed once payment clears.</li>
+    </ul>
+</section>
+
+<section>
+    <h2>About Us</h2>
+    <p>As a real couple who once needed witnesses ourselves, we now help others with a friendly, dependable service. We understand how important your day is, and we’re committed to making the process simple, stress‑free, and professional.</p>
+</section>
+
+<section>
+    <h2>FAQ</h2>
+
+    <div class="faq-item">
+        <strong>Do you attend wedding venues?</strong>
+        <p>No — we attend registry offices only for signatures and optional photos.</p>
+    </div>
+
+    <div class="faq-item">
+        <strong>Do you take photos?</strong>
+        <p>Yes — we can take photos on your phone for free, or you can choose our photo & video add‑on.</p>
+    </div>
+
+    <div class="faq-item">
+        <strong>How do I pay?</strong>
+        <p>You can pay via PayPal, Stripe, or bank transfer.</p>
+    </div>
+
+    <div class="faq-item">
+        <strong>Is my booking confirmed immediately?</strong>
+        <p>Your booking is confirmed once payment is received.</p>
+    </div>
+</section>
+
+<section id="booking">
+    <h2>Booking Form</h2>
+    <form action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+        <label>Your Name</label>
+        <input type="text" name="name" required>
+
+        <label>Your Email</label>
+        <input type="email" name="email" required>
+
+        <label>Wedding Date</label>
+        <input type="date" name="date" required>
+
+        <label>Wedding Time</label>
+        <input type="time" name="time" required>
+
+        <label>Registry Office Location</label>
+        <input type="text" name="location" required>
+
+        <label>Package</label>
+        <select name="package">
+            <option>One Witness — £100</option>
+            <option>Two Witnesses — £150</option>
+        </select>
+
+        <label>Add‑Ons</label>
+        <textarea name="addons" placeholder="Confetti, photos, last‑minute, etc."></textarea>
+
+        <label>Additional Notes</label>
+        <textarea name="notes"></textarea>
+
+        <button class="btn" type="submit">Submit Booking Request</button>
+    </form>
+</section>
+
+<footer>
+    <p>Need A Witness UK — Professional Wedding Witnesses Across Kent</p>
+    <p>Email: yourbusiness@email.com</p>
+</footer>
+
+</body>
+</html>
