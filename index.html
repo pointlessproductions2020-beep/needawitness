@@ -87,7 +87,7 @@
             padding: 0 20px;
         }
 
-        .pricing-box, .addon-box {
+        .pricing-box, .addon-box, .availability-box {
             background: white;
             padding: 25px;
             border-radius: 8px;
@@ -127,15 +127,27 @@
         }
 
         /* Availability Buttons */
+        .slots-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
         .slot-button {
-            padding: 10px 15px;
+            padding: 10px 16px;
+            border-radius: 8px;
             border: 1px solid #d4a762;
             background: #fff;
             color: #333;
-            border-radius: 6px;
             cursor: pointer;
-            font-size: 1rem;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
             transition: 0.2s;
+            min-width: 80px;
+            justify-content: center;
         }
 
         .slot-button:hover {
@@ -145,12 +157,32 @@
         .slot-selected {
             background: #d4a762 !important;
             color: white !important;
+            box-shadow: 0 0 0 2px rgba(212, 167, 98, 0.3);
+        }
+
+        .slot-unavailable {
+            background: #eee !important;
+            color: #999 !important;
+            border-color: #ccc !important;
+            cursor: not-allowed;
+        }
+
+        .availability-note {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 8px;
+        }
+
+        .error-message {
+            color: #b00020;
+            font-size: 0.9rem;
+            margin-top: 8px;
         }
     </style>
 </head>
 <body>
 
-<!-- ⭐ HERO SECTION ⭐ -->
+<!-- HERO -->
 <div class="hero">
     <div class="hero-content">
         <img src="logo.png" alt="Need A Witness UK Logo">
@@ -167,6 +199,7 @@
 
     <p>We keep things simple, professional, and stress‑free:</p>
     <ol>
+        <li>Check our availability and choose a time.</li>
         <li>Fill out the booking form below.</li>
         <li>We confirm availability for your ceremony.</li>
         <li>You choose your preferred payment method.</li>
@@ -205,12 +238,12 @@
 
     <div class="addon-box">
         <strong>Travel Outside Kent — £1 per mile</strong><br>
-        Calculated round‑trip.
+        Calculated round‑trip from CT14 7QE. We’ll confirm mileage and cost before payment.
     </div>
 
     <div class="addon-box">
-        <strong>Last‑Minute Booking (within 48 hours) — £25</strong><br>
-        Guaranteed availability for urgent ceremonies.
+        <strong>Last‑Minute Booking (within 24 hours)</strong><br>
+        We don’t accept bookings within 24 hours via the form. For emergencies, please contact us directly.
     </div>
 </section>
 
@@ -258,20 +291,28 @@
     </div>
 </section>
 
-<!-- ⭐ NEW AVAILABILITY WIDGET ⭐ -->
+<!-- AVAILABILITY WIDGET -->
 <section>
     <h2>Check Our Availability</h2>
 
-    <label for="date-picker"><strong>Choose your wedding date:</strong></label><br>
-    <input type="date" id="date-picker" style="padding: 10px; margin: 10px 0; font-size: 1rem;">
+    <div class="availability-box">
+        <label for="date-picker"><strong>Choose your wedding date:</strong></label><br>
+        <input type="date" id="date-picker" style="padding: 10px; margin: 10px 0; font-size: 1rem;">
 
-    <p><strong>Available times:</strong></p>
-    <div id="slots" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;"></div>
+        <div class="availability-note">
+            We offer hourly slots between 9am and 4pm, Monday to Saturday. No bookings within 24 hours. Sundays unavailable.
+        </div>
 
-    <input type="hidden" id="selected-time">
+        <p style="margin-top: 20px;"><strong>Available times:</strong></p>
+        <div id="slots" class="slots-grid"></div>
+
+        <div id="availability-error" class="error-message" style="display:none;"></div>
+
+        <input type="hidden" id="selected-time">
+    </div>
 </section>
 
-<!-- ⭐ BOOKING FORM ⭐ -->
+<!-- BOOKING FORM -->
 <section id="booking">
     <h2>Booking Form</h2>
 
@@ -299,6 +340,12 @@
         <li>Margate</li>
         <li>Ramsgate</li>
         <li>Maidstone</li>
+        <li>Tunbridge Wells</li>
+        <li>Sittingbourne</li>
+        <li>Sevenoaks</li>
+        <li>Tonbridge</li>
+        <li>Dartford</li>
+        <li>Gravesend</li>
     </ul>
 </section>
 
@@ -326,12 +373,45 @@
 }
 </script>
 
-<!-- ⭐ AVAILABILITY SCRIPT ⭐ -->
+<!-- AVAILABILITY SCRIPT -->
 <script>
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzqKFLmGk6qvD4dyg7dAAhGfzfZWudghhr9nzEIkLWLehF1ecrU38eRiI8_Yr_7veL8/exec";
+
+function isSunday(date) {
+    return date.getDay() === 0; // Sunday
+}
+
+function isWithin24Hours(date) {
+    const now = new Date();
+    const diffMs = date.getTime() - now.getTime();
+    const hours = diffMs / (1000 * 60 * 60);
+    return hours < 24;
+}
+
 async function loadSlots(dateString) {
+    const errorEl = document.getElementById("availability-error");
+    errorEl.style.display = "none";
+    errorEl.textContent = "";
+
     if (!dateString) return;
 
-    const url = `https://script.google.com/macros/s/AKfycbzqKFLmGk6qvD4dyg7dAAhGfzfZWudghhr9nzEIkLWLehF1ecrU38eRiI8_Yr_7veL8/exec?action=slots&date=${dateString}`;
+    const date = new Date(dateString + "T00:00:00");
+
+    if (isSunday(date)) {
+        errorEl.textContent = "We don’t offer bookings on Sundays. Please choose another day.";
+        errorEl.style.display = "block";
+        document.getElementById("slots").innerHTML = "";
+        return;
+    }
+
+    if (isWithin24Hours(date)) {
+        errorEl.textContent = "We don’t accept bookings within 24 hours via the form. Please choose a later date or contact us directly.";
+        errorEl.style.display = "block";
+        document.getElementById("slots").innerHTML = "";
+        return;
+    }
+
+    const url = `${SCRIPT_URL}?action=slots&date=${dateString}`;
 
     const response = await fetch(url);
     const data = await response.json();
@@ -339,29 +419,30 @@ async function loadSlots(dateString) {
     const container = document.getElementById("slots");
     container.innerHTML = "";
 
-    if (!data.slots || data.slots.length === 0) {
-        container.innerHTML = "<p>No available times for this date.</p>";
-        return;
-    }
+    const allSlots = ["09:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00"];
+    const available = new Set(data.slots || []);
 
-    data.slots.forEach(time => {
+    allSlots.forEach(time => {
         const btn = document.createElement("button");
         btn.textContent = time;
         btn.className = "slot-button";
 
-        btn.onclick = (event) => {
-            document.getElementById("selected-time").value = time;
+        if (!available.has(time)) {
+            btn.classList.add("slot-unavailable");
+            btn.disabled = true;
+        } else {
+            btn.onclick = (event) => {
+                document.getElementById("selected-time").value = time;
 
-            document.querySelectorAll(".slot-button").forEach(b => b.classList.remove("slot-selected"));
-            event.target.classList.add("slot-selected");
+                document.querySelectorAll(".slot-button").forEach(b => b.classList.remove("slot-selected"));
+                event.target.classList.add("slot-selected");
 
-            // Auto-scroll to booking form
-            document.getElementById("booking").scrollIntoView({ behavior: "smooth" });
+                document.getElementById("booking").scrollIntoView({ behavior: "smooth" });
 
-            // Auto-fill Google Form with the selected time
-            const form = document.getElementById("booking-form");
-            form.src = `https://docs.google.com/forms/d/e/1FAIpQLSdIrqTzNxB8LRx62apakEtt4zGgTDcILw56Rq7SAXtH_eTHFw/viewform?embedded=true&entry.1363878991=${encodeURIComponent(time)}`;
-        };
+                const form = document.getElementById("booking-form");
+                form.src = `https://docs.google.com/forms/d/e/1FAIpQLSdIrqTzNxB8LRx62apakEtt4zGgTDcILw56Rq7SAXtH_eTHFw/viewform?embedded=true&entry.1363878991=${encodeURIComponent(time)}`;
+            };
+        }
 
         container.appendChild(btn);
     });
