@@ -59,8 +59,6 @@
             margin-bottom: 20px;
         }
 
-
-
         .hero h1 {
             font-size: 2.4rem;
             margin-bottom: 10px;
@@ -126,6 +124,27 @@
             background: #f1eee9;
             margin-top: 60px;
             font-size: 0.9rem;
+        }
+
+        /* Availability Buttons */
+        .slot-button {
+            padding: 10px 15px;
+            border: 1px solid #d4a762;
+            background: #fff;
+            color: #333;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: 0.2s;
+        }
+
+        .slot-button:hover {
+            background: #f3e4c8;
+        }
+
+        .slot-selected {
+            background: #d4a762 !important;
+            color: white !important;
         }
     </style>
 </head>
@@ -239,26 +258,30 @@
     </div>
 </section>
 
+<!-- ⭐ NEW AVAILABILITY WIDGET ⭐ -->
 <section>
     <h2>Check Our Availability</h2>
-    <iframe
-    src="https://script.google.com/macros/s/AKfycbzqKFLmGk6qvD4dyg7dAAhGfzfZWudghhr9nzEIkLWLehF1ecrU38eRiI8_Yr_7veL8/exec"
-    width="100%"
-    height="450"
-    frameborder="0"
-    style="border: 1px solid #e5e5e5; border-radius: 8px;">
-</iframe>
+
+    <label for="date-picker"><strong>Choose your wedding date:</strong></label><br>
+    <input type="date" id="date-picker" style="padding: 10px; margin: 10px 0; font-size: 1rem;">
+
+    <p><strong>Available times:</strong></p>
+    <div id="slots" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;"></div>
+
+    <input type="hidden" id="selected-time">
 </section>
 
+<!-- ⭐ BOOKING FORM ⭐ -->
 <section id="booking">
     <h2>Booking Form</h2>
 
     <iframe 
-        src="https://docs.google.com/forms/d/e/1FAIpQLSdIrqTzNxB8LRx62apakEtt4zGgTDcILw56Rq7SAXtH_eTHFw/viewform?embedded=true" 
-        width="100%" 
-        height="2145" 
-        frameborder="0" 
-        marginheight="0" 
+        id="booking-form"
+        src="https://docs.google.com/forms/d/e/1FAIpQLSdIrqTzNxB8LRx62apakEtt4zGgTDcILw56Rq7SAXtH_eTHFw/viewform?embedded=true"
+        width="100%"
+        height="2145"
+        frameborder="0"
+        marginheight="0"
         marginwidth="0">
         Loading…
     </iframe>
@@ -301,6 +324,52 @@
   },
   "areaServed": "Kent"
 }
+</script>
+
+<!-- ⭐ AVAILABILITY SCRIPT ⭐ -->
+<script>
+async function loadSlots(dateString) {
+    if (!dateString) return;
+
+    const url = `https://script.google.com/macros/s/AKfycbzqKFLmGk6qvD4dyg7dAAhGfzfZWudghhr9nzEIkLWLehF1ecrU38eRiI8_Yr_7veL8/exec?action=slots&date=${dateString}`;
+
+    const response = await fetch(url);
+    const data = await response.json();
+
+    const container = document.getElementById("slots");
+    container.innerHTML = "";
+
+    if (!data.slots || data.slots.length === 0) {
+        container.innerHTML = "<p>No available times for this date.</p>";
+        return;
+    }
+
+    data.slots.forEach(time => {
+        const btn = document.createElement("button");
+        btn.textContent = time;
+        btn.className = "slot-button";
+
+        btn.onclick = (event) => {
+            document.getElementById("selected-time").value = time;
+
+            document.querySelectorAll(".slot-button").forEach(b => b.classList.remove("slot-selected"));
+            event.target.classList.add("slot-selected");
+
+            // Auto-scroll to booking form
+            document.getElementById("booking").scrollIntoView({ behavior: "smooth" });
+
+            // Auto-fill Google Form (if field exists)
+            const form = document.getElementById("booking-form");
+            form.src = `https://docs.google.com/forms/d/e/1FAIpQLSdIrqTzNxB8LRx62apakEtt4zGgTDcILw56Rq7SAXtH_eTHFw/viewform?embedded=true&entry.123456789=${encodeURIComponent(time)}`;
+        };
+
+        container.appendChild(btn);
+    });
+}
+
+document.getElementById("date-picker").addEventListener("change", function () {
+    loadSlots(this.value);
+});
 </script>
 
 </body>
