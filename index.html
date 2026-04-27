@@ -358,9 +358,9 @@ async function loadSlots(dateString) {
             // Auto-scroll to booking form
             document.getElementById("booking").scrollIntoView({ behavior: "smooth" });
 
-            // Auto-fill Google Form (if field exists)
+            // Auto-fill Google Form with the selected time
             const form = document.getElementById("booking-form");
-            form.src = `https://docs.google.com/forms/d/e/1FAIpQLSdIrqTzNxB8LRx62apakEtt4zGgTDcILw56Rq7SAXtH_eTHFw/viewform?embedded=true&entry.123456789=${encodeURIComponent(time)}`;
+            form.src = `https://docs.google.com/forms/d/e/1FAIpQLSdIrqTzNxB8LRx62apakEtt4zGgTDcILw56Rq7SAXtH_eTHFw/viewform?embedded=true&entry.1363878991=${encodeURIComponent(time)}`;
         };
 
         container.appendChild(btn);
