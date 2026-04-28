@@ -16,7 +16,7 @@
     <meta property="og:url" content="https://needawitness.uk">
     <meta property="og:image" content="https://needawitness.uk/logo.png">
 
-   <style>
+<style>
     body {
         margin: 0;
         font-family: 'Helvetica Neue', Arial, sans-serif;
@@ -179,7 +179,6 @@
         margin-top: 8px;
     }
 
-    /* ⭐ FIX: Prevent booking form from hiding time slots */
     #slots {
         min-height: 140px;
         padding-bottom: 30px;
@@ -196,9 +195,6 @@
     .availability-box {
         padding-bottom: 40px;
     }
-
-    
-
 </style>
 </head>
 <body>
@@ -337,7 +333,7 @@
 <section id="booking">
     <h2>Booking Form</h2>
 
-    <iframe 
+    <iframe  
       id="bookingForm"
       src="https://docs.google.com/forms/d/e/1FAIpQLSdIrqTzNxB8LRx62apakEtt4zGgTDcILw56Rq7SAXtH_eTHFw/viewform?embedded=true"
       width="640"
@@ -345,7 +341,7 @@
       frameborder="0"
       marginheight="0"
       marginwidth="0">
-</iframe>
+    </iframe>
 </section>
 
 <section>
@@ -374,31 +370,21 @@
     <p>Email: bookings@needawitness.uk</p>
 </footer>
 
-<!-- LocalBusiness Schema -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "LocalBusiness",
-  "name": "Need A Witness UK",
-  "url": "https://needawitness.uk",
-  "image": "https://needawitness.uk/logo.png",
-  "description": "Professional wedding witness service for registry office ceremonies across Kent. Friendly, reliable, and available for last-minute bookings.",
-  "address": {
-    "@type": "PostalAddress",
-    "addressLocality": "Kent",
-    "addressRegion": "Kent",
-    "addressCountry": "UK"
-  },
-  "areaServed": "Kent"
-}
-</script>
-
 <!-- AVAILABILITY SCRIPT -->
 <script>
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzqKFLmGk6qvD4dyg7dAAhGfzfZWudghhr9nzEIkLWLehF1ecrU38eRiI8_Yr_7veL8/exec";
 
+// Convert DD/MM/YYYY → YYYY-MM-DD if needed
+function normaliseDate(dateString) {
+    if (dateString.includes("/")) {
+        const [day, month, year] = dateString.split("/");
+        return `${year}-${month}-${day}`;
+    }
+    return dateString;
+}
+
 function isSunday(date) {
-    return date.getDay() === 0; // Sunday
+    return date.getDay() === 0;
 }
 
 function isWithin24Hours(date) {
@@ -409,6 +395,8 @@ function isWithin24Hours(date) {
 }
 
 async function loadSlots(dateString) {
+    dateString = normaliseDate(dateString);
+
     const errorEl = document.getElementById("availability-error");
     errorEl.style.display = "none";
     errorEl.textContent = "";
@@ -460,7 +448,7 @@ async function loadSlots(dateString) {
                 document.getElementById("booking").scrollIntoView({ behavior: "smooth" });
 
                 const form = document.getElementById("bookingForm");
-                form.src = `https://docs.google.com/forms/d/e/1FAIpQLSdIrqTzNxB8LRx62apakEtt4zGgTDcILw56Rq7SAXtH_eTHFw/viewform?embedded=true&entry.1363878991=${encodeURIComponent(time)}`;
+                form.src = `https://docs.google.com/forms/d/e/1FAIpQLSdIrqTzNxB8LRx62apakEtt4zGgTDcILw56Rq7SAXtH_eTHFw/viewform?embedded=true&entry.679899998=${encodeURIComponent(time)}`;
             };
         }
 
