@@ -30,22 +30,24 @@
 
 <script>
 function register() {
-    const name = document.getElementById("name").value;
-    const email = document.getElementById("email").value;
-    const phone = document.getElementById("phone").value;
-    const pass = document.getElementById("password").value;
+    const name = document.getElementById("name").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const phone = document.getElementById("phone").value.trim();
+    const pass = document.getElementById("password").value.trim();
 
     auth.createUserWithEmailAndPassword(email, pass)
-        .then(cred => {
-            return db.collection("users").doc(cred.user.uid).set({
+        .then(async cred => {
+
+            // Create Firestore user document
+            await db.collection("users").doc(cred.user.uid).set({
                 name: name,
                 email: email,
                 phone: phone,
                 type: "witness",
+                availability: {},   // <-- THIS IS THE IMPORTANT FIX
                 createdAt: new Date()
             });
-        })
-        .then(() => {
+
             window.location.href = "dashboard.html";
         })
         .catch(err => alert(err.message));
