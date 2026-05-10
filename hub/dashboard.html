@@ -101,10 +101,10 @@
 <!-- Sidebar -->
 <div class="sidebar">
     <h2>Witness Hub</h2>
-    <a href="#">Dashboard</a>
-    <a href="#">My Jobs</a>
-    <a href="#">Availability</a>
-    <a href="#">Profile</a>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="jobs.html">My Jobs</a>
+    <a href="availability.html">Availability</a>
+    <a href="profile-edit.html">Profile</a>
 
     <div class="logout-btn" onclick="logout()">Logout</div>
 </div>
@@ -137,9 +137,9 @@
 
     <!-- Availability -->
     <div class="section">
-    <h3>Your Availability</h3>
-    <div id="availabilitySummary">Loading...</div>
-</div>
+        <h3>Your Availability</h3>
+        <div id="availabilitySummary">Loading...</div>
+    </div>
 
     <!-- Profile -->
     <div class="section">
@@ -171,10 +171,26 @@ auth.onAuthStateChanged(async (user) => {
     if (doc.exists) {
         const data = doc.data();
 
+        // Basic profile info
         document.getElementById("username").innerText = data.name;
         document.getElementById("profileName").innerText = data.name;
         document.getElementById("profileEmail").innerText = data.email;
         document.getElementById("profilePhone").innerText = data.phone;
+
+        // Availability summary
+        if (data.availability) {
+            let html = "";
+            for (const [day, info] of Object.entries(data.availability)) {
+                if (info.enabled) {
+                    html += `<p><strong>${day}:</strong> ${info.start}–${info.end}</p>`;
+                } else {
+                    html += `<p><strong>${day}:</strong> Not available</p>`;
+                }
+            }
+            document.getElementById("availabilitySummary").innerHTML = html;
+        } else {
+            document.getElementById("availabilitySummary").innerHTML = "<p>No availability set yet.</p>";
+        }
     }
 });
 
