@@ -2,10 +2,55 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Witness Hub – Dashboard</title>
+    <title>Witness Hub – Register</title>
+
+    <!-- Firebase v8 script tags -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Register</h1>
-    <p>Placeholder content.</p>
+
+<h1>Create Your Witness Account</h1>
+
+<div class="form-box">
+    <input id="name" type="text" placeholder="Full Name">
+    <input id="email" type="email" placeholder="Email">
+    <input id="phone" type="text" placeholder="Phone Number">
+    <input id="password" type="password" placeholder="Password">
+    <button onclick="register()">Register</button>
+</div>
+
+<p>Already have an account? <a href="login.html">Login here</a></p>
+
+<!-- Load your firebase.js (with your config inside) -->
+<script src="firebase.js"></script>
+
+<script>
+function register() {
+    const name = document.getElementById("name").value;
+    const email = document.getElementById("email").value;
+    const phone = document.getElementById("phone").value;
+    const pass = document.getElementById("password").value;
+
+    auth.createUserWithEmailAndPassword(email, pass)
+        .then(cred => {
+            return db.collection("users").doc(cred.user.uid).set({
+                name: name,
+                email: email,
+                phone: phone,
+                type: "witness",
+                createdAt: new Date()
+            });
+        })
+        .then(() => {
+            window.location.href = "dashboard.html";
+        })
+        .catch(err => alert(err.message));
+}
+</script>
+
 </body>
 </html>
