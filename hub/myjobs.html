@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Jobs – Witness Hub</title>
+
+    <!-- Firebase v8 -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+        }
+
+        header {
+            background: #000;
+            color: #fff;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 20px;
+        }
+
+        header button {
+            background: #fff;
+            color: #000;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .container {
+            padding: 20px;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .jobBtn {
+            background: #000;
+            color: #fff;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .jobBtn:hover {
+            background: #333;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>My Jobs</h1>
+    <button onclick="logout()">Logout</button>
+</header>
+
+<div class="container">
+
+    <div class="card">
+        <h2>Available Jobs</h2>
+        <div id="availableJobs">Loading…</div>
+    </div>
+
+    <div class="card">
+        <h2>My Assigned Jobs</h2>
+        <div id="assignedJobs">Loading…</div>
+    </div>
+
+    <div class="card">
+        <h2>My Pending Requests</h2>
+        <div id="pendingRequests">Loading…</div>
+    </div>
+
+</div>
+
+<script src="firebase.js"></script>
+
+<script>
+auth.onAuthStateChanged(async user => {
+    if (!user) {
+        window.location.href = "login.html";
+        return;
+    }
+
+    loadAvailableJobs(user.uid);
+    loadAssignedJobs(user.uid);
+    loadPendingRequests(user.uid);
+});
+
+// ⭐ Load jobs that are unassigned
+function loadAvailableJobs(uid) {
+    db.collection("jobs")
+        .where("status", "==", "unassigned")
+        .onSnapshot(snapshot => {
+            const container = document.getElementById("availableJobs");
+            container.innerHTML = "";
+
+            if (snapshot.empty) {
+                container.innerHTML = "<p>No available jobs.</p>";
+                return;
+            }
+
+            snapshot.forEach(doc => {
+                const job = doc.data();
+                const id = doc.id;
+
+                const card = document.createElement("div");
+                card.className = "card";
+                card.innerHTML = `
+                    <h3>${job.ceremonyDate} @ ${job.ceremonyTime}</h3>
+                    <p><strong>Location:</strong> ${job.ceremonyLocation}</p>
+                    <button class="jobBtn" onclick="requestJob('${id}')">Request Assignment</button>
+                `;
+
+                container.appendChild(card);
+            });
+        });
+}
+
+// ⭐ Load jobs assigned to this witness
+function loadAssignedJobs(uid) {
+    db.collection("jobs")
+        .where("assignedTo", "==", uid)
+        .onSnapshot(snapshot => {
+            const container = document.getElementById("assignedJobs");
+            container.innerHTML = "";
+
+            if (snapshot.empty) {
+                container.innerHTML = "<p>No assigned jobs.</p>";
+                return;
+            }
+
+            snapshot.forEach(doc => {
+                const job = doc.data();
+
+                const card = document.createElement("div");
+                card.className = "card";
+                card.innerHTML = `
+                    <h3>${job.ceremonyDate} @ ${job.ceremonyTime}</h3>
+                    <p><strong>Location:</strong> ${job.ceremonyLocation}</p>
+                    <p><strong>Status:</strong> Assigned</p>
+                `;
+
+                container.appendChild(card);
+            });
+        });
+}
+
+// ⭐ Load pending requests by this witness
+function loadPendingRequests(uid) {
+    db.collection("jobs")
+        .where("requestBy", "==", uid)
+        .where("requestStatus", "==", "pending")
+        .onSnapshot(snapshot => {
+            const container = document.getElementById("pendingRequests");
+            container.innerHTML = "";
+
+            if (snapshot.empty) {
+                container.innerHTML = "<p>No pending requests.</p>";
+                return;
+            }
+
+            snapshot.forEach(doc => {
+                const job = doc.data();
+
+                const card = document.createElement("div");
+                card.className = "card";
+                card.innerHTML = `
+                    <h3>${job.ceremonyDate} @ ${job.ceremonyTime}</h3>
+                    <p><strong>Location:</strong> ${job.ceremonyLocation}</p>
+                    <p><strong>Status:</strong> Awaiting admin approval</p>
+                `;
+
+                container.appendChild(card);
+            });
+        });
+}
+
+// ⭐ Witness requests assignment
+function requestJob(jobId) {
+    auth.onAuthStateChanged(async user => {
+        if (!user) return;
+
+        const uid = user.uid;
+
+        // Get witness team name or single name
+        const userDoc = await db.collection("users").doc(uid).get();
+        const data = userDoc.data();
+
+        const teamName = data.type === "couple"
+            ? data.teamName
+            : data.name;
+
+        db.collection("jobs").doc(jobId).update({
+            requestBy: uid,
+            requestTeamName: teamName,
+            requestStatus: "pending",
+            status: "pending"
+        });
+    });
+}
+
+function logout() {
+    auth.signOut().then(() => {
+        window.location.href = "login.html";
+    });
+}
+</script>
+
+</body>
+</html>
