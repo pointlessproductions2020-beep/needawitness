@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Witness Hub – Admin Dashboard</title>
+
+    <!-- Firebase v8 -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+        }
+
+        header {
+            background: #000;
+            color: #fff;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 20px;
+        }
+
+        header button {
+            background: #fff;
+            color: #000;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .container {
+            padding: 20px;
+        }
+
+        h2 {
+            margin-top: 0;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .small {
+            font-size: 13px;
+            color: #555;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 15px;
+        }
+
+        button {
+            padding: 10px 15px;
+            background: #000;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #333;
+        }
+
+        .rejectBtn {
+            background: #b30000;
+            margin-left: 10px;
+        }
+
+        .rejectBtn:hover {
+            background: #800000;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Admin Dashboard</h1>
+    <button onclick="logout()">Logout</button>
+</header>
+
+<div class="container">
+
+    <div id="status" class="card">
+        <h2>Welcome</h2>
+        <p class="small" id="adminInfo">Checking admin permissions…</p>
+    </div>
+
+    <!-- ⭐ MANUAL JOB CREATION -->
+    <div class="card">
+        <h2>Create Manual Job</h2>
+
+        <input id="ceremonyDate" type="date" placeholder="Ceremony Date">
+        <input id="ceremonyTime" type="time" placeholder="Ceremony Time">
+        <input id="ceremonyLocation" type="text" placeholder="Ceremony Location">
+
+        <button onclick="createManualJob()">Add Job</button>
+    </div>
+
+    <!-- ⭐ PENDING JOB REQUESTS -->
+    <div class="card">
+        <h2>Pending Job Requests</h2>
+        <div id="pendingJobs">Loading…</div>
+    </div>
+
+    <!-- ⭐ ALL JOBS -->
+    <div class="card">
+        <h2>All Jobs</h2>
+        <div id="allJobs">Loading…</div>
+    </div>
+
+</div>
+
+<script src="firebase.js"></script>
+
+<script>
+auth.onAuthStateChanged(async user => {
+    const info = document.getElementById("adminInfo");
+
+    if (!user) {
+        window.location.href = "admin-login.html";
+        return;
+    }
+
+    try {
+        const snap = await db.collection("admins")
+            .where("email", "==", user.email)
+            .limit(1)
+            .get();
+
+        if (snap.empty) {
+            await auth.signOut();
+            window.location.href = "admin-login.html";
+            return;
+        }
+
+        const adminData = snap.docs[0].data();
+        info.textContent = `Logged in as ${adminData.name} (${adminData.role})`;
+
+        // ⭐ Load dashboard data
+        loadPendingRequests();
+        loadAllJobs();
+
+    } catch (err) {
+        info.textContent = "Error checking admin permissions.";
+    }
+});
+
+
+// ⭐ CREATE MANUAL JOB
+function createManualJob() {
+    const date = document.getElementById("ceremonyDate").value;
+    const time = document.getElementById("ceremonyTime").value;
+    const location = document.getElementById("ceremonyLocation").value;
+
+    if (!date || !time || !location) {
+        alert("Please fill in all fields.");
+        return;
+    }
+
+    db.collection("jobs").add({
+        ceremonyDate: date,
+        ceremonyTime: time,
+        ceremonyLocation: location,
+        status: "unassigned",
+        requestStatus: null,
+        requestBy: null,
+        requestTeamName: null,
+        assignedTo: null,
+        assignedTeamName: null,
+        createdAt: new Date()
+    }).then(() => {
+        alert("Job added successfully!");
+        document.getElementById("ceremonyDate").value = "";
+        document.getElementById("ceremonyTime").value = "";
+        document.getElementById("ceremonyLocation").value = "";
+    });
+}
+
+
+// ⭐ LOAD PENDING JOB REQUESTS
+function loadPendingRequests() {
+    db.collection("jobs")
+        .where("requestStatus", "==", "pending")
+        .onSnapshot(snapshot => {
+            const container = document.getElementById("pendingJobs");
+            container.innerHTML = "";
+
+            if (snapshot.empty) {
+                container.innerHTML = "<p>No pending requests.</p>";
+                return;
+            }
+
+            snapshot.forEach(doc => {
+                const job = doc.data();
+                const id = doc.id;
+
+                const card = document.createElement("div");
+                card.className = "card";
+                card.innerHTML = `
+                    <h3>Job ID: ${id}</h3>
+                    <p><strong>Requested By:</strong> ${job.requestTeamName || "Unknown"}</p>
+                    <p><strong>Date:</strong> ${job.ceremonyDate || "N/A"}</p>
+                    <p><strong>Time:</strong> ${job.ceremonyTime || "N/A"}</p>
+                    <p><strong>Location:</strong> ${job.ceremonyLocation || "N/A"}</p>
+
+                    <button onclick="approveJob('${id}', '${job.requestBy}', '${job.requestTeamName}')">Approve</button>
+                    <button class="rejectBtn" onclick="rejectJob('${id}')">Reject</button>
+                `;
+
+                container.appendChild(card);
+            });
+        });
+}
+
+
+// ⭐ APPROVE JOB
+function approveJob(jobId, witnessId, teamName) {
+    db.collection("jobs").doc(jobId).update({
+        assignedTo: witnessId,
+        assignedTeamName: teamName,
+        requestStatus: "approved",
+        status: "assigned"
+    }).then(() => {
+        alert("Job approved and assigned.");
+    });
+}
+
+
+// ⭐ REJECT JOB
+function rejectJob(jobId) {
+    db.collection("jobs").doc(jobId).update({
+        requestStatus: "rejected",
+        requestBy: null,
+        requestTeamName: null,
+        status: "unassigned"
+    }).then(() => {
+        alert("Job request rejected.");
+    });
+}
+
+
+// ⭐ LOAD ALL JOBS
+function loadAllJobs() {
+    db.collection("jobs")
+        .orderBy("createdAt", "desc")
+        .onSnapshot(snapshot => {
+            const container = document.getElementById("allJobs");
+            container.innerHTML = "";
+
+            if (snapshot.empty) {
+                container.innerHTML = "<p>No jobs found.</p>";
+                return;
+            }
+
+            snapshot.forEach(doc => {
+                const job = doc.data();
+                const id = doc.id;
+
+                const card = document.createElement("div");
+                card.className = "card";
+                card.innerHTML = `
+                    <h3>Job ID: ${id}</h3>
+                    <p><strong>Status:</strong> ${job.status}</p>
+                    <p><strong>Date:</strong> ${job.ceremonyDate}</p>
+                    <p><strong>Time:</strong> ${job.ceremonyTime}</p>
+                    <p><strong>Location:</strong> ${job.ceremonyLocation}</p>
+                `;
+
+                container.appendChild(card);
+            });
+        });
+}
+
+
+// ⭐ LOGOUT
+function logout() {
+    auth.signOut().then(() => {
+        window.location.href = "admin-login.html";
+    });
+}
+</script>
+
+</body>
+</html>
