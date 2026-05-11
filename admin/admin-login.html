@@ -2,84 +2,52 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Witness Hub – Admin Login</title>
-
-    <!-- Firebase v8 -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login – Need A Witness UK</title>
     <style>
         body {
             margin: 0;
             font-family: Arial, sans-serif;
-            background: #f5f5f5;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            background: #fafafa;
         }
-
         .container {
-            background: white;
-            padding: 40px;
-            width: 360px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            text-align: center;
+            max-width: 400px;
+            margin: 80px auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
         }
-
         h1 {
+            text-align: center;
             margin-top: 0;
-            margin-bottom: 25px;
-            font-size: 24px;
         }
-
+        label {
+            display: block;
+            margin-top: 15px;
+        }
         input {
             width: 100%;
-            padding: 14px;
-            margin-bottom: 15px;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-            font-size: 16px;
+            padding: 10px;
+            margin-top: 5px;
+            box-sizing: border-box;
         }
-
         button {
             width: 100%;
-            padding: 14px;
+            padding: 10px;
+            margin-top: 20px;
             background: #000;
-            color: white;
+            color: #fff;
             border: none;
-            border-radius: 6px;
-            font-size: 16px;
             cursor: pointer;
-            margin-top: 10px;
         }
-
         button:hover {
-            background: #333;
+            opacity: 0.9;
         }
-
-        p {
-            margin-top: 15px;
-            font-size: 14px;
-        }
-
-        a {
-            color: #000;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        a:hover {
-            opacity: 0.7;
-        }
-
         .error {
             color: red;
-            font-size: 13px;
-            min-height: 18px;
-            margin-bottom: 5px;
+            margin-top: 10px;
+            min-height: 20px;
         }
     </style>
 </head>
@@ -88,53 +56,65 @@
 <div class="container">
     <h1>Admin Login</h1>
 
-    <div id="error" class="error"></div>
+    <label for="email">Email</label>
+    <input type="email" id="email" value="admin@needawitness.uk">
 
-    <input id="email" type="email" placeholder="Admin Email">
-    <input id="password" type="password" placeholder="Password">
+    <label for="password">Password</label>
+    <input type="password" id="password">
 
-    <button onclick="adminLogin()">Login</button>
+    <button id="loginBtn">Log In</button>
 
-    <p><a href="login.html">Back to Witness Login</a></p>
+    <div class="error" id="error"></div>
 </div>
 
-<script src="firebase.js"></script>
+<!-- Firebase + your config (same as hub pages) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="../hub/firebase.js"></script> <!-- adjust path if needed -->
 
 <script>
-async function adminLogin() {
-    const email = document.getElementById("email").value.trim();
-    const pass  = document.getElementById("password").value.trim();
-    const errorBox = document.getElementById("error");
-    errorBox.textContent = "";
+    const auth = firebase.auth();
+    const db = firebase.firestore();
 
-    if (!email || !pass) {
-        errorBox.textContent = "Please enter email and password.";
-        return;
-    }
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const loginBtn = document.getElementById('loginBtn');
+    const errorDiv = document.getElementById('error');
 
-    try {
-        const cred = await auth.signInWithEmailAndPassword(email, pass);
+    loginBtn.addEventListener('click', async () => {
+        errorDiv.textContent = '';
 
-        // Check if this email exists in the admins collection
-        const snap = await db.collection("admins")
-            .where("email", "==", email)
-            .limit(1)
-            .get();
+        const email = emailInput.value.trim();
+        const password = passwordInput.value;
 
-        if (snap.empty) {
-            // Not an admin – log out immediately
-            await auth.signOut();
-            errorBox.textContent = "This account is not authorised as an admin.";
+        if (!email || !password) {
+            errorDiv.textContent = 'Please enter email and password.';
             return;
         }
 
-        // Admin confirmed – go to admin dashboard
-        window.location.href = "admin-dashboard.html";
+        try {
+            // 1) Sign in with Firebase Auth
+            const userCred = await auth.signInWithEmailAndPassword(email, password);
+            const user = userCred.user;
 
-    } catch (err) {
-        errorBox.textContent = err.message;
-    }
-}
+            // 2) Check if this user is in the "admins" collection
+            const adminDoc = await db.collection('admins').doc(email).get();
+
+            if (!adminDoc.exists || adminDoc.data().role !== 'admin') {
+                // Not an admin – sign out and show error
+                await auth.signOut();
+                errorDiv.textContent = 'You are not authorised to access the admin area.';
+                return;
+            }
+
+            // 3) If admin, redirect to admin dashboard
+            window.location.href = 'admin-dashboard.html';
+        } catch (err) {
+            console.error(err);
+            errorDiv.textContent = 'Login failed. Please check your details.';
+        }
+    });
 </script>
 
 </body>
