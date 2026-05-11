@@ -118,8 +118,6 @@
 <script src="firebase.js"></script>
 
 <script>
-    const auth = firebase.auth();
-    const db = firebase.firestore();
 
     // Redirect if already logged in
     auth.onAuthStateChanged(user => {
