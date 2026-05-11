@@ -112,15 +112,45 @@ auth.onAuthStateChanged(async user => {
         const adminData = snap.docs[0].data();
         info.textContent = `Logged in as ${adminData.name} (${adminData.role})`;
 
-        // Here is where we'll later load:
-        // - pending job requests
-        // - all jobs
-        // - approve / reject buttons
+        // ⭐ Load pending job requests
+        loadPendingRequests();
 
     } catch (err) {
         info.textContent = "Error checking admin permissions.";
     }
 });
+
+// ⭐ Function to load pending job requests
+function loadPendingRequests() {
+    db.collection("jobs")
+        .where("requestStatus", "==", "pending")
+        .onSnapshot(snapshot => {
+            const container = document.getElementById("pendingJobs");
+            container.innerHTML = "";
+
+            if (snapshot.empty) {
+                container.innerHTML = "<p>No pending requests.</p>";
+                return;
+            }
+
+            snapshot.forEach(doc => {
+                const job = doc.data();
+                const id = doc.id;
+
+                const card = document.createElement("div");
+                card.className = "card";
+                card.innerHTML = `
+                    <h3>Job ID: ${id}</h3>
+                    <p><strong>Requested By:</strong> ${job.requestTeamName || "Unknown"}</p>
+                    <p><strong>Date:</strong> ${job.ceremonyDate || "N/A"}</p>
+                    <p><strong>Time:</strong> ${job.ceremonyTime || "N/A"}</p>
+                    <p><strong>Location:</strong> ${job.ceremonyLocation || "N/A"}</p>
+                `;
+
+                container.appendChild(card);
+            });
+        });
+}
 
 function logout() {
     auth.signOut().then(() => {
