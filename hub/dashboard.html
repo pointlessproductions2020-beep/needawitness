@@ -143,12 +143,14 @@
 
     <!-- Profile -->
     <div class="section">
-        <h3>Your Profile</h3>
-        <p><strong>Name:</strong> <span id="profileName">Loading...</span></p>
-        <p><strong>Email:</strong> <span id="profileEmail">Loading...</span></p>
-        <p><strong>Phone:</strong> <span id="profilePhone">Loading...</span></p>
-    </div>
+    <h3>Your Profile</h3>
+    <p><strong>Name:</strong> <span id="profileName">Loading...</span></p>
+    <p><strong>Email:</strong> <span id="profileEmail">Loading...</span></p>
+    <p><strong>Phone:</strong> <span id="profilePhone">Loading...</span></p>
+    <p><strong>Location:</strong> <span id="profileLocation">Loading...</span></p>
+    <p><strong>Bio:</strong> <span id="profileBio">Loading...</span></p>
 </div>
+
 
 <!-- Firebase SDKs -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -176,6 +178,8 @@ auth.onAuthStateChanged(async (user) => {
         document.getElementById("profileName").innerText = data.name;
         document.getElementById("profileEmail").innerText = data.email;
         document.getElementById("profilePhone").innerText = data.phone;
+        document.getElementById("profileLocation").innerText = data.location || "Not set";
+        document.getElementById("profileBio").innerText = data.bio || "No bio yet";
 
         // Availability summary
         if (data.availability) {
