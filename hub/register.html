@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Witness Hub – Register</title>
 
     <!-- Firebase v8 -->
@@ -78,6 +79,13 @@
         .hidden {
             display: none;
         }
+
+        .error {
+            color: red;
+            font-size: 14px;
+            min-height: 20px;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
@@ -85,21 +93,19 @@
 <div class="container">
     <h1>Create Your Witness Account</h1>
 
-    <!-- Witness Type -->
+    <div class="error" id="error"></div>
+
     <select id="witnessType">
         <option value="single">Single Witness</option>
         <option value="couple">Couple Witness Team</option>
     </select>
 
-    <!-- Single Witness Fields -->
     <input id="name" type="text" placeholder="Full Name">
 
-    <!-- Couple Witness Fields -->
     <input id="teamName" class="hidden" type="text" placeholder="Team Name (must be unique)">
     <input id="partner1" class="hidden" type="text" placeholder="Partner 1 Name">
     <input id="partner2" class="hidden" type="text" placeholder="Partner 2 Name">
 
-    <!-- Shared Fields -->
     <input id="email" type="email" placeholder="Email">
     <input id="phone" type="text" placeholder="Phone Number">
     <input id="password" type="password" placeholder="Password">
@@ -112,67 +118,98 @@
 <script src="firebase.js"></script>
 
 <script>
-// Show/hide fields based on witness type
-document.getElementById("witnessType").addEventListener("change", function () {
-    const type = this.value;
+    const auth = firebase.auth();
+    const db = firebase.firestore();
 
-    document.getElementById("name").classList.toggle("hidden", type === "couple");
-    document.getElementById("teamName").classList.toggle("hidden", type === "single");
-    document.getElementById("partner1").classList.toggle("hidden", type === "single");
-    document.getElementById("partner2").classList.toggle("hidden", type === "single");
-});
+    // Redirect if already logged in
+    auth.onAuthStateChanged(user => {
+        if (user) window.location.href = "dashboard.html";
+    });
 
-// Check if team name is unique
-async function isTeamNameTaken(name) {
-    const snap = await db.collection("users").where("teamName", "==", name).get();
-    return !snap.empty;
-}
+    // Show/hide fields based on witness type
+    document.getElementById("witnessType").addEventListener("change", function () {
+        const type = this.value;
 
-async function register() {
-    const type = document.getElementById("witnessType").value;
-    const email = document.getElementById("email").value.trim();
-    const phone = document.getElementById("phone").value.trim();
-    const pass = document.getElementById("password").value.trim();
+        document.getElementById("name").classList.toggle("hidden", type === "couple");
+        document.getElementById("teamName").classList.toggle("hidden", type === "single");
+        document.getElementById("partner1").classList.toggle("hidden", type === "single");
+        document.getElementById("partner2").classList.toggle("hidden", type === "single");
+    });
 
-    let userData = {
-        email: email,
-        phone: phone,
-        availability: {},
-        createdAt: new Date()
-    };
-
-    if (type === "single") {
-        const name = document.getElementById("name").value.trim();
-        if (!name) return alert("Please enter your name.");
-
-        userData.type = "single";
-        userData.name = name;
-        userData.teamName = null;
-
-    } else {
-        const teamName = document.getElementById("teamName").value.trim();
-        const partner1 = document.getElementById("partner1").value.trim();
-        const partner2 = document.getElementById("partner2").value.trim();
-
-        if (!teamName || !partner1 || !partner2)
-            return alert("Please fill in all couple team fields.");
-
-        if (await isTeamNameTaken(teamName))
-            return alert("Sorry, this team name is already taken.");
-
-        userData.type = "couple";
-        userData.teamName = teamName;
-        userData.partner1Name = partner1;
-        userData.partner2Name = partner2;
+    async function isTeamNameTaken(name) {
+        const snap = await db.collection("users")
+            .where("teamName", "==", name.toLowerCase())
+            .get();
+        return !snap.empty;
     }
 
-    auth.createUserWithEmailAndPassword(email, pass)
-        .then(async cred => {
-            await db.collection("users").doc(cred.user.uid).set(userData);
-            window.location.href = "dashboard.html";
-        })
-        .catch(err => alert(err.message));
-}
+    async function register() {
+        const errorBox = document.getElementById("error");
+        errorBox.textContent = "";
+
+        const type = document.getElementById("witnessType").value;
+        const email = document.getElementById("email").value.trim();
+        const phone = document.getElementById("phone").value.trim();
+        const pass = document.getElementById("password").value.trim();
+
+        if (!email || !phone || !pass) {
+            errorBox.textContent = "Please fill in all required fields.";
+            return;
+        }
+
+        if (pass.length < 6) {
+            errorBox.textContent = "Password must be at least 6 characters.";
+            return;
+        }
+
+        let userData = {
+            email: email,
+            phone: phone,
+            availability: {},
+            createdAt: new Date()
+        };
+
+        if (type === "single") {
+            const name = document.getElementById("name").value.trim();
+            if (!name) {
+                errorBox.textContent = "Please enter your name.";
+                return;
+            }
+
+            userData.type = "single";
+            userData.name = name;
+            userData.teamName = null;
+
+        } else {
+            const teamName = document.getElementById("teamName").value.trim().toLowerCase();
+            const partner1 = document.getElementById("partner1").value.trim();
+            const partner2 = document.getElementById("partner2").value.trim();
+
+            if (!teamName || !partner1 || !partner2) {
+                errorBox.textContent = "Please fill in all couple team fields.";
+                return;
+            }
+
+            if (await isTeamNameTaken(teamName)) {
+                errorBox.textContent = "This team name is already taken.";
+                return;
+            }
+
+            userData.type = "couple";
+            userData.teamName = teamName;
+            userData.partner1Name = partner1;
+            userData.partner2Name = partner2;
+        }
+
+        auth.createUserWithEmailAndPassword(email, pass)
+            .then(async cred => {
+                await db.collection("users").doc(cred.user.uid).set(userData);
+                window.location.href = "dashboard.html";
+            })
+            .catch(err => {
+                errorBox.textContent = err.message;
+            });
+    }
 </script>
 
 </body>
