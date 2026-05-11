@@ -35,7 +35,7 @@
             font-size: 24px;
         }
 
-        input {
+        input, select {
             width: 100%;
             padding: 14px;
             margin-bottom: 15px;
@@ -74,6 +74,10 @@
         a:hover {
             opacity: 0.7;
         }
+
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -81,7 +85,21 @@
 <div class="container">
     <h1>Create Your Witness Account</h1>
 
+    <!-- Witness Type -->
+    <select id="witnessType">
+        <option value="single">Single Witness</option>
+        <option value="couple">Couple Witness Team</option>
+    </select>
+
+    <!-- Single Witness Fields -->
     <input id="name" type="text" placeholder="Full Name">
+
+    <!-- Couple Witness Fields -->
+    <input id="teamName" class="hidden" type="text" placeholder="Team Name (must be unique)">
+    <input id="partner1" class="hidden" type="text" placeholder="Partner 1 Name">
+    <input id="partner2" class="hidden" type="text" placeholder="Partner 2 Name">
+
+    <!-- Shared Fields -->
     <input id="email" type="email" placeholder="Email">
     <input id="phone" type="text" placeholder="Phone Number">
     <input id="password" type="password" placeholder="Password">
@@ -94,25 +112,63 @@
 <script src="firebase.js"></script>
 
 <script>
-function register() {
-    const name = document.getElementById("name").value.trim();
+// Show/hide fields based on witness type
+document.getElementById("witnessType").addEventListener("change", function () {
+    const type = this.value;
+
+    document.getElementById("name").classList.toggle("hidden", type === "couple");
+    document.getElementById("teamName").classList.toggle("hidden", type === "single");
+    document.getElementById("partner1").classList.toggle("hidden", type === "single");
+    document.getElementById("partner2").classList.toggle("hidden", type === "single");
+});
+
+// Check if team name is unique
+async function isTeamNameTaken(name) {
+    const snap = await db.collection("users").where("teamName", "==", name).get();
+    return !snap.empty;
+}
+
+async function register() {
+    const type = document.getElementById("witnessType").value;
     const email = document.getElementById("email").value.trim();
     const phone = document.getElementById("phone").value.trim();
     const pass = document.getElementById("password").value.trim();
 
+    let userData = {
+        email: email,
+        phone: phone,
+        availability: {},
+        createdAt: new Date()
+    };
+
+    if (type === "single") {
+        const name = document.getElementById("name").value.trim();
+        if (!name) return alert("Please enter your name.");
+
+        userData.type = "single";
+        userData.name = name;
+        userData.teamName = null;
+
+    } else {
+        const teamName = document.getElementById("teamName").value.trim();
+        const partner1 = document.getElementById("partner1").value.trim();
+        const partner2 = document.getElementById("partner2").value.trim();
+
+        if (!teamName || !partner1 || !partner2)
+            return alert("Please fill in all couple team fields.");
+
+        if (await isTeamNameTaken(teamName))
+            return alert("Sorry, this team name is already taken.");
+
+        userData.type = "couple";
+        userData.teamName = teamName;
+        userData.partner1Name = partner1;
+        userData.partner2Name = partner2;
+    }
+
     auth.createUserWithEmailAndPassword(email, pass)
         .then(async cred => {
-
-            // Create Firestore user document
-            await db.collection("users").doc(cred.user.uid).set({
-                name: name,
-                email: email,
-                phone: phone,
-                type: "witness",
-                availability: {},   // required for dashboard
-                createdAt: new Date()
-            });
-
+            await db.collection("users").doc(cred.user.uid).set(userData);
             window.location.href = "dashboard.html";
         })
         .catch(err => alert(err.message));
