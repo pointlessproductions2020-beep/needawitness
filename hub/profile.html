@@ -2,172 +2,166 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Profile – Witness Hub</title>
-
-    <!-- Firebase v8 -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
     <style>
         body {
             margin: 0;
             font-family: Arial, sans-serif;
             background: #f5f5f5;
-        }
-
-        header {
-            background: #000;
-            color: #fff;
-            padding: 15px 20px;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            height: 100vh;
         }
 
-        header h1 {
-            margin: 0;
-            font-size: 20px;
-        }
-
-        header button {
-            background: #fff;
-            color: #000;
-            border: none;
-            padding: 8px 14px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        .container {
+        /* Sidebar */
+        .sidebar {
+            width: 240px;
+            background: #000;
+            color: white;
             padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar h2 {
+            margin-top: 0;
+            margin-bottom: 30px;
+            font-size: 22px;
+        }
+
+        .sidebar a {
+            color: white;
+            text-decoration: none;
+            padding: 12px 0;
+            display: block;
+            font-size: 16px;
+        }
+
+        .sidebar a:hover {
+            opacity: 0.7;
+        }
+
+        .logout-btn {
+            margin-top: auto;
+            padding: 12px;
+            background: #333;
+            text-align: center;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        /* Main content */
+        .main {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .header {
+            font-size: 26px;
+            margin-bottom: 20px;
         }
 
         .card {
-            background: #fff;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            max-width: 600px;
         }
 
-        input {
-            width: 100%;
-            padding: 12px;
+        .profile-row {
             margin-bottom: 12px;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-            font-size: 16px;
         }
 
-        button.saveBtn {
-            width: 100%;
-            padding: 12px;
+        .profile-row strong {
+            display: inline-block;
+            width: 120px;
+        }
+
+        .edit-btn {
+            margin-top: 20px;
+            display: inline-block;
+            padding: 10px 16px;
             background: #000;
-            color: #fff;
-            border: none;
+            color: white;
             border-radius: 6px;
-            cursor: pointer;
-            font-size: 16px;
+            text-decoration: none;
         }
 
-        button.saveBtn:hover {
+        .edit-btn:hover {
             background: #333;
-        }
-
-        .hidden {
-            display: none;
         }
     </style>
 </head>
 <body>
 
-<header>
-    <h1>My Profile</h1>
-    <button onclick="logout()">Logout</button>
-</header>
+<!-- Sidebar -->
+<div class="sidebar">
+    <h2>Witness Hub</h2>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="jobs.html">My Jobs</a>
+    <a href="availability.html">Availability</a>
+    <a href="profile.html">Profile</a>
+    <a href="profile-edit.html">Edit Profile</a>
 
-<div class="container">
-
-    <div class="card">
-        <h2>Your Details</h2>
-
-        <p><strong>Email:</strong> <span id="emailDisplay"></span></p>
-
-        <!-- Single Witness -->
-        <input id="name" type="text" placeholder="Full Name">
-
-        <!-- Couple Witness -->
-        <input id="teamName" class="hidden" type="text" placeholder="Team Name">
-        <input id="partner1" class="hidden" type="text" placeholder="Partner 1 Name">
-        <input id="partner2" class="hidden" type="text" placeholder="Partner 2 Name">
-
-        <!-- Shared -->
-        <input id="phone" type="text" placeholder="Phone Number">
-
-        <button class="saveBtn" onclick="saveProfile()">Save Changes</button>
-    </div>
-
+    <div class="logout-btn" onclick="logout()">Logout</div>
 </div>
 
+<!-- Main content -->
+<div class="main">
+    <div class="header">Your Profile</div>
+
+    <div class="card">
+        <div class="profile-row"><strong>Email:</strong> <span id="email"></span></div>
+        <div class="profile-row"><strong>Name:</strong> <span id="name"></span></div>
+        <div class="profile-row"><strong>Team Name:</strong> <span id="teamName"></span></div>
+        <div class="profile-row"><strong>Partner 1:</strong> <span id="partner1"></span></div>
+        <div class="profile-row"><strong>Partner 2:</strong> <span id="partner2"></span></div>
+        <div class="profile-row"><strong>Phone:</strong> <span id="phone"></span></div>
+        <div class="profile-row"><strong>Location:</strong> <span id="location"></span></div>
+        <div class="profile-row"><strong>Bio:</strong> <span id="bio"></span></div>
+
+        <a class="edit-btn" href="profile-edit.html">Edit Profile</a>
+    </div>
+</div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 <script src="firebase.js"></script>
 
 <script>
-let currentUserId = null;
-let userType = null;
-
 auth.onAuthStateChanged(async user => {
     if (!user) {
         window.location.href = "login.html";
         return;
     }
 
-    currentUserId = user.uid;
-    document.getElementById("emailDisplay").textContent = user.email;
-
     const doc = await db.collection("users").doc(user.uid).get();
     const data = doc.data();
 
-    userType = data.type;
+    document.getElementById("email").textContent = user.email;
+    document.getElementById("phone").textContent = data.phone || "Not set";
+    document.getElementById("location").textContent = data.location || "Not set";
+    document.getElementById("bio").textContent = data.bio || "No bio yet";
 
     if (data.type === "single") {
-        document.getElementById("name").value = data.name;
-        document.getElementById("phone").value = data.phone;
+        document.getElementById("name").textContent = data.name;
+        document.getElementById("teamName").textContent = "—";
+        document.getElementById("partner1").textContent = "—";
+        document.getElementById("partner2").textContent = "—";
+    }
 
-    } else if (data.type === "couple") {
-        document.getElementById("teamName").classList.remove("hidden");
-        document.getElementById("partner1").classList.remove("hidden");
-        document.getElementById("partner2").classList.remove("hidden");
-
-        document.getElementById("teamName").value = data.teamName;
-        document.getElementById("partner1").value = data.partner1Name;
-        document.getElementById("partner2").value = data.partner2Name;
-        document.getElementById("phone").value = data.phone;
-
-        // Hide single name field
-        document.getElementById("name").classList.add("hidden");
+    if (data.type === "couple") {
+        document.getElementById("name").textContent = "—";
+        document.getElementById("teamName").textContent = data.teamName;
+        document.getElementById("partner1").textContent = data.partner1Name;
+        document.getElementById("partner2").textContent = data.partner2Name;
     }
 });
-
-function saveProfile() {
-    let updateData = {
-        phone: document.getElementById("phone").value.trim()
-    };
-
-    if (userType === "single") {
-        updateData.name = document.getElementById("name").value.trim();
-    }
-
-    if (userType === "couple") {
-        updateData.teamName = document.getElementById("teamName").value.trim();
-        updateData.partner1Name = document.getElementById("partner1").value.trim();
-        updateData.partner2Name = document.getElementById("partner2").value.trim();
-    }
-
-    db.collection("users").doc(currentUserId).update(updateData)
-        .then(() => alert("Profile updated successfully!"));
-}
 
 function logout() {
     auth.signOut().then(() => {
