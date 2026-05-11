@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Witness Hub – Admin Dashboard</title>
+
+    <!-- Firebase v8 -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+        }
+
+        header {
+            background: #000;
+            color: #fff;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 20px;
+        }
+
+        header button {
+            background: #fff;
+            color: #000;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .container {
+            padding: 20px;
+        }
+
+        h2 {
+            margin-top: 0;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .small {
+            font-size: 13px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Admin Dashboard</h1>
+    <button onclick="logout()">Logout</button>
+</header>
+
+<div class="container">
+    <div id="status" class="card">
+        <h2>Welcome</h2>
+        <p class="small" id="adminInfo">Checking admin permissions…</p>
+    </div>
+
+    <div class="card">
+        <h2>Pending Job Requests</h2>
+        <div id="pendingJobs">Coming soon…</div>
+    </div>
+
+    <div class="card">
+        <h2>All Jobs</h2>
+        <div id="allJobs">Coming soon…</div>
+    </div>
+</div>
+
+<script src="firebase.js"></script>
+
+<script>
+auth.onAuthStateChanged(async user => {
+    const info = document.getElementById("adminInfo");
+
+    if (!user) {
+        window.location.href = "admin-login.html";
+        return;
+    }
+
+    try {
+        const snap = await db.collection("admins")
+            .where("email", "==", user.email)
+            .limit(1)
+            .get();
+
+        if (snap.empty) {
+            await auth.signOut();
+            window.location.href = "admin-login.html";
+            return;
+        }
+
+        const adminData = snap.docs[0].data();
+        info.textContent = `Logged in as ${adminData.name} (${adminData.role})`;
+
+        // Here is where we'll later load:
+        // - pending job requests
+        // - all jobs
+        // - approve / reject buttons
+
+    } catch (err) {
+        info.textContent = "Error checking admin permissions.";
+    }
+});
+
+function logout() {
+    auth.signOut().then(() => {
+        window.location.href = "admin-login.html";
+    });
+}
+</script>
+
+</body>
+</html>
