@@ -2,10 +2,179 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Witness Hub – Dashboard</title>
+    <title>My Profile – Witness Hub</title>
+
+    <!-- Firebase v8 -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+        }
+
+        header {
+            background: #000;
+            color: #fff;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 20px;
+        }
+
+        header button {
+            background: #fff;
+            color: #000;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .container {
+            padding: 20px;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 12px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+
+        button.saveBtn {
+            width: 100%;
+            padding: 12px;
+            background: #000;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button.saveBtn:hover {
+            background: #333;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
 </head>
 <body>
-    <h1>Profile</h1>
-    <p>Placeholder content.</p>
+
+<header>
+    <h1>My Profile</h1>
+    <button onclick="logout()">Logout</button>
+</header>
+
+<div class="container">
+
+    <div class="card">
+        <h2>Your Details</h2>
+
+        <p><strong>Email:</strong> <span id="emailDisplay"></span></p>
+
+        <!-- Single Witness -->
+        <input id="name" type="text" placeholder="Full Name">
+
+        <!-- Couple Witness -->
+        <input id="teamName" class="hidden" type="text" placeholder="Team Name">
+        <input id="partner1" class="hidden" type="text" placeholder="Partner 1 Name">
+        <input id="partner2" class="hidden" type="text" placeholder="Partner 2 Name">
+
+        <!-- Shared -->
+        <input id="phone" type="text" placeholder="Phone Number">
+
+        <button class="saveBtn" onclick="saveProfile()">Save Changes</button>
+    </div>
+
+</div>
+
+<script src="firebase.js"></script>
+
+<script>
+let currentUserId = null;
+let userType = null;
+
+auth.onAuthStateChanged(async user => {
+    if (!user) {
+        window.location.href = "login.html";
+        return;
+    }
+
+    currentUserId = user.uid;
+    document.getElementById("emailDisplay").textContent = user.email;
+
+    const doc = await db.collection("users").doc(user.uid).get();
+    const data = doc.data();
+
+    userType = data.type;
+
+    if (data.type === "single") {
+        document.getElementById("name").value = data.name;
+        document.getElementById("phone").value = data.phone;
+
+    } else if (data.type === "couple") {
+        document.getElementById("teamName").classList.remove("hidden");
+        document.getElementById("partner1").classList.remove("hidden");
+        document.getElementById("partner2").classList.remove("hidden");
+
+        document.getElementById("teamName").value = data.teamName;
+        document.getElementById("partner1").value = data.partner1Name;
+        document.getElementById("partner2").value = data.partner2Name;
+        document.getElementById("phone").value = data.phone;
+
+        // Hide single name field
+        document.getElementById("name").classList.add("hidden");
+    }
+});
+
+function saveProfile() {
+    let updateData = {
+        phone: document.getElementById("phone").value.trim()
+    };
+
+    if (userType === "single") {
+        updateData.name = document.getElementById("name").value.trim();
+    }
+
+    if (userType === "couple") {
+        updateData.teamName = document.getElementById("teamName").value.trim();
+        updateData.partner1Name = document.getElementById("partner1").value.trim();
+        updateData.partner2Name = document.getElementById("partner2").value.trim();
+    }
+
+    db.collection("users").doc(currentUserId).update(updateData)
+        .then(() => alert("Profile updated successfully!"));
+}
+
+function logout() {
+    auth.signOut().then(() => {
+        window.location.href = "login.html";
+    });
+}
+</script>
+
 </body>
 </html>
