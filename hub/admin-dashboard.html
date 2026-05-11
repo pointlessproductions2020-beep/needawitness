@@ -82,6 +82,15 @@
         button:hover {
             background: #333;
         }
+
+        .rejectBtn {
+            background: #b30000;
+            margin-left: 10px;
+        }
+
+        .rejectBtn:hover {
+            background: #800000;
+        }
     </style>
 </head>
 <body>
@@ -215,11 +224,40 @@ function loadPendingRequests() {
                     <p><strong>Date:</strong> ${job.ceremonyDate || "N/A"}</p>
                     <p><strong>Time:</strong> ${job.ceremonyTime || "N/A"}</p>
                     <p><strong>Location:</strong> ${job.ceremonyLocation || "N/A"}</p>
+
+                    <button onclick="approveJob('${id}', '${job.requestBy}', '${job.requestTeamName}')">Approve</button>
+                    <button class="rejectBtn" onclick="rejectJob('${id}')">Reject</button>
                 `;
 
                 container.appendChild(card);
             });
         });
+}
+
+
+// ⭐ APPROVE JOB
+function approveJob(jobId, witnessId, teamName) {
+    db.collection("jobs").doc(jobId).update({
+        assignedTo: witnessId,
+        assignedTeamName: teamName,
+        requestStatus: "approved",
+        status: "assigned"
+    }).then(() => {
+        alert("Job approved and assigned.");
+    });
+}
+
+
+// ⭐ REJECT JOB
+function rejectJob(jobId) {
+    db.collection("jobs").doc(jobId).update({
+        requestStatus: "rejected",
+        requestBy: null,
+        requestTeamName: null,
+        status: "unassigned"
+    }).then(() => {
+        alert("Job request rejected.");
+    });
 }
 
 
