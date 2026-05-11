@@ -8,6 +8,7 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="../hub/firebase.js"></script>
 
     <style>
         body {
@@ -42,10 +43,6 @@
 
         .container {
             padding: 20px;
-        }
-
-        h2 {
-            margin-top: 0;
         }
 
         .card {
@@ -95,6 +92,35 @@
 </head>
 <body>
 
+<script>
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    // ⭐ SECURE ADMIN CHECK
+    auth.onAuthStateChanged(async (user) => {
+        if (!user) {
+            window.location.href = 'admin-login.html';
+            return;
+        }
+
+        const email = user.email;
+        const adminDoc = await db.collection('admins').doc(email).get();
+
+        if (!adminDoc.exists || adminDoc.data().role !== 'admin') {
+            await auth.signOut();
+            window.location.href = 'admin-login.html';
+            return;
+        }
+
+        // Admin verified
+        document.getElementById("adminInfo").textContent =
+            `Logged in as ${email} (admin)`;
+
+        loadPendingRequests();
+        loadAllJobs();
+    });
+</script>
+
 <header>
     <h1>Admin Dashboard</h1>
     <button onclick="logout()">Logout</button>
@@ -111,8 +137,8 @@
     <div class="card">
         <h2>Create Manual Job</h2>
 
-        <input id="ceremonyDate" type="date" placeholder="Ceremony Date">
-        <input id="ceremonyTime" type="time" placeholder="Ceremony Time">
+        <input id="ceremonyDate" type="date">
+        <input id="ceremonyTime" type="time">
         <input id="ceremonyLocation" type="text" placeholder="Ceremony Location">
 
         <button onclick="createManualJob()">Add Job</button>
@@ -132,41 +158,7 @@
 
 </div>
 
-<script src="firebase.js"></script>
-
 <script>
-auth.onAuthStateChanged(async user => {
-    const info = document.getElementById("adminInfo");
-
-    if (!user) {
-        window.location.href = "admin-login.html";
-        return;
-    }
-
-    try {
-        const snap = await db.collection("admins")
-            .where("email", "==", user.email)
-            .limit(1)
-            .get();
-
-        if (snap.empty) {
-            await auth.signOut();
-            window.location.href = "admin-login.html";
-            return;
-        }
-
-        const adminData = snap.docs[0].data();
-        info.textContent = `Logged in as ${adminData.name} (${adminData.role})`;
-
-        // ⭐ Load dashboard data
-        loadPendingRequests();
-        loadAllJobs();
-
-    } catch (err) {
-        info.textContent = "Error checking admin permissions.";
-    }
-});
-
 
 // ⭐ CREATE MANUAL JOB
 function createManualJob() {
@@ -300,6 +292,7 @@ function logout() {
         window.location.href = "admin-login.html";
     });
 }
+
 </script>
 
 </body>
