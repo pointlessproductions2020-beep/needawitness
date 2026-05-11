@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Login – Need A Witness UK</title>
+
     <style>
         body {
             margin: 0;
@@ -67,11 +68,11 @@
     <div class="error" id="error"></div>
 </div>
 
-<!-- Firebase + your config (same as hub pages) -->
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="../hub/firebase.js"></script> <!-- adjust path if needed -->
+<!-- Firebase v8 + your config -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<script src="../hub/firebase.js"></script>
 
 <script>
     const auth = firebase.auth();
@@ -94,22 +95,21 @@
         }
 
         try {
-            // 1) Sign in with Firebase Auth
+            // Sign in with Firebase Auth
             const userCred = await auth.signInWithEmailAndPassword(email, password);
-            const user = userCred.user;
 
-            // 2) Check if this user is in the "admins" collection
+            // Check admin role in Firestore
             const adminDoc = await db.collection('admins').doc(email).get();
 
             if (!adminDoc.exists || adminDoc.data().role !== 'admin') {
-                // Not an admin – sign out and show error
                 await auth.signOut();
                 errorDiv.textContent = 'You are not authorised to access the admin area.';
                 return;
             }
 
-            // 3) If admin, redirect to admin dashboard
+            // Redirect to dashboard
             window.location.href = 'admin-dashboard.html';
+
         } catch (err) {
             console.error(err);
             errorDiv.textContent = 'Login failed. Please check your details.';
