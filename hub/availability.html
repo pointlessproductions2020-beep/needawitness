@@ -1,88 +1,109 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Availability – Witness Hub</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Availability – Witness Hub</title>
 
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f5f5f5;
-            padding: 20px;
-        }
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-        .container {
-            max-width: 600px;
-            margin: auto;
-            background: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
+<style>
+    body {
+        margin: 0;
+        font-family: Inter, sans-serif;
+        background: #f7f7f7;
+        padding: 30px;
+    }
 
-        h2 {
-            text-align: center;
-            margin-top: 0;
-        }
+    .container {
+        max-width: 650px;
+        margin: auto;
+        background: white;
+        padding: 30px;
+        border-radius: 14px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        border-left: 4px solid #D4AF37;
+    }
 
-        .day {
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #ddd;
-        }
+    h2 {
+        text-align: center;
+        margin-top: 0;
+        font-family: "Playfair Display", serif;
+        color: #D4AF37;
+        font-size: 28px;
+    }
 
-        .day label {
-            font-weight: bold;
-            display: block;
-        }
+    .day {
+        margin-bottom: 22px;
+        padding-bottom: 18px;
+        border-bottom: 1px solid #eee;
+    }
 
-        .time-row {
-            display: flex;
-            gap: 10px;
-            margin-top: 8px;
-        }
+    .day label {
+        font-weight: 600;
+        display: block;
+        font-size: 17px;
+        margin-bottom: 6px;
+    }
 
-        input[type="time"] {
-            flex: 1;
-            padding: 10px;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-        }
+    .toggle {
+        margin-top: 5px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+    }
 
-        .toggle {
-            margin-top: 5px;
-        }
+    .time-row {
+        display: flex;
+        gap: 12px;
+        margin-top: 10px;
+    }
 
-        button {
-            width: 100%;
-            padding: 14px;
-            background: #000;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 16px;
-            cursor: pointer;
-            margin-top: 20px;
-        }
+    input[type="time"] {
+        flex: 1;
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 15px;
+    }
 
-        button:hover {
-            background: #333;
-        }
+    button {
+        width: 100%;
+        padding: 14px;
+        background: #D4AF37;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 17px;
+        cursor: pointer;
+        font-weight: 600;
+        margin-top: 25px;
+    }
 
-        .back {
-            text-align: center;
-            margin-top: 15px;
-            display: block;
-            color: #000;
-        }
-    </style>
+    button:hover {
+        opacity: 0.9;
+    }
+
+    .back {
+        text-align: center;
+        margin-top: 18px;
+        display: block;
+        color: #333;
+        font-weight: 500;
+        text-decoration: none;
+    }
+
+    .back:hover {
+        color: #D4AF37;
+    }
+</style>
 </head>
+
 <body>
 
 <div class="container">
-    <h2>Your Availability</h2>
+    <h2>Your Weekly Availability</h2>
 
     <div id="days"></div>
 
@@ -91,11 +112,10 @@
     <a class="back" href="dashboard.html">← Back to Dashboard</a>
 </div>
 
-<!-- Firebase SDKs -->
+<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-
 <script src="firebase.js"></script>
 
 <script>
@@ -119,6 +139,7 @@ auth.onAuthStateChanged(async (user) => {
         container.innerHTML += `
             <div class="day">
                 <label>${day}</label>
+
                 <div class="toggle">
                     <input type="checkbox" id="${day}-enabled" ${saved.enabled ? "checked" : ""}>
                     <span>Available</span>
@@ -149,7 +170,7 @@ async function saveAvailability() {
 
     await db.collection("users").doc(user.uid).update({ availability });
 
-    alert("Availability saved");
+    alert("Availability saved successfully");
     window.location.href = "dashboard.html";
 }
 </script>
