@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Job Details – Witness Hub</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+    body {
+        margin: 0;
+        font-family: Inter, sans-serif;
+        background: #f7f7f7;
+        display: flex;
+        min-height: 100vh;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+        width: 240px;
+        background: white;
+        border-right: 1px solid #eee;
+        padding: 25px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .sidebar h2 {
+        font-family: "Playfair Display", serif;
+        color: #D4AF37;
+        margin-top: 0;
+        margin-bottom: 30px;
+        font-size: 24px;
+    }
+
+    .sidebar a {
+        color: #333;
+        text-decoration: none;
+        padding: 12px 0;
+        display: block;
+        font-size: 16px;
+        font-weight: 500;
+    }
+
+    .sidebar a:hover {
+        color: #D4AF37;
+    }
+
+    .logout-btn {
+        margin-top: auto;
+        padding: 12px;
+        background: #D4AF37;
+        color: white;
+        text-align: center;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+    }
+
+    .sidebar-footer {
+        margin-top: 20px;
+        padding-top: 15px;
+        border-top: 1px solid #eee;
+        font-size: 12px;
+        color: #777;
+        line-height: 1.4;
+    }
+
+    /* MAIN CONTENT */
+    .main {
+        flex: 1;
+        padding: 40px;
+        overflow-y: auto;
+    }
+
+    .header {
+        font-size: 28px;
+        font-family: "Playfair Display", serif;
+        color: #D4AF37;
+        margin-bottom: 25px;
+    }
+
+    .card {
+        background: white;
+        padding: 30px;
+        border-radius: 14px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        max-width: 700px;
+    }
+
+    .row {
+        margin-bottom: 14px;
+        font-size: 16px;
+    }
+
+    .row strong {
+        display: inline-block;
+        width: 150px;
+        color: #444;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        margin-left: 10px;
+    }
+
+    .pending { background: #fff4d6; color: #8a6d00; }
+    .assigned { background: #d6ffe0; color: #006d2a; }
+    .completed { background: #e6e6e6; color: #555; }
+
+    .btn {
+        padding: 12px 18px;
+        background: #D4AF37;
+        color: white;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 16px;
+        margin-top: 20px;
+        display: inline-block;
+    }
+
+    .btn.cancel {
+        background: #999;
+        margin-left: 10px;
+    }
+
+    .btn:hover {
+        opacity: 0.9;
+    }
+</style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+    <h2>Witness Hub</h2>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="myjobs.html">My Jobs</a>
+    <a href="availability.html">Availability</a>
+    <a href="profile.html">Profile</a>
+
+    <div class="logout-btn" onclick="logout()">Logout</div>
+
+    <div class="sidebar-footer">
+        © Need A Witness UK<br>
+        Witness Hub v1.0
+    </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main">
+    <div class="header">Job Details</div>
+
+    <div class="card" id="jobCard">
+        Loading job details…
+    </div>
+</div>
+
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<script src="firebase.js"></script>
+
+<script>
+let currentUser = null;
+let jobId = new URLSearchParams(window.location.search).get("id");
+
+auth.onAuthStateChanged(async user => {
+    if (!user) {
+        window.location.href = "login.html";
+        return;
+    }
+
+    currentUser = user;
+    loadJob();
+});
+
+/* LOAD JOB DETAILS */
+async function loadJob() {
+    const doc = await db.collection("jobs").doc(jobId).get();
+    if (!doc.exists) {
+        jobCard.innerHTML = "<p>Job not found.</p>";
+        return;
+    }
+
+    const j = doc.data();
+
+    const badge = j.status === "pending" ? "pending" :
+                  j.status === "assigned" ? "assigned" :
+                  j.status === "completed" ? "completed" : "pending";
+
+    let assignedList = "None";
+    if (j.assignedWitnesses?.length) {
+        assignedList = j.assignedWitnesses.join(", ");
+    }
+
+    jobCard.innerHTML = `
+        <div class="row"><strong>Couple:</strong> ${j.coupleName}</div>
+        <div class="row"><strong>Email:</strong> ${j.coupleEmail}</div>
+        <div class="row"><strong>Date:</strong> ${j.date}</div>
+        <div class="row"><strong>Time:</strong> ${j.time}</div>
+        <div class="row"><strong>Location:</strong> ${j.location}</div>
+        <div class="row"><strong>Notes:</strong> ${j.notes || "None"}</div>
+
+        <div class="row">
+            <strong>Status:</strong>
+            <span class="status-badge ${badge}">${j.status}</span>
+        </div>
+
+        <div class="row"><strong>Assigned Witnesses:</strong> ${assignedList}</div>
+
+        <a class="btn" href="https://www.google.com/maps/search/${encodeURIComponent(j.location)}" target="_blank">
+            Open in Maps
+        </a>
+
+        ${renderButtons(j)}
+    `;
+}
+
+/* BUTTON LOGIC */
+function renderButtons(j) {
+    const uid = currentUser.uid;
+
+    // Already assigned
+    if (j.assignedWitnesses?.includes(uid)) {
+        return `
+            <button class="btn" onclick="markCompleted()">Mark Completed</button>
+        `;
+    }
+
+    // Pending request
+    if (j.requestBy === uid && j.requestStatus === "pending") {
+        return `
+            <button class="btn cancel" onclick="cancelRequest()">Cancel Request</button>
+        `;
+    }
+
+    // Available job
+    if (j.status === "pending") {
+        return `
+            <button class="btn" onclick="requestJob()">Request Job</button>
+        `;
+    }
+
+    return "";
+}
+
+/* REQUEST JOB */
+function requestJob() {
+    db.collection("jobs").doc(jobId).update({
+        requestBy: currentUser.uid,
+        requestTeamName: "Witness",
+        requestStatus: "pending"
+    });
+
+    loadJob();
+}
+
+/* CANCEL REQUEST */
+function cancelRequest() {
+    db.collection("jobs").doc(jobId).update({
+        requestBy: "",
+        requestTeamName: "",
+        requestStatus: null
+    });
+
+    loadJob();
+}
+
+/* MARK COMPLETED */
+function markCompleted() {
+    db.collection("jobs").doc(jobId).update({
+        status: "completed"
+    });
+
+    loadJob();
+}
+
+/* LOGOUT */
+function logout() {
+    auth.signOut().then(() => {
+        window.location.href = "login.html";
+    });
+}
+</script>
+
+</body>
+</html>
