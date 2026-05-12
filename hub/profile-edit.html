@@ -106,6 +106,16 @@
         button:hover {
             background: #333;
         }
+
+        /* Photo preview */
+        #photoPreview {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin-top: 10px;
+            display: none;
+            object-fit: cover;
+        }
     </style>
 </head>
 <body>
@@ -127,6 +137,11 @@
     <div class="header">Edit Your Profile</div>
 
     <div class="card">
+
+        <!-- PHOTO UPLOAD -->
+        <label>Profile Photo</label>
+        <input id="photoInput" type="file" accept="image/*">
+        <img id="photoPreview">
 
         <!-- SINGLE WITNESS FIELDS -->
         <div id="singleFields">
@@ -169,7 +184,46 @@
 <script src="firebase.js"></script>
 
 <script>
-// Load user data into the form
+const WORKER_URL = "https://shrill-math-1bfc.pointlessproductions2020.workers.dev/";
+
+/* Convert file → base64 */
+function toBase64(file) {
+    return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.readAsDataURL(file);
+    });
+}
+
+/* Upload photo to Cloudflare Worker → GitHub */
+async function uploadPhoto(uid) {
+    const fileInput = document.getElementById("photoInput");
+    if (!fileInput.files.length) return null;
+
+    const file = fileInput.files[0];
+    const base64 = await toBase64(file);
+
+    // Show preview
+    const preview = document.getElementById("photoPreview");
+    preview.src = base64;
+    preview.style.display = "block";
+
+    const res = await fetch(WORKER_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            file: base64,
+            filename: `${uid}.jpg`
+        })
+    });
+
+    if (!res.ok) return null;
+
+    const json = await res.json();
+    return json.url || null;
+}
+
+/* Load user data */
 auth.onAuthStateChanged(async (user) => {
     if (!user) {
         window.location.href = "login.html";
@@ -181,7 +235,14 @@ auth.onAuthStateChanged(async (user) => {
 
     const data = doc.data();
 
-    // Show correct fields depending on type
+    // Load photo
+    if (data.photoURL) {
+        const preview = document.getElementById("photoPreview");
+        preview.src = data.photoURL;
+        preview.style.display = "block";
+    }
+
+    // Show correct fields
     if (data.type === "couple") {
         document.getElementById("singleFields").style.display = "none";
         document.getElementById("coupleFields").style.display = "block";
@@ -197,13 +258,12 @@ auth.onAuthStateChanged(async (user) => {
         document.getElementById("name").value = data.name || "";
     }
 
-    // Shared fields
     document.getElementById("phone").value = data.phone || "";
     document.getElementById("location").value = data.location || "";
     document.getElementById("bio").value = data.bio || "";
 });
 
-// Save profile changes
+/* Save profile */
 async function saveProfile() {
     const user = auth.currentUser;
     if (!user) return;
@@ -216,6 +276,10 @@ async function saveProfile() {
         location: document.getElementById("location").value.trim(),
         bio: document.getElementById("bio").value.trim(),
     };
+
+    // Upload photo if selected
+    const photoURL = await uploadPhoto(user.uid);
+    if (photoURL) updatedData.photoURL = photoURL;
 
     if (data.type === "couple") {
         updatedData.teamName = document.getElementById("teamName").value.trim().toLowerCase();
@@ -231,7 +295,7 @@ async function saveProfile() {
     window.location.href = "profile.html";
 }
 
-// Logout
+/* Logout */
 function logout() {
     auth.signOut().then(() => {
         window.location.href = "login.html";
