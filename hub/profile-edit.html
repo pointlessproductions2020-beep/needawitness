@@ -234,19 +234,25 @@ async function uploadPhoto(uid) {
     preview.src = base64;
     preview.style.display = "block";
 
-    const res = await fetch(WORKER_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            file: base64,
-            filename: `${uid}.jpg`
-        })
-    });
+    try {
+        const res = await fetch(WORKER_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                file: base64,
+                filename: `${uid}.jpg`
+            })
+        });
 
-    if (!res.ok) return null;
+        if (!res.ok) return null;
 
-    const json = await res.json();
-    return json.url || null;
+        const json = await res.json();
+        return json.url || null;
+
+    } catch (err) {
+        console.error("Upload failed:", err);
+        return null;
+    }
 }
 
 /* Load user data */
