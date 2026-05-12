@@ -189,21 +189,38 @@ auth.onAuthStateChanged(async (user) => {
         return;
     }
 
-    // Load user data from Firestore
     const doc = await db.collection("users").doc(user.uid).get();
 
     if (doc.exists) {
         const data = doc.data();
 
-        // Basic profile info
-        document.getElementById("username").innerText = data.name;
-        document.getElementById("profileName").innerText = data.name;
+        // ---------------------------
+        // WELCOME NAME (single/couple)
+        // ---------------------------
+        if (data.type === "couple") {
+            document.getElementById("username").innerText = data.teamName;
+        } else {
+            document.getElementById("username").innerText = data.name;
+        }
+
+        // ---------------------------
+        // PROFILE SECTION
+        // ---------------------------
+        if (data.type === "couple") {
+            document.getElementById("profileName").innerText =
+                `${data.partner1Name} & ${data.partner2Name} (${data.teamName})`;
+        } else {
+            document.getElementById("profileName").innerText = data.name;
+        }
+
         document.getElementById("profileEmail").innerText = data.email;
         document.getElementById("profilePhone").innerText = data.phone;
         document.getElementById("profileLocation").innerText = data.location || "Not set";
         document.getElementById("profileBio").innerText = data.bio || "No bio yet";
 
-        // Availability summary
+        // ---------------------------
+        // AVAILABILITY
+        // ---------------------------
         if (data.availability) {
             let html = "";
             for (const [day, info] of Object.entries(data.availability)) {
@@ -215,12 +232,13 @@ auth.onAuthStateChanged(async (user) => {
             }
             document.getElementById("availabilitySummary").innerHTML = html;
         } else {
-            document.getElementById("availabilitySummary").innerHTML = "<p>No availability set yet.</p>";
+            document.getElementById("availabilitySummary").innerHTML =
+                "<p>No availability set yet.</p>";
         }
     }
 });
 
-// Logout function
+// Logout
 function logout() {
     auth.signOut().then(() => {
         window.location.href = "login.html";
