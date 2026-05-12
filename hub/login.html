@@ -1,77 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Witness Hub – Login</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Witness Hub – Login</title>
 
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f5f5f5;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-        .login-box {
-            background: white;
-            padding: 30px;
-            width: 350px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            text-align: center;
-        }
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        background: #f7f7f7;
+        font-family: Inter, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
 
-        h2 {
-            margin-bottom: 20px;
-        }
+    .login-card {
+        background: white;
+        width: 380px;
+        padding: 35px;
+        border-radius: 14px;
+        box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+        text-align: center;
+        border-top: 4px solid #D4AF37;
+    }
 
-        input {
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-            font-size: 16px;
-        }
+    h2 {
+        font-family: "Playfair Display", serif;
+        color: #D4AF37;
+        margin-bottom: 25px;
+        font-size: 26px;
+    }
 
-        button {
-            width: 100%;
-            padding: 12px;
-            background: #000;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 16px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
+    input {
+        width: 100%;
+        padding: 14px;
+        margin: 10px 0;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 15px;
+        background: #fafafa;
+    }
 
-        button:hover {
-            background: #333;
-        }
+    button {
+        width: 100%;
+        padding: 14px;
+        background: #D4AF37;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 17px;
+        cursor: pointer;
+        font-weight: 600;
+        margin-top: 10px;
+    }
 
-        .link {
-            margin-top: 15px;
-            display: block;
-            font-size: 14px;
-        }
+    button:hover {
+        opacity: 0.9;
+    }
 
-        .error {
-            color: red;
-            font-size: 14px;
-            min-height: 20px;
-            margin-top: 10px;
-        }
-    </style>
+    .link {
+        margin-top: 15px;
+        display: block;
+        font-size: 14px;
+        color: #333;
+        text-decoration: none;
+    }
+
+    .link:hover {
+        color: #D4AF37;
+    }
+
+    .error {
+        color: red;
+        font-size: 14px;
+        min-height: 20px;
+        margin-top: 10px;
+    }
+</style>
 </head>
+
 <body>
 
-<div class="login-box">
+<div class="login-card">
     <h2>Witness Hub Login</h2>
 
     <input id="email" type="email" placeholder="Email">
@@ -93,35 +108,35 @@
 <script src="firebase.js"></script>
 
 <script>
-    const auth = firebase.auth();
+const auth = firebase.auth();
 
-    // ⭐ Redirect if already logged in
-    auth.onAuthStateChanged(user => {
-        if (user) {
-            window.location.href = "dashboard.html";
-        }
-    });
-
-    function login() {
-        const email = document.getElementById("email").value.trim();
-        const pass = document.getElementById("password").value.trim();
-        const errorBox = document.getElementById("error");
-
-        errorBox.textContent = "";
-
-        if (!email || !pass) {
-            errorBox.textContent = "Please enter both email and password.";
-            return;
-        }
-
-        auth.signInWithEmailAndPassword(email, pass)
-            .then(() => {
-                window.location.href = "dashboard.html";
-            })
-            .catch((error) => {
-                errorBox.textContent = error.message;
-            });
+// Redirect if already logged in
+auth.onAuthStateChanged(user => {
+    if (user) {
+        window.location.href = "dashboard.html";
     }
+});
+
+function login() {
+    const email = document.getElementById("email").value.trim();
+    const pass = document.getElementById("password").value.trim();
+    const errorBox = document.getElementById("error");
+
+    errorBox.textContent = "";
+
+    if (!email || !pass) {
+        errorBox.textContent = "Please enter both email and password.";
+        return;
+    }
+
+    auth.signInWithEmailAndPassword(email, pass)
+        .then(() => {
+            window.location.href = "dashboard.html";
+        })
+        .catch((error) => {
+            errorBox.textContent = error.message;
+        });
+}
 </script>
 
 </body>
