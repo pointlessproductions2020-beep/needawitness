@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Witnesses – Admin – Need A Witness UK</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<script src="../hub/firebase.js"></script>
+
+<style>
+    body {
+        margin: 0;
+        font-family: Inter, sans-serif;
+        background: #f4f4f6;
+        color: #222;
+    }
+
+    .layout {
+        display: flex;
+        min-height: 100vh;
+    }
+
+    .sidebar {
+        width: 260px;
+        background: #ffffff;
+        border-right: 1px solid #eee;
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        position: sticky;
+        top: 0;
+        height: 100vh;
+    }
+
+    .logo {
+        font-family: "Playfair Display", serif;
+        font-size: 22px;
+        font-weight: 600;
+        color: #D4AF37;
+        margin-bottom: 30px;
+    }
+
+    .nav-title {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #999;
+        margin-bottom: 8px;
+    }
+
+    .nav-item {
+        padding: 10px 12px;
+        margin-bottom: 6px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 500;
+        font-size: 14px;
+        color: #333;
+    }
+
+    .nav-item:hover {
+        background: #f5f1e6;
+    }
+
+    .nav-item.active {
+        background: #D4AF37;
+        color: white;
+    }
+
+    .sidebar-footer {
+        margin-top: auto;
+        padding-top: 16px;
+        border-top: 1px solid #eee;
+        font-size: 12px;
+        color: #777;
+        line-height: 1.4;
+    }
+
+    .logout-btn {
+        margin-top: 16px;
+        padding: 10px;
+        background: #D4AF37;
+        color: white;
+        text-align: center;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+    .main {
+        flex: 1;
+        padding: 30px 40px;
+    }
+
+    .main-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .main-header h1 {
+        font-family: "Playfair Display", serif;
+        color: #D4AF37;
+        margin: 0;
+        font-size: 26px;
+    }
+
+    .main-subtitle {
+        color: #777;
+        font-size: 14px;
+        margin-top: 4px;
+    }
+
+    .filters-row {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 18px;
+        flex-wrap: wrap;
+    }
+
+    .filters-row input,
+    .filters-row select {
+        padding: 9px 10px;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        font-size: 14px;
+        background: #fafafa;
+    }
+
+    .card {
+        background: white;
+        padding: 18px;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .witness-row {
+        display: grid;
+        grid-template-columns: 60px 1.5fr 1fr 1fr 1.2fr;
+        gap: 12px;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid #eee;
+        font-size: 14px;
+    }
+
+    .witness-row:last-child {
+        border-bottom: none;
+    }
+
+    .witness-photo {
+        width: 46px;
+        height: 46px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #D4AF37;
+    }
+
+    .witness-name {
+        font-weight: 600;
+    }
+
+    .witness-type {
+        font-size: 12px;
+        color: #777;
+    }
+
+    .badge-status {
+        display: inline-block;
+        padding: 3px 8px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: capitalize;
+    }
+
+    .status-active { background: #d6ffe0; color: #006d2a; }
+    .status-suspended { background: #ffd6d6; color: #8a0000; }
+
+    .rating {
+        font-weight: 600;
+    }
+
+    .actions button {
+        padding: 6px 10px;
+        font-size: 12px;
+        border-radius: 6px;
+        border: none;
+        cursor: pointer;
+        margin-right: 6px;
+    }
+
+    .btn-small-gold {
+        background: #D4AF37;
+        color: white;
+    }
+
+    .btn-small-grey {
+        background: #999;
+        color: white;
+    }
+
+    .btn-small-outline {
+        background: white;
+        color: #555;
+        border: 1px solid #ccc;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="layout">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="logo">Need A Witness UK</div>
+
+        <div class="nav-title">Navigation</div>
+        <div class="nav-item" onclick="window.location.href='admin-dashboard.html'">Dashboard</div>
+        <div class="nav-item active">Witnesses</div>
+
+        <div class="sidebar-footer">
+            Admin Panel<br>
+            Witness Hub v1.0
+            <div class="logout-btn" onclick="adminLogout()">Logout</div>
+        </div>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main">
+        <div class="main-header">
+            <div>
+                <h1>Witnesses</h1>
+                <div class="main-subtitle">Manage all witnesses, ratings, and status.</div>
+            </div>
+        </div>
+
+        <div class="filters-row">
+            <input id="searchInput" type="text" placeholder="Search by name or email" oninput="renderWitnesses()">
+            <select id="typeFilter" onchange="renderWitnesses()">
+                <option value="all">All Types</option>
+                <option value="single">Single</option>
+                <option value="couple">Couple</option>
+            </select>
+            <select id="statusFilter" onchange="renderWitnesses()">
+                <option value="all">All Status</option>
+                <option value="active">Active</option>
+                <option value="suspended">Suspended</option>
+            </select>
+        </div>
+
+        <div class="card">
+            <div id="witnessContainer"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+const db = firebase.firestore();
+let allWitnesses = [];
+
+/* LOAD WITNESSES */
+function loadWitnesses() {
+    db.collection("users").onSnapshot(snapshot => {
+        allWitnesses = [];
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            allWitnesses.push({
+                id: doc.id,
+                ...data
+            });
+        });
+        renderWitnesses();
+    });
+}
+
+/* RENDER WITNESSES WITH FILTERS */
+function renderWitnesses() {
+    const container = document.getElementById("witnessContainer");
+    const search = document.getElementById("searchInput").value.toLowerCase();
+    const typeFilter = document.getElementById("typeFilter").value;
+    const statusFilter = document.getElementById("statusFilter").value;
+
+    container.innerHTML = "";
+
+    if (!allWitnesses.length) {
+        container.innerHTML = "<p>No witnesses found.</p>";
+        return;
+    }
+
+    allWitnesses
+        .filter(w => {
+            const name = (w.type === "couple"
+                ? (w.teamName || `${w.partner1Name || ""} & ${w.partner2Name || ""}`)
+                : (w.name || w.fullName || "")
+            ).toLowerCase();
+
+            const email = (w.email || "").toLowerCase();
+
+            const matchesSearch = !search || name.includes(search) || email.includes(search);
+            const matchesType = typeFilter === "all" || w.type === typeFilter;
+            const status = w.status || "active";
+            const matchesStatus = statusFilter === "all" || status === statusFilter;
+
+            return matchesSearch && matchesType && matchesStatus;
+        })
+        .forEach(w => {
+            const displayName =
+                w.type === "couple"
+                    ? (w.teamName || `${w.partner1Name || ""} & ${w.partner2Name || ""}`)
+                    : (w.name || w.fullName || "Unnamed");
+
+            const typeLabel = w.type === "couple" ? "Couple Team" : "Single";
+            const photo = w.photoURL || "https://via.placeholder.com/80x80?text=W";
+            const rating = typeof w.rating === "number" ? w.rating.toFixed(1) : (w.rating || "N/A");
+            const status = w.status || "active";
+            const statusClass = status === "suspended" ? "status-suspended" : "status-active";
+
+            const row = document.createElement("div");
+            row.className = "witness-row";
+            row.innerHTML = `
+                <div>
+                    <img class="witness-photo" src="${photo}">
+                </div>
+                <div>
+                    <div class="witness-name">${displayName}</div>
+                    <div class="witness-type">${typeLabel}</div>
+                    <div style="font-size:12px;color:#777;">${w.email || ""}</div>
+                </div>
+                <div>
+                    <div class="rating">⭐ ${rating}</div>
+                    <div style="font-size:12px;color:#777;">Rating</div>
+                </div>
+                <div>
+                    <span class="badge-status ${statusClass}">${status}</span>
+                </div>
+                <div class="actions">
+                    <button class="btn-small-gold" onclick="editRating('${w.id}', ${w.rating || 5})">Edit Rating</button>
+                    <button class="btn-small-grey" onclick="toggleStatus('${w.id}', '${status}')">
+                        ${status === "suspended" ? "Activate" : "Suspend"}
+                    </button>
+                </div>
+            `;
+            container.appendChild(row);
+        });
+}
+
+/* EDIT RATING */
+function editRating(uid, currentRating) {
+    const newRatingStr = prompt("Set new rating (0–5):", currentRating);
+    if (newRatingStr === null) return;
+
+    const newRating = parseFloat(newRatingStr);
+    if (isNaN(newRating) || newRating < 0 || newRating > 5) {
+        alert("Please enter a number between 0 and 5.");
+        return;
+    }
+
+    db.collection("users").doc(uid).update({
+        rating: newRating
+    });
+}
+
+/* TOGGLE STATUS */
+function toggleStatus(uid, currentStatus) {
+    const newStatus = currentStatus === "suspended" ? "active" : "suspended";
+    db.collection("users").doc(uid).update({
+        status: newStatus
+    });
+}
+
+/* ADMIN LOGOUT */
+function adminLogout() {
+    firebase.auth().signOut().then(() => {
+        window.location.href = "admin-login.html";
+    });
+}
+
+/* INIT */
+loadWitnesses();
+</script>
+
+</body>
+</html>
