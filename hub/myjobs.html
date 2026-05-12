@@ -1,225 +1,321 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>My Jobs – Witness Hub</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Witness Hub – My Jobs</title>
 
-    <!-- Firebase v8 -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f5f5f5;
-        }
+<style>
+    body {
+        margin: 0;
+        font-family: Inter, sans-serif;
+        background: #f7f7f7;
+    }
 
-        header {
-            background: #000;
-            color: #fff;
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+    .layout {
+        display: flex;
+        min-height: 100vh;
+    }
 
-        header h1 {
-            margin: 0;
-            font-size: 20px;
-        }
+    /* SIDEBAR */
+    .sidebar {
+        width: 240px;
+        background: white;
+        border-right: 1px solid #eee;
+        padding: 25px;
+        display: flex;
+        flex-direction: column;
+    }
 
-        header button {
-            background: #fff;
-            color: #000;
-            border: none;
-            padding: 8px 14px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-        }
+    .sidebar h2 {
+        font-family: "Playfair Display", serif;
+        color: #D4AF37;
+        margin-top: 0;
+        margin-bottom: 30px;
+        font-size: 24px;
+    }
 
-        .container {
-            padding: 20px;
-        }
+    .sidebar a {
+        color: #333;
+        text-decoration: none;
+        padding: 12px 0;
+        display: block;
+        font-size: 16px;
+        font-weight: 500;
+    }
 
-        .card {
-            background: #fff;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
+    .sidebar a:hover {
+        color: #D4AF37;
+    }
 
-        .jobBtn {
-            background: #000;
-            color: #fff;
-            padding: 8px 12px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
+    .logout-btn {
+        margin-top: auto;
+        padding: 12px;
+        background: #D4AF37;
+        color: white;
+        text-align: center;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+    }
 
-        .jobBtn:hover {
-            background: #333;
-        }
-    </style>
+    .sidebar-footer {
+        margin-top: 20px;
+        padding-top: 15px;
+        border-top: 1px solid #eee;
+        font-size: 12px;
+        color: #777;
+        line-height: 1.4;
+    }
+
+    /* MAIN CONTENT */
+    .main {
+        flex: 1;
+        padding: 30px;
+        overflow-y: auto;
+    }
+
+    h2 {
+        font-family: "Playfair Display", serif;
+        color: #D4AF37;
+        margin-top: 0;
+    }
+
+    .section {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        margin-bottom: 25px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    }
+
+    .job-card {
+        padding: 15px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .job-card:last-child {
+        border-bottom: none;
+    }
+
+    .job-title {
+        font-weight: 600;
+        font-size: 17px;
+    }
+
+    .job-meta {
+        color: #555;
+        margin: 4px 0 10px;
+    }
+
+    .btn {
+        background: #D4AF37;
+        color: white;
+        padding: 10px 16px;
+        border-radius: 6px;
+        border: none;
+        cursor: pointer;
+        font-weight: 600;
+    }
+
+    .btn.cancel {
+        background: #999;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        margin-left: 10px;
+    }
+
+    .pending { background: #fff4d6; color: #8a6d00; }
+    .assigned { background: #d6ffe0; color: #006d2a; }
+</style>
 </head>
+
 <body>
 
-<header>
-    <h1>My Jobs</h1>
-    <button onclick="logout()">Logout</button>
-</header>
+<div class="layout">
 
-<div class="container">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <h2>Witness Hub</h2>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="myjobs.html" style="color:#D4AF37;font-weight:600;">My Jobs</a>
+        <a href="availability.html">Availability</a>
+        <a href="profile-edit.html">Profile</a>
 
-    <div class="card">
-        <h2>Available Jobs</h2>
-        <div id="availableJobs">Loading…</div>
+        <div class="logout-btn" onclick="logout()">Logout</div>
+
+        <div class="sidebar-footer">
+            © Need A Witness UK<br>
+            Witness Hub v1.0
+        </div>
     </div>
 
-    <div class="card">
-        <h2>My Assigned Jobs</h2>
-        <div id="assignedJobs">Loading…</div>
-    </div>
+    <!-- MAIN CONTENT -->
+    <div class="main">
 
-    <div class="card">
-        <h2>My Pending Requests</h2>
-        <div id="pendingRequests">Loading…</div>
-    </div>
+        <h2>My Jobs</h2>
 
+        <!-- ASSIGNED JOBS -->
+        <div class="section">
+            <h3>Assigned Jobs</h3>
+            <div id="assignedJobs">Loading...</div>
+        </div>
+
+        <!-- PENDING REQUESTS -->
+        <div class="section">
+            <h3>Pending Requests</h3>
+            <div id="pendingRequests">Loading...</div>
+        </div>
+
+        <!-- AVAILABLE JOBS -->
+        <div class="section">
+            <h3>Available Jobs</h3>
+            <div id="availableJobs">Loading...</div>
+        </div>
+
+    </div>
 </div>
 
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 <script src="firebase.js"></script>
 
 <script>
-auth.onAuthStateChanged(async user => {
+let currentUser = null;
+let userData = null;
+
+auth.onAuthStateChanged(async (user) => {
     if (!user) {
         window.location.href = "login.html";
         return;
     }
 
-    loadAvailableJobs(user.uid);
-    loadAssignedJobs(user.uid);
-    loadPendingRequests(user.uid);
+    currentUser = user;
+
+    const doc = await db.collection("users").doc(user.uid).get();
+    userData = doc.data();
+
+    loadAssignedJobs();
+    loadPendingRequests();
+    loadAvailableJobs();
 });
 
-// ⭐ Load jobs that are unassigned
-function loadAvailableJobs(uid) {
+/* -------------------------
+   ASSIGNED JOBS
+-------------------------- */
+function loadAssignedJobs() {
     db.collection("jobs")
-        .where("status", "==", "unassigned")
-        .onSnapshot(snapshot => {
-            const container = document.getElementById("availableJobs");
-            container.innerHTML = "";
+      .where("assignedWitnesses", "array-contains", currentUser.uid)
+      .onSnapshot(snapshot => {
+        let html = "";
 
-            if (snapshot.empty) {
-                container.innerHTML = "<p>No available jobs.</p>";
-                return;
-            }
-
-            snapshot.forEach(doc => {
-                const job = doc.data();
-                const id = doc.id;
-
-                const card = document.createElement("div");
-                card.className = "card";
-                card.innerHTML = `
-                    <h3>${job.ceremonyDate} @ ${job.ceremonyTime}</h3>
-                    <p><strong>Location:</strong> ${job.ceremonyLocation}</p>
-                    <button class="jobBtn" onclick="requestJob('${id}')">Request Assignment</button>
-                `;
-
-                container.appendChild(card);
-            });
+        snapshot.forEach(doc => {
+            const j = doc.data();
+            html += `
+                <div class="job-card">
+                    <div class="job-title">${j.coupleName}
+                        <span class="status-badge assigned">Assigned</span>
+                    </div>
+                    <div class="job-meta">${j.date} at ${j.time} — ${j.location}</div>
+                </div>
+            `;
         });
-}
 
-// ⭐ Load jobs assigned to this witness
-function loadAssignedJobs(uid) {
-    db.collection("jobs")
-        .where("assignedTo", "==", uid)
-        .onSnapshot(snapshot => {
-            const container = document.getElementById("assignedJobs");
-            container.innerHTML = "";
-
-            if (snapshot.empty) {
-                container.innerHTML = "<p>No assigned jobs.</p>";
-                return;
-            }
-
-            snapshot.forEach(doc => {
-                const job = doc.data();
-
-                const card = document.createElement("div");
-                card.className = "card";
-                card.innerHTML = `
-                    <h3>${job.ceremonyDate} @ ${job.ceremonyTime}</h3>
-                    <p><strong>Location:</strong> ${job.ceremonyLocation}</p>
-                    <p><strong>Status:</strong> Assigned</p>
-                `;
-
-                container.appendChild(card);
-            });
-        });
-}
-
-// ⭐ Load pending requests by this witness
-function loadPendingRequests(uid) {
-    db.collection("jobs")
-        .where("requestBy", "==", uid)
-        .where("requestStatus", "==", "pending")
-        .onSnapshot(snapshot => {
-            const container = document.getElementById("pendingRequests");
-            container.innerHTML = "";
-
-            if (snapshot.empty) {
-                container.innerHTML = "<p>No pending requests.</p>";
-                return;
-            }
-
-            snapshot.forEach(doc => {
-                const job = doc.data();
-
-                const card = document.createElement("div");
-                card.className = "card";
-                card.innerHTML = `
-                    <h3>${job.ceremonyDate} @ ${job.ceremonyTime}</h3>
-                    <p><strong>Location:</strong> ${job.ceremonyLocation}</p>
-                    <p><strong>Status:</strong> Awaiting admin approval</p>
-                `;
-
-                container.appendChild(card);
-            });
-        });
-}
-
-// ⭐ Witness requests assignment
-function requestJob(jobId) {
-    auth.onAuthStateChanged(async user => {
-        if (!user) return;
-
-        const uid = user.uid;
-
-        // Get witness team name or single name
-        const userDoc = await db.collection("users").doc(uid).get();
-        const data = userDoc.data();
-
-        const teamName = data.type === "couple"
-            ? data.teamName
-            : data.name;
-
-        db.collection("jobs").doc(jobId).update({
-            requestBy: uid,
-            requestTeamName: teamName,
-            requestStatus: "pending",
-            status: "pending"
-        });
+        assignedJobs.innerHTML = html || "<p>No assigned jobs.</p>";
     });
 }
 
+/* -------------------------
+   PENDING REQUESTS
+-------------------------- */
+function loadPendingRequests() {
+    db.collection("jobs")
+      .where("requestBy", "==", currentUser.uid)
+      .where("requestStatus", "==", "pending")
+      .onSnapshot(snapshot => {
+        let html = "";
+
+        snapshot.forEach(doc => {
+            const j = doc.data();
+            html += `
+                <div class="job-card">
+                    <div class="job-title">${j.coupleName}
+                        <span class="status-badge pending">Pending</span>
+                    </div>
+                    <div class="job-meta">${j.date} at ${j.time} — ${j.location}</div>
+                    <button class="btn cancel" onclick="cancelRequest('${doc.id}')">Cancel Request</button>
+                </div>
+            `;
+        });
+
+        pendingRequests.innerHTML = html || "<p>No pending requests.</p>";
+    });
+}
+
+/* -------------------------
+   AVAILABLE JOBS
+-------------------------- */
+function loadAvailableJobs() {
+    db.collection("jobs")
+      .where("status", "==", "pending")
+      .onSnapshot(snapshot => {
+        let html = "";
+
+        snapshot.forEach(doc => {
+            const j = doc.data();
+
+            // FILTER BY WITNESS TYPE
+            if (j.witnessType === "single" && userData.type !== "single") return;
+            if (j.witnessType === "couple" && userData.type !== "couple") return;
+
+            html += `
+                <div class="job-card">
+                    <div class="job-title">${j.coupleName}</div>
+                    <div class="job-meta">${j.date} at ${j.time} — ${j.location}</div>
+                    <button class="btn" onclick="requestJob('${doc.id}')">Request Job</button>
+                </div>
+            `;
+        });
+
+        availableJobs.innerHTML = html || "<p>No available jobs.</p>";
+    });
+}
+
+/* -------------------------
+   REQUEST JOB
+-------------------------- */
+function requestJob(jobId) {
+    db.collection("jobs").doc(jobId).update({
+        requestBy: currentUser.uid,
+        requestTeamName: userData.type === "couple" ? userData.teamName : userData.name,
+        requestStatus: "pending"
+    });
+}
+
+/* -------------------------
+   CANCEL REQUEST
+-------------------------- */
+function cancelRequest(jobId) {
+    db.collection("jobs").doc(jobId).update({
+        requestBy: "",
+        requestTeamName: "",
+        requestStatus: null
+    });
+}
+
+/* -------------------------
+   LOGOUT
+-------------------------- */
 function logout() {
     auth.signOut().then(() => {
         window.location.href = "login.html";
