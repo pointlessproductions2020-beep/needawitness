@@ -4,92 +4,202 @@
     <meta charset="UTF-8">
     <title>Booking & Payment Process – Need A Witness UK</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <style>
-        body { font-family: Arial, sans-serif; margin: 0; background: #f5f5f5; }
-        .wrapper {
-            max-width: 900px; margin: 40px auto; background: #fff; padding: 30px;
-            border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        body {
+            margin: 0;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background: #faf8f5;
+            color: #333;
+            line-height: 1.7;
         }
-        h1, h2 { margin-top: 0; }
-        h1 { font-size: 26px; margin-bottom: 10px; }
-        h2 { font-size: 20px; margin-top: 25px; }
-        p, li { font-size: 15px; line-height: 1.6; }
-        ul { padding-left: 20px; }
-        .small { font-size: 13px; color: #666; }
+
+        h1, h2, h3 {
+            font-family: 'Georgia', serif;
+            color: #2b2b2b;
+        }
+
+        /* TOP CTA */
+        .top-cta {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 3;
+        }
+
+        .top-cta a {
+            background: #d4a762;
+            color: white;
+            padding: 10px 18px;
+            border-radius: 6px;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 0.95rem;
+        }
+
+        /* HEADER */
+        header {
+            background: url('photo.png') center/cover no-repeat;
+            padding: 120px 20px;
+            text-align: center;
+            color: white;
+            position: relative;
+        }
+
+        header::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.45);
+        }
+
+        header h1 {
+            position: relative;
+            z-index: 2;
+            font-size: 2.6rem;
+            margin: 0;
+            color: #fff;
+        }
+
+        /* CONTENT WRAPPER */
+        .wrapper {
+            max-width: 900px;
+            margin: 60px auto;
+            background: #fff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .wrapper h2 {
+            margin-top: 40px;
+            font-size: 1.8rem;
+        }
+
+        ul {
+            padding-left: 20px;
+        }
+
+        .small {
+            font-size: 13px;
+            color: #666;
+        }
+
+        /* FOOTER */
+        footer {
+            background:#f1eee9;
+            padding:40px 20px;
+            margin-top:60px;
+            font-size:0.9rem;
+        }
+
+        footer a {
+            color: #333;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            color: #d4a762;
+        }
+
+        @media (max-width: 700px) {
+            .wrapper {
+                padding: 25px;
+            }
+            header h1 {
+                font-size: 2rem;
+            }
+        }
     </style>
 </head>
+
 <body>
 
-<div class="wrapper">
+<!-- TOP CTA -->
+<div class="top-cta">
+    <a href="/hub/register.html">Become a Witness</a>
+</div>
+
+<!-- HEADER -->
+<header>
     <h1>Booking & Payment Process</h1>
-    <p class="small">Last updated: [add date]</p>
+</header>
+
+<!-- MAIN CONTENT -->
+<div class="wrapper">
+
+    <p class="small">Last updated: May 2026</p>
 
     <p>
         This page explains how bookings and payments work when using <strong>Need A Witness UK</strong>.
-        Our process is designed to be simple, secure, and transparent for all couples.
+        Our process is designed to be simple, secure, and fully transparent for all couples.
     </p>
 
     <h2>1. Submit a Booking Request</h2>
     <p>
-        Complete our online booking form with your ceremony details.  
+        Complete our online booking form with your ceremony details.
         This creates a <strong>booking request</strong>, not a confirmed booking.
     </p>
 
     <h2>2. We Review Your Request</h2>
-    <p>
-        We check witness availability for your:
-    </p>
+    <p>We check witness availability for your:</p>
     <ul>
         <li>date</li>
         <li>time</li>
         <li>location</li>
         <li>witness requirements</li>
     </ul>
+    <p>If we can cover your ceremony, we will approve your request.</p>
+
+    <h2>3. Pay the Non‑Refundable Booking Fee</h2>
     <p>
-        If we can cover your ceremony, we will approve your request.
+        Once approved, we will send you a secure payment link (Monzo/Stripe).
+        The booking fee amount depends on the day of your ceremony:
     </p>
 
-    <h2>3. Pay the £20 Non‑Refundable Booking Fee</h2>
-    <p>
-        Once approved, we will send you a secure payment link (Monzo/Stripe).  
-        This £20 fee:
-    </p>
     <ul>
-        <li>secures your date</li>
-        <li>covers administration and allocation</li>
-        <li>is non‑refundable</li>
+        <li><strong>Standard Days (Mon–Sat):</strong> £20</li>
+        <li><strong>Sunday:</strong> £40 (premium surcharge)</li>
+        <li><strong>UK Bank Holidays:</strong> £50 (double‑rate day)</li>
     </ul>
 
+    <p>This fee secures your date and covers administration and allocation. It is non‑refundable.</p>
+
     <h2>4. Booking Confirmation</h2>
-    <p>
-        Your booking is officially confirmed once the £20 fee has been paid.
-    </p>
+    <p>Your booking is officially confirmed once the booking fee has been paid.</p>
 
     <h2>5. Remaining Balance</h2>
     <p>
         The remaining balance must be paid <strong>no later than 48 hours before the ceremony</strong>.
     </p>
-    <p>
-        If payment is not received by this time:
-    </p>
+
+    <p>If payment is not received by this time:</p>
     <ul>
         <li>the booking will be cancelled</li>
-        <li>the £20 booking fee is non‑refundable</li>
+        <li>the booking fee is non‑refundable</li>
         <li>witnesses will be released from the booking</li>
     </ul>
 
     <h2>6. Witness Attendance</h2>
     <p>
-        Once fully paid, your allocated witness (or witness team) will attend your ceremony at the agreed time and location.
+        Once fully paid, your allocated witness (or witnesses) will attend your ceremony at the agreed time and location.
     </p>
 
     <h2>7. Payment to Witnesses</h2>
     <p>
-        Witnesses are paid by us <strong>after the ceremony</strong>.  
+        Witnesses are paid by us <strong>after the ceremony</strong>.
         All witnesses are independent self‑employed contractors.
     </p>
 
-    <h2>8. Related Policies</h2>
+    <h2>8. Pricing Transparency</h2>
+    <p>
+        We operate <strong>Monday to Saturday</strong> at our standard rates.
+        Sunday ceremonies include a <strong>premium surcharge</strong>, and
+        <strong>UK Bank Holidays are charged at double the standard rate</strong>.
+        Deposits and final balances are adjusted accordingly.
+    </p>
+
+    <h2>9. Related Policies</h2>
     <ul>
         <li><a href="refund-policy.html">Refund Policy</a></li>
         <li><a href="no-show-policy.html">No‑Show Policy</a></li>
@@ -99,9 +209,8 @@
 
 </div>
 
-</body>
-
-<footer style="background:#f1eee9; padding:40px 20px; margin-top:60px; font-size:0.9rem;">
+<!-- FOOTER -->
+<footer>
 
     <div style="max-width:1100px; margin:auto; display:flex; flex-wrap:wrap; gap:40px;">
 
@@ -140,4 +249,5 @@
 
 </footer>
 
+</body>
 </html>
