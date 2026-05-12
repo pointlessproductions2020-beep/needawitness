@@ -8,46 +8,118 @@
     <style>
         body {
             margin: 0;
-            font-family: Arial, sans-serif;
-            background: #fafafa;
-            line-height: 1.6;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background: #faf8f5;
+            color: #333;
+            line-height: 1.7;
         }
 
+        h1, h2, h3 {
+            font-family: 'Georgia', serif;
+            color: #2b2b2b;
+        }
+
+        /* TOP CTA */
+        .top-cta {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 3;
+        }
+
+        .top-cta a {
+            background: #d4a762;
+            color: white;
+            padding: 10px 18px;
+            border-radius: 6px;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 0.95rem;
+        }
+
+        /* HEADER */
         header {
-            background: #000;
-            color: #fff;
-            padding: 20px;
+            background: url('photo.png') center/cover no-repeat;
+            padding: 120px 20px;
             text-align: center;
+            color: white;
+            position: relative;
         }
 
+        header::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.45);
+        }
+
+        header h1 {
+            position: relative;
+            z-index: 2;
+            font-size: 2.6rem;
+            margin: 0;
+            color: #fff;
+        }
+
+        /* CONTENT */
         .container {
             max-width: 900px;
-            margin: 40px auto;
-            background: #fff;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            margin: 60px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
         }
 
-        h1, h2 {
-            margin-top: 0;
+        .container h2 {
+            margin-top: 40px;
+            font-size: 1.8rem;
         }
 
-        h2 {
-            margin-top: 30px;
+        ul {
+            padding-left: 20px;
         }
 
-        a {
-            color: #000;
+        footer {
+            background:#f1eee9;
+            padding:40px 20px;
+            margin-top:60px;
+            font-size:0.9rem;
+        }
+
+        footer a {
+            color: #333;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            color: #d4a762;
+        }
+
+        @media (max-width: 700px) {
+            .container {
+                padding: 25px;
+            }
+            header h1 {
+                font-size: 2rem;
+            }
         }
     </style>
 </head>
+
 <body>
 
+<!-- TOP CTA -->
+<div class="top-cta">
+    <a href="/hub/register.html">Become a Witness</a>
+</div>
+
+<!-- HEADER -->
 <header>
     <h1>Terms & Conditions</h1>
 </header>
 
+<!-- MAIN CONTENT -->
 <div class="container">
 
     <p><strong>Last updated:</strong> May 2026</p>
@@ -93,51 +165,61 @@
 
     <h2>6. Payments</h2>
     <p>
-        Payments are processed securely through Stripe. By booking a witness, you agree to Stripe’s
-        terms and conditions. All fees must be paid in full before a witness is confirmed.
+        Payments are processed securely through Stripe or Monzo. By booking a witness, you agree to
+        the payment provider’s terms and conditions. All fees must be paid in full before a witness
+        is confirmed.
     </p>
 
-    <h2>7. Cancellations & Refunds</h2>
+    <h2>7. Pricing Transparency</h2>
+    <p>
+        We operate <strong>Monday to Saturday</strong> at our standard rates.
+        Sunday ceremonies include a <strong>premium surcharge</strong>, and
+        <strong>UK Bank Holidays are charged at double the standard rate</strong>.
+        Deposits and final balances are adjusted accordingly.
+    </p>
+
+    <h2>8. Cancellations & Refunds</h2>
     <p>
         Cancellations made more than 48 hours before the ceremony may be eligible for a partial refund.
         Cancellations within 48 hours are non-refundable. If a witness cancels, we will attempt to
         provide a replacement at no additional cost.
     </p>
 
-    <h2>8. Liability</h2>
+    <h2>9. Liability</h2>
     <p>
         Need A Witness UK is not liable for delays, cancellations, registry office decisions, or any
         issues outside our control. Our responsibility is limited to providing a witness for your
         ceremony.
     </p>
 
-    <h2>9. Behaviour & Conduct</h2>
+    <h2>10. Behaviour & Conduct</h2>
     <p>
         We reserve the right to remove any user or witness from the platform for inappropriate,
         abusive, or unsafe behaviour.
     </p>
 
-    <h2>10. Privacy</h2>
+    <h2>11. Privacy</h2>
     <p>
         We collect and store information necessary to operate the service. For full details, please
         see our <a href="privacy.html">Privacy Policy</a>.
     </p>
 
-    <h2>11. Changes to These Terms</h2>
+    <h2>12. Changes to These Terms</h2>
     <p>
         We may update these Terms & Conditions at any time. Continued use of the platform constitutes
         acceptance of the updated terms.
     </p>
 
-    <h2>12. Contact Us</h2>
+    <h2>13. Contact Us</h2>
     <p>
         If you have any questions, please contact us at:<br>
         <strong>support@needawitness.uk</strong>
     </p>
 
-</div> <!-- end container -->
+</div>
 
-<footer style="background:#f1eee9; padding:40px 20px; margin-top:60px; font-size:0.9rem;">
+<!-- FOOTER -->
+<footer>
 
     <div style="max-width:1100px; margin:auto; display:flex; flex-wrap:wrap; gap:40px;">
 
