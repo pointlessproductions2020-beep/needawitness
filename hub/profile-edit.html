@@ -128,9 +128,25 @@
 
     <div class="card">
 
-        <label>Name</label>
-        <input id="name" type="text">
+        <!-- SINGLE WITNESS FIELDS -->
+        <div id="singleFields">
+            <label>Name</label>
+            <input id="name" type="text">
+        </div>
 
+        <!-- COUPLE WITNESS FIELDS -->
+        <div id="coupleFields" style="display:none;">
+            <label>Team Name</label>
+            <input id="teamName" type="text">
+
+            <label>Partner 1 Name</label>
+            <input id="partner1" type="text">
+
+            <label>Partner 2 Name</label>
+            <input id="partner2" type="text">
+        </div>
+
+        <!-- SHARED FIELDS -->
         <label>Phone</label>
         <input id="phone" type="text">
 
@@ -161,14 +177,30 @@ auth.onAuthStateChanged(async (user) => {
     }
 
     const doc = await db.collection("users").doc(user.uid).get();
-    if (doc.exists) {
-        const data = doc.data();
+    if (!doc.exists) return;
+
+    const data = doc.data();
+
+    // Show correct fields depending on type
+    if (data.type === "couple") {
+        document.getElementById("singleFields").style.display = "none";
+        document.getElementById("coupleFields").style.display = "block";
+
+        document.getElementById("teamName").value = data.teamName || "";
+        document.getElementById("partner1").value = data.partner1Name || "";
+        document.getElementById("partner2").value = data.partner2Name || "";
+
+    } else {
+        document.getElementById("singleFields").style.display = "block";
+        document.getElementById("coupleFields").style.display = "none";
 
         document.getElementById("name").value = data.name || "";
-        document.getElementById("phone").value = data.phone || "";
-        document.getElementById("location").value = data.location || "";
-        document.getElementById("bio").value = data.bio || "";
     }
+
+    // Shared fields
+    document.getElementById("phone").value = data.phone || "";
+    document.getElementById("location").value = data.location || "";
+    document.getElementById("bio").value = data.bio || "";
 });
 
 // Save profile changes
@@ -176,12 +208,22 @@ async function saveProfile() {
     const user = auth.currentUser;
     if (!user) return;
 
-    const updatedData = {
-        name: document.getElementById("name").value.trim(),
+    const doc = await db.collection("users").doc(user.uid).get();
+    const data = doc.data();
+
+    let updatedData = {
         phone: document.getElementById("phone").value.trim(),
         location: document.getElementById("location").value.trim(),
         bio: document.getElementById("bio").value.trim(),
     };
+
+    if (data.type === "couple") {
+        updatedData.teamName = document.getElementById("teamName").value.trim().toLowerCase();
+        updatedData.partner1Name = document.getElementById("partner1").value.trim();
+        updatedData.partner2Name = document.getElementById("partner2").value.trim();
+    } else {
+        updatedData.name = document.getElementById("name").value.trim();
+    }
 
     await db.collection("users").doc(user.uid).update(updatedData);
 
