@@ -8,52 +8,119 @@
     <style>
         body {
             margin: 0;
-            font-family: Arial, sans-serif;
-            background: #fafafa;
-            line-height: 1.6;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background: #faf8f5;
+            color: #333;
+            line-height: 1.7;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Georgia', serif;
+            color: #2b2b2b;
+        }
+
+        .top-cta {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 3;
+        }
+
+        .top-cta a {
+            background: #d4a762;
+            color: white;
+            padding: 10px 18px;
+            border-radius: 6px;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 0.95rem;
         }
 
         header {
-            background: #000;
-            color: #fff;
-            padding: 20px;
+            background: url('photo.png') center/cover no-repeat;
+            padding: 120px 20px;
             text-align: center;
+            color: white;
+            position: relative;
+        }
+
+        header::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.45);
+        }
+
+        header h1 {
+            position: relative;
+            z-index: 2;
+            font-size: 2.6rem;
+            margin: 0;
+            color: #fff;
         }
 
         .container {
             max-width: 900px;
-            margin: 40px auto;
-            background: #fff;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            margin: 60px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
         }
 
-        h1, h2 {
-            margin-top: 0;
-        }
-
-        h2 {
-            margin-top: 30px;
-        }
-
-        a {
-            color: #000;
+        .container h2 {
+            margin-top: 40px;
+            font-size: 1.8rem;
         }
 
         .contact-box {
-            background: #f0f0f0;
+            background: #f3f0eb;
             padding: 20px;
-            border-radius: 8px;
+            border-radius: 10px;
             margin-top: 20px;
+            border-left: 4px solid #d4a762;
         }
 
         .contact-box p {
             margin: 8px 0;
         }
+
+        ul {
+            padding-left: 20px;
+        }
+
+        footer {
+            background:#f1eee9;
+            padding:40px 20px;
+            margin-top:60px;
+            font-size:0.9rem;
+        }
+
+        footer a {
+            color: #333;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            color: #d4a762;
+        }
+
+        @media (max-width: 700px) {
+            .container {
+                padding: 25px;
+            }
+            header h1 {
+                font-size: 2rem;
+            }
+        }
     </style>
 </head>
+
 <body>
+
+<div class="top-cta">
+    <a href="/hub/register.html">Become a Witness</a>
+</div>
 
 <header>
     <h1>Contact Us</h1>
@@ -84,10 +151,12 @@
         <li>General enquiries</li>
     </ul>
 
-    <h2>Business Hours</h2>
+    <h2>Business Hours & Pricing Notes</h2>
     <p>
-        We operate 6 days a week, as weddings can happen any day.
-        Emails are monitored throughout the day.
+        We operate <strong>6 days a week (Monday to Saturday)</strong> at our standard rates.
+        Sunday ceremonies are available with a <strong>premium surcharge</strong>, and
+        <strong>UK Bank Holidays are charged at double the standard rate</strong>.
+        This ensures fair compensation for witnesses working outside normal hours and on national holidays.
     </p>
 
     <h2>Social Media</h2>
@@ -96,9 +165,9 @@
         <a href="https://www.facebook.com/NeedAWitnessUK/" target="_blank">Need A Witness UK</a>
     </p>
 
-</div> <!-- end container -->
+</div>
 
-<footer style="background:#f1eee9; padding:40px 20px; margin-top:60px; font-size:0.9rem;">
+<footer>
 
     <div style="max-width:1100px; margin:auto; display:flex; flex-wrap:wrap; gap:40px;">
 
