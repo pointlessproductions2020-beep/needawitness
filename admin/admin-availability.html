@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Availability Editor – Admin – Need A Witness UK</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<script src="../hub/firebase.js"></script>
+
+<style>
+    body {
+        margin: 0;
+        font-family: Inter, sans-serif;
+        background: #fafafa;
+        color: #222;
+    }
+
+    .layout {
+        display: flex;
+        min-height: 100vh;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+        width: 260px;
+        background: white;
+        border-right: 1px solid #eee;
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        position: sticky;
+        top: 0;
+        height: 100vh;
+    }
+
+    .logo {
+        font-family: "Playfair Display", serif;
+        font-size: 22px;
+        font-weight: 600;
+        color: #D4AF37;
+        margin-bottom: 30px;
+    }
+
+    .nav-title {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #999;
+        margin-bottom: 8px;
+    }
+
+    .nav-item {
+        padding: 10px 12px;
+        margin-bottom: 6px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 500;
+        font-size: 14px;
+        color: #333;
+    }
+
+    .nav-item:hover {
+        background: #f5f1e6;
+    }
+
+    .nav-item.active {
+        background: #D4AF37;
+        color: white;
+    }
+
+    .sidebar-footer {
+        margin-top: auto;
+        padding-top: 16px;
+        border-top: 1px solid #eee;
+        font-size: 12px;
+        color: #777;
+        line-height: 1.4;
+    }
+
+    .logout-btn {
+        margin-top: 16px;
+        padding: 10px;
+        background: #D4AF37;
+        color: white;
+        text-align: center;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+    /* MAIN */
+    .main {
+        flex: 1;
+        padding: 30px 40px;
+    }
+
+    .main-header {
+        margin-bottom: 20px;
+    }
+
+    .main-header h1 {
+        font-family: "Playfair Display", serif;
+        color: #D4AF37;
+        margin: 0;
+        font-size: 26px;
+    }
+
+    .main-subtitle {
+        color: #777;
+        font-size: 14px;
+        margin-top: 4px;
+    }
+
+    .card {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        margin-bottom: 24px;
+    }
+
+    .section-title {
+        font-family: "Playfair Display", serif;
+        color: #D4AF37;
+        font-size: 20px;
+        margin-top: 0;
+        margin-bottom: 10px;
+    }
+
+    .day-row {
+        display: grid;
+        grid-template-columns: 120px 80px 1fr 1fr;
+        gap: 12px;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid #f2f2f2;
+    }
+
+    .day-row:last-child {
+        border-bottom: none;
+    }
+
+    .toggle {
+        width: 50px;
+        height: 26px;
+        background: #ddd;
+        border-radius: 20px;
+        position: relative;
+        cursor: pointer;
+    }
+
+    .toggle.active {
+        background: #D4AF37;
+    }
+
+    .toggle-circle {
+        width: 22px;
+        height: 22px;
+        background: white;
+        border-radius: 50%;
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        transition: 0.2s;
+    }
+
+    .toggle.active .toggle-circle {
+        left: 26px;
+    }
+
+    input[type="time"] {
+        padding: 8px;
+        border-radius: 6px;
+        border: 1px solid #ddd;
+        background: #fafafa;
+        font-size: 14px;
+    }
+
+    .btn-gold {
+        background: #D4AF37;
+        color: white;
+        border: none;
+        padding: 10px 16px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 14px;
+        margin-top: 20px;
+    }
+
+    .btn-gold:hover {
+        opacity: 0.9;
+    }
+
+</style>
+</head>
+
+<body>
+
+<div class="layout">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="logo">Need A Witness UK</div>
+
+        <div class="nav-title">Navigation</div>
+        <div class="nav-item" onclick="window.location.href='admin-dashboard.html'">Dashboard</div>
+        <div class="nav-item" onclick="window.location.href='admin-witnesses.html'">Witnesses</div>
+        <div class="nav-item" onclick="window.location.href='admin-create-job.html'">Create Job</div>
+        <div class="nav-item active">Availability Editor</div>
+
+        <div class="sidebar-footer">
+            Admin Panel<br>
+            Witness Hub v1.0
+            <div class="logout-btn" onclick="adminLogout()">Logout</div>
+        </div>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main">
+        <div class="main-header">
+            <h1 id="witnessName">Loading...</h1>
+            <div class="main-subtitle">Edit weekly availability for this witness.</div>
+        </div>
+
+        <div class="card">
+            <div class="section-title">Weekly Availability</div>
+
+            <div id="availabilityContainer"></div>
+
+            <button class="btn-gold" onclick="saveAvailability()">Save Availability</button>
+        </div>
+    </div>
+</div>
+
+<script>
+const db = firebase.firestore();
+let witnessId = null;
+let witnessData = null;
+
+const days = [
+    "Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"
+];
+
+/* GET ID FROM URL */
+function getParam(name) {
+    const url = new URL(window.location.href);
+    return url.searchParams.get(name);
+}
+
+/* LOAD WITNESS */
+async function loadWitness() {
+    witnessId = getParam("id");
+    if (!witnessId) {
+        alert("No witness ID provided.");
+        window.location.href = "admin-witnesses.html";
+        return;
+    }
+
+    const doc = await db.collection("users").doc(witnessId).get();
+    if (!doc.exists) {
+        alert("Witness not found.");
+        window.location.href = "admin-witnesses.html";
+        return;
+    }
+
+    witnessData = doc.data();
+    document.getElementById("witnessName").innerText =
+        witnessData.fullName || witnessData.teamName || "Witness";
+
+    renderAvailabilityEditor();
+}
+
+/* RENDER EDITOR */
+function renderAvailabilityEditor() {
+    const container = document.getElementById("availabilityContainer");
+    container.innerHTML = "";
+
+    const avail = witnessData.availability || {};
+
+    days.forEach(day => {
+        const info = avail[day] || { enabled: false, start: "09:00", end: "17:00" };
+
+        const row = document.createElement("div");
+        row.className = "day-row";
+
+        row.innerHTML = `
+            <div><b>${day}</b></div>
+
+            <div>
+                <div class="toggle ${info.enabled ? "active" : ""}" onclick="toggleDay(this)">
+                    <div class="toggle-circle"></div>
+                </div>
+            </div>
+
+            <div>
+                <input type="time" value="${info.start}" ${info.enabled ? "" : "disabled"}>
+            </div>
+
+            <div>
+                <input type="time" value="${info.end}" ${info.enabled ? "" : "disabled"}>
+            </div>
+        `;
+
+        container.appendChild(row);
+    });
+}
+
+/* TOGGLE DAY */
+function toggleDay(toggleEl) {
+    toggleEl.classList.toggle("active");
+
+    const row = toggleEl.parentElement.parentElement;
+    const timeInputs = row.querySelectorAll("input[type='time']");
+
+    const enabled = toggleEl.classList.contains("active");
+    timeInputs.forEach(inp => inp.disabled = !enabled);
+}
+
+/* SAVE AVAILABILITY */
+function saveAvailability() {
+    const rows = document.querySelectorAll(".day-row");
+    const newAvail = {};
+
+    rows.forEach(row => {
+        const day = row.children[0].innerText.trim();
+        const toggle = row.querySelector(".toggle");
+        const enabled = toggle.classList.contains("active");
+
+        const times = row.querySelectorAll("input[type='time']");
+        const start = times[0].value;
+        const end = times[1].value;
+
+        newAvail[day] = {
+            enabled,
+            start,
+            end
+        };
+    });
+
+    db.collection("users").doc(witnessId).update({
+        availability: newAvail
+    }).then(() => {
+        alert("Availability saved.");
+    });
+}
+
+/* LOGOUT */
+function adminLogout() {
+    firebase.auth().signOut().then(() => {
+        window.location.href = "admin-login.html";
+    });
+}
+
+/* INIT */
+loadWitness();
+</script>
+
+</body>
+</html>
