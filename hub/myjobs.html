@@ -94,6 +94,7 @@
     .job-card {
         padding: 15px;
         border-bottom: 1px solid #eee;
+        cursor: pointer;
     }
 
     .job-card:last-child {
@@ -118,6 +119,7 @@
         border: none;
         cursor: pointer;
         font-weight: 600;
+        margin-top: 10px;
     }
 
     .btn.cancel {
@@ -222,12 +224,14 @@ function loadAssignedJobs() {
         snapshot.forEach(doc => {
             const j = doc.data();
             html += `
-                <div class="job-card">
-                    <div class="job-title">${j.coupleName}
-                        <span class="status-badge assigned">Assigned</span>
+                <a href="job-details.html?id=${doc.id}" style="text-decoration:none;color:inherit;">
+                    <div class="job-card">
+                        <div class="job-title">${j.coupleName}
+                            <span class="status-badge assigned">Assigned</span>
+                        </div>
+                        <div class="job-meta">${j.date} at ${j.time} — ${j.location}</div>
                     </div>
-                    <div class="job-meta">${j.date} at ${j.time} — ${j.location}</div>
-                </div>
+                </a>
             `;
         });
 
@@ -248,13 +252,15 @@ function loadPendingRequests() {
         snapshot.forEach(doc => {
             const j = doc.data();
             html += `
-                <div class="job-card">
-                    <div class="job-title">${j.coupleName}
-                        <span class="status-badge pending">Pending</span>
+                <a href="job-details.html?id=${doc.id}" style="text-decoration:none;color:inherit;">
+                    <div class="job-card">
+                        <div class="job-title">${j.coupleName}
+                            <span class="status-badge pending">Pending</span>
+                        </div>
+                        <div class="job-meta">${j.date} at ${j.time} — ${j.location}</div>
                     </div>
-                    <div class="job-meta">${j.date} at ${j.time} — ${j.location}</div>
-                    <button class="btn cancel" onclick="cancelRequest('${doc.id}')">Cancel Request</button>
-                </div>
+                </a>
+                <button class="btn cancel" onclick="cancelRequest('${doc.id}')">Cancel Request</button>
             `;
         });
 
@@ -279,11 +285,13 @@ function loadAvailableJobs() {
             if (j.witnessType === "couple" && userData.type !== "couple") return;
 
             html += `
-                <div class="job-card">
-                    <div class="job-title">${j.coupleName}</div>
-                    <div class="job-meta">${j.date} at ${j.time} — ${j.location}</div>
-                    <button class="btn" onclick="requestJob('${doc.id}')">Request Job</button>
-                </div>
+                <a href="job-details.html?id=${doc.id}" style="text-decoration:none;color:inherit;">
+                    <div class="job-card">
+                        <div class="job-title">${j.coupleName}</div>
+                        <div class="job-meta">${j.date} at ${j.time} — ${j.location}</div>
+                    </div>
+                </a>
+                <button class="btn" onclick="requestJob('${doc.id}')">Request Job</button>
             `;
         });
 
