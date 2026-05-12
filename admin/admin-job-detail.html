@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Job Detail – Admin – Need A Witness UK</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<script src="../hub/firebase.js"></script>
+
+<style>
+    body {
+        margin: 0;
+        font-family: Inter, sans-serif;
+        background: #fafafa;
+        color: #222;
+    }
+
+    .layout {
+        display: flex;
+        min-height: 100vh;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+        width: 260px;
+        height: 100vh;
+        background: white;
+        border-right: 1px solid #eee;
+        position: sticky;
+        top: 0;
+        left: 0;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .logo {
+        font-family: "Playfair Display", serif;
+        font-size: 22px;
+        font-weight: 600;
+        color: #D4AF37;
+        margin-bottom: 30px;
+    }
+
+    .nav-title {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #999;
+        margin-bottom: 8px;
+    }
+
+    .nav-item {
+        padding: 10px 12px;
+        margin-bottom: 6px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 500;
+        font-size: 14px;
+        color: #333;
+    }
+
+    .nav-item:hover {
+        background: #f5f1e6;
+    }
+
+    .nav-item.active {
+        background: #D4AF37;
+        color: white;
+    }
+
+    .sidebar-footer {
+        margin-top: auto;
+        padding-top: 16px;
+        border-top: 1px solid #eee;
+        font-size: 12px;
+        color: #777;
+        line-height: 1.4;
+    }
+
+    .logout-btn {
+        margin-top: 16px;
+        padding: 10px;
+        background: #D4AF37;
+        color: white;
+        text-align: center;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+    /* MAIN */
+    .main {
+        flex: 1;
+        margin-left: 260px;
+        padding: 30px;
+    }
+
+    .main-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .main-header h1 {
+        font-family: "Playfair Display", serif;
+        color: #D4AF37;
+        margin: 0;
+        font-size: 26px;
+    }
+
+    .main-subtitle {
+        color: #777;
+        font-size: 14px;
+        margin-top: 4px;
+    }
+
+    .btn-gold {
+        background: #D4AF37;
+        color: white;
+        border: none;
+        padding: 10px 16px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+    .btn-gold:hover {
+        opacity: 0.9;
+    }
+
+    .btn-outline {
+        background: white;
+        color: #555;
+        border: 1px solid #ccc;
+        padding: 8px 12px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+    .btn-outline:hover {
+        background: #f5f5f5;
+    }
+
+    .btn-small {
+        padding: 6px 10px;
+        font-size: 12px;
+        border-radius: 6px;
+        border: none;
+        cursor: pointer;
+        margin-right: 4px;
+    }
+
+    .btn-small-gold {
+        background: #D4AF37;
+        color: white;
+    }
+
+    .btn-small-outline {
+        background: white;
+        color: #555;
+        border: 1px solid #ccc;
+    }
+
+    .card {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        margin-bottom: 20px;
+    }
+
+    .section-title {
+        font-family: "Playfair Display", serif;
+        color: #D4AF37;
+        font-size: 20px;
+        margin-top: 0;
+        margin-bottom: 10px;
+    }
+
+    .section-sub {
+        font-size: 12px;
+        color: #777;
+        margin-bottom: 10px;
+    }
+
+    .grid-main {
+        display: grid;
+        grid-template-columns: 1.2fr 0.9fr;
+        gap: 20px;
+    }
+
+    .grid-bottom {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 20px;
+    }
+
+    label {
+        font-size: 13px;
+        font-weight: 500;
+        display: block;
+        margin-top: 10px;
+    }
+
+    input, textarea, select {
+        width: 100%;
+        padding: 9px;
+        margin-top: 4px;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        font-size: 13px;
+        background: #fafafa;
+        box-sizing: border-box;
+    }
+
+    textarea {
+        resize: vertical;
+        min-height: 70px;
+    }
+
+    .row-two {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 3px 8px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: capitalize;
+        margin-right: 6px;
+    }
+
+    .status-pending { background: #fff4d6; color: #8a6d00; }
+    .status-assigned { background: #d6ffe0; color: #006d2a; }
+    .status-completed { background: #e6e6e6; color: #555; }
+    .status-cancelled { background: #ffd6d6; color: #8a0000; }
+
+    .pay-unpaid { background: #ffe6e6; color: #8a0000; }
+    .pay-deposit { background: #fff4d6; color: #8a6d00; }
+    .pay-full { background: #d6ffe0; color: #006d2a; }
+    .pay-late { background: #ffd6d6; color: #8a0000; }
+
+    .witness-item {
+        padding: 8px 0;
+        border-bottom: 1px solid #f2f2f2;
+        font-size: 13px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .witness-item:last-child {
+        border-bottom: none;
+    }
+
+    .witness-name {
+        font-weight: 600;
+    }
+
+    .witness-meta {
+        font-size: 12px;
+        color: #777;
+    }
+
+    .timeline-item {
+        font-size: 12px;
+        padding: 6px 0;
+        border-bottom: 1px solid #f2f2f2;
+    }
+
+    .timeline-item:last-child {
+        border-bottom: none;
+    }
+
+    .timeline-label {
+        font-weight: 600;
+    }
+
+    .pill {
+        display: inline-block;
+        padding: 3px 8px;
+        border-radius: 999px;
+        font-size: 11px;
+        background: #f0f0f0;
+        color: #555;
+        margin-right: 4px;
+        margin-bottom: 4px;
+    }
+
+    @media (max-width: 1000px) {
+        .main {
+            margin-left: 0;
+        }
+        .sidebar {
+            position: static;
+            height: auto;
+        }
+        .grid-main, .grid-bottom {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="layout">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="logo">Need A Witness UK</div>
+
+        <div class="nav-title">Navigation</div>
+        <div class="nav-item" onclick="window.location.href='admin-dashboard.html'">Dashboard</div>
+        <div class="nav-item" onclick="window.location.href='admin-witnesses.html'">Witnesses</div>
+        <div class="nav-item" onclick="window.location.href='admin-create-job.html'">Create Job</div>
+
+        <div class="sidebar-footer">
+            Admin Panel<br>
+            Witness Hub v1.0
+            <div class="logout-btn" onclick="adminLogout()">Logout</div>
+        </div>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main">
+        <div class="main-header">
+            <div>
+                <h1 id="jobTitle">Job Detail</h1>
+                <div class="main-subtitle" id="jobSubtitle">Loading job...</div>
+            </div>
+            <div>
+                <button class="btn-outline" onclick="window.location.href='admin-dashboard.html'">← Back to Dashboard</button>
+            </div>
+        </div>
+
+        <div class="grid-main">
+            <!-- LEFT: JOB + COUPLE -->
+            <div>
+                <!-- JOB INFO -->
+                <div class="card">
+                    <div class="section-title">Job & Couple</div>
+                    <div class="section-sub">Core details about this booking.</div>
+
+                    <label>Couple Name</label>
+                    <input id="coupleName" />
+
+                    <label>Couple Email</label>
+                    <input id="coupleEmail" type="email" />
+
+                    <label>Couple Phone</label>
+                    <input id="couplePhone" />
+
+                    <div class="row-two">
+                        <div>
+                            <label>Date</label>
+                            <input id="jobDate" type="date" />
+                        </div>
+                        <div>
+                            <label>Time</label>
+                            <input id="jobTime" type="time" />
+                        </div>
+                    </div>
+
+                    <label>Location</label>
+                    <input id="jobLocation" />
+
+                    <label>Ceremony Type</label>
+                    <select id="ceremonyType">
+                        <option value="civil">Civil Ceremony</option>
+                        <option value="religious">Religious Ceremony</option>
+                        <option value="elopement">Elopement</option>
+                        <option value="other">Other</option>
+                    </select>
+
+                    <label>Notes for Witnesses</label>
+                    <textarea id="jobNotes"></textarea>
+
+                    <label>Internal Admin Notes</label>
+                    <textarea id="adminNotes" placeholder="Private notes only admins can see."></textarea>
+
+                    <div style="margin-top:12px;">
+                        <span id="statusBadge" class="badge status-pending">status</span>
+                        <span id="paymentBadge" class="badge pay-unpaid">payment</span>
+                    </div>
+
+                    <div style="margin-top:14px;">
+                        <button class="btn-gold" onclick="saveJobDetails()">Save Changes</button>
+                    </div>
+                </div>
+
+                <!-- WITNESS ASSIGNMENT -->
+                <div class="card">
+                    <div class="section-title">Witness Assignment</div>
+                    <div class="section-sub">Manage who is assigned to this job.</div>
+
+                    <div id="assignedWitnesses"></div>
+
+                    <div style="margin-top:10px;">
+                        <button class="btn-small btn-small-gold" onclick="openAddWitness()">+ Add Witness</button>
+                    </div>
+
+                    <div id="addWitnessArea" style="margin-top:10px; display:none;">
+                        <label>Select Witness to Add</label>
+                        <select id="addWitnessSelect"></select>
+                        <button class="btn-small btn-small-gold" style="margin-top:6px;" onclick="confirmAddWitness()">Add</button>
+                        <button class="btn-small btn-small-outline" style="margin-top:6px;" onclick="closeAddWitness()">Cancel</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT: PAYMENTS + SNAPSHOT -->
+            <div>
+                <!-- PAYMENTS -->
+                <div class="card">
+                    <div class="section-title">Payments</div>
+                    <div class="section-sub">Track deposit, remaining balance, and Monzo links.</div>
+
+                    <div class="row-two">
+                        <div>
+                            <label>Total Price (£)</label>
+                            <input id="totalPrice" type="number" min="0" />
+                        </div>
+                        <div>
+                            <label>Deposit Amount (£)</label>
+                            <input id="depositAmount" type="number" min="0" />
+                        </div>
+                    </div>
+
+                    <div class="row-two">
+                        <div>
+                            <label>Amount Paid (£)</label>
+                            <input id="amountPaid" type="number" min="0" />
+                        </div>
+                        <div>
+                            <label>Amount Due (£)</label>
+                            <input id="amountDue" type="number" min="0" />
+                        </div>
+                    </div>
+
+                    <label>Payment Status</label>
+                    <select id="paymentStatus">
+                        <option value="unpaid">Unpaid</option>
+                        <option value="deposit">Deposit</option>
+                        <option value="full">Full</option>
+                        <option value="late-cancel">Late / Cancelled</option>
+                    </select>
+
+                    <label>Payment Deadline (48h before ceremony)</label>
+                    <input id="paymentDeadline" type="datetime-local" />
+
+                    <label>Monzo Payment Link – Deposit</label>
+                    <input id="paymentLinkDeposit" placeholder="Paste Monzo link for deposit" />
+
+                    <label>Monzo Payment Link – Remaining</label>
+                    <input id="paymentLinkRemaining" placeholder="Paste Monzo link for remaining balance" />
+
+                    <div style="margin-top:10px;">
+                        <button class="btn-small btn-small-outline" onclick="markDepositPaid()">Mark deposit paid</button>
+                        <button class="btn-small btn-small-outline" onclick="markRemainingPaid()">Mark remaining paid</button>
+                        <button class="btn-small btn-small-outline" onclick="cancelForNonPayment()">Cancel for non‑payment</button>
+                    </div>
+                </div>
+
+                <!-- SNAPSHOT -->
+                <div class="card">
+                    <div class="section-title">Snapshot</div>
+                    <div class="section-sub">Quick overview of this job.</div>
+
+                    <div style="font-size:13px;margin-bottom:8px;">
+                        <b>Witness Type:</b> <span id="witnessTypeText">–</span>
+                    </div>
+                    <div style="font-size:13px;margin-bottom:8px;">
+                        <b>Assigned Witnesses:</b> <span id="assignedCountText">0</span>
+                    </div>
+                    <div style="font-size:13px;margin-bottom:8px;">
+                        <b>Payment:</b> <span id="paymentSummaryText">–</span>
+                    </div>
+                    <div style="font-size:13px;margin-bottom:8px;">
+                        <b>Deadline:</b> <span id="deadlineText">–</span>
+                    </div>
+
+                    <div style="margin-top:10px;">
+                        <div class="section-sub" style="margin-bottom:4px;">Availability on this date (approx):</div>
+                        <div id="availabilityPills"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- BOTTOM: TIMELINE -->
+        <div class="grid-bottom" style="margin-top:20px;">
+            <div class="card">
+                <div class="section-title">Timeline</div>
+                <div class="section-sub">Key events for this job.</div>
+                <div id="timeline"></div>
+            </div>
+
+            <div class="card">
+                <div class="section-title">Danger Zone</div>
+                <div class="section-sub">Irreversible actions.</div>
+
+                <button class="btn-small btn-small-outline" style="background:#ffe6e6;color:#8a0000;border-color:#ffb3b3;" onclick="deleteJob()">Delete Job</button>
+                <p style="font-size:12px;color:#777;margin-top:10px;">
+                    Deleting a job will permanently remove it from the system. This cannot be undone.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const db = firebase.firestore();
+let jobId = null;
+let jobDocRef = null;
+let jobData = null;
+let allWitnesses = [];
+
+/* --------- UTIL: GET PARAM --------- */
+function getParam(name) {
+    const url = new URL(window.location.href);
+    return url.searchParams.get(name);
+}
+
+/* --------- LOAD JOB --------- */
+async function loadJob() {
+    jobId = getParam("id");
+    if (!jobId) {
+        alert("No job ID provided.");
+        window.location.href = "admin-dashboard.html";
+        return;
+    }
+
+    jobDocRef = db.collection("jobs").doc(jobId);
+    const doc = await jobDocRef.get();
+    if (!doc.exists) {
+        alert("Job not found.");
+        window.location.href = "admin-dashboard.html";
+        return;
+    }
+
+    jobData = doc.data();
+    populateJobFields();
+    loadWitnessesForAdd();
+    loadAvailabilityForDate();
+    buildTimeline();
+}
+
+/* --------- POPULATE FIELDS --------- */
+function populateJobFields() {
+    const j = jobData;
+
+    document.getElementById("jobTitle").innerText = j.coupleName || "Job Detail";
+    document.getElementById("jobSubtitle").innerText =
+        (j.date || "") + (j.time ? " at " + j.time : "") + (j.location ? " • " + j.location : "");
+
+    coupleName.value = j.coupleName || "";
+    coupleEmail.value = j.coupleEmail || "";
+    couplePhone.value = j.couplePhone || "";
+
+    jobDate.value = j.date || "";
+    jobTime.value = j.time || "";
+    jobLocation.value = j.location || "";
+    ceremonyType.value = j.ceremonyType || "civil";
+    jobNotes.value = j.notes || "";
+    adminNotes.value = j.adminNotes || "";
+
+    totalPrice.value = j.totalPrice || 0;
+    depositAmount.value = j.depositAmount || 20;
+    amountPaid.value = j.amountPaid || 0;
+    amountDue.value = j.amountDue || 0;
+    paymentStatus.value = j.paymentStatus || "unpaid";
+
+    paymentLinkDeposit.value = j.paymentLinkDeposit || "";
+    paymentLinkRemaining.value = j.paymentLinkRemaining || "";
+
+    if (j.paymentDeadline && j.paymentDeadline.toDate) {
+        const d = j.paymentDeadline.toDate();
+        paymentDeadline.value = toLocalInputDateTime(d);
+    } else if (j.paymentDeadline) {
+        // stored as string
+        paymentDeadline.value = j.paymentDeadline;
+    }
+
+    // badges
+    const status = j.status || "pending";
+    const ps = j.paymentStatus || "unpaid";
+
+    const statusBadge = document.getElementById("statusBadge");
+    statusBadge.textContent = status;
+    statusBadge.className = "badge " +
+        (status === "pending" ? "status-pending" :
+         status === "assigned" ? "status-assigned" :
+         status === "completed" ? "status-completed" : "status-cancelled");
+
+    const paymentBadge = document.getElementById("paymentBadge");
+    paymentBadge.textContent =
+        ps === "full" ? "Paid in full" :
+        ps === "deposit" ? "Deposit only" :
+        ps === "late-cancel" ? "Late / Cancelled" : "Unpaid";
+    paymentBadge.className = "badge " +
+        (ps === "full" ? "pay-full" :
+         ps === "deposit" ? "pay-deposit" :
+         ps === "late-cancel" ? "pay-late" : "pay-unpaid");
+
+    // snapshot
+    document.getElementById("witnessTypeText").innerText =
+        j.witnessType === "couple" ? "Couple Team" :
+        j.witnessType === "either" ? "Either" : "Single Witness";
+
+    const assignedCount = (j.assignedWitnesses && j.assignedWitnesses.length) || 0;
+    document.getElementById("assignedCountText").innerText = assignedCount;
+
+    document.getElementById("paymentSummaryText").innerText =
+        `£${j.totalPrice || 0} total • £${j.amountPaid || 0} paid • £${j.amountDue || 0} due`;
+
+    let deadlineText = "Not set";
+    if (j.paymentDeadline && j.paymentDeadline.toDate) {
+        deadlineText = j.paymentDeadline.toDate().toLocaleString();
+    } else if (j.paymentDeadline) {
+        deadlineText = j.paymentDeadline;
+    }
+    document.getElementById("deadlineText").innerText = deadlineText;
+
+    renderAssignedWitnesses();
+}
+
+/* --------- ASSIGNED WITNESSES --------- */
+async function renderAssignedWitnesses() {
+    const container = document.getElementById("assignedWitnesses");
+    container.innerHTML = "";
+
+    const ids = jobData.assignedWitnesses || [];
+    if (!ids.length) {
+        container.innerHTML = "<p style='font-size:13px;color:#777;'>No witnesses assigned yet.</p>";
+        return;
+    }
+
+    const promises = ids.map(id => db.collection("users").doc(id).get());
+    const docs = await Promise.all(promises);
+
+    docs.forEach(doc => {
+        if (!doc.exists) return;
+        const w = doc.data();
+        const id = doc.id;
+
+        const name =
+            w.type === "couple"
+                ? (w.teamName || `${w.partner1Name || ""} & ${w.partner2Name || ""}`)
+                : (w.name || w.fullName || "Unnamed");
+
+        const typeLabel = w.type === "couple" ? "Couple Team" : "Single";
+        const rating = typeof w.rating === "number" ? w.rating.toFixed(1) : (w.rating || "N/A");
+        const location = w.location || "";
+
+        const div = document.createElement("div");
+        div.className = "witness-item";
+        div.innerHTML = `
+            <div>
+                <div class="witness-name">${name}</div>
+                <div class="witness-meta">${typeLabel} • ⭐ ${rating} • ${location}</div>
+            </div>
+            <div>
+                <button class="btn-small btn-small-outline" onclick="goToWitness('${id}')">View</button>
+                <button class="btn-small btn-small-outline" onclick="removeWitness('${id}')">Remove</button>
+            </div>
+        `;
+        container.appendChild(div);
+    });
+}
+
+/* --------- ADD WITNESS FLOW --------- */
+function openAddWitness() {
+    document.getElementById("addWitnessArea").style.display = "block";
+}
+
+function closeAddWitness() {
+    document.getElementById("addWitnessArea").style.display = "none";
+}
+
+function loadWitnessesForAdd() {
+    db.collection("users").get().then(snapshot => {
+        allWitnesses = [];
+        snapshot.forEach(doc => {
+            allWitnesses.push({ id: doc.id, ...doc.data() });
+        });
+
+        const select = document.getElementById("addWitnessSelect");
+        select.innerHTML = "";
+
+        allWitnesses.forEach(w => {
+            const opt = document.createElement("option");
+            const name =
+                w.type === "couple"
+                    ? (w.teamName || `${w.partner1Name || ""} & ${w.partner2Name || ""}`)
+                    : (w.name || w.fullName || "Unnamed");
+            opt.value = w.id;
+            opt.textContent = `${name} (${w.type === "couple" ? "Couple" : "Single"})`;
+            select.appendChild(opt);
+        });
+    });
+}
+
+function confirmAddWitness() {
+    const select = document.getElementById("addWitnessSelect");
+    const wid = select.value;
+    if (!wid) return;
+
+    const current = jobData.assignedWitnesses || [];
+    if (current.includes(wid)) {
+        alert("Witness already assigned.");
+        return;
+    }
+
+    const updated = [...current, wid];
+    jobDocRef.update({
+        assignedWitnesses: updated,
+        status: "assigned"
+    }).then(() => {
+        jobData.assignedWitnesses = updated;
+        renderAssignedWitnesses();
+        populateJobFields();
+        closeAddWitness();
+    });
+}
+
+function removeWitness(wid) {
+    if (!confirm("Remove this witness from the job?")) return;
+
+    const current = jobData.assignedWitnesses || [];
+    const updated = current.filter(id => id !== wid);
+
+    jobDocRef.update({
+        assignedWitnesses: updated,
+        status: updated.length ? "assigned" : "pending"
+    }).then(() => {
+        jobData.assignedWitnesses = updated;
+        renderAssignedWitnesses();
+        populateJobFields();
+    });
+}
+
+/* --------- SAVE JOB DETAILS --------- */
+function saveJobDetails() {
+    const updates = {
+        coupleName: coupleName.value.trim(),
+        coupleEmail: coupleEmail.value.trim(),
+        couplePhone: couplePhone.value.trim(),
+        date: jobDate.value,
+        time: jobTime.value,
+        location: jobLocation.value.trim(),
+        ceremonyType: ceremonyType.value,
+        notes: jobNotes.value.trim(),
+        adminNotes: adminNotes.value.trim(),
+        totalPrice: Number(totalPrice.value) || 0,
+        depositAmount: Number(depositAmount.value) || 0,
+        amountPaid: Number(amountPaid.value) || 0,
+        amountDue: Number(amountDue.value) || 0,
+        paymentStatus: paymentStatus.value,
+        paymentLinkDeposit: paymentLinkDeposit.value.trim(),
+        paymentLinkRemaining: paymentLinkRemaining.value.trim()
+    };
+
+    const pd = paymentDeadline.value;
+    if (pd) {
+        updates.paymentDeadline = pd;
+    }
+
+    jobDocRef.update(updates).then(() => {
+        alert("Job updated.");
+        jobData = { ...jobData, ...updates };
+        populateJobFields();
+        buildTimeline();
+    });
+}
+
+/* --------- PAYMENT ACTIONS --------- */
+function markDepositPaid() {
+    if (!confirm("Mark deposit as paid?")) return;
+
+    jobDocRef.get().then(doc => {
+        if (!doc.exists) return;
+        const j = doc.data();
+        const total = j.totalPrice || 0;
+        const deposit = j.depositAmount || 20;
+        const newPaid = (j.amountPaid || 0) + deposit;
+        const newDue = Math.max(total - newPaid, 0);
+
+        jobDocRef.update({
+            paymentStatus: newDue > 0 ? "deposit" : "full",
+            amountPaid: newPaid,
+            amountDue: newDue,
+            depositPaidAt: firebase.firestore.FieldValue.serverTimestamp()
+        }).then(() => {
+            jobData.paymentStatus = newDue > 0 ? "deposit" : "full";
+            jobData.amountPaid = newPaid;
+            jobData.amountDue = newDue;
+            jobData.depositPaidAt = new Date();
+            populateJobFields();
+            buildTimeline();
+        });
+    });
+}
+
+function markRemainingPaid() {
+    if (!confirm("Mark remaining balance as paid?")) return;
+
+    jobDocRef.get().then(doc => {
+        if (!doc.exists) return;
+        const j = doc.data();
+        const total = j.totalPrice || 0;
+
+        jobDocRef.update({
+            paymentStatus: "full",
+            amountPaid: total,
+            amountDue: 0,
+            remainingPaidAt: firebase.firestore.FieldValue.serverTimestamp()
+        }).then(() => {
+            jobData.paymentStatus = "full";
+            jobData.amountPaid = total;
+            jobData.amountDue = 0;
+            jobData.remainingPaidAt = new Date();
+            populateJobFields();
+            buildTimeline();
+        });
+    });
+}
+
+function cancelForNonPayment() {
+    if (!confirm("Cancel this job for non‑payment? Deposit will be kept and witnesses freed.")) return;
+
+    jobDocRef.update({
+        paymentStatus: "late-cancel",
+        status: "cancelled",
+        assignedWitnesses: []
+    }).then(() => {
+        jobData.paymentStatus = "late-cancel";
+        jobData.status = "cancelled";
+        jobData.assignedWitnesses = [];
+        populateJobFields();
+        renderAssignedWitnesses();
+        buildTimeline();
+    });
+}
+
+/* --------- AVAILABILITY FOR DATE --------- */
+function loadAvailabilityForDate() {
+    const dateStr = jobData.date;
+    if (!dateStr) return;
+
+    const d = new Date(dateStr);
+    const dayIndex = d.getDay(); // 0=Sun
+    const dayName = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][dayIndex];
+
+    db.collection("users").get().then(snapshot => {
+        const container = document.getElementById("availabilityPills");
+        container.innerHTML = "";
+
+        let available = 0;
+        let unavailable = 0;
+
+        snapshot.forEach(doc => {
+            const w = doc.data();
+            if (!w.availability || !w.availability[dayName]) return;
+            if (w.availability[dayName].enabled) available++;
+            else unavailable++;
+        });
+
+        container.innerHTML =
+            `<span class="pill">Day: ${dayName}</span>` +
+            `<span class="pill" style="background:#d6ffe0;color:#006d2a;">Available: ${available}</span>` +
+            `<span class="pill" style="background:#ffe6e6;color:#8a0000;">Unavailable: ${unavailable}</span>`;
+    });
+}
+
+/* --------- TIMELINE --------- */
+function buildTimeline() {
+    const container = document.getElementById("timeline");
+    container.innerHTML = "";
+
+    const j = jobData;
+    const items = [];
+
+    if (j.createdAt && j.createdAt.toDate) {
+        items.push({ label: "Job created", time: j.createdAt.toDate() });
+    }
+
+    if (j.depositPaidAt && j.depositPaidAt.toDate) {
+        items.push({ label: "Deposit paid", time: j.depositPaidAt.toDate() });
+    }
+
+    if (j.remainingPaidAt && j.remainingPaidAt.toDate) {
+        items.push({ label: "Remaining paid", time: j.remainingPaidAt.toDate() });
+    }
+
+    if (j.status === "cancelled") {
+        items.push({ label: "Job cancelled", time: new Date() });
+    }
+
+    if (j.date) {
+        const d = new Date(j.date + "T" + (j.time || "00:00"));
+        items.push({ label: "Ceremony", time: d });
+    }
+
+    items.sort((a,b) => a.time - b.time);
+
+    if (!items.length) {
+        container.innerHTML = "<p style='font-size:12px;color:#777;'>No timeline events yet.</p>";
+        return;
+    }
+
+    items.forEach(it => {
+        const div = document.createElement("div");
+        div.className = "timeline-item";
+        div.innerHTML = `
+            <span class="timeline-label">${it.label}</span>
+            <br>
+            <span>${it.time.toLocaleString()}</span>
+        `;
+        container.appendChild(div);
+    });
+}
+
+/* --------- DELETE JOB --------- */
+function deleteJob() {
+    if (!confirm("Are you sure you want to permanently delete this job?")) return;
+
+    jobDocRef.delete().then(() => {
+        alert("Job deleted.");
+        window.location.href = "admin-dashboard.html";
+    });
+}
+
+/* --------- NAV TO WITNESS --------- */
+function goToWitness(uid) {
+    window.location.href = `admin-witness-detail.html?id=${uid}`;
+}
+
+/* --------- UTIL: DATETIME LOCAL --------- */
+function toLocalInputDateTime(date) {
+    const pad = n => n.toString().padStart(2, "0");
+    const yyyy = date.getFullYear();
+    const mm = pad(date.getMonth() + 1);
+    const dd = pad(date.getDate());
+    const hh = pad(date.getHours());
+    const mi = pad(date.getMinutes());
+    return `${yyyy}-${mm}-${dd}T${hh}:${mi}`;
+}
+
+/* --------- LOGOUT --------- */
+function adminLogout() {
+    firebase.auth().signOut().then(() => {
+        window.location.href = "admin-login.html";
+    });
+}
+
+/* INIT */
+loadJob();
+</script>
+
+</body>
+</html>
