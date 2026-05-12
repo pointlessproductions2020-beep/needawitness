@@ -253,14 +253,19 @@ auth.onAuthStateChanged(async (user) => {
     profileLocation.innerText = data.location || "Not set";
     profileBio.innerText = data.bio || "No bio yet";
 
-    /* AVAILABILITY */
+    /* FIXED AVAILABILITY ORDER */
+    const dayNames = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+
     if (data.availability) {
         let html = "";
-        for (const [day, info] of Object.entries(data.availability)) {
+        dayNames.forEach(day => {
+            const info = data.availability[day];
+            if (!info) return;
+
             html += `<p><strong>${day}:</strong> ${
                 info.enabled ? `${info.start}–${info.end}` : "Not available"
             }</p>`;
-        }
+        });
         availabilitySummary.innerHTML = html;
     } else {
         availabilitySummary.innerHTML = "<p>No availability set yet.</p>";
