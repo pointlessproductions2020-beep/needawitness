@@ -1,134 +1,162 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Witness Hub – Dashboard</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Witness Hub – Dashboard</title>
 
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f5f5f5;
-        }
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-        .layout {
-            display: flex;
-            min-height: 100vh;
-        }
+<style>
+    body {
+        margin: 0;
+        font-family: Inter, sans-serif;
+        background: #f7f7f7;
+    }
 
-        /* Sidebar */
-        .sidebar {
-            width: 240px;
-            background: #000;
-            color: white;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-        }
+    .layout {
+        display: flex;
+        min-height: 100vh;
+    }
 
-        .sidebar h2 {
-            margin-top: 0;
-            margin-bottom: 30px;
-            font-size: 22px;
-        }
+    /* SIDEBAR */
+    .sidebar {
+        width: 240px;
+        background: white;
+        border-right: 1px solid #eee;
+        padding: 25px;
+        display: flex;
+        flex-direction: column;
+    }
 
-        .sidebar a {
-            color: white;
-            text-decoration: none;
-            padding: 12px 0;
-            display: block;
-            font-size: 16px;
-        }
+    .sidebar h2 {
+        font-family: "Playfair Display", serif;
+        color: #D4AF37;
+        margin-top: 0;
+        margin-bottom: 30px;
+        font-size: 24px;
+    }
 
-        .sidebar a:hover {
-            opacity: 0.7;
-        }
+    .sidebar a {
+        color: #333;
+        text-decoration: none;
+        padding: 12px 0;
+        display: block;
+        font-size: 16px;
+        font-weight: 500;
+    }
 
-        .logout-btn {
-            margin-top: auto;
-            padding: 12px;
-            background: #333;
-            text-align: center;
-            border-radius: 6px;
-            cursor: pointer;
-        }
+    .sidebar a:hover {
+        color: #D4AF37;
+    }
 
-        .sidebar-footer {
-            margin-top: 20px;
-            padding-top: 15px;
-            border-top: 1px solid rgba(255,255,255,0.2);
-            font-size: 12px;
-            opacity: 0.7;
-            line-height: 1.4;
-        }
+    .logout-btn {
+        margin-top: auto;
+        padding: 12px;
+        background: #D4AF37;
+        color: white;
+        text-align: center;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+    }
 
-        /* Main content */
-        .main {
-            flex: 1;
-            padding: 30px;
-            overflow-y: auto;
-        }
+    .sidebar-footer {
+        margin-top: 20px;
+        padding-top: 15px;
+        border-top: 1px solid #eee;
+        font-size: 12px;
+        color: #777;
+        line-height: 1.4;
+    }
 
-        .header {
-            font-size: 26px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+    /* MAIN CONTENT */
+    .main {
+        flex: 1;
+        padding: 30px;
+        overflow-y: auto;
+    }
 
-        /* Profile photo in header */
-        .header-photo {
-            width: 55px;
-            height: 55px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid #ddd;
-        }
+    .header {
+        font-size: 26px;
+        margin-bottom: 25px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-family: "Playfair Display", serif;
+    }
 
-        /* Cards */
-        .cards {
-            display: flex;
-            gap: 20px;
-            margin-bottom: 30px;
-        }
+    .header-photo {
+        width: 55px;
+        height: 55px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #D4AF37;
+    }
 
-        .card {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            flex: 1;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        }
+    /* CARDS */
+    .cards {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 30px;
+    }
 
-        .card h3 {
-            margin-top: 0;
-        }
+    .card {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        flex: 1;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        border-left: 4px solid #D4AF37;
+    }
 
-        /* Sections */
-        .section {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 25px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        }
+    .card h3 {
+        margin-top: 0;
+        font-family: "Playfair Display", serif;
+        color: #D4AF37;
+    }
 
-        .section h3 {
-            margin-top: 0;
-        }
-    </style>
+    .card p {
+        font-size: 22px;
+        margin: 10px 0 0;
+        font-weight: 600;
+    }
+
+    /* SECTIONS */
+    .section {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        margin-bottom: 25px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    }
+
+    .section h3 {
+        margin-top: 0;
+        font-family: "Playfair Display", serif;
+        color: #D4AF37;
+    }
+
+    .job-item {
+        padding: 12px 0;
+        border-bottom: 1px solid #eee;
+    }
+
+    .job-item:last-child {
+        border-bottom: none;
+    }
+</style>
 </head>
+
 <body>
 
 <div class="layout">
 
-    <!-- Sidebar -->
+    <!-- SIDEBAR -->
     <div class="sidebar">
         <h2>Witness Hub</h2>
         <a href="dashboard.html">Dashboard</a>
-        <a href="jobs.html">My Jobs</a>
+        <a href="myjobs.html">My Jobs</a>
         <a href="availability.html">Availability</a>
         <a href="profile-edit.html">Profile</a>
 
@@ -140,16 +168,16 @@
         </div>
     </div>
 
-    <!-- Main content -->
+    <!-- MAIN CONTENT -->
     <div class="main">
 
-        <!-- Header with profile photo -->
+        <!-- HEADER -->
         <div class="header">
             <div>Welcome, <span id="username">Loading...</span></div>
             <img id="headerPhoto" class="header-photo" src="default-avatar.png">
         </div>
 
-        <!-- Stats cards -->
+        <!-- STATS CARDS -->
         <div class="cards">
             <div class="card">
                 <h3>Jobs Today</h3>
@@ -165,19 +193,19 @@
             </div>
         </div>
 
-        <!-- Today's Jobs -->
+        <!-- TODAY'S JOBS -->
         <div class="section">
             <h3>Today's Jobs</h3>
-            <p>No jobs assigned yet.</p>
+            <div id="todaysJobs">Loading...</div>
         </div>
 
-        <!-- Availability -->
+        <!-- AVAILABILITY -->
         <div class="section">
             <h3>Your Availability</h3>
             <div id="availabilitySummary">Loading...</div>
         </div>
 
-        <!-- Profile -->
+        <!-- PROFILE -->
         <div class="section">
             <h3>Your Profile</h3>
             <p><strong>Name:</strong> <span id="profileName">Loading...</span></p>
@@ -187,16 +215,13 @@
             <p><strong>Bio:</strong> <span id="profileBio">Loading...</span></p>
         </div>
 
-    </div> <!-- end main -->
+    </div>
+</div>
 
-</div> <!-- end layout -->
-
-<!-- Firebase SDKs -->
+<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-
-<!-- Your Firebase config -->
 <script src="firebase.js"></script>
 
 <script>
@@ -207,61 +232,75 @@ auth.onAuthStateChanged(async (user) => {
     }
 
     const doc = await db.collection("users").doc(user.uid).get();
+    if (!doc.exists) return;
 
-    if (doc.exists) {
-        const data = doc.data();
+    const data = doc.data();
 
-        // ---------------------------
-        // PROFILE PHOTO IN HEADER
-        // ---------------------------
-        const headerPhoto = document.getElementById("headerPhoto");
-        headerPhoto.src = data.photoURL || "default-avatar.png";
+    /* HEADER PHOTO */
+    headerPhoto.src = data.photoURL || "default-avatar.png";
 
-        // ---------------------------
-        // WELCOME NAME (single/couple)
-        // ---------------------------
-        if (data.type === "couple") {
-            document.getElementById("username").innerText = data.teamName;
-        } else {
-            document.getElementById("username").innerText = data.name;
+    /* WELCOME NAME */
+    username.innerText = data.type === "couple" ? data.teamName : data.name;
+
+    /* PROFILE SECTION */
+    profileName.innerText =
+        data.type === "couple"
+            ? `${data.partner1Name} & ${data.partner2Name} (${data.teamName})`
+            : data.name;
+
+    profileEmail.innerText = data.email;
+    profilePhone.innerText = data.phone;
+    profileLocation.innerText = data.location || "Not set";
+    profileBio.innerText = data.bio || "No bio yet";
+
+    /* AVAILABILITY */
+    if (data.availability) {
+        let html = "";
+        for (const [day, info] of Object.entries(data.availability)) {
+            html += `<p><strong>${day}:</strong> ${
+                info.enabled ? `${info.start}–${info.end}` : "Not available"
+            }</p>`;
         }
-
-        // ---------------------------
-        // PROFILE SECTION
-        // ---------------------------
-        if (data.type === "couple") {
-            document.getElementById("profileName").innerText =
-                `${data.partner1Name} & ${data.partner2Name} (${data.teamName})`;
-        } else {
-            document.getElementById("profileName").innerText = data.name;
-        }
-
-        document.getElementById("profileEmail").innerText = data.email;
-        document.getElementById("profilePhone").innerText = data.phone;
-        document.getElementById("profileLocation").innerText = data.location || "Not set";
-        document.getElementById("profileBio").innerText = data.bio || "No bio yet";
-
-        // ---------------------------
-        // AVAILABILITY
-        // ---------------------------
-        if (data.availability) {
-            let html = "";
-            for (const [day, info] of Object.entries(data.availability)) {
-                if (info.enabled) {
-                    html += `<p><strong>${day}:</strong> ${info.start}–${info.end}</p>`;
-                } else {
-                    html += `<p><strong>${day}:</strong> Not available</p>`;
-                }
-            }
-            document.getElementById("availabilitySummary").innerHTML = html;
-        } else {
-            document.getElementById("availabilitySummary").innerHTML =
-                "<p>No availability set yet.</p>";
-        }
+        availabilitySummary.innerHTML = html;
+    } else {
+        availabilitySummary.innerHTML = "<p>No availability set yet.</p>";
     }
+
+    /* LOAD JOBS */
+    loadJobs(user.uid);
 });
 
-// Logout
+/* LOAD TODAY'S JOBS + TOTAL JOBS */
+function loadJobs(uid) {
+    const today = new Date().toISOString().split("T")[0];
+
+    db.collection("jobs")
+        .where("assignedWitnesses", "array-contains", uid)
+        .onSnapshot(snapshot => {
+            let total = 0;
+            let todayList = "";
+
+            snapshot.forEach(doc => {
+                const j = doc.data();
+                total++;
+
+                if (j.date === today) {
+                    todayList += `
+                        <div class="job-item">
+                            <strong>${j.coupleName}</strong><br>
+                            ${j.time} at ${j.location}
+                        </div>
+                    `;
+                }
+            });
+
+            totalJobs.innerText = total;
+            todaysJobs.innerHTML = todayList || "<p>No jobs today.</p>";
+            jobsToday.innerText = todayList ? todayList.split("job-item").length - 1 : 0;
+        });
+}
+
+/* LOGOUT */
 function logout() {
     auth.signOut().then(() => {
         window.location.href = "login.html";
