@@ -1,66 +1,94 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Login – Need A Witness UK</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Login – Need A Witness UK</title>
 
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #fafafa;
-        }
-        .container {
-            max-width: 400px;
-            margin: 80px auto;
-            background: #fff;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        }
-        h1 {
-            text-align: center;
-            margin-top: 0;
-        }
-        label {
-            display: block;
-            margin-top: 15px;
-        }
-        input {
-            width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            box-sizing: border-box;
-        }
-        button {
-            width: 100%;
-            padding: 10px;
-            margin-top: 20px;
-            background: #000;
-            color: #fff;
-            border: none;
-            cursor: pointer;
-        }
-        button:hover {
-            opacity: 0.9;
-        }
-        .error {
-            color: red;
-            margin-top: 10px;
-            min-height: 20px;
-        }
-    </style>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        background: #f7f7f7;
+        font-family: Inter, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+
+    .login-card {
+        background: white;
+        width: 380px;
+        padding: 35px;
+        border-radius: 14px;
+        box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+        text-align: center;
+        border-top: 4px solid #D4AF37;
+    }
+
+    h2 {
+        font-family: "Playfair Display", serif;
+        color: #D4AF37;
+        margin-bottom: 25px;
+        font-size: 26px;
+    }
+
+    label {
+        text-align: left;
+        display: block;
+        margin-top: 15px;
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+    input {
+        width: 100%;
+        padding: 14px;
+        margin-top: 6px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 15px;
+        background: #fafafa;
+    }
+
+    button {
+        width: 100%;
+        padding: 14px;
+        background: #D4AF37;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 17px;
+        cursor: pointer;
+        font-weight: 600;
+        margin-top: 20px;
+    }
+
+    button:hover {
+        opacity: 0.9;
+    }
+
+    .error {
+        color: red;
+        font-size: 14px;
+        min-height: 20px;
+        margin-top: 15px;
+    }
+</style>
 </head>
+
 <body>
 
-<div class="container">
-    <h1>Admin Login</h1>
+<div class="login-card">
+    <h2>Admin Login</h2>
 
-    <label for="email">Email</label>
+    <label>Email</label>
     <input type="email" id="email" value="admin@needawitness.uk">
 
-    <label for="password">Password</label>
+    <label>Password</label>
     <input type="password" id="password">
 
     <button id="loginBtn">Log In</button>
@@ -68,50 +96,50 @@
     <div class="error" id="error"></div>
 </div>
 
-<!-- Firebase v8 + your config -->
+<!-- Firebase v8 -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 <script src="../hub/firebase.js"></script>
 
 <script>
-    const emailInput = document.getElementById('email');
-    const passwordInput = document.getElementById('password');
-    const loginBtn = document.getElementById('loginBtn');
-    const errorDiv = document.getElementById('error');
+const emailInput = document.getElementById('email');
+const passwordInput = document.getElementById('password');
+const loginBtn = document.getElementById('loginBtn');
+const errorDiv = document.getElementById('error');
 
-    loginBtn.addEventListener('click', async () => {
-        errorDiv.textContent = '';
+loginBtn.addEventListener('click', async () => {
+    errorDiv.textContent = '';
 
-        const email = emailInput.value.trim();
-        const password = passwordInput.value;
+    const email = emailInput.value.trim();
+    const password = passwordInput.value;
 
-        if (!email || !password) {
-            errorDiv.textContent = 'Please enter email and password.';
+    if (!email || !password) {
+        errorDiv.textContent = 'Please enter email and password.';
+        return;
+    }
+
+    try {
+        // Sign in with Firebase Auth
+        const userCred = await auth.signInWithEmailAndPassword(email, password);
+
+        // Check admin role in Firestore
+        const adminDoc = await db.collection('admins').doc(email).get();
+
+        if (!adminDoc.exists || adminDoc.data().role !== 'admin') {
+            await auth.signOut();
+            errorDiv.textContent = 'You are not authorised to access the admin area.';
             return;
         }
 
-        try {
-            // Sign in with Firebase Auth
-            const userCred = await auth.signInWithEmailAndPassword(email, password);
+        // Redirect to admin dashboard
+        window.location.href = 'admin-dashboard.html';
 
-            // Check admin role in Firestore
-            const adminDoc = await db.collection('admins').doc(email).get();
-
-            if (!adminDoc.exists || adminDoc.data().role !== 'admin') {
-                await auth.signOut();
-                errorDiv.textContent = 'You are not authorised to access the admin area.';
-                return;
-            }
-
-            // Redirect to dashboard
-            window.location.href = 'admin-dashboard.html';
-
-        } catch (err) {
-            console.error(err);
-            errorDiv.textContent = 'Login failed. Please check your details.';
-        }
-    });
+    } catch (err) {
+        console.error(err);
+        errorDiv.textContent = 'Login failed. Please check your details.';
+    }
+});
 </script>
 
 </body>
