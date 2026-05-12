@@ -30,7 +30,6 @@
         color: #2b2b2b;
     }
 
-    /* HERO */
     .hero {
         background: url('photo.png') center/cover no-repeat;
         padding: 140px 20px 160px;
@@ -81,7 +80,6 @@
         font-weight: bold;
     }
 
-    /* TOP RIGHT CTA */
     .top-cta {
         position: absolute;
         top: 20px;
@@ -144,7 +142,6 @@
         font-size: 0.9rem;
     }
 
-    /* AVAILABILITY */
     .slots-grid {
         display: flex;
         flex-wrap: wrap;
@@ -220,12 +217,10 @@
 
 <body>
 
-<!-- TOP RIGHT CTA -->
 <div class="top-cta">
     <a href="/hub/register.html">Become a Witness</a>
 </div>
 
-<!-- HERO -->
 <div class="hero">
     <div class="hero-content">
         <img src="logo.png" alt="Need A Witness UK Logo">
@@ -264,6 +259,16 @@
     <div class="pricing-box">
         <h3>Add a Second Witness — +£50</h3>
         <p>Need two witnesses? Add an additional witness for just £50.</p>
+    </div>
+
+    <div class="pricing-box">
+        <h3>Pricing & Operating Days</h3>
+        <p>
+            We operate <strong>Monday to Saturday</strong> at our standard rates.
+            Sunday ceremonies are available with a <strong>premium surcharge</strong>, and
+            <strong>UK Bank Holidays are charged at double the standard rate</strong>.
+            Deposits are adjusted accordingly, so you always know the cost upfront.
+        </p>
     </div>
 
     <h3>Add‑Ons</h3>
@@ -332,9 +337,16 @@
         <strong>Is my booking confirmed immediately?</strong>
         <p>Your booking is confirmed once payment is received.</p>
     </div>
+
+    <div class="faq-item">
+        <strong>Do Sundays or Bank Holidays cost more?</strong>
+        <p>
+            Yes. We operate Monday to Saturday at our standard rates.
+            Sunday bookings include a premium surcharge, and UK Bank Holidays are charged at double the standard rate.
+        </p>
+    </div>
 </section>
 
-<!-- AVAILABILITY WIDGET -->
 <section>
     <h2>Check Our Availability</h2>
 
@@ -343,7 +355,8 @@
         <input type="date" id="date-picker" style="padding: 10px; margin: 10px 0; font-size: 1rem;">
 
         <div class="availability-note">
-            We offer hourly slots between 9am and 4pm. Sundays and bank holidays carry a premium surcharge.
+            We offer hourly slots between 9am and 4pm. Standard rates apply Monday to Saturday.
+            Sunday bookings include a premium surcharge, and UK Bank Holidays are charged at double rate.
             No bookings within 24 hours.
         </div>
 
@@ -356,7 +369,6 @@
     </div>
 </section>
 
-<!-- BOOKING FORM -->
 <section id="booking">
     <h2>Booking Form</h2>
 
@@ -410,13 +422,12 @@
     </p>
 </footer>
 
-<!-- FIREBASE + AVAILABILITY -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 <script src="hub/firebase.js"></script>
 
 <script type="module">
-    import { checkAvailability, calculatePrice, calculateDeposit, isSunday, isBankHoliday } from './hub/availability.js';
+    import { checkAvailability, calculatePrice, calculateDeposit } from './hub/availability.js';
 
     const db = firebase.firestore();
 
