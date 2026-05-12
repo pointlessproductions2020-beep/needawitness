@@ -73,6 +73,18 @@
         .header {
             font-size: 26px;
             margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Profile photo in header */
+        .header-photo {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #ddd;
         }
 
         /* Cards */
@@ -130,7 +142,12 @@
 
     <!-- Main content -->
     <div class="main">
-        <div class="header">Welcome, <span id="username">Loading...</span></div>
+
+        <!-- Header with profile photo -->
+        <div class="header">
+            <div>Welcome, <span id="username">Loading...</span></div>
+            <img id="headerPhoto" class="header-photo" src="default-avatar.png">
+        </div>
 
         <!-- Stats cards -->
         <div class="cards">
@@ -193,6 +210,12 @@ auth.onAuthStateChanged(async (user) => {
 
     if (doc.exists) {
         const data = doc.data();
+
+        // ---------------------------
+        // PROFILE PHOTO IN HEADER
+        // ---------------------------
+        const headerPhoto = document.getElementById("headerPhoto");
+        headerPhoto.src = data.photoURL || "default-avatar.png";
 
         // ---------------------------
         // WELCOME NAME (single/couple)
