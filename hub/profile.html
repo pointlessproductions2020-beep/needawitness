@@ -71,6 +71,16 @@
             max-width: 600px;
         }
 
+        .profile-photo {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            object-fit: cover;
+            display: block;
+            margin: 0 auto 20px auto;
+            border: 3px solid #ddd;
+        }
+
         .profile-row {
             margin-bottom: 12px;
         }
@@ -114,6 +124,10 @@
     <div class="header">Your Profile</div>
 
     <div class="card">
+
+        <!-- PROFILE PHOTO -->
+        <img id="profilePhoto" class="profile-photo" src="default-avatar.png">
+
         <div class="profile-row"><strong>Email:</strong> <span id="email"></span></div>
         <div class="profile-row"><strong>Name:</strong> <span id="name"></span></div>
         <div class="profile-row"><strong>Team Name:</strong> <span id="teamName"></span></div>
@@ -142,6 +156,14 @@ auth.onAuthStateChanged(async user => {
 
     const doc = await db.collection("users").doc(user.uid).get();
     const data = doc.data();
+
+    // Load photo or fallback
+    const photo = document.getElementById("profilePhoto");
+    if (data.photoURL) {
+        photo.src = data.photoURL;
+    } else {
+        photo.src = "default-avatar.png"; // You can replace this with your own default
+    }
 
     document.getElementById("email").textContent = user.email;
     document.getElementById("phone").textContent = data.phone || "Not set";
