@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calendar – Admin – Need A Witness UK</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<!-- FullCalendar CSS -->
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<script src="../hub/firebase.js"></script>
+
+<!-- FullCalendar JS -->
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+
+<style>
+    body {
+        margin: 0;
+        font-family: Inter, sans-serif;
+        background: #fafafa;
+        color: #222;
+    }
+
+    .layout {
+        display: flex;
+        min-height: 100vh;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+        width: 260px;
+        background: white;
+        border-right: 1px solid #eee;
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        position: sticky;
+        top: 0;
+        height: 100vh;
+    }
+
+    .logo {
+        font-family: "Playfair Display", serif;
+        font-size: 22px;
+        font-weight: 600;
+        color: #D4AF37;
+        margin-bottom: 30px;
+    }
+
+    .nav-title {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #999;
+        margin-bottom: 8px;
+    }
+
+    .nav-item {
+        padding: 10px 12px;
+        margin-bottom: 6px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 500;
+        font-size: 14px;
+        color: #333;
+    }
+
+    .nav-item:hover {
+        background: #f5f1e6;
+    }
+
+    .nav-item.active {
+        background: #D4AF37;
+        color: white;
+    }
+
+    .sidebar-footer {
+        margin-top: auto;
+        padding-top: 16px;
+        border-top: 1px solid #eee;
+        font-size: 12px;
+        color: #777;
+        line-height: 1.4;
+    }
+
+    .logout-btn {
+        margin-top: 16px;
+        padding: 10px;
+        background: #D4AF37;
+        color: white;
+        text-align: center;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+    /* MAIN */
+    .main {
+        flex: 1;
+        padding: 30px 40px;
+    }
+
+    .main-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .main-header h1 {
+        font-family: "Playfair Display", serif;
+        color: #D4AF37;
+        margin: 0;
+        font-size: 26px;
+    }
+
+    .main-subtitle {
+        color: #777;
+        font-size: 14px;
+        margin-top: 4px;
+    }
+
+    .card {
+        background: white;
+        padding: 16px 20px;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        margin-bottom: 24px;
+    }
+
+    #calendar {
+        max-width: 100%;
+        margin: 0 auto;
+    }
+
+    .fc-toolbar-title {
+        font-family: "Playfair Display", serif;
+        color: #D4AF37;
+        font-size: 20px !important;
+    }
+
+    .legend {
+        font-size: 12px;
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 8px;
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .legend-color {
+        width: 14px;
+        height: 14px;
+        border-radius: 4px;
+    }
+
+    .legend-paid { background:#4caf50; }
+    .legend-deposit { background:#D4AF37; }
+    .legend-unpaid { background:#e53935; }
+    .legend-cancelled { background:#9e9e9e; }
+
+    @media (max-width: 900px) {
+        .main {
+            padding: 20px;
+        }
+        .sidebar {
+            position: static;
+            height: auto;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="layout">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="logo">Need A Witness UK</div>
+
+        <div class="nav-title">Navigation</div>
+        <div class="nav-item" onclick="window.location.href='admin-dashboard.html'">Dashboard</div>
+        <div class="nav-item" onclick="window.location.href='admin-witnesses.html'">Witnesses</div>
+        <div class="nav-item" onclick="window.location.href='admin-create-job.html'">Create Job</div>
+        <div class="nav-item" onclick="window.location.href='admin-payments.html'">Payments</div>
+        <div class="nav-item active">Calendar</div>
+
+        <div class="sidebar-footer">
+            Admin Panel<br>
+            Witness Hub v1.0
+            <div class="logout-btn" onclick="adminLogout()">Logout</div>
+        </div>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main">
+        <div class="main-header">
+            <div>
+                <h1>Calendar</h1>
+                <div class="main-subtitle">
+                    All ceremonies, colour‑coded by payment status. Click an event to open the job.
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div id="calendar"></div>
+
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color legend-paid"></div> <span>Paid in full</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color legend-deposit"></div> <span>Deposit only</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color legend-unpaid"></div> <span>Unpaid</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color legend-cancelled"></div> <span>Cancelled / Late</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const db = firebase.firestore();
+let calendar = null;
+
+/* MAP PAYMENT STATUS TO COLOUR */
+function getEventColor(job) {
+    const ps = job.paymentStatus || "unpaid";
+    if (ps === "full") return "#4caf50";        // green
+    if (ps === "deposit") return "#D4AF37";     // gold
+    if (ps === "late-cancel") return "#9e9e9e"; // grey
+    return "#e53935";                           // red (unpaid)
+}
+
+/* BUILD EVENT TITLE */
+function getEventTitle(job) {
+    const name = job.coupleName || "Unnamed couple";
+    const time = job.time || "";
+    return time ? `${time} – ${name}` : name;
+}
+
+/* INIT CALENDAR */
+function initCalendar(events) {
+    const calendarEl = document.getElementById("calendar");
+
+    calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,timeGridDay'
+        },
+        height: 'auto',
+        events: events,
+        eventClick: function(info) {
+            const jobId = info.event.extendedProps.jobId;
+            if (jobId) {
+                window.location.href = `admin-job-detail.html?id=${jobId}`;
+            }
+        },
+        eventDidMount: function(info) {
+            const job = info.event.extendedProps.jobData || {};
+            const location = job.location || "";
+            const paymentStatus = job.paymentStatus || "unpaid";
+
+            const payLabel =
+                paymentStatus === "full" ? "Paid in full" :
+                paymentStatus === "deposit" ? "Deposit only" :
+                paymentStatus === "late-cancel" ? "Late / Cancelled" : "Unpaid";
+
+            const tooltip = `
+                ${info.event.title}
+                ${location ? "\nLocation: " + location : ""}
+                \nStatus: ${payLabel}
+            `;
+            info.el.title = tooltip;
+        }
+    });
+
+    calendar.render();
+}
+
+/* LOAD JOBS FROM FIRESTORE */
+function loadJobsForCalendar() {
+    db.collection("jobs").onSnapshot(snapshot => {
+        const events = [];
+
+        snapshot.forEach(doc => {
+            const job = doc.data();
+            if (!job.date) return;
+
+            // ceremony date/time
+            const dateStr = job.date;
+            const timeStr = job.time || "10:00";
+
+            // Build ISO datetime for start
+            const start = new Date(`${dateStr}T${timeStr}`);
+            // End = +1 hour (visual only; internal 3‑hour block is handled elsewhere)
+            const end = new Date(start.getTime() + 60 * 60 * 1000);
+
+            events.push({
+                title: getEventTitle(job),
+                start: start.toISOString(),
+                end: end.toISOString(),
+                backgroundColor: getEventColor(job),
+                borderColor: getEventColor(job),
+                jobId: doc.id,
+                jobData: job
+            });
+        });
+
+        if (!calendar) {
+            initCalendar(events);
+        } else {
+            calendar.removeAllEvents();
+            calendar.addEventSource(events);
+        }
+    });
+}
+
+/* LOGOUT */
+function adminLogout() {
+    firebase.auth().signOut().then(() => {
+        window.location.href = "admin-login.html";
+    });
+}
+
+/* INIT */
+loadJobsForCalendar();
+</script>
+
+</body>
+</html>
