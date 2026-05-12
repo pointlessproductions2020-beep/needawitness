@@ -1,138 +1,166 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Profile – Witness Hub</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Edit Profile – Witness Hub</title>
 
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f5f5f5;
-            display: flex;
-            height: 100vh;
-        }
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-        /* Sidebar */
-        .sidebar {
-            width: 240px;
-            background: #000;
-            color: white;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-        }
+<style>
+    body {
+        margin: 0;
+        font-family: Inter, sans-serif;
+        background: #f7f7f7;
+        display: flex;
+        min-height: 100vh;
+    }
 
-        .sidebar h2 {
-            margin-top: 0;
-            margin-bottom: 30px;
-            font-size: 22px;
-        }
+    /* SIDEBAR */
+    .sidebar {
+        width: 240px;
+        background: white;
+        border-right: 1px solid #eee;
+        padding: 25px;
+        display: flex;
+        flex-direction: column;
+    }
 
-        .sidebar a {
-            color: white;
-            text-decoration: none;
-            padding: 12px 0;
-            display: block;
-            font-size: 16px;
-        }
+    .sidebar h2 {
+        font-family: "Playfair Display", serif;
+        color: #D4AF37;
+        margin-top: 0;
+        margin-bottom: 30px;
+        font-size: 24px;
+    }
 
-        .sidebar a:hover {
-            opacity: 0.7;
-        }
+    .sidebar a {
+        color: #333;
+        text-decoration: none;
+        padding: 12px 0;
+        display: block;
+        font-size: 16px;
+        font-weight: 500;
+    }
 
-        .logout-btn {
-            margin-top: auto;
-            padding: 12px;
-            background: #333;
-            text-align: center;
-            border-radius: 6px;
-            cursor: pointer;
-        }
+    .sidebar a:hover {
+        color: #D4AF37;
+    }
 
-        /* Main content */
-        .main {
-            flex: 1;
-            padding: 30px;
-            overflow-y: auto;
-        }
+    .logout-btn {
+        margin-top: auto;
+        padding: 12px;
+        background: #D4AF37;
+        color: white;
+        text-align: center;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+    }
 
-        .header {
-            font-size: 26px;
-            margin-bottom: 20px;
-        }
+    .sidebar-footer {
+        margin-top: 20px;
+        padding-top: 15px;
+        border-top: 1px solid #eee;
+        font-size: 12px;
+        color: #777;
+        line-height: 1.4;
+    }
 
-        .card {
-            background: white;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            max-width: 600px;
-        }
+    /* MAIN CONTENT */
+    .main {
+        flex: 1;
+        padding: 40px;
+        overflow-y: auto;
+    }
 
-        label {
-            font-weight: bold;
-            display: block;
-            margin-top: 15px;
-        }
+    .header {
+        font-size: 28px;
+        font-family: "Playfair Display", serif;
+        color: #D4AF37;
+        margin-bottom: 25px;
+    }
 
-        input, textarea {
-            width: 100%;
-            padding: 12px;
-            margin-top: 6px;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-            font-size: 16px;
-        }
+    .card {
+        background: white;
+        padding: 30px;
+        border-radius: 14px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        max-width: 650px;
+    }
 
-        textarea {
-            height: 100px;
-            resize: none;
-        }
+    label {
+        font-weight: 600;
+        display: block;
+        margin-top: 18px;
+        font-size: 15px;
+    }
 
-        button {
-            width: 100%;
-            padding: 14px;
-            background: #000;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 16px;
-            cursor: pointer;
-            margin-top: 20px;
-        }
+    input, textarea {
+        width: 100%;
+        padding: 12px;
+        margin-top: 6px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 15px;
+        background: #fafafa;
+    }
 
-        button:hover {
-            background: #333;
-        }
+    textarea {
+        height: 110px;
+        resize: none;
+    }
 
-        /* Photo preview */
-        #photoPreview {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            margin-top: 10px;
-            display: none;
-            object-fit: cover;
-        }
-    </style>
+    button {
+        width: 100%;
+        padding: 14px;
+        background: #D4AF37;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 17px;
+        cursor: pointer;
+        font-weight: 600;
+        margin-top: 25px;
+    }
+
+    button:hover {
+        opacity: 0.9;
+    }
+
+    /* PHOTO PREVIEW */
+    #photoPreview {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        margin-top: 12px;
+        display: none;
+        object-fit: cover;
+        border: 2px solid #D4AF37;
+    }
+</style>
 </head>
+
 <body>
 
-<!-- Sidebar -->
+<!-- SIDEBAR -->
 <div class="sidebar">
     <h2>Witness Hub</h2>
     <a href="dashboard.html">Dashboard</a>
-    <a href="jobs.html">My Jobs</a>
+    <a href="myjobs.html">My Jobs</a>
     <a href="availability.html">Availability</a>
     <a href="profile.html">Profile</a>
-    <a href="profile-edit.html">Edit Profile</a>
+    <a href="profile-edit.html" style="color:#D4AF37;font-weight:600;">Edit Profile</a>
 
     <div class="logout-btn" onclick="logout()">Logout</div>
+
+    <div class="sidebar-footer">
+        © Need A Witness UK<br>
+        Witness Hub v1.0
+    </div>
 </div>
 
-<!-- Main content -->
+<!-- MAIN CONTENT -->
 <div class="main">
     <div class="header">Edit Your Profile</div>
 
@@ -175,12 +203,10 @@
     </div>
 </div>
 
-<!-- Firebase SDKs -->
+<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-
-<!-- Firebase config -->
 <script src="firebase.js"></script>
 
 <script>
@@ -244,23 +270,23 @@ auth.onAuthStateChanged(async (user) => {
 
     // Show correct fields
     if (data.type === "couple") {
-        document.getElementById("singleFields").style.display = "none";
-        document.getElementById("coupleFields").style.display = "block";
+        singleFields.style.display = "none";
+        coupleFields.style.display = "block";
 
-        document.getElementById("teamName").value = data.teamName || "";
-        document.getElementById("partner1").value = data.partner1Name || "";
-        document.getElementById("partner2").value = data.partner2Name || "";
+        teamName.value = data.teamName || "";
+        partner1.value = data.partner1Name || "";
+        partner2.value = data.partner2Name || "";
 
     } else {
-        document.getElementById("singleFields").style.display = "block";
-        document.getElementById("coupleFields").style.display = "none";
+        singleFields.style.display = "block";
+        coupleFields.style.display = "none";
 
-        document.getElementById("name").value = data.name || "";
+        name.value = data.name || "";
     }
 
-    document.getElementById("phone").value = data.phone || "";
-    document.getElementById("location").value = data.location || "";
-    document.getElementById("bio").value = data.bio || "";
+    phone.value = data.phone || "";
+    location.value = data.location || "";
+    bio.value = data.bio || "";
 });
 
 /* Save profile */
@@ -272,9 +298,9 @@ async function saveProfile() {
     const data = doc.data();
 
     let updatedData = {
-        phone: document.getElementById("phone").value.trim(),
-        location: document.getElementById("location").value.trim(),
-        bio: document.getElementById("bio").value.trim(),
+        phone: phone.value.trim(),
+        location: location.value.trim(),
+        bio: bio.value.trim(),
     };
 
     // Upload photo if selected
@@ -282,11 +308,11 @@ async function saveProfile() {
     if (photoURL) updatedData.photoURL = photoURL;
 
     if (data.type === "couple") {
-        updatedData.teamName = document.getElementById("teamName").value.trim().toLowerCase();
-        updatedData.partner1Name = document.getElementById("partner1").value.trim();
-        updatedData.partner2Name = document.getElementById("partner2").value.trim();
+        updatedData.teamName = teamName.value.trim();
+        updatedData.partner1Name = partner1.value.trim();
+        updatedData.partner2Name = partner2.value.trim();
     } else {
-        updatedData.name = document.getElementById("name").value.trim();
+        updatedData.name = name.value.trim();
     }
 
     await db.collection("users").doc(user.uid).update(updatedData);
