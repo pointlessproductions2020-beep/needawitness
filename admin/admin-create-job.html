@@ -219,11 +219,6 @@
         color: white;
     }
 
-    .btn-grey {
-        background: #999;
-        color: white;
-    }
-
     .btn-outline {
         background: white;
         color: #555;
@@ -247,22 +242,6 @@
 
     .witness-item:last-child {
         border-bottom: none;
-    }
-
-    .witness-item label {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        cursor: pointer;
-    }
-
-    .witness-name {
-        font-weight: 500;
-    }
-
-    .witness-meta {
-        font-size: 12px;
-        color: #777;
     }
 
     .summary-row {
@@ -298,6 +277,7 @@
 
     <!-- MAIN -->
     <div class="main">
+
         <div class="main-header">
             <div>
                 <h1>Create Job</h1>
@@ -306,6 +286,7 @@
         </div>
 
         <div class="wizard">
+
             <!-- STEPS -->
             <div class="steps">
                 <div class="step" id="stepIndicator1">
@@ -329,7 +310,7 @@
                 </div>
             </div>
 
-            <!-- STEP 1: COUPLE -->
+            <!-- STEP 1 -->
             <div class="card" id="step1">
                 <h2 style="font-family:'Playfair Display',serif;color:#D4AF37;margin-top:0;">Couple Details</h2>
 
@@ -351,7 +332,7 @@
                 </div>
             </div>
 
-            <!-- STEP 2: CEREMONY -->
+            <!-- STEP 2 -->
             <div class="card" id="step2" style="display:none;">
                 <h2 style="font-family:'Playfair Display',serif;color:#D4AF37;margin-top:0;">Ceremony Details</h2>
 
@@ -381,7 +362,7 @@
                 </div>
             </div>
 
-            <!-- STEP 3: WITNESSES -->
+            <!-- STEP 3 -->
             <div class="card" id="step3" style="display:none;">
                 <h2 style="font-family:'Playfair Display',serif;color:#D4AF37;margin-top:0;">Witness Requirements</h2>
 
@@ -393,9 +374,7 @@
                 </select>
 
                 <label>Preferred Witnesses (optional)</label>
-                <div class="witness-list" id="witnessList">
-                    <!-- Filled by JS -->
-                </div>
+                <div class="witness-list" id="witnessList"></div>
 
                 <small style="display:block;margin-top:6px;color:#777;">
                     You can select one or more witnesses to pre‑assign. Leave empty to assign later.
@@ -407,7 +386,7 @@
                 </div>
             </div>
 
-            <!-- STEP 4: REVIEW -->
+            <!-- STEP 4 -->
             <div class="card" id="step4" style="display:none;">
                 <h2 style="font-family:'Playfair Display',serif;color:#D4AF37;margin-top:0;">Review & Create Job</h2>
 
@@ -418,15 +397,17 @@
                     <button class="btn btn-gold" onclick="createJob()">Create Job</button>
                 </div>
             </div>
+
         </div>
     </div>
 </div>
 
 <script>
+/* FIRESTORE */
 const db = firebase.firestore();
 let allWitnesses = [];
 
-/* STEP HANDLING */
+/* STEP INDICATOR */
 function setStepIndicator(step) {
     for (let i = 1; i <= 4; i++) {
         const el = document.getElementById("stepIndicator" + i);
@@ -436,20 +417,20 @@ function setStepIndicator(step) {
     }
 }
 
+/* STEP NAVIGATION */
 function goToStep(step) {
-    // basic validation between steps
-    if (step === 2) {
-        if (!coupleName.value.trim()) {
-            alert("Please enter the couple name.");
-            return;
-        }
+    if (step === 2 && !coupleName.value.trim()) {
+        alert("Please enter the couple name.");
+        return;
     }
+
     if (step === 3) {
         if (!jobDate.value || !jobTime.value || !jobLocation.value.trim()) {
             alert("Please enter date, time, and location.");
             return;
         }
     }
+
     if (step === 4) {
         buildReview();
     }
@@ -457,10 +438,11 @@ function goToStep(step) {
     for (let i = 1; i <= 4; i++) {
         document.getElementById("step" + i).style.display = (i === step) ? "block" : "none";
     }
+
     setStepIndicator(step);
 }
 
-/* LOAD WITNESSES FOR STEP 3 */
+/* LOAD WITNESSES */
 function loadWitnesses() {
     db.collection("users").onSnapshot(snapshot => {
         allWitnesses = [];
@@ -508,7 +490,7 @@ function renderWitnessList() {
     });
 }
 
-/* BUILD REVIEW CONTENT */
+/* REVIEW PAGE */
 function buildReview() {
     const review = document.getElementById("reviewContent");
     const selectedWitnessIds = getSelectedWitnessIds();
@@ -517,11 +499,9 @@ function buildReview() {
     let witnessSummary = "None selected (you can assign later)";
     if (selectedWitnesses.length) {
         witnessSummary = selectedWitnesses.map(w => {
-            const name =
-                w.type === "couple"
-                    ? (w.teamName || `${w.partner1Name || ""} & ${w.partner2Name || ""}`)
-                    : (w.name || w.fullName || "Unnamed");
-            return name;
+            return w.type === "couple"
+                ? (w.teamName || `${w.partner1Name || ""} & ${w.partner2Name || ""}`)
+                : (w.name || w.fullName || "Unnamed");
         }).join(", ");
     }
 
@@ -555,7 +535,7 @@ function buildReview() {
         <div class="summary-row">
             <span class="summary-label">Witness Type Needed:</span>
             ${witnessType.options[witnessType.selectedIndex].text}
-        </div>
+        </div>       
         <div class="summary-row">
             <span class="summary-label">Pre‑assigned Witnesses:</span>
             ${witnessSummary}
