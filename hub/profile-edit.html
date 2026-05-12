@@ -212,43 +212,45 @@
 <script>
 const WORKER_URL = "https://shrill-math-1bfc.pointlessproductions2020.workers.dev/";
 
-/* Convert file → base64 */
-function toBase64(file) {
-    return new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
-        reader.readAsDataURL(file);
-    });
-}
+/* Preview photo when selected */
+document.getElementById("photoInput").addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
 
-/* Upload photo to Cloudflare Worker → GitHub */
+    const reader = new FileReader();
+    reader.onload = () => {
+        const preview = document.getElementById("photoPreview");
+        preview.src = reader.result;
+        preview.style.display = "block";
+    };
+    reader.readAsDataURL(file);
+});
+
+/* Upload photo to Cloudflare Worker → GitHub (FormData) */
 async function uploadPhoto(uid) {
     const fileInput = document.getElementById("photoInput");
     if (!fileInput.files.length) return null;
 
     const file = fileInput.files[0];
-    const base64 = await toBase64(file);
 
-    // Show preview
-    const preview = document.getElementById("photoPreview");
-    preview.src = base64;
-    preview.style.display = "block";
+    const formData = new FormData();
+    formData.append("file", file);               // must match Worker
+    formData.append("filename", `${uid}.jpg`);   // must match Worker
 
     try {
         const res = await fetch(WORKER_URL, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                file: base64,
-                filename: `${uid}.jpg`
-            })
+            body: formData
         });
 
-        if (!res.ok) return null;
+        if (!res.ok) {
+            const text = await res.text();
+            console.error("Upload failed:", text);
+            return null;
+        }
 
         const json = await res.json();
         return json.url || null;
-
     } catch (err) {
         console.error("Upload failed:", err);
         return null;
@@ -282,7 +284,6 @@ auth.onAuthStateChanged(async (user) => {
         teamName.value = data.teamName || "";
         partner1.value = data.partner1Name || "";
         partner2.value = data.partner2Name || "";
-
     } else {
         singleFields.style.display = "block";
         coupleFields.style.display = "none";
@@ -301,7 +302,7 @@ async function saveProfile() {
     if (!user) return;
 
     const doc = await db.collection("users").doc(user.uid).get();
-    const data = doc.data();
+    const data = doc.data() || {};
 
     let updatedData = {
         phone: phone.value.trim(),
