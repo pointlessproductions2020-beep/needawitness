@@ -12,25 +12,33 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<script src="../hub/firebase.js"></script>
 
 <style>
     body {
         margin: 0;
         font-family: Inter, sans-serif;
-        background: #fafafa;
+        background: #f4f4f6;
         color: #222;
+    }
+
+    /* LAYOUT */
+    .layout {
+        display: flex;
+        min-height: 100vh;
     }
 
     /* SIDEBAR */
     .sidebar {
-        width: 240px;
-        height: 100vh;
-        background: white;
+        width: 260px;
+        background: #ffffff;
         border-right: 1px solid #eee;
-        position: fixed;
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        position: sticky;
         top: 0;
-        left: 0;
-        padding: 20px;
+        height: 100vh;
     }
 
     .logo {
@@ -41,12 +49,26 @@
         margin-bottom: 30px;
     }
 
-    .nav-item {
-        padding: 12px 10px;
+    .nav-title {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #999;
         margin-bottom: 8px;
-        border-radius: 6px;
+    }
+
+    .nav-item {
+        padding: 10px 12px;
+        margin-bottom: 6px;
+        border-radius: 8px;
         cursor: pointer;
         font-weight: 500;
+        font-size: 14px;
+        color: #333;
+    }
+
+    .nav-item:hover {
+        background: #f5f1e6;
     }
 
     .nav-item.active {
@@ -54,24 +76,99 @@
         color: white;
     }
 
-    /* MAIN CONTENT */
-    .main {
-        margin-left: 260px;
-        padding: 30px;
+    .sidebar-footer {
+        margin-top: auto;
+        padding-top: 16px;
+        border-top: 1px solid #eee;
+        font-size: 12px;
+        color: #777;
+        line-height: 1.4;
     }
 
-    h2 {
+    .logout-btn {
+        margin-top: 16px;
+        padding: 10px;
+        background: #D4AF37;
+        color: white;
+        text-align: center;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+    /* MAIN */
+    .main {
+        flex: 1;
+        padding: 30px 40px;
+    }
+
+    .main-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+    }
+
+    .main-header h1 {
         font-family: "Playfair Display", serif;
         color: #D4AF37;
-        margin-top: 0;
+        margin: 0;
+        font-size: 28px;
     }
 
+    .main-subtitle {
+        color: #777;
+        font-size: 14px;
+        margin-top: 4px;
+    }
+
+    /* STATS CARDS */
+    .stats-row {
+        display: flex;
+        gap: 18px;
+        margin-bottom: 25px;
+        flex-wrap: wrap;
+    }
+
+    .stat-card {
+        background: white;
+        padding: 18px 20px;
+        border-radius: 12px;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        flex: 1;
+        min-width: 180px;
+        border-top: 3px solid #D4AF37;
+    }
+
+    .stat-label {
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #999;
+    }
+
+    .stat-value {
+        font-size: 24px;
+        font-weight: 600;
+        margin-top: 6px;
+    }
+
+    /* CARDS */
     .card {
         background: white;
         padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-        margin-bottom: 30px;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        margin-bottom: 25px;
+    }
+
+    .card h2 {
+        font-family: "Playfair Display", serif;
+        color: #D4AF37;
+        margin-top: 0;
+        margin-bottom: 15px;
+        font-size: 22px;
     }
 
     input, select, textarea {
@@ -82,17 +179,23 @@
         border: 1px solid #ddd;
         border-radius: 6px;
         font-size: 15px;
+        background: #fafafa;
+    }
+
+    textarea {
+        resize: vertical;
+        min-height: 80px;
     }
 
     button {
         background: #D4AF37;
         color: white;
         border: none;
-        padding: 12px 18px;
+        padding: 11px 18px;
         border-radius: 6px;
         cursor: pointer;
         font-weight: 600;
-        font-size: 15px;
+        font-size: 14px;
     }
 
     button:hover {
@@ -101,26 +204,33 @@
 
     /* JOB LIST */
     .job-card {
-        background: white;
-        padding: 18px;
+        background: #fff;
+        padding: 16px;
         border-radius: 10px;
-        border-left: 5px solid #D4AF37;
-        margin-bottom: 15px;
+        border-left: 4px solid #D4AF37;
+        margin-bottom: 12px;
     }
 
     .job-header {
         font-weight: 600;
-        font-size: 17px;
+        font-size: 16px;
+        margin-bottom: 4px;
+    }
+
+    .job-meta {
+        font-size: 14px;
+        color: #555;
         margin-bottom: 6px;
     }
 
     .status-badge {
         display: inline-block;
-        padding: 4px 10px;
-        border-radius: 6px;
-        font-size: 12px;
+        padding: 3px 9px;
+        border-radius: 999px;
+        font-size: 11px;
         font-weight: 600;
-        margin-left: 10px;
+        margin-left: 8px;
+        text-transform: capitalize;
     }
 
     .pending { background: #fff4d6; color: #8a6d00; }
@@ -137,72 +247,139 @@
         display: none;
         justify-content: center;
         align-items: center;
+        z-index: 50;
     }
 
     .modal {
         background: white;
-        width: 500px;
-        padding: 25px;
-        border-radius: 10px;
+        width: 520px;
+        max-width: 90%;
+        padding: 24px;
+        border-radius: 12px;
+        box-shadow: 0 4px 18px rgba(0,0,0,0.2);
+    }
+
+    .modal h3 {
+        margin-top: 0;
+        font-family: "Playfair Display", serif;
+        color: #D4AF37;
     }
 
     .witness-item {
-        padding: 10px;
+        padding: 8px 0;
         border-bottom: 1px solid #eee;
+        font-size: 14px;
+    }
+
+    .witness-item:last-child {
+        border-bottom: none;
     }
 
     .witness-item label {
         cursor: pointer;
         display: flex;
         justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .witness-name {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .witness-type {
+        font-size: 12px;
+        color: #777;
+    }
+
+    .witness-avail {
+        font-size: 12px;
+        color: #555;
     }
 </style>
 </head>
 
 <body>
 
-<!-- SIDEBAR -->
-<div class="sidebar">
-    <div class="logo">Need A Witness UK</div>
-    <div class="nav-item active">Admin Dashboard</div>
-</div>
+<div class="layout">
 
-<!-- MAIN CONTENT -->
-<div class="main">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="logo">Need A Witness UK</div>
 
-    <!-- CREATE JOB -->
-    <div class="card">
-        <h2>Create New Job</h2>
+        <div class="nav-title">Navigation</div>
+        <div class="nav-item active">Dashboard</div>
+        <div class="nav-item" onclick="window.location.href='admin-witnesses.html'">Witnesses</div>
 
-        <input id="coupleName" placeholder="Couple Name">
-        <input id="coupleEmail" placeholder="Couple Email">
-        <input id="jobDate" type="date">
-        <input id="jobTime" type="time">
-        <input id="jobLocation" placeholder="Location">
-        <textarea id="jobNotes" placeholder="Notes"></textarea>
-
-        <label>Witness Type Needed</label>
-        <select id="witnessType">
-            <option value="single">Single Witness</option>
-            <option value="couple">Couple Team</option>
-            <option value="either">Either</option>
-        </select>
-
-        <button onclick="createJob()">Create Job</button>
+        <div class="sidebar-footer">
+            Admin Panel<br>
+            Witness Hub v1.0
+            <div class="logout-btn" onclick="adminLogout()">Logout</div>
+        </div>
     </div>
 
-    <!-- PENDING REQUESTS -->
-    <div class="card">
-        <h2>Pending Requests</h2>
-        <div id="pendingRequests"></div>
-    </div>
+    <!-- MAIN CONTENT -->
+    <div class="main">
 
-    <!-- ALL JOBS -->
-    <div class="card">
-        <h2>All Jobs</h2>
-        <div id="allJobs"></div>
-    </div>
+        <div class="main-header">
+            <div>
+                <h1>Admin Dashboard</h1>
+                <div class="main-subtitle">Overview of jobs, requests, and assignments.</div>
+            </div>
+        </div>
 
+        <!-- STATS -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-label">Total Jobs</div>
+                <div class="stat-value" id="statTotalJobs">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Pending Requests</div>
+                <div class="stat-value" id="statPendingRequests">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Assigned Jobs</div>
+                <div class="stat-value" id="statAssignedJobs">0</div>
+            </div>
+        </div>
+
+        <!-- CREATE JOB -->
+        <div class="card">
+            <h2>Create New Job</h2>
+
+            <input id="coupleName" placeholder="Couple Name">
+            <input id="coupleEmail" placeholder="Couple Email">
+            <input id="jobDate" type="date">
+            <input id="jobTime" type="time">
+            <input id="jobLocation" placeholder="Location">
+            <textarea id="jobNotes" placeholder="Notes"></textarea>
+
+            <label>Witness Type Needed</label>
+            <select id="witnessType">
+                <option value="single">Single Witness</option>
+                <option value="couple">Couple Team</option>
+                <option value="either">Either</option>
+            </select>
+
+            <button onclick="createJob()">Create Job</button>
+        </div>
+
+        <!-- PENDING REQUESTS -->
+        <div class="card">
+            <h2>Pending Requests</h2>
+            <div id="pendingRequests"></div>
+        </div>
+
+        <!-- ALL JOBS -->
+        <div class="card">
+            <h2>All Jobs</h2>
+            <div id="allJobs"></div>
+        </div>
+
+    </div>
 </div>
 
 <!-- ASSIGN WITNESS MODAL -->
@@ -210,34 +387,26 @@
     <div class="modal">
         <h3>Assign Witnesses</h3>
         <div id="witnessList"></div>
-        <button onclick="confirmAssignment()">Assign Selected</button>
-        <button style="background:#999;margin-left:10px" onclick="closeModal()">Cancel</button>
+        <div style="margin-top:16px;">
+            <button onclick="confirmAssignment()">Assign Selected</button>
+            <button style="background:#999;margin-left:10px" onclick="closeModal()">Cancel</button>
+        </div>
     </div>
 </div>
 
 <script>
-// FIREBASE CONFIG
-firebase.initializeApp({
-    apiKey: "YOUR_KEY",
-    authDomain: "YOUR_DOMAIN",
-    projectId: "YOUR_PROJECT_ID"
-});
-
 const db = firebase.firestore();
-
 let selectedJobId = null;
 
-/* -------------------------
-   CREATE JOB
--------------------------- */
+/* CREATE JOB */
 function createJob() {
     const job = {
-        coupleName: coupleName.value,
-        coupleEmail: coupleEmail.value,
+        coupleName: coupleName.value.trim(),
+        coupleEmail: coupleEmail.value.trim(),
         date: jobDate.value,
         time: jobTime.value,
-        location: jobLocation.value,
-        notes: jobNotes.value,
+        location: jobLocation.value.trim(),
+        notes: jobNotes.value.trim(),
         witnessType: witnessType.value,
         assignedWitnesses: [],
         requestBy: "",
@@ -247,65 +416,87 @@ function createJob() {
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
     };
 
+    if (!job.coupleName || !job.date || !job.time || !job.location) {
+        alert("Please fill in couple name, date, time, and location.");
+        return;
+    }
+
     db.collection("jobs").add(job).then(() => {
         alert("Job created!");
+        coupleName.value = "";
+        coupleEmail.value = "";
+        jobDate.value = "";
+        jobTime.value = "";
+        jobLocation.value = "";
+        jobNotes.value = "";
+        witnessType.value = "single";
     });
 }
 
-/* -------------------------
-   LOAD PENDING REQUESTS
--------------------------- */
+/* LOAD PENDING REQUESTS */
 function loadPendingRequests() {
     db.collection("jobs")
       .where("requestStatus", "==", "pending")
       .onSnapshot(snapshot => {
+        let count = 0;
         pendingRequests.innerHTML = "";
         snapshot.forEach(doc => {
             const j = doc.data();
+            count++;
+
             pendingRequests.innerHTML += `
                 <div class="job-card">
                     <div class="job-header">${j.coupleName}</div>
-                    <div>Requested by: <b>${j.requestTeamName}</b></div>
+                    <div class="job-meta">
+                        Requested by: <b>${j.requestTeamName || "Unknown"}</b>
+                    </div>
                     <button onclick="openAssignModal('${doc.id}')">Assign</button>
                     <button style="background:#999;margin-left:10px" onclick="rejectRequest('${doc.id}')">Reject</button>
                 </div>
             `;
         });
+        statPendingRequests.innerText = count;
     });
 }
 
-/* -------------------------
-   LOAD ALL JOBS
--------------------------- */
+/* LOAD ALL JOBS + STATS */
 function loadAllJobs() {
     db.collection("jobs")
       .orderBy("createdAt", "desc")
       .onSnapshot(snapshot => {
         allJobs.innerHTML = "";
+        let total = 0;
+        let assignedCount = 0;
+
         snapshot.forEach(doc => {
             const j = doc.data();
-            const badge = j.status === "pending" ? "pending" :
-                          j.status === "assigned" ? "assigned" :
-                          j.status === "completed" ? "completed" : "cancelled";
+            total++;
+
+            if (j.status === "assigned") assignedCount++;
+
+            const badgeClass =
+                j.status === "pending" ? "pending" :
+                j.status === "assigned" ? "assigned" :
+                j.status === "completed" ? "completed" : "cancelled";
 
             allJobs.innerHTML += `
                 <div class="job-card">
                     <div class="job-header">
                         ${j.coupleName}
-                        <span class="status-badge ${badge}">${j.status}</span>
+                        <span class="status-badge ${badgeClass}">${j.status}</span>
                     </div>
-                    <div>${j.date} at ${j.time}</div>
-                    <div>${j.location}</div>
+                    <div class="job-meta">${j.date} at ${j.time} — ${j.location}</div>
                     <button onclick="openAssignModal('${doc.id}')">Assign / Edit</button>
                 </div>
             `;
         });
+
+        statTotalJobs.innerText = total;
+        statAssignedJobs.innerText = assignedCount;
     });
 }
 
-/* -------------------------
-   OPEN ASSIGN MODAL
--------------------------- */
+/* OPEN ASSIGN MODAL */
 function openAssignModal(jobId) {
     selectedJobId = jobId;
     assignModal.style.display = "flex";
@@ -315,17 +506,23 @@ function openAssignModal(jobId) {
         snapshot.forEach(doc => {
             const u = doc.data();
 
-            const type = u.type === "couple" ? "Couple Team" : "Single";
-            const avail = u.availability ? "Available" : "No availability set";
+            const displayName =
+                u.type === "couple"
+                    ? (u.teamName || `${u.partner1Name || ""} & ${u.partner2Name || ""}`)
+                    : (u.name || u.fullName || "Unnamed");
+
+            const typeLabel = u.type === "couple" ? "Couple Team" : "Single";
+            const avail = u.availability ? "Availability set" : "No availability";
 
             witnessList.innerHTML += `
                 <div class="witness-item">
                     <label>
-                        <span>
+                        <span class="witness-name">
                             <input type="checkbox" value="${doc.id}">
-                            ${u.fullName || u.teamName} — ${type}
+                            ${displayName}
+                            <span class="witness-type">(${typeLabel})</span>
                         </span>
-                        <span>${avail}</span>
+                        <span class="witness-avail">${avail}</span>
                     </label>
                 </div>
             `;
@@ -337,10 +534,10 @@ function closeModal() {
     assignModal.style.display = "none";
 }
 
-/* -------------------------
-   CONFIRM ASSIGNMENT
--------------------------- */
+/* CONFIRM ASSIGNMENT */
 function confirmAssignment() {
+    if (!selectedJobId) return;
+
     const checkboxes = document.querySelectorAll("#witnessList input[type='checkbox']");
     const selected = [];
 
@@ -350,19 +547,24 @@ function confirmAssignment() {
 
     db.collection("jobs").doc(selectedJobId).update({
         assignedWitnesses: selected,
-        status: "assigned",
+        status: selected.length ? "assigned" : "pending",
         requestStatus: null
     });
 
     closeModal();
 }
 
-/* -------------------------
-   REJECT REQUEST
--------------------------- */
+/* REJECT REQUEST */
 function rejectRequest(jobId) {
     db.collection("jobs").doc(jobId).update({
         requestStatus: "rejected"
+    });
+}
+
+/* ADMIN LOGOUT */
+function adminLogout() {
+    firebase.auth().signOut().then(() => {
+        window.location.href = "admin-login.html";
     });
 }
 
