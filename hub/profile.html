@@ -1,125 +1,153 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Profile – Witness Hub</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Profile – Witness Hub</title>
 
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f5f5f5;
-            display: flex;
-            height: 100vh;
-        }
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-        /* Sidebar */
-        .sidebar {
-            width: 240px;
-            background: #000;
-            color: white;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-        }
+<style>
+    body {
+        margin: 0;
+        font-family: Inter, sans-serif;
+        background: #f7f7f7;
+        display: flex;
+        min-height: 100vh;
+    }
 
-        .sidebar h2 {
-            margin-top: 0;
-            margin-bottom: 30px;
-            font-size: 22px;
-        }
+    /* SIDEBAR */
+    .sidebar {
+        width: 240px;
+        background: white;
+        border-right: 1px solid #eee;
+        padding: 25px;
+        display: flex;
+        flex-direction: column;
+    }
 
-        .sidebar a {
-            color: white;
-            text-decoration: none;
-            padding: 12px 0;
-            display: block;
-            font-size: 16px;
-        }
+    .sidebar h2 {
+        font-family: "Playfair Display", serif;
+        color: #D4AF37;
+        margin-top: 0;
+        margin-bottom: 30px;
+        font-size: 24px;
+    }
 
-        .sidebar a:hover {
-            opacity: 0.7;
-        }
+    .sidebar a {
+        color: #333;
+        text-decoration: none;
+        padding: 12px 0;
+        display: block;
+        font-size: 16px;
+        font-weight: 500;
+    }
 
-        .logout-btn {
-            margin-top: auto;
-            padding: 12px;
-            background: #333;
-            text-align: center;
-            border-radius: 6px;
-            cursor: pointer;
-        }
+    .sidebar a:hover {
+        color: #D4AF37;
+    }
 
-        /* Main content */
-        .main {
-            flex: 1;
-            padding: 30px;
-            overflow-y: auto;
-        }
+    .logout-btn {
+        margin-top: auto;
+        padding: 12px;
+        background: #D4AF37;
+        color: white;
+        text-align: center;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+    }
 
-        .header {
-            font-size: 26px;
-            margin-bottom: 20px;
-        }
+    .sidebar-footer {
+        margin-top: 20px;
+        padding-top: 15px;
+        border-top: 1px solid #eee;
+        font-size: 12px;
+        color: #777;
+        line-height: 1.4;
+    }
 
-        .card {
-            background: white;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            max-width: 600px;
-        }
+    /* MAIN CONTENT */
+    .main {
+        flex: 1;
+        padding: 40px;
+        overflow-y: auto;
+    }
 
-        .profile-photo {
-            width: 140px;
-            height: 140px;
-            border-radius: 50%;
-            object-fit: cover;
-            display: block;
-            margin: 0 auto 20px auto;
-            border: 3px solid #ddd;
-        }
+    .header {
+        font-size: 28px;
+        font-family: "Playfair Display", serif;
+        color: #D4AF37;
+        margin-bottom: 25px;
+    }
 
-        .profile-row {
-            margin-bottom: 12px;
-        }
+    .card {
+        background: white;
+        padding: 30px;
+        border-radius: 14px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        max-width: 650px;
+    }
 
-        .profile-row strong {
-            display: inline-block;
-            width: 120px;
-        }
+    .profile-photo {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+        display: block;
+        margin: 0 auto 25px auto;
+        border: 3px solid #D4AF37;
+    }
 
-        .edit-btn {
-            margin-top: 20px;
-            display: inline-block;
-            padding: 10px 16px;
-            background: #000;
-            color: white;
-            border-radius: 6px;
-            text-decoration: none;
-        }
+    .profile-row {
+        margin-bottom: 14px;
+        font-size: 16px;
+    }
 
-        .edit-btn:hover {
-            background: #333;
-        }
-    </style>
+    .profile-row strong {
+        display: inline-block;
+        width: 140px;
+        color: #444;
+    }
+
+    .edit-btn {
+        margin-top: 25px;
+        display: inline-block;
+        padding: 12px 18px;
+        background: #D4AF37;
+        color: white;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 16px;
+    }
+
+    .edit-btn:hover {
+        opacity: 0.9;
+    }
+</style>
 </head>
+
 <body>
 
-<!-- Sidebar -->
+<!-- SIDEBAR -->
 <div class="sidebar">
     <h2>Witness Hub</h2>
     <a href="dashboard.html">Dashboard</a>
-    <a href="jobs.html">My Jobs</a>
+    <a href="myjobs.html">My Jobs</a>
     <a href="availability.html">Availability</a>
-    <a href="profile.html">Profile</a>
+    <a href="profile.html" style="color:#D4AF37;font-weight:600;">Profile</a>
     <a href="profile-edit.html">Edit Profile</a>
 
     <div class="logout-btn" onclick="logout()">Logout</div>
+
+    <div class="sidebar-footer">
+        © Need A Witness UK<br>
+        Witness Hub v1.0
+    </div>
 </div>
 
-<!-- Main content -->
+<!-- MAIN CONTENT -->
 <div class="main">
     <div class="header">Your Profile</div>
 
@@ -141,7 +169,7 @@
     </div>
 </div>
 
-<!-- Firebase -->
+<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
@@ -157,31 +185,29 @@ auth.onAuthStateChanged(async user => {
     const doc = await db.collection("users").doc(user.uid).get();
     const data = doc.data();
 
-    // Load photo or fallback
+    // Load photo
     const photo = document.getElementById("profilePhoto");
-    if (data.photoURL) {
-        photo.src = data.photoURL;
-    } else {
-        photo.src = "default-avatar.png"; // You can replace this with your own default
-    }
+    photo.src = data.photoURL || "default-avatar.png";
 
-    document.getElementById("email").textContent = user.email;
-    document.getElementById("phone").textContent = data.phone || "Not set";
-    document.getElementById("location").textContent = data.location || "Not set";
-    document.getElementById("bio").textContent = data.bio || "No bio yet";
+    // Shared fields
+    email.textContent = user.email;
+    phone.textContent = data.phone || "Not set";
+    location.textContent = data.location || "Not set";
+    bio.textContent = data.bio || "No bio yet";
 
+    // Single vs Couple
     if (data.type === "single") {
-        document.getElementById("name").textContent = data.name;
-        document.getElementById("teamName").textContent = "—";
-        document.getElementById("partner1").textContent = "—";
-        document.getElementById("partner2").textContent = "—";
+        name.textContent = data.name;
+        teamName.textContent = "—";
+        partner1.textContent = "—";
+        partner2.textContent = "—";
     }
 
     if (data.type === "couple") {
-        document.getElementById("name").textContent = "—";
-        document.getElementById("teamName").textContent = data.teamName;
-        document.getElementById("partner1").textContent = data.partner1Name;
-        document.getElementById("partner2").textContent = data.partner2Name;
+        name.textContent = "—";
+        teamName.textContent = data.teamName;
+        partner1.textContent = data.partner1Name;
+        partner2.textContent = data.partner2Name;
     }
 });
 
