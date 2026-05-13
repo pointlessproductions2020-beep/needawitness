@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pending Approval – Need A Witness UK</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+    body {
+        margin: 0;
+        font-family: Inter, sans-serif;
+        background: #f7f7f7;
+        color: #222;
+    }
+
+    .layout {
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding: 40px 16px;
+    }
+
+    .card {
+        background: #ffffff;
+        max-width: 720px;
+        width: 100%;
+        border-radius: 16px;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+        padding: 26px 24px 24px;
+        border-top: 4px solid #D4AF37;
+    }
+
+    .logo {
+        font-family: "Playfair Display", serif;
+        font-size: 24px;
+        font-weight: 600;
+        color: #D4AF37;
+        margin-bottom: 4px;
+    }
+
+    .subtitle {
+        font-size: 13px;
+        color: #777;
+        margin-bottom: 18px;
+    }
+
+    h1 {
+        font-family: "Playfair Display", serif;
+        font-size: 26px;
+        margin: 10px 0 6px;
+        color: #222;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        background: #fff4d6;
+        color: #8a6d00;
+        margin-bottom: 12px;
+    }
+
+    .section-title {
+        font-family: "Playfair Display", serif;
+        font-size: 18px;
+        color: #D4AF37;
+        margin: 18px 0 6px;
+    }
+
+    .text-muted {
+        font-size: 13px;
+        color: #777;
+        line-height: 1.5;
+    }
+
+    .highlight-box {
+        background: #fdf8ec;
+        border-radius: 10px;
+        padding: 10px 12px;
+        font-size: 13px;
+        color: #5c4a1a;
+        margin-top: 10px;
+    }
+
+    .upload-row {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+
+    .upload-label {
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .upload-help {
+        font-size: 12px;
+        color: #777;
+    }
+
+    input[type="file"] {
+        font-size: 13px;
+    }
+
+    .btn {
+        display: inline-block;
+        padding: 10px 16px;
+        border-radius: 999px;
+        border: none;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .btn-gold {
+        background: #D4AF37;
+        color: #fff;
+    }
+
+    .btn-outline {
+        background: #fff;
+        color: #555;
+        border: 1px solid #ccc;
+    }
+
+    .btn-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 14px;
+    }
+
+    .small-note {
+        font-size: 11px;
+        color: #999;
+        margin-top: 4px;
+    }
+
+    .divider {
+        height: 1px;
+        background: #eee;
+        margin: 18px 0;
+    }
+
+    .field-status {
+        font-size: 12px;
+        color: #555;
+        margin-top: 4px;
+    }
+
+    .pill {
+        display: inline-block;
+        padding: 3px 8px;
+        border-radius: 999px;
+        font-size: 11px;
+        background: #f0f0f0;
+        color: #555;
+        margin-top: 4px;
+    }
+
+    .pill-ok {
+        background: #d6ffe0;
+        color: #006d2a;
+    }
+
+    .pill-missing {
+        background: #ffe6e6;
+        color: #8a0000;
+    }
+
+    @media (max-width: 600px) {
+        .card {
+            padding: 20px 16px 18px;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="layout">
+    <div class="card">
+        <div class="logo">Need A Witness UK</div>
+        <div class="subtitle">Witness Hub – Account Status</div>
+
+        <span class="status-badge" id="statusBadge">Pending approval</span>
+
+        <h1>Thank you for becoming a witness</h1>
+        <p class="text-muted" id="welcomeText">
+            Your application has been received and is currently under review. We personally check every witness to
+            keep our couples safe and to maintain a high standard of professionalism.
+        </p>
+
+        <div class="highlight-box">
+            <strong>What happens next?</strong><br>
+            We usually review new witnesses within 24 hours. Once approved, you’ll get full access to your dashboard,
+            jobs, availability, and profile tools.
+        </div>
+
+        <div class="section-title">Optional uploads to speed up approval</div>
+        <p class="text-muted">
+            These are completely optional, but they can help us approve you faster and with more confidence.
+            You can also skip this step and we’ll review your application based on the details you already provided.
+        </p>
+
+        <div class="upload-row">
+            <div class="upload-label">Photo of your ID (optional)</div>
+            <div class="upload-help">
+                A clear photo of your driving licence, passport, or other official ID. You can blur sensitive numbers
+                if you prefer, as long as your name and photo are visible.
+            </div>
+            <input type="file" id="idFile" accept="image/*">
+            <button class="btn btn-outline" onclick="uploadFile('idFile','idPhotoURL')">Upload ID photo</button>
+            <div class="field-status" id="idStatus"></div>
+        </div>
+
+        <div class="upload-row">
+            <div class="upload-label">Selfie holding your ID (optional)</div>
+            <div class="upload-help">
+                A quick selfie holding your ID next to your face. This helps us confirm you match the ID.
+            </div>
+            <input type="file" id="selfieFile" accept="image/*">
+            <button class="btn btn-outline" onclick="uploadFile('selfieFile','selfiePhotoURL')">Upload selfie with ID</button>
+            <div class="field-status" id="selfieStatus"></div>
+        </div>
+
+        <div class="upload-row">
+            <div class="upload-label">Profile photo (optional)</div>
+            <div class="upload-help">
+                This is the photo couples may eventually see on your profile. A clear, friendly headshot works best.
+            </div>
+            <input type="file" id="profileFile" accept="image/*">
+            <button class="btn btn-outline" onclick="uploadFile('profileFile','photoURL')">Upload profile photo</button>
+            <div class="field-status" id="profileStatus"></div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="section-title">Want to chat?</div>
+        <p class="text-muted">
+            If you have any questions, or you’d like to say hello before approval, you can message us on WhatsApp.
+        </p>
+
+        <div class="btn-row">
+            <button class="btn btn-gold" onclick="openWhatsApp()">Message us on WhatsApp</button>
+        </div>
+        <p class="small-note">
+            We do not accept WhatsApp calls unless pre‑arranged. Messages are welcome anytime during business hours.
+        </p>
+
+        <div class="divider"></div>
+
+        <p class="text-muted">
+            <span class="pill" id="accountStatusPill">Status: Pending approval</span>
+            <br>
+            Once your account is approved, you’ll be able to access your full Witness Hub dashboard automatically.
+        </p>
+
+        <div class="btn-row" style="margin-top: 10px;">
+            <button class="btn btn-outline" onclick="logout()">Log out</button>
+        </div>
+    </div>
+</div>
+
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+<script src="firebase.js"></script>
+
+<script>
+const storage = firebase.storage();
+
+/* AUTH + STATUS CHECK */
+auth.onAuthStateChanged(async (user) => {
+    if (!user) {
+        window.location.href = "login.html";
+        return;
+    }
+
+    try {
+        const doc = await db.collection("users").doc(user.uid).get();
+        if (!doc.exists) {
+            // No user doc – send them to login just in case
+            window.location.href = "login.html";
+            return;
+        }
+
+        const data = doc.data();
+
+        // If already approved, send them to dashboard
+        if (data.approved === true && data.status !== "pending") {
+            window.location.href = "dashboard.html";
+            return;
+        }
+
+        // Update welcome text with their name if available
+        const name =
+            data.type === "couple"
+                ? (data.teamName || `${data.partner1Name || ""} & ${data.partner2Name || ""}`)
+                : (data.name || data.fullName || "there");
+
+        document.getElementById("welcomeText").innerHTML =
+            `Hi ${name}, your application has been received and is currently under review. ` +
+            `We personally check every witness to keep our couples safe and to maintain a high standard of professionalism.`;
+
+        // Status pill
+        const pill = document.getElementById("accountStatusPill");
+        pill.textContent = "Status: Pending approval";
+        pill.classList.remove("pill-ok");
+        pill.classList.add("pill-missing");
+
+        // Pre-fill upload statuses if already uploaded
+        if (data.idPhotoURL) {
+            document.getElementById("idStatus").innerHTML =
+                `<span class="pill pill-ok">ID photo uploaded</span>`;
+        }
+        if (data.selfiePhotoURL) {
+            document.getElementById("selfieStatus").innerHTML =
+                `<span class="pill pill-ok">Selfie with ID uploaded</span>`;
+        }
+        if (data.photoURL) {
+            document.getElementById("profileStatus").innerHTML =
+                `<span class="pill pill-ok">Profile photo uploaded</span>`;
+        }
+    } catch (e) {
+        console.error(e);
+        alert("There was a problem loading your account. Please try again in a moment.");
+    }
+});
+
+/* FILE UPLOAD HANDLER */
+async function uploadFile(inputId, fieldName) {
+    const user = auth.currentUser;
+    if (!user) {
+        window.location.href = "login.html";
+        return;
+    }
+
+    const input = document.getElementById(inputId);
+    if (!input.files || !input.files[0]) {
+        alert("Please choose a file first.");
+        return;
+    }
+
+    const file = input.files[0];
+    const path = `witness-uploads/${user.uid}/${fieldName}-${Date.now()}-${file.name}`;
+    const ref = storage.ref().child(path);
+
+    try {
+        const snap = await ref.put(file);
+        const url = await snap.ref.getDownloadURL();
+
+        await db.collection("users").doc(user.uid).update({
+            [fieldName]: url
+        });
+
+        let statusEl;
+        if (fieldName === "idPhotoURL") statusEl = document.getElementById("idStatus");
+        else if (fieldName === "selfiePhotoURL") statusEl = document.getElementById("selfieStatus");
+        else if (fieldName === "photoURL") statusEl = document.getElementById("profileStatus");
+
+        if (statusEl) {
+            statusEl.innerHTML = `<span class="pill pill-ok">Upload saved</span>`;
+        }
+
+        alert("Upload complete and saved to your profile.");
+        input.value = "";
+    } catch (e) {
+        console.error(e);
+        alert("There was a problem uploading your file. Please try again.");
+    }
+}
+
+/* WHATSAPP LINK */
+function openWhatsApp() {
+    // +44 7538 803084 -> 447538803084
+    const url = "https://wa.me/447538803084";
+    window.open(url, "_blank");
+}
+
+/* LOGOUT */
+function logout() {
+    auth.signOut().then(() => {
+        window.location.href = "login.html";
+    });
+}
+</script>
+
+</body>
+</html>
