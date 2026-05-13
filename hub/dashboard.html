@@ -232,15 +232,27 @@ auth.onAuthStateChanged(async (user) => {
     }
 
     const doc = await db.collection("users").doc(user.uid).get();
-    if (!doc.exists) return;
+    if (!doc.exists) {
+        logout();
+        return;
+    }
 
     const data = doc.data();
+
+    /* 🔒 APPROVAL CHECK */
+    if (data.approved !== true || data.status === "pending") {
+        window.location.href = "pending.html";
+        return;
+    }
 
     /* HEADER PHOTO */
     headerPhoto.src = data.photoURL || "default-avatar.png";
 
     /* WELCOME NAME */
-    username.innerText = data.type === "couple" ? data.teamName : data.name;
+    username.innerText =
+        data.type === "couple"
+            ? (data.teamName || "Your Team")
+            : (data.name || "Witness");
 
     /* PROFILE SECTION */
     profileName.innerText =
@@ -253,7 +265,10 @@ auth.onAuthStateChanged(async (user) => {
     profileLocation.innerText = data.location || "Not set";
     profileBio.innerText = data.bio || "No bio yet";
 
-    /* FIXED AVAILABILITY ORDER */
+    /* RATING */
+    rating.innerText = `⭐ ${data.rating ? data.rating.toFixed(1) : "5.0"}`;
+
+    /* AVAILABILITY */
     const dayNames = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
 
     if (data.availability) {
