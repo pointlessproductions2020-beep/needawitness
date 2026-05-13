@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jobs – Admin – Need A Witness UK</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+    body {
+        margin: 0;
+        font-family: Inter, sans-serif;
+        background: #f7f7f7;
+    }
+
+    .layout {
+        display: flex;
+        min-height: 100vh;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+        width: 240px;
+        background: white;
+        border-right: 1px solid #eee;
+        padding: 25px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .sidebar h2 {
+        font-family: "Playfair Display", serif;
+        color: #D4AF37;
+        margin-top: 0;
+        margin-bottom: 30px;
+        font-size: 24px;
+    }
+
+    .sidebar a {
+        color: #333;
+        text-decoration: none;
+        padding: 12px 0;
+        display: block;
+        font-size: 16px;
+        font-weight: 500;
+    }
+
+    .sidebar a:hover {
+        color: #D4AF37;
+    }
+
+    .logout-btn {
+        margin-top: auto;
+        padding: 12px;
+        background: #D4AF37;
+        color: white;
+        text-align: center;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+    }
+
+    .sidebar-footer {
+        margin-top: 20px;
+        padding-top: 15px;
+        border-top: 1px solid #eee;
+        font-size: 12px;
+        color: #777;
+        line-height: 1.4;
+    }
+
+    /* MAIN */
+    .main {
+        flex: 1;
+        padding: 30px;
+        overflow-y: auto;
+    }
+
+    .header {
+        font-size: 26px;
+        margin-bottom: 20px;
+        font-family: "Playfair Display", serif;
+        color: #D4AF37;
+    }
+
+    .section {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    }
+
+    .search-row {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+        flex-wrap: wrap;
+    }
+
+    .search-row input, .search-row select {
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 14px;
+    }
+
+    .search-row input {
+        flex: 1;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+    }
+
+    th, td {
+        padding: 10px 8px;
+        border-bottom: 1px solid #eee;
+        text-align: left;
+    }
+
+    th {
+        font-weight: 600;
+        color: #555;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 3px 8px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .pending { background: #fff4d6; color: #8a6d00; }
+    .approved { background: #d6ffe0; color: #006d2a; }
+    .assigned { background: #d6e9ff; color: #004a99; }
+    .completed { background: #e6ffe6; color: #006600; }
+    .cancelled { background: #ffe6e6; color: #8a0000; }
+
+    .btn {
+        padding: 5px 10px;
+        border-radius: 6px;
+        border: none;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 600;
+        margin-right: 4px;
+        margin-bottom: 4px;
+    }
+
+    .btn-view { background: #f0f0f0; color: #333; }
+    .btn-approve { background: #28a745; color: white; }
+    .btn-reject { background: #dc3545; color: white; }
+    .btn-assign { background: #007bff; color: white; }
+</style>
+</head>
+
+<body>
+
+<div class="layout">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <h2>Admin Panel</h2>
+        <a href="admin-dashboard.html">Dashboard</a>
+        <a href="admin-witnesses.html">Witnesses</a>
+        <a href="admin-jobs.html">Jobs</a>
+
+        <div class="logout-btn" onclick="logout()">Logout</div>
+
+        <div class="sidebar-footer">
+            © Need A Witness UK<br>
+            Admin Panel v1.0
+        </div>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main">
+        <div class="header">Jobs</div>
+
+        <div class="section">
+
+            <!-- SEARCH + FILTERS -->
+            <div class="search-row">
+                <input type="text" id="searchInput" placeholder="Search by couple, location, witness..." oninput="renderFiltered()">
+
+                <select id="statusFilter" onchange="renderFiltered()">
+                    <option value="all">All statuses</option>
+                    <option value="pending">Pending</option>
+                    <option value="approved">Approved</option>
+                    <option value="assigned">Assigned</option>
+                    <option value="completed">Completed</option>
+                    <option value="cancelled">Cancelled</option>
+                </select>
+            </div>
+
+            <!-- JOB TABLE -->
+            <div style="overflow-x:auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Couple</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Location</th>
+                            <th>Status</th>
+                            <th>Witnesses</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="jobsTableBody">
+                        <tr><td colspan="7">Loading...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<script src="../firebase.js"></script>
+
+<script>
+let allJobs = [];
+
+auth.onAuthStateChanged(async (user) => {
+    if (!user) {
+        window.location.href = "../hub/login.html";
+        return;
+    }
+
+    db.collection("jobs").onSnapshot(snapshot => {
+        allJobs = [];
+        snapshot.forEach(doc => {
+            allJobs.push({ id: doc.id, ...doc.data() });
+        });
+        renderFiltered();
+    });
+});
+
+function statusBadge(status) {
+    return `<span class="status-badge ${status}">${status.charAt(0).toUpperCase() + status.slice(1)}</span>`;
+}
+
+function renderFiltered() {
+    const search = document.getElementById("searchInput").value.toLowerCase();
+    const filter = document.getElementById("statusFilter").value;
+    const tbody = document.getElementById("jobsTableBody");
+
+    let rows = "";
+
+    allJobs.forEach(j => {
+        const couple = j.coupleName || "—";
+        const date = j.date || "—";
+        const time = j.time || "—";
+        const location = j.location || "—";
+        const status = j.status || "pending";
+
+        const witnesses = j.assignedWitnesses?.length
+            ? j.assignedWitnesses.join(", ")
+            : "—";
+
+        // filter by status
+        if (filter !== "all" && status !== filter) return;
+
+        // search filter
+        const haystack = (couple + location + witnesses).toLowerCase();
+        if (search && !haystack.includes(search)) return;
+
+        rows += `
+            <tr>
+                <td>${couple}</td>
+                <td>${date}</td>
+                <td>${time}</td>
+                <td>${location}</td>
+                <td>${statusBadge(status)}</td>
+                <td>${witnesses}</td>
+                <td>
+                    <button class="btn btn-view" onclick="viewJob('${j.id}')">View</button>
+                    <button class="btn btn-assign" onclick="assignJob('${j.id}')">Assign</button>
+                    <button class="btn btn-approve" onclick="approveJob('${j.id}')">Approve</button>
+                    <button class="btn btn-reject" onclick="rejectJob('${j.id}')">Reject</button>
+                </td>
+            </tr>
+        `;
+    });
+
+    tbody.innerHTML = rows || '<tr><td colspan="7">No jobs found.</td></tr>';
+}
+
+function viewJob(id) {
+    window.location.href = "admin-job-detail.html?id=" + encodeURIComponent(id);
+}
+
+function assignJob(id) {
+    window.location.href = "admin-job-detail.html?id=" + encodeURIComponent(id) + "&assign=true";
+}
+
+function approveJob(id) {
+    db.collection("jobs").doc(id).update({ status: "approved" });
+}
+
+function rejectJob(id) {
+    db.collection("jobs").doc(id).update({ status: "cancelled" });
+}
+
+function logout() {
+    auth.signOut().then(() => {
+        window.location.href = "../hub/login.html";
+    });
+}
+</script>
+
+</body>
+</html>
