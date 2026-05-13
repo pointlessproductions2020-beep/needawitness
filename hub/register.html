@@ -1,220 +1,194 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Witness Hub – Register</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Register – Need A Witness UK</title>
 
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-    <!-- Firebase v8 -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<style>
+    body {
+        margin: 0;
+        background: #f7f7f7;
+        font-family: Inter, sans-serif;
+    }
 
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background: #f7f7f7;
-            font-family: Inter, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
+    .container {
+        max-width: 420px;
+        margin: 60px auto;
+        background: white;
+        padding: 30px;
+        border-radius: 14px;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+        border-top: 4px solid #D4AF37;
+    }
 
-        .register-card {
-            background: white;
-            width: 420px;
-            padding: 35px;
-            border-radius: 14px;
-            box-shadow: 0 4px 18px rgba(0,0,0,0.08);
-            border-top: 4px solid #D4AF37;
-            text-align: center;
-        }
+    h1 {
+        font-family: "Playfair Display", serif;
+        color: #D4AF37;
+        text-align: center;
+        margin-bottom: 20px;
+    }
 
-        h2 {
-            font-family: "Playfair Display", serif;
-            color: #D4AF37;
-            margin-bottom: 25px;
-            font-size: 26px;
-        }
+    label {
+        font-size: 14px;
+        font-weight: 600;
+        display: block;
+        margin-top: 12px;
+    }
 
-        input, select {
-            width: 100%;
-            padding: 14px;
-            margin: 10px 0;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-            font-size: 15px;
-            background: #fafafa;
-        }
+    input, select {
+        width: 100%;
+        padding: 12px;
+        margin-top: 6px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 15px;
+    }
 
-        button {
-            width: 100%;
-            padding: 14px;
-            background: #D4AF37;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 17px;
-            cursor: pointer;
-            font-weight: 600;
-            margin-top: 10px;
-        }
+    .btn {
+        width: 100%;
+        padding: 14px;
+        background: #D4AF37;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 20px;
+    }
 
-        button:hover {
-            opacity: 0.9;
-        }
+    .btn:hover {
+        background: #c19c2f;
+    }
 
-        .link {
-            margin-top: 15px;
-            display: block;
-            font-size: 14px;
-            color: #333;
-            text-decoration: none;
-        }
+    .link {
+        text-align: center;
+        margin-top: 14px;
+        font-size: 14px;
+    }
 
-        .link:hover {
-            color: #D4AF37;
-        }
-
-        .error {
-            color: red;
-            font-size: 14px;
-            min-height: 20px;
-            margin-top: 10px;
-        }
-
-        .hidden {
-            display: none;
-        }
-    </style>
+    .link a {
+        color: #D4AF37;
+        text-decoration: none;
+        font-weight: 600;
+    }
+</style>
 </head>
 
 <body>
 
-<div class="register-card">
-    <h2>Create Your Witness Account</h2>
+<div class="container">
+    <h1>Become a Witness</h1>
 
-    <div class="error" id="error"></div>
+    <label>Full Name</label>
+    <input type="text" id="name" placeholder="Your full name">
 
-    <select id="witnessType">
+    <label>Email</label>
+    <input type="email" id="email" placeholder="you@example.com">
+
+    <label>Password</label>
+    <input type="password" id="password" placeholder="Choose a password">
+
+    <label>Phone Number</label>
+    <input type="text" id="phone" placeholder="07...">
+
+    <label>Location</label>
+    <input type="text" id="location" placeholder="City or town">
+
+    <label>Witness Type</label>
+    <select id="type">
         <option value="single">Single Witness</option>
-        <option value="couple">Couple Witness Team</option>
+        <option value="couple">Couple Team</option>
     </select>
 
-    <input id="name" type="text" placeholder="Full Name">
+    <div id="coupleFields" style="display:none;">
+        <label>Partner 1 Name</label>
+        <input type="text" id="partner1Name">
 
-    <input id="teamName" class="hidden" type="text" placeholder="Team Name (must be unique)">
-    <input id="partner1" class="hidden" type="text" placeholder="Partner 1 Name">
-    <input id="partner2" class="hidden" type="text" placeholder="Partner 2 Name">
+        <label>Partner 2 Name</label>
+        <input type="text" id="partner2Name">
 
-    <input id="email" type="email" placeholder="Email">
-    <input id="phone" type="text" placeholder="Phone Number">
-    <input id="password" type="password" placeholder="Password">
+        <label>Team Name (optional)</label>
+        <input type="text" id="teamName" placeholder="e.g., The Smiths">
+    </div>
 
-    <button onclick="register()">Register</button>
+    <button class="btn" onclick="register()">Create Account</button>
 
-    <a class="link" href="login.html">Already have an account? Login</a>
+    <div class="link">
+        Already registered? <a href="login.html">Login</a>
+    </div>
 </div>
 
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 <script src="firebase.js"></script>
 
 <script>
-    const auth = firebase.auth();
-    const db = firebase.firestore();
+document.getElementById("type").addEventListener("change", function() {
+    document.getElementById("coupleFields").style.display =
+        this.value === "couple" ? "block" : "none";
+});
 
-    // Redirect if logged in
-    auth.onAuthStateChanged(user => {
-        if (user) window.location.href = "dashboard.html";
-    });
+async function register() {
+    const name = document.getElementById("name").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
+    const phone = document.getElementById("phone").value.trim();
+    const location = document.getElementById("location").value.trim();
+    const type = document.getElementById("type").value;
 
-    // Toggle fields based on witness type
-    document.getElementById("witnessType").addEventListener("change", function () {
-        const type = this.value;
-
-        document.getElementById("name").classList.toggle("hidden", type === "couple");
-        document.getElementById("teamName").classList.toggle("hidden", type === "single");
-        document.getElementById("partner1").classList.toggle("hidden", type === "single");
-        document.getElementById("partner2").classList.toggle("hidden", type === "single");
-    });
-
-    async function isTeamNameTaken(name) {
-        const snap = await db.collection("users")
-            .where("teamName", "==", name.toLowerCase())
-            .get();
-        return !snap.empty;
+    if (!name || !email || !password || !phone) {
+        alert("Please fill in all required fields.");
+        return;
     }
 
-    async function register() {
-        const errorBox = document.getElementById("error");
-        errorBox.textContent = "";
+    try {
+        const userCred = await auth.createUserWithEmailAndPassword(email, password);
+        const uid = userCred.user.uid;
 
-        const type = document.getElementById("witnessType").value;
-        const email = document.getElementById("email").value.trim();
-        const phone = document.getElementById("phone").value.trim();
-        const pass = document.getElementById("password").value.trim();
+        const userData = {
+            name,
+            email,
+            phone,
+            location,
+            type,
 
-        if (!email || !phone || !pass) {
-            errorBox.textContent = "Please fill in all required fields.";
-            return;
-        }
+            // Couple fields
+            partner1Name: type === "couple" ? document.getElementById("partner1Name").value.trim() : null,
+            partner2Name: type === "couple" ? document.getElementById("partner2Name").value.trim() : null,
+            teamName: type === "couple" ? document.getElementById("teamName").value.trim() : null,
 
-        if (pass.length < 6) {
-            errorBox.textContent = "Password must be at least 6 characters.";
-            return;
-        }
+            // NEW APPROVAL SYSTEM FIELDS
+            approved: false,
+            status: "pending",
+            rating: 0,
+            suspended: false,
+            photoURL: null,
+            adminNotes: "",
+            idPhotoURL: null,
+            selfiePhotoURL: null,
 
-        let userData = {
-            email: email,
-            phone: phone,
+            // Availability placeholder
             availability: {},
-            createdAt: new Date()
+
+            createdAt: new Date().toISOString()
         };
 
-        if (type === "single") {
-            const name = document.getElementById("name").value.trim();
-            if (!name) {
-                errorBox.textContent = "Please enter your name.";
-                return;
-            }
+        await db.collection("users").doc(uid).set(userData);
 
-            userData.type = "single";
-            userData.name = name;
-            userData.teamName = null;
+        alert("Account created! Please wait for approval.");
+        window.location.href = "pending.html";
 
-        } else {
-            const teamName = document.getElementById("teamName").value.trim().toLowerCase();
-            const partner1 = document.getElementById("partner1").value.trim();
-            const partner2 = document.getElementById("partner2").value.trim();
-
-            if (!teamName || !partner1 || !partner2) {
-                errorBox.textContent = "Please fill in all couple team fields.";
-                return;
-            }
-
-            if (await isTeamNameTaken(teamName)) {
-                errorBox.textContent = "This team name is already taken.";
-                return;
-            }
-
-            userData.type = "couple";
-            userData.teamName = teamName;
-            userData.partner1Name = partner1;
-            userData.partner2Name = partner2;
-        }
-
-        auth.createUserWithEmailAndPassword(email, pass)
-            .then(async cred => {
-                await db.collection("users").doc(cred.user.uid).set(userData);
-                window.location.href = "dashboard.html";
-            })
-            .catch(err => {
-                errorBox.textContent = err.message;
-            });
+    } catch (error) {
+        console.error(error);
+        alert(error.message);
     }
+}
 </script>
 
 </body>
