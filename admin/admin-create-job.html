@@ -572,7 +572,17 @@ function createJob() {
         requestBy: "",
         requestTeamName: "",
         requestStatus: null,
+
+        // STATUS FIELD (dashboard expects this)
         status: getSelectedWitnessIds().length ? "assigned" : "pending",
+
+        // PAYMENT FIELDS (dashboard expects these)
+        paymentStatus: "unpaid",
+        totalPrice: 0,
+        amountPaid: 0,
+        amountDue: 0,
+
+        // TIMESTAMP
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
     };
 
