@@ -50,6 +50,11 @@
         color: #D4AF37;
     }
 
+    .sidebar a.active {
+        color: #D4AF37;
+        font-weight: 600;
+    }
+
     .logout-btn {
         margin-top: auto;
         padding: 12px;
@@ -117,20 +122,9 @@
         margin-right: 6px;
     }
 
-    .btn-approve {
-        background: #28a745;
-        color: white;
-    }
-
-    .btn-reject {
-        background: #dc3545;
-        color: white;
-    }
-
-    .btn-undo {
-        background: #007bff;
-        color: white;
-    }
+    .btn-approve { background: #28a745; color: white; }
+    .btn-reject { background: #dc3545; color: white; }
+    .btn-undo { background: #007bff; color: white; }
 
     .status-badge {
         display: inline-block;
@@ -141,20 +135,9 @@
         margin-left: 6px;
     }
 
-    .pending {
-        background: #fff4d6;
-        color: #8a6d00;
-    }
-
-    .rejected {
-        background: #ffe6e6;
-        color: #8a0000;
-    }
-
-    .active {
-        background: #d6ffe0;
-        color: #006d2a;
-    }
+    .pending { background: #fff4d6; color: #8a6d00; }
+    .rejected { background: #ffe6e6; color: #8a0000; }
+    .active { background: #d6ffe0; color: #006d2a; }
 </style>
 </head>
 
@@ -165,9 +148,11 @@
     <!-- SIDEBAR -->
     <div class="sidebar">
         <h2>Admin Panel</h2>
-        <a href="admin-dashboard.html">Dashboard</a>
+
+        <a href="admin-dashboard.html" class="active">Dashboard</a>
         <a href="admin-witnesses.html">Witnesses</a>
         <a href="admin-jobs.html">Jobs</a>
+        <a href="admin-calendar.html">Calendar</a>
 
         <div class="logout-btn" onclick="logout()">Logout</div>
 
