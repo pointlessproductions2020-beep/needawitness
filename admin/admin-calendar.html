@@ -309,7 +309,8 @@ function initCalendar(events) {
             const payLabel =
                 paymentStatus === "full" ? "Paid in full" :
                 paymentStatus === "deposit" ? "Deposit only" :
-                paymentStatus === "late-cancel" ? "Late / Cancelled" : "Unpaid";
+                paymentStatus === "late-cancel" ? "Late / Cancelled" :
+                "Unpaid";
 
             const tooltip = `
                 ${info.event.title}
@@ -332,13 +333,10 @@ function loadJobsForCalendar() {
             const job = doc.data();
             if (!job.date) return;
 
-            // ceremony date/time
             const dateStr = job.date;
             const timeStr = job.time || "10:00";
 
-            // Build ISO datetime for start
             const start = new Date(`${dateStr}T${timeStr}`);
-            // End = +1 hour (visual only; internal 3‑hour block is handled elsewhere)
             const end = new Date(start.getTime() + 60 * 60 * 1000);
 
             events.push({
@@ -357,9 +355,44 @@ function loadJobsForCalendar() {
         } else {
             calendar.removeAllEvents();
             calendar.addEventSource(events);
+            applyFilters(); // ⭐ Reapply filters after refresh
         }
     });
 }
+
+/* ⭐ FILTER SYSTEM ⭐ */
+let currentFilter = "all";
+
+/* APPLY FILTERS TO EVENTS */
+function applyFilters() {
+    if (!calendar) return;
+
+    const events = calendar.getEvents();
+
+    events.forEach(ev => {
+        const job = ev.extendedProps.jobData || {};
+        const ps = job.paymentStatus || "unpaid";
+
+        if (currentFilter === "all" || currentFilter === ps) {
+            ev.setProp("display", "auto");
+        } else {
+            ev.setProp("display", "none");
+        }
+    });
+}
+
+/* FILTER BUTTON CLICK HANDLER */
+document.addEventListener("click", (e) => {
+    if (!e.target.classList.contains("filter-btn")) return;
+
+    document.querySelectorAll(".filter-btn").forEach(btn => btn.classList.remove("active"));
+
+    e.target.classList.add("active");
+
+    currentFilter = e.target.dataset.filter;
+
+    applyFilters();
+});
 
 /* LOGOUT */
 function adminLogout() {
