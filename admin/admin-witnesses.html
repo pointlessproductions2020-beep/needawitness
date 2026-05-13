@@ -46,8 +46,10 @@
         font-weight: 500;
     }
 
-    .sidebar a:hover {
+    .sidebar a:hover,
+    .sidebar a.active {
         color: #D4AF37;
+        font-weight: 600;
     }
 
     .logout-btn {
@@ -164,25 +166,10 @@
         margin-bottom: 4px;
     }
 
-    .btn-approve {
-        background: #28a745;
-        color: white;
-    }
-
-    .btn-reject {
-        background: #dc3545;
-        color: white;
-    }
-
-    .btn-undo {
-        background: #007bff;
-        color: white;
-    }
-
-    .btn-view {
-        background: #f0f0f0;
-        color: #333;
-    }
+    .btn-approve { background: #28a745; color: white; }
+    .btn-reject { background: #dc3545; color: white; }
+    .btn-undo { background: #007bff; color: white; }
+    .btn-view { background: #f0f0f0; color: #333; }
 </style>
 </head>
 
@@ -194,8 +181,9 @@
     <div class="sidebar">
         <h2>Admin Panel</h2>
         <a href="admin-dashboard.html">Dashboard</a>
-        <a href="admin-witnesses.html">Witnesses</a>
+        <a href="admin-witnesses.html" class="active">Witnesses</a>
         <a href="admin-jobs.html">Jobs</a>
+        <a href="admin-calendar.html">Calendar</a>
 
         <div class="logout-btn" onclick="logout()">Logout</div>
 
@@ -246,7 +234,7 @@
 <!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 <script src="../firebase.js"></script>
 
 <script>
@@ -261,10 +249,9 @@ auth.onAuthStateChanged(async (user) => {
     db.collection("users").onSnapshot(snapshot => {
         allWitnesses = [];
         snapshot.forEach(doc => {
-            const data = doc.data();
             allWitnesses.push({
                 id: doc.id,
-                ...data
+                ...doc.data()
             });
         });
         renderFiltered();
@@ -285,27 +272,27 @@ function renderFiltered() {
     let rows = "";
 
     allWitnesses.forEach(u => {
-        const name = u.type === "couple"
-            ? `${u.partner1Name || ""} & ${u.partner2Name || ""} ${u.teamName ? "(" + u.teamName + ")" : ""}`
-            : (u.name || "");
 
-        const email = u.email || "";
-        const phone = u.phone || "";
-        const location = u.location || "";
+        const name =
+            u.type === "couple"
+                ? `${u.partner1Name || ""} & ${u.partner2Name || ""} ${u.teamName ? "(" + u.teamName + ")" : ""}`
+                : (u.name || u.availability?.name || "");
+
+        const email = u.email || u.availability?.email || "";
+        const phone = u.phone || u.availability?.phone || "";
+        const location = u.location || u.availability?.location || "";
         const rating = u.rating ? u.rating.toFixed(1) : "—";
 
-        // filter by status
+        // STATUS FILTER
         if (filter === "pending" && !(u.status === "pending" || u.approved === false)) return;
         if (filter === "active" && !(u.approved === true && u.status === "active")) return;
         if (filter === "rejected" && u.status !== "rejected") return;
 
-        // search filter
+        // SEARCH FILTER
         const haystack = (name + email + phone + location).toLowerCase();
         if (search && !haystack.includes(search)) return;
 
-        let actions = `
-            <button class="btn btn-view" onclick="viewWitness('${u.id}')">View</button>
-        `;
+        let actions = `<button class="btn btn-view" onclick="viewWitness('${u.id}')">View</button>`;
 
         if (u.status === "rejected") {
             actions += `<button class="btn btn-undo" onclick="undoReject('${u.id}')">Undo</button>`;
