@@ -164,6 +164,18 @@
         min-width: 120px;
         justify-content: center;
         flex-direction: column;
+
+        /* Fade-in animation */
+        opacity: 0;
+        transform: translateY(5px);
+        animation: fadeIn 0.3s ease forwards;
+    }
+
+    @keyframes fadeIn {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 
     .slot-button:hover {
@@ -212,6 +224,22 @@
         position: relative;
         z-index: 1;
     }
+
+    /* GOLD LOADING SPINNER */
+    .spinner {
+        width: 40px;
+        height: 40px;
+        border: 4px solid #f3e4c8;
+        border-top: 4px solid #d4a762;
+        border-radius: 50%;
+        animation: spin 0.9s linear infinite;
+        margin: 20px auto;
+        display: none;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
 </style>
 </head>
 
@@ -229,7 +257,6 @@
         <a href="#booking" class="btn">Book Your Witnesses</a>
     </div>
 </div>
-
 <section>
     <h2>How It Works</h2>
 
@@ -361,6 +388,10 @@
         </div>
 
         <p style="margin-top: 20px;"><strong>Available times:</strong></p>
+
+        <!-- GOLD SPINNER -->
+        <div id="slot-spinner" class="spinner"></div>
+
         <div id="slots" class="slots-grid"></div>
 
         <div id="availability-error" class="error-message" style="display:none;"></div>
@@ -403,7 +434,6 @@
         <li>Gravesend</li>
     </ul>
 </section>
-
 <footer>
     <p>Need A Witness UK — Professional Wedding Witnesses Across Kent</p>
     <p>Email: bookings@needawitness.uk</p>
@@ -422,15 +452,16 @@
     </p>
 </footer>
 
+<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 <script src="hub/firebase.js"></script>
 
+<!-- Enhanced Availability Script -->
 <script type="module">
     import { checkAvailability, calculatePrice, calculateDeposit } from '/hub/availability.js';
 
-    // DO NOT redeclare db — firebase.js already defines it
-    // const db = firebase.firestore();  ❌ REMOVE THIS LINE
+    // db is already defined in firebase.js
 
     function isWithin24Hours(date) {
         const now = new Date();
@@ -442,9 +473,11 @@
     async function loadSlots(dateString) {
         const errorEl = document.getElementById("availability-error");
         const slotsContainer = document.getElementById("slots");
+        const spinner = document.getElementById("slot-spinner");
         const selectedTimeInput = document.getElementById("selected-time");
         const form = document.getElementById("bookingForm");
 
+        // Reset UI
         errorEl.style.display = "none";
         errorEl.textContent = "";
         slotsContainer.innerHTML = "";
@@ -460,9 +493,14 @@
             return;
         }
 
-        slotsContainer.innerHTML = "Checking availability...";
+        // Show spinner
+        spinner.style.display = "block";
 
         const availability = await checkAvailability(db, dateString);
+
+        // Hide spinner
+        spinner.style.display = "none";
+
         slotsContainer.innerHTML = "";
 
         Object.keys(availability).forEach(time => {
@@ -500,5 +538,6 @@
         loadSlots(this.value);
     });
 </script>
+
 </body>
 </html>
