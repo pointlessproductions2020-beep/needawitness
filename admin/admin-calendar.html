@@ -285,11 +285,11 @@ function initCalendar(initialEvents) {
         height: "auto",
         events: initialEvents,
         eventClick: function(info) {
-            const jobId = info.event.extendedProps.jobId || info.event.id;
-            if (jobId) {
-                window.location.href = `admin-job.html?id=${jobId}`;
-            }
-        }
+    const jobId = info.event.extendedProps.jobId || info.event.id;
+    if (jobId) {
+        window.location.href = `admin-job-detail.html?id=${jobId}`;
+    }
+}
     });
 
     calendar.render();
