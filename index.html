@@ -427,9 +427,10 @@
 <script src="hub/firebase.js"></script>
 
 <script type="module">
-    import { checkAvailability, calculatePrice, calculateDeposit } from './hub/availability.js';
+    import { checkAvailability, calculatePrice, calculateDeposit } from '/hub/availability.js';
 
-    const db = firebase.firestore();
+    // DO NOT redeclare db — firebase.js already defines it
+    // const db = firebase.firestore();  ❌ REMOVE THIS LINE
 
     function isWithin24Hours(date) {
         const now = new Date();
@@ -499,6 +500,5 @@
         loadSlots(this.value);
     });
 </script>
-
 </body>
 </html>
