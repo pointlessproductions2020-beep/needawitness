@@ -10,6 +10,7 @@
 <!-- FullCalendar CSS -->
 <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
 
+<!-- Firebase SDKs -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
@@ -170,7 +171,7 @@
     .legend-unpaid { background:#e53935; }
     .legend-cancelled { background:#9e9e9e; }
 
-    /* ⭐ FILTER BUTTONS ⭐ */
+    /* FILTER BUTTONS */
     .filter-btn {
         padding: 8px 14px;
         border-radius: 6px;
@@ -231,18 +232,18 @@
             </div>
         </div>
 
-<div class="card">
+        <div class="card">
 
-    <!-- FILTER BUTTONS -->
-    <div style="margin-bottom: 15px; display:flex; gap:10px; flex-wrap:wrap;">
-        <button class="filter-btn" data-filter="all">All</button>
-        <button class="filter-btn" data-filter="full">Paid in Full</button>
-        <button class="filter-btn" data-filter="deposit">Deposit Only</button>
-        <button class="filter-btn" data-filter="unpaid">Unpaid</button>
-        <button class="filter-btn" data-filter="late-cancel">Cancelled / Late</button>
-    </div>
+            <!-- FILTER BUTTONS -->
+            <div style="margin-bottom: 15px; display:flex; gap:10px; flex-wrap:wrap;">
+                <button class="filter-btn" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="full">Paid in Full</button>
+                <button class="filter-btn" data-filter="deposit">Deposit Only</button>
+                <button class="filter-btn" data-filter="unpaid">Unpaid</button>
+                <button class="filter-btn" data-filter="late-cancel">Cancelled / Late</button>
+            </div>
 
-    <div id="calendar"></div>
+            <div id="calendar"></div>
 
             <div class="legend">
                 <div class="legend-item">
@@ -263,8 +264,8 @@
 </div>
 
 <script>
-const db = firebase.firestore();
 let calendar = null;
+let currentFilter = "all";
 
 /* MAP PAYMENT STATUS TO COLOUR */
 function getEventColor(job) {
@@ -275,78 +276,52 @@ function getEventColor(job) {
     return "#e53935";                           // red (unpaid)
 }
 
-/* BUILD EVENT TITLE */
-function getEventTitle(job) {
-    const name = job.coupleName || "Unnamed couple";
-    const time = job.time || "";
-    return time ? `${time} – ${name}` : name;
-}
-
 /* INIT CALENDAR */
-function initCalendar(events) {
+function initCalendar(initialEvents) {
     const calendarEl = document.getElementById("calendar");
 
     calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth',
-        headerToolbar: {
-            left: 'prev,next today',
-            center: 'title',
-            right: 'dayGridMonth,timeGridWeek,timeGridDay'
-        },
-        height: 'auto',
-        events: events,
+        initialView: "dayGridMonth",
+        height: "auto",
+        events: initialEvents,
         eventClick: function(info) {
-            const jobId = info.event.extendedProps.jobId;
+            const jobId = info.event.extendedProps.jobId || info.event.id;
             if (jobId) {
-                window.location.href = `admin-job-detail.html?id=${jobId}`;
+                window.location.href = `admin-job.html?id=${jobId}`;
             }
-        },
-        eventDidMount: function(info) {
-            const job = info.event.extendedProps.jobData || {};
-            const location = job.location || "";
-            const paymentStatus = job.paymentStatus || "unpaid";
-
-            const payLabel =
-                paymentStatus === "full" ? "Paid in full" :
-                paymentStatus === "deposit" ? "Deposit only" :
-                paymentStatus === "late-cancel" ? "Late / Cancelled" :
-                "Unpaid";
-
-            const tooltip = `
-                ${info.event.title}
-                ${location ? "\nLocation: " + location : ""}
-                \nStatus: ${payLabel}
-            `;
-            info.el.title = tooltip;
         }
     });
 
     calendar.render();
+    applyFilters();
 }
 
 /* LOAD JOBS FROM FIRESTORE */
-function loadJobsForCalendar() {
-    db.collection("jobs").onSnapshot(snapshot => {
+async function loadJobsForCalendar() {
+    try {
+        const snapshot = await db.collection("jobs").get();
         const events = [];
 
         snapshot.forEach(doc => {
             const job = doc.data();
-            if (!job.date) return;
 
-            const dateStr = job.date;
-            const timeStr = job.time || "10:00";
+            const dateStr = job.date;          // e.g. "2025-05-14"
+            const timeStr = job.time || "12:00"; // fallback if no time
 
             const start = new Date(`${dateStr}T${timeStr}`);
             const end = new Date(start.getTime() + 60 * 60 * 1000);
 
             events.push({
-                title: getEventTitle(job),
+                title: job.coupleNames || "Ceremony",
                 start: start.toISOString(),
                 end: end.toISOString(),
                 backgroundColor: getEventColor(job),
                 borderColor: getEventColor(job),
                 jobId: doc.id,
-                jobData: job
+                jobData: job,
+                extendedProps: {
+                    jobData: job
+                }
             });
         });
 
@@ -355,13 +330,12 @@ function loadJobsForCalendar() {
         } else {
             calendar.removeAllEvents();
             calendar.addEventSource(events);
-            applyFilters(); // ⭐ Reapply filters after refresh
+            applyFilters();
         }
-    });
+    } catch (err) {
+        console.error("Error loading jobs:", err);
+    }
 }
-
-/* ⭐ FILTER SYSTEM ⭐ */
-let currentFilter = "all";
 
 /* APPLY FILTERS TO EVENTS */
 function applyFilters() {
@@ -370,8 +344,8 @@ function applyFilters() {
     const events = calendar.getEvents();
 
     events.forEach(ev => {
-        const job = ev.extendedProps.jobData || {};
-        const ps = job.paymentStatus || "unpaid";
+        const job = ev.extendedProps.jobData || ev.extendedProps.jobData || {};
+        const ps = (job.paymentStatus || "unpaid").toString();
 
         if (currentFilter === "all" || currentFilter === ps) {
             ev.setProp("display", "auto");
@@ -401,8 +375,12 @@ function adminLogout() {
     });
 }
 
-/* INIT */
-loadJobsForCalendar();
+/* INIT ON LOAD */
+document.addEventListener("DOMContentLoaded", () => {
+    const allBtn = document.querySelector('.filter-btn[data-filter="all"]');
+    if (allBtn) allBtn.classList.add("active");
+    loadJobsForCalendar();
+});
 </script>
 
 </body>
