@@ -485,7 +485,12 @@
                     <div style="font-size:13px;margin-bottom:8px;">
                         <b>Witness Type:</b> <span id="witnessTypeText">–</span>
                     </div>
+
+                    <!-- ⭐ ADDED WITNESS SERVICE DISPLAY ⭐ -->
                     <div style="font-size:13px;margin-bottom:8px;">
+                        <b>Witness Service:</b> <span id="witnessServiceText">–</span>
+                    </div>
+                                        <div style="font-size:13px;margin-bottom:8px;">
                         <b>Assigned Witnesses:</b> <span id="assignedCountText">0</span>
                     </div>
                     <div style="font-size:13px;margin-bottom:8px;">
@@ -593,7 +598,6 @@ function populateJobFields() {
         const d = j.paymentDeadline.toDate();
         paymentDeadline.value = toLocalInputDateTime(d);
     } else if (j.paymentDeadline) {
-        // stored as string
         paymentDeadline.value = j.paymentDeadline;
     }
 
@@ -618,10 +622,15 @@ function populateJobFields() {
          ps === "deposit" ? "pay-deposit" :
          ps === "late-cancel" ? "pay-late" : "pay-unpaid");
 
-    // snapshot
+    // snapshot: witness type
     document.getElementById("witnessTypeText").innerText =
         j.witnessType === "couple" ? "Couple Team" :
         j.witnessType === "either" ? "Either" : "Single Witness";
+
+    // ⭐ NEW: Witness Service (1 or 2 witnesses)
+    let serviceText = "One Witness (£100)";
+    if (j.witnessCount === 2) serviceText = "Two Witnesses (£150)";
+    document.getElementById("witnessServiceText").innerText = serviceText;
 
     const assignedCount = (j.assignedWitnesses && j.assignedWitnesses.length) || 0;
     document.getElementById("assignedCountText").innerText = assignedCount;
@@ -639,8 +648,7 @@ function populateJobFields() {
 
     renderAssignedWitnesses();
 }
-
-/* --------- ASSIGNED WITNESSES --------- */
+    /* --------- ASSIGNED WITNESSES --------- */
 async function renderAssignedWitnesses() {
     const container = document.getElementById("assignedWitnesses");
     container.innerHTML = "";
@@ -864,7 +872,7 @@ function loadAvailabilityForDate() {
     if (!dateStr) return;
 
     const d = new Date(dateStr);
-    const dayIndex = d.getDay(); // 0=Sun
+    const dayIndex = d.getDay();
     const dayName = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][dayIndex];
 
     db.collection("users").get().then(snapshot => {
@@ -971,6 +979,7 @@ function adminLogout() {
 
 /* INIT */
 loadJob();
+
 </script>
 
 </body>
