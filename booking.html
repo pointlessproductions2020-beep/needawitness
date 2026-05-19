@@ -105,6 +105,23 @@
         <p><strong>Bank Holiday Adjustment:</strong> <span id="sum-bankholiday">None</span></p>
     </div>
 
+    <!-- ⭐ WITNESS SERVICE OPTIONS ⭐ -->
+    <h3>Witness Service</h3>
+
+    <div class="addon-box">
+        <label>
+            <input type="radio" name="witnessCount" value="1" checked>
+            One Witness — £100
+        </label>
+
+        <label style="margin-top:10px;">
+            <input type="radio" name="witnessCount" value="2">
+            Add a Second Witness — +£50
+        </label>
+
+        <small>This describes the service package only and does not imply employment.</small>
+    </div>
+
     <h3>Add‑Ons</h3>
 
     <div class="addon-box">
@@ -189,7 +206,7 @@
     const lastMinuteFee = hoursDiff < 24 ? 50 : 0;
     if (lastMinuteFee > 0) document.getElementById("lastMinute").checked = true;
 
-    // ⭐⭐⭐ FIXED TRAVEL CALCULATION ⭐⭐⭐
+    // ⭐⭐⭐ TRAVEL CALCULATION ⭐⭐⭐
     async function calculateTravel() {
         const postcode = document.getElementById("travelPostcode").value.trim();
         if (!postcode) {
@@ -201,7 +218,6 @@
         const originPostcode = "CT14 7QE";
 
         try {
-            // 1. Convert both postcodes to coordinates
             const [originCoords, destCoords] = await Promise.all([
                 fetch(`https://api.postcodes.io/postcodes/${originPostcode.replace(/\s+/g, "")}`).then(r => r.json()),
                 fetch(`https://api.postcodes.io/postcodes/${postcode.replace(/\s+/g, "")}`).then(r => r.json())
@@ -216,7 +232,6 @@
             const origin = `${originCoords.result.longitude},${originCoords.result.latitude}`;
             const dest = `${destCoords.result.longitude},${destCoords.result.latitude}`;
 
-            // 2. Call OpenRouteService for driving distance
             const orsKey = "eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6IjBiYjMxNzAwMGRlNDQ5M2NhNTYwYjljYTIwY2NlZDk0IiwiaCI6Im11cm11cjY0In0=";
 
             const routeRes = await fetch(
@@ -228,7 +243,6 @@
             const meters = routeData.features[0].properties.summary.distance;
             const miles = meters / 1609.34;
 
-           // 3. Calculate travel cost (£1 per mile, round trip)
             const travelCost = Math.round(miles * 2);
 
             document.getElementById("travelCost").textContent = travelCost;
@@ -243,9 +257,12 @@
 
     document.getElementById("travelPostcode").addEventListener("change", calculateTravel);
 
-    // Total calculation
+    // ⭐⭐⭐ TOTAL PRICE CALCULATION ⭐⭐⭐
     function updateTotal() {
-        let total = basePrice;
+        const witnessCount = document.querySelector('input[name="witnessCount"]:checked').value;
+        const witnessFee = (witnessCount === "2") ? 150 : 100;
+
+        let total = witnessFee;
 
         total += sundayFee;
         total *= bankHolidayMultiplier;
@@ -263,51 +280,56 @@
         cb.addEventListener("change", updateTotal)
     );
 
+    document.querySelectorAll('input[name="witnessCount"]').forEach(r =>
+        r.addEventListener("change", updateTotal)
+    );
+
     updateTotal();
 
-// Submit booking
-async function submitBooking() {
-    const job = {
-        date,
-        time,
-        basePrice,
-        deposit,
-        sundayFee,
-        bankHolidayMultiplier,
-        addOns: {
-            confetti: document.getElementById("confetti").checked,
-            photoVideo: document.getElementById("photoVideo").checked,
-            lastMinute: document.getElementById("lastMinute").checked,
-            travelPostcode: document.getElementById("travelPostcode").value.trim(),
-            travelCost: Number(document.getElementById("travelCost").textContent)
-        },
-        totalPrice: Number(document.getElementById("totalPrice").textContent),
-        customer: {
-            name: document.getElementById("cust-name").value.trim(),
-            email: document.getElementById("cust-email").value.trim(),
-            phone: document.getElementById("cust-phone").value.trim(),
-            location: document.getElementById("cust-location").value.trim(),
-            notes: document.getElementById("cust-notes").value.trim()
-        },
-        status: "pending",
-        createdAt: new Date().toISOString()
-    };
+    // ⭐⭐⭐ SUBMIT BOOKING ⭐⭐⭐
+    async function submitBooking() {
+        const witnessCount = Number(document.querySelector('input[name="witnessCount"]:checked').value);
 
-    // 1️⃣ Save the job
-    await db.collection("jobs").add(job);
+        const job = {
+            date,
+            time,
+            witnessCount,
+            basePrice,
+            deposit,
+            sundayFee,
+            bankHolidayMultiplier,
+            addOns: {
+                confetti: document.getElementById("confetti").checked,
+                photoVideo: document.getElementById("photoVideo").checked,
+                lastMinute: document.getElementById("lastMinute").checked,
+                travelPostcode: document.getElementById("travelPostcode").value.trim(),
+                travelCost: Number(document.getElementById("travelCost").textContent)
+            },
+            totalPrice: Number(document.getElementById("totalPrice").textContent),
+            customer: {
+                name: document.getElementById("cust-name").value.trim(),
+                email: document.getElementById("cust-email").value.trim(),
+                phone: document.getElementById("cust-phone").value.trim(),
+                location: document.getElementById("cust-location").value.trim(),
+                notes: document.getElementById("cust-notes").value.trim()
+            },
+            status: "pending",
+            createdAt: new Date().toISOString()
+        };
 
-    // 2️⃣ Mark the slot as booked in Firestore
-    await db.collection("availability")
-        .doc(date)
-        .collection("slots")
-        .doc(time)
-        .update({ booked: true });
+        await db.collection("jobs").add(job);
 
-    // 3️⃣ Redirect to confirmation page
-    window.location.href = "booking-confirmed.html";
-}
+        await db.collection("availability")
+            .doc(date)
+            .collection("slots")
+            .doc(time)
+            .update({ booked: true });
 
-window.submitBooking = submitBooking;
+        window.location.href = "booking-confirmed.html";
+    }
+
+    window.submitBooking = submitBooking;
 </script>
+
 </body>
 </html>
