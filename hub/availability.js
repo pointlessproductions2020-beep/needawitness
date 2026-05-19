@@ -159,15 +159,28 @@ export async function getAvailableWitnesses(db, dateStr, timeStr) {
 }
 
 // ========================================
-// 8. Check availability for all slots
+// 8. Check availability for all slots (using /availability)
 // ========================================
 export async function checkAvailability(db, dateStr) {
     const slots = generateSlots();
     const results = {};
 
     for (const slot of slots) {
-        const witnesses = await getAvailableWitnesses(db, dateStr, slot);
-        results[slot] = witnesses.length > 0;
+        const ref = db
+            .collection("availability")
+            .doc(dateStr)
+            .collection("slots")
+            .doc(slot);
+
+        const snap = await ref.get();
+
+        if (!snap.exists) {
+            // If no document exists, assume available
+            results[slot] = true;
+        } else {
+            const data = snap.data();
+            results[slot] = data.available !== false;
+        }
     }
 
     return results;
