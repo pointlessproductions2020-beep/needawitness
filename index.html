@@ -80,6 +80,10 @@
         font-weight: bold;
     }
 
+    .btn:hover {
+        background: #c3954f;
+    }
+
     .top-cta {
         position: absolute;
         top: 20px;
@@ -95,6 +99,10 @@
         font-weight: bold;
         text-decoration: none;
         font-size: 0.95rem;
+    }
+
+    .top-cta a:hover {
+        background: #c3954f;
     }
 
     section {
@@ -127,11 +135,13 @@
         gap: 20px;
         justify-content: center;
         margin-top: 20px;
+        flex-wrap: wrap;
     }
 
     .about-images img {
         width: 45%;
         border-radius: 10px;
+        min-width: 260px;
     }
 
     footer {
@@ -161,7 +171,7 @@
         align-items: center;
         gap: 6px;
         transition: 0.2s;
-        min-width: 120px;
+        min-width: 140px;
         justify-content: center;
         flex-direction: column;
 
@@ -247,13 +257,128 @@
         <img src="logo.png" alt="Need A Witness UK Logo">
         <h1>Professional Wedding Witnesses Across Kent</h1>
         <p>Reliable, friendly, and available for last‑minute ceremonies.</p>
-        <a href="#booking" class="btn">Book Your Witnesses</a>
+        <a href="#availability" class="btn">Book Your Witnesses</a>
     </div>
 </div>
 
-<!-- (All your sections remain unchanged until we reach availability) -->
+<section>
+    <h2>How It Works</h2>
+
+    <img src="photo.png" alt="Wedding Signing Scene" class="image-center">
+
+    <p>We keep things simple, professional, and stress‑free:</p>
+    <ol>
+        <li>Check our availability and choose a time.</li>
+        <li>Fill out the booking form on our secure booking page.</li>
+        <li>We confirm availability for your ceremony.</li>
+        <li>You choose your preferred payment method.</li>
+        <li>Once paid, your booking is secured.</li>
+        <li>We attend your registry office, sign as witnesses, and take photos if requested.</li>
+    </ol>
+</section>
 
 <section>
+    <h2>Pricing</h2>
+
+    <img src="marriagecert.png" alt="Marriage Certificate Signing" class="image-center">
+
+    <div class="pricing-box">
+        <h3>One Witness — £100</h3>
+        <p>Professional, punctual, and reliable. Ideal if you only need a single witness.</p>
+    </div>
+
+    <div class="pricing-box">
+        <h3>Add a Second Witness — +£50</h3>
+        <p>Need two witnesses? Add an additional witness for just £50.</p>
+    </div>
+
+    <div class="pricing-box">
+        <h3>Pricing & Operating Days</h3>
+        <p>
+            We operate <strong>Monday to Saturday</strong> at our standard rates.
+            Sunday ceremonies are available with a <strong>premium surcharge</strong>, and
+            <strong>UK Bank Holidays are charged at double the standard rate</strong>.
+            Deposits are adjusted accordingly, so you always know the cost upfront.
+        </p>
+    </div>
+
+    <h3>Add‑Ons</h3>
+
+    <div class="addon-box">
+        <strong>Confetti Moment — £20</strong><br>
+        We bring biodegradable confetti and capture the moment.
+    </div>
+
+    <div class="addon-box">
+        <strong>Photo & Video Add‑On — £30</strong><br>
+        We take photos and short videos on our device and send them digitally.<br>
+        On request, we can use your device instead at no extra cost.
+    </div>
+
+    <div class="addon-box">
+        <strong>Travel Outside Kent — £1 per mile</strong><br>
+        Calculated round‑trip from CT14 7QE. We’ll confirm mileage and cost before payment.
+    </div>
+
+    <div class="addon-box">
+        <strong>Last‑Minute Booking (within 24 hours)</strong><br>
+        We don’t accept bookings within 24 hours via the form. For emergencies, please contact us directly.
+    </div>
+</section>
+
+<section>
+    <h2>Payment Options</h2>
+    <p>We offer flexible payment methods to suit your needs:</p>
+    <ul>
+        <li><strong>PayPal</strong> — Ideal if you prefer PayPal for secure payments.</li>
+        <li><strong>Card (Stripe)</strong> — Fast, secure card checkout.</li>
+        <li><strong>Bank Transfer</strong> — Available on request. Bookings are confirmed once payment clears.</li>
+    </ul>
+</section>
+
+<section>
+    <h2>About Us</h2>
+    <p>As a real couple who once needed witnesses ourselves, we now help others with a friendly, dependable service. We understand how important your day is, and we’re committed to making the process simple, stress‑free, and professional.</p>
+
+    <div class="about-images">
+        <img src="photo.png" alt="Wedding Signing Scene">
+        <img src="marriagecert.png" alt="Marriage Certificate Close-Up">
+    </div>
+</section>
+
+<section>
+    <h2>FAQ</h2>
+
+    <div class="faq-item">
+        <strong>Do you attend wedding venues?</strong>
+        <p>No — we attend registry offices only for signatures and optional photos.</p>
+    </div>
+
+    <div class="faq-item">
+        <strong>Do you take photos?</strong>
+        <p>Yes — we can take photos on your phone for free, or you can choose our photo & video add‑on.</p>
+    </div>
+
+    <div class="faq-item">
+        <strong>How do I pay?</strong>
+        <p>You can pay via PayPal, Stripe, or bank transfer.</p>
+    </div>
+
+    <div class="faq-item">
+        <strong>Is my booking confirmed immediately?</strong>
+        <p>Your booking is confirmed once payment is received.</p>
+    </div>
+
+    <div class="faq-item">
+        <strong>Do Sundays or Bank Holidays cost more?</strong>
+        <p>
+            Yes. We operate Monday to Saturday at our standard rates.
+            Sunday bookings include a premium surcharge, and UK Bank Holidays are charged at double the standard rate.
+        </p>
+    </div>
+</section>
+
+<section id="availability">
     <h2>Check Our Availability</h2>
 
     <div class="availability-box">
@@ -268,6 +393,7 @@
 
         <p style="margin-top: 20px;"><strong>Available times:</strong></p>
 
+        <!-- GOLD SPINNER -->
         <div id="slot-spinner" class="spinner"></div>
 
         <div id="slots" class="slots-grid"></div>
@@ -277,8 +403,6 @@
         <input type="hidden" id="selected-time">
     </div>
 </section>
-
-<!-- ⭐ OLD BOOKING FORM REMOVED COMPLETELY ⭐ -->
 
 <section>
     <h2>Areas We Cover</h2>
@@ -385,7 +509,6 @@
                     document.querySelectorAll(".slot-button").forEach(b => b.classList.remove("slot-selected"));
                     event.currentTarget.classList.add("slot-selected");
 
-                    // ⭐ NEW BOOKING REDIRECT ⭐
                     const url = `booking.html
                         ?date=${encodeURIComponent(dateString)}
                         &time=${encodeURIComponent(time)}
