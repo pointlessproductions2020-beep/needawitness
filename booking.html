@@ -343,7 +343,7 @@
             .doc(date)
             .collection("slots")
             .doc(time)
-            .update({ booked: true });
+            .set({ booked: true }, { merge: true });
 
         window.location.href = "booking-confirmed.html";
     }
