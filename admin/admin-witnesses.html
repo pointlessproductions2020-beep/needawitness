@@ -246,7 +246,9 @@ auth.onAuthStateChanged(async (user) => {
         return;
     }
 
-    db.collection("users").onSnapshot(snapshot => {
+   db.collection("users")
+  .where("type", "in", ["single", "couple"])
+  .onSnapshot(snapshot => {
         allWitnesses = [];
         snapshot.forEach(doc => {
             allWitnesses.push({
@@ -256,7 +258,6 @@ auth.onAuthStateChanged(async (user) => {
         });
         renderFiltered();
     });
-});
 
 function statusBadge(u) {
     if (u.status === "rejected") return '<span class="status-badge rejected">Rejected</span>';
