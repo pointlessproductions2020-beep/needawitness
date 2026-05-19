@@ -189,7 +189,7 @@
     const lastMinuteFee = hoursDiff < 24 ? 50 : 0;
     if (lastMinuteFee > 0) document.getElementById("lastMinute").checked = true;
 
-    // Travel calculation
+    // ⭐⭐⭐ FIXED TRAVEL CALCULATION ⭐⭐⭐
     async function calculateTravel() {
         const postcode = document.getElementById("travelPostcode").value.trim();
         if (!postcode) {
@@ -198,20 +198,43 @@
             return;
         }
 
-        const origin = "CT14 7QE";
-        const url = `https://api.distancematrix.ai/maps/api/distancematrix/json?origins=${origin}&destinations=${postcode}&key=YOUR_API_KEY`;
+        const originPostcode = "CT14 7QE";
 
         try {
-            const res = await fetch(url);
-            const data = await res.json();
+            // 1. Convert both postcodes to coordinates
+            const [originCoords, destCoords] = await Promise.all([
+                fetch(`https://api.postcodes.io/postcodes/${originPostcode.replace(/\s+/g, "")}`).then(r => r.json()),
+                fetch(`https://api.postcodes.io/postcodes/${postcode.replace(/\s+/g, "")}`).then(r => r.json())
+            ]);
 
-            const meters = data.rows[0].elements[0].distance.value;
+            if (originCoords.status !== 200 || destCoords.status !== 200) {
+                document.getElementById("travelCost").textContent = 0;
+                updateTotal();
+                return;
+            }
+
+            const origin = `${originCoords.result.longitude},${originCoords.result.latitude}`;
+            const dest = `${destCoords.result.longitude},${destCoords.result.latitude}`;
+
+            // 2. Call OpenRouteService for driving distance
+            const orsKey = "eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6IjBiYjMxNzAwMGRlNDQ5M2NhNTYwYjljYTIwY2NlZDk0IiwiaCI6Im11cm11cjY0In0=";
+
+            const routeRes = await fetch(
+                `https://api.openrouteservice.org/v2/directions/driving-car?api_key=${orsKey}&start=${origin}&end=${dest}`
+            );
+
+            const routeData = await routeRes.json();
+
+            const meters = routeData.features[0].properties.summary.distance;
             const miles = meters / 1609.34;
 
-            const travelCost = Math.round(miles * 2 * 2); // £2 per mile, round trip
+            // 3. Calculate travel cost (£2 per mile, round trip)
+            const travelCost = Math.round(miles * 2 * 2);
+
             document.getElementById("travelCost").textContent = travelCost;
 
-        } catch (e) {
+        } catch (err) {
+            console.error(err);
             document.getElementById("travelCost").textContent = 0;
         }
 
@@ -277,6 +300,5 @@
 
     window.submitBooking = submitBooking;
 </script>
-
 </body>
 </html>
