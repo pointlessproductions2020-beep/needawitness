@@ -46,10 +46,7 @@
         font-weight: 500;
     }
 
-    .sidebar a:hover {
-        color: #D4AF37;
-    }
-
+    .sidebar a:hover,
     .sidebar a.active {
         color: #D4AF37;
         font-weight: 600;
@@ -103,28 +100,19 @@
         color: #D4AF37;
     }
 
-    .witness-item {
+    .item {
         padding: 12px 0;
         border-bottom: 1px solid #eee;
+        cursor: pointer;
     }
 
-    .witness-item:last-child {
+    .item:last-child {
         border-bottom: none;
     }
 
-    .btn {
-        padding: 6px 12px;
-        border-radius: 6px;
-        border: none;
-        cursor: pointer;
-        font-size: 13px;
-        font-weight: 600;
-        margin-right: 6px;
+    .item:hover {
+        background: #fafafa;
     }
-
-    .btn-approve { background: #28a745; color: white; }
-    .btn-reject { background: #dc3545; color: white; }
-    .btn-undo { background: #007bff; color: white; }
 
     .status-badge {
         display: inline-block;
@@ -167,6 +155,18 @@
 
         <div class="header">Admin Dashboard</div>
 
+        <!-- PENDING JOBS -->
+        <div class="section">
+            <h3>Pending Jobs</h3>
+            <div id="pendingJobs">Loading...</div>
+        </div>
+
+        <!-- NEXT UPCOMING JOB -->
+        <div class="section">
+            <h3>Next Upcoming Job</h3>
+            <div id="nextJob">Loading...</div>
+        </div>
+
         <!-- PENDING WITNESSES -->
         <div class="section">
             <h3>Pending Witnesses</h3>
@@ -202,9 +202,13 @@ auth.onAuthStateChanged(async (user) => {
     }
 
     loadWitnesses();
+    loadPendingJobs();
+    loadNextJob();
 });
 
-/* LOAD WITNESSES */
+/* ------------------------------
+   LOAD WITNESSES
+------------------------------ */
 function loadWitnesses() {
     db.collection("users").onSnapshot(snapshot => {
         let pendingHTML = "";
@@ -219,37 +223,18 @@ function loadWitnesses() {
                 ? `${u.partner1Name} & ${u.partner2Name} (${u.teamName})`
                 : u.name;
 
-            /* PENDING */
-            if (u.status === "pending" || u.approved === false) {
-                pendingHTML += `
-                    <div class="witness-item">
-                        <strong>${name}</strong>
-                        <span class="status-badge pending">Pending</span><br>
-                        <button class="btn btn-approve" onclick="approve('${id}')">Approve</button>
-                        <button class="btn btn-reject" onclick="reject('${id}')">Reject</button>
-                    </div>
-                `;
+            const clickable = `<div class="item" onclick="viewWitness('${id}')"><strong>${name}</strong>`;
+
+            if (u.status === "pending") {
+                pendingHTML += `${clickable}<span class="status-badge pending">Pending</span></div>`;
             }
 
-            /* ACTIVE */
-            if (u.approved === true && u.status === "active") {
-                activeHTML += `
-                    <div class="witness-item">
-                        <strong>${name}</strong>
-                        <span class="status-badge active">Active</span>
-                    </div>
-                `;
+            if (u.status === "active") {
+                activeHTML += `${clickable}<span class="status-badge active">Active</span></div>`;
             }
 
-            /* REJECTED */
             if (u.status === "rejected") {
-                rejectedHTML += `
-                    <div class="witness-item">
-                        <strong>${name}</strong>
-                        <span class="status-badge rejected">Rejected</span><br>
-                        <button class="btn btn-undo" onclick="undoReject('${id}')">Undo Rejection</button>
-                    </div>
-                `;
+                rejectedHTML += `${clickable}<span class="status-badge rejected">Rejected</span></div>`;
             }
         });
 
@@ -259,31 +244,74 @@ function loadWitnesses() {
     });
 }
 
-/* APPROVE */
-function approve(uid) {
-    db.collection("users").doc(uid).update({
-        approved: true,
-        status: "active"
-    });
+/* ------------------------------
+   LOAD PENDING JOBS
+------------------------------ */
+function loadPendingJobs() {
+    db.collection("jobs")
+        .where("status", "==", "pending")
+        .onSnapshot(snapshot => {
+            let html = "";
+
+            snapshot.forEach(doc => {
+                const j = doc.data();
+                const id = doc.id;
+
+                html += `
+                    <div class="item" onclick="viewJob('${id}')">
+                        <strong>${j.customer?.name || "Unknown"}</strong>
+                        <span class="status-badge pending">Pending</span><br>
+                        ${j.date} at ${j.time}
+                    </div>
+                `;
+            });
+
+            pendingJobs.innerHTML = html || "<p>No pending jobs.</p>";
+        });
 }
 
-/* REJECT */
-function reject(uid) {
-    db.collection("users").doc(uid).update({
-        approved: false,
-        status: "rejected"
-    });
+/* ------------------------------
+   LOAD NEXT UPCOMING JOB
+------------------------------ */
+function loadNextJob() {
+    db.collection("jobs")
+        .orderBy("date")
+        .orderBy("time")
+        .limit(1)
+        .onSnapshot(snapshot => {
+            if (snapshot.empty) {
+                nextJob.innerHTML = "<p>No upcoming jobs.</p>";
+                return;
+            }
+
+            const doc = snapshot.docs[0];
+            const j = doc.data();
+            const id = doc.id;
+
+            nextJob.innerHTML = `
+                <div class="item" onclick="viewJob('${id}')">
+                    <strong>${j.customer?.name || "Unknown"}</strong><br>
+                    ${j.date} at ${j.time}<br>
+                    <span class="status-badge ${j.status}">${j.status}</span>
+                </div>
+            `;
+        });
 }
 
-/* UNDO REJECTION */
-function undoReject(uid) {
-    db.collection("users").doc(uid).update({
-        approved: false,
-        status: "pending"
-    });
+/* ------------------------------
+   NAVIGATION
+------------------------------ */
+function viewWitness(uid) {
+    window.location.href = "admin-witness-detail.html?id=" + uid;
 }
 
-/* LOGOUT */
+function viewJob(jid) {
+    window.location.href = "admin-job-detail.html?id=" + jid;
+}
+
+/* ------------------------------
+   LOGOUT
+------------------------------ */
 function logout() {
     auth.signOut().then(() => {
         window.location.href = "../hub/login.html";
