@@ -167,9 +167,9 @@
     }
 
     .btn-approve { background: #28a745; color: white; }
-    .btn-reject { background: #dc3545; color: white; }
-    .btn-undo { background: #007bff; color: white; }
-    .btn-view { background: #f0f0f0; color: #333; }
+    .btn-reject  { background: #dc3545; color: white; }
+    .btn-undo    { background: #007bff; color: white; }
+    .btn-view    { background: #f0f0f0; color: #333; }
 </style>
 </head>
 
@@ -199,7 +199,12 @@
 
         <div class="section">
             <div class="search-row">
-                <input type="text" id="searchInput" placeholder="Search by name, email, or location..." oninput="renderFiltered()">
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Search by name, email, or location..."
+                    oninput="renderFiltered()"
+                >
                 <select id="statusFilter" class="filter-select" onchange="renderFiltered()">
                     <option value="all">All statuses</option>
                     <option value="pending">Pending</option>
@@ -235,36 +240,45 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-<script src="../firebase.js"></script>
+<script src="../hub/firebase.js"></script>
 
 <script>
 let allWitnesses = [];
 
+// Auth gate
 auth.onAuthStateChanged(async (user) => {
     if (!user) {
         window.location.href = "../hub/login.html";
         return;
     }
 
-   db.collection("users")
-  .where("type", "in", ["single", "couple"])
-  .onSnapshot(snapshot => {
-        allWitnesses = [];
-        snapshot.forEach(doc => {
-            allWitnesses.push({
-                id: doc.id,
-                ...doc.data()
+    // Load all witnesses (single + couple)
+    db.collection("users")
+        .where("type", "in", ["single", "couple"])
+        .onSnapshot(snapshot => {
+            allWitnesses = [];
+            snapshot.forEach(doc => {
+                allWitnesses.push({
+                    id: doc.id,
+                    ...doc.data()
+                });
             });
+            renderFiltered();
         });
-        renderFiltered();
-    });
+});
 
+// Status badge renderer
 function statusBadge(u) {
-    if (u.status === "rejected") return '<span class="status-badge rejected">Rejected</span>';
-    if (u.approved === true && u.status === "active") return '<span class="status-badge active">Active</span>';
+    if (u.status === "rejected") {
+        return '<span class="status-badge rejected">Rejected</span>';
+    }
+    if (u.status === "active") {
+        return '<span class="status-badge active">Active</span>';
+    }
     return '<span class="status-badge pending">Pending</span>';
 }
 
+// Main render with filters
 function renderFiltered() {
     const search = document.getElementById("searchInput").value.toLowerCase();
     const filter = document.getElementById("statusFilter").value;
@@ -273,20 +287,28 @@ function renderFiltered() {
     let rows = "";
 
     allWitnesses.forEach(u => {
+        // Build display name
+        let name;
+        if (u.type === "couple") {
+            const p1 = u.partner1Name || "";
+            const p2 = u.partner2Name || "";
+            const team = u.teamName ? ` (${u.teamName})` : "";
+            name = `${p1} & ${p2}${team}`.trim();
+            if (!p1 && !p2 && u.name) {
+                name = u.name;
+            }
+        } else {
+            name = u.name || "";
+        }
 
-        const name =
-            u.type === "couple"
-                ? `${u.partner1Name || ""} & ${u.partner2Name || ""} ${u.teamName ? "(" + u.teamName + ")" : ""}`
-                : (u.name || u.availability?.name || "");
-
-        const email = u.email || u.availability?.email || "";
-        const phone = u.phone || u.availability?.phone || "";
-        const location = u.location || u.availability?.location || "";
-        const rating = u.rating ? u.rating.toFixed(1) : "—";
+        const email    = u.email    || "";
+        const phone    = u.phone    || "";
+        const location = u.location || "";
+        const rating   = typeof u.rating === "number" ? u.rating.toFixed(1) : "—";
 
         // STATUS FILTER
-        if (filter === "pending" && !(u.status === "pending" || u.approved === false)) return;
-        if (filter === "active" && !(u.approved === true && u.status === "active")) return;
+        if (filter === "pending"  && u.status !== "pending")  return;
+        if (filter === "active"   && u.status !== "active")   return;
         if (filter === "rejected" && u.status !== "rejected") return;
 
         // SEARCH FILTER
@@ -297,12 +319,12 @@ function renderFiltered() {
 
         if (u.status === "rejected") {
             actions += `<button class="btn btn-undo" onclick="undoReject('${u.id}')">Undo</button>`;
-        } else if (u.approved === true && u.status === "active") {
-            actions += `<button class="btn btn-reject" onclick="reject('${u.id}')">Reject</button>`;
+        } else if (u.status === "active") {
+            actions += `<button class="btn btn-reject" onclick="rejectWitness('${u.id}')">Reject</button>`;
         } else {
             actions += `
-                <button class="btn btn-approve" onclick="approve('${u.id}')">Approve</button>
-                <button class="btn btn-reject" onclick="reject('${u.id}')">Reject</button>
+                <button class="btn btn-approve" onclick="approveWitness('${u.id}')">Approve</button>
+                <button class="btn btn-reject" onclick="rejectWitness('${u.id}')">Reject</button>
             `;
         }
 
@@ -322,14 +344,15 @@ function renderFiltered() {
     tbody.innerHTML = rows || '<tr><td colspan="7">No witnesses found.</td></tr>';
 }
 
-function approve(uid) {
+// Approve / reject / undo
+function approveWitness(uid) {
     db.collection("users").doc(uid).update({
         approved: true,
         status: "active"
     });
 }
 
-function reject(uid) {
+function rejectWitness(uid) {
     db.collection("users").doc(uid).update({
         approved: false,
         status: "rejected"
@@ -343,10 +366,12 @@ function undoReject(uid) {
     });
 }
 
+// View detail
 function viewWitness(uid) {
     window.location.href = "admin-witness-detail.html?id=" + encodeURIComponent(uid);
 }
 
+// Logout
 function logout() {
     auth.signOut().then(() => {
         window.location.href = "../hub/login.html";
