@@ -212,7 +212,7 @@
 <script>
 const WORKER_URL = "https://shrill-math-1bfc.pointlessproductions2020.workers.dev/";
 
-/* Preview photo when selected */
+/* Preview photo */
 document.getElementById("photoInput").addEventListener("change", (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -226,7 +226,7 @@ document.getElementById("photoInput").addEventListener("change", (e) => {
     reader.readAsDataURL(file);
 });
 
-/* Upload photo to Cloudflare Worker → GitHub (FormData) */
+/* Upload photo */
 async function uploadPhoto(uid) {
     const fileInput = document.getElementById("photoInput");
     if (!fileInput.files.length) return null;
@@ -234,8 +234,8 @@ async function uploadPhoto(uid) {
     const file = fileInput.files[0];
 
     const formData = new FormData();
-    formData.append("file", file);               // must match Worker
-    formData.append("filename", `${uid}.jpg`);   // must match Worker
+    formData.append("file", file);
+    formData.append("filename", `${uid}.jpg`);
 
     try {
         const res = await fetch(WORKER_URL, {
@@ -244,13 +244,13 @@ async function uploadPhoto(uid) {
         });
 
         if (!res.ok) {
-            const text = await res.text();
-            console.error("Upload failed:", text);
+            console.error("Upload failed:", await res.text());
             return null;
         }
 
         const json = await res.json();
         return json.url || null;
+
     } catch (err) {
         console.error("Upload failed:", err);
         return null;
@@ -304,22 +304,24 @@ async function saveProfile() {
     const doc = await db.collection("users").doc(user.uid).get();
     const data = doc.data() || {};
 
+    const safeTrim = (val) => (val || "").toString().trim();
+
     let updatedData = {
-        phone: phone.value.trim(),
-        location: location.value.trim(),
-        bio: bio.value.trim(),
+        phone: safeTrim(phone.value),
+        location: safeTrim(location.value),
+        bio: safeTrim(bio.value),
     };
 
-    // Upload photo if selected
+    // Upload photo
     const photoURL = await uploadPhoto(user.uid);
     if (photoURL) updatedData.photoURL = photoURL;
 
     if (data.type === "couple") {
-        updatedData.teamName = teamName.value.trim();
-        updatedData.partner1Name = partner1.value.trim();
-        updatedData.partner2Name = partner2.value.trim();
+        updatedData.teamName = safeTrim(teamName.value);
+        updatedData.partner1Name = safeTrim(partner1.value);
+        updatedData.partner2Name = safeTrim(partner2.value);
     } else {
-        updatedData.name = name.value.trim();
+        updatedData.name = safeTrim(name.value);
     }
 
     await db.collection("users").doc(user.uid).update(updatedData);
