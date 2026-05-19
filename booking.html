@@ -265,40 +265,49 @@
 
     updateTotal();
 
-    // Submit booking
-    async function submitBooking() {
-        const job = {
-            date,
-            time,
-            basePrice,
-            deposit,
-            sundayFee,
-            bankHolidayMultiplier,
-            addOns: {
-                confetti: document.getElementById("confetti").checked,
-                photoVideo: document.getElementById("photoVideo").checked,
-                lastMinute: document.getElementById("lastMinute").checked,
-                travelPostcode: document.getElementById("travelPostcode").value.trim(),
-                travelCost: Number(document.getElementById("travelCost").textContent)
-            },
-            totalPrice: Number(document.getElementById("totalPrice").textContent),
-            customer: {
-                name: document.getElementById("cust-name").value.trim(),
-                email: document.getElementById("cust-email").value.trim(),
-                phone: document.getElementById("cust-phone").value.trim(),
-                location: document.getElementById("cust-location").value.trim(),
-                notes: document.getElementById("cust-notes").value.trim()
-            },
-            status: "pending",
-            createdAt: new Date().toISOString()
-        };
+// Submit booking
+async function submitBooking() {
+    const job = {
+        date,
+        time,
+        basePrice,
+        deposit,
+        sundayFee,
+        bankHolidayMultiplier,
+        addOns: {
+            confetti: document.getElementById("confetti").checked,
+            photoVideo: document.getElementById("photoVideo").checked,
+            lastMinute: document.getElementById("lastMinute").checked,
+            travelPostcode: document.getElementById("travelPostcode").value.trim(),
+            travelCost: Number(document.getElementById("travelCost").textContent)
+        },
+        totalPrice: Number(document.getElementById("totalPrice").textContent),
+        customer: {
+            name: document.getElementById("cust-name").value.trim(),
+            email: document.getElementById("cust-email").value.trim(),
+            phone: document.getElementById("cust-phone").value.trim(),
+            location: document.getElementById("cust-location").value.trim(),
+            notes: document.getElementById("cust-notes").value.trim()
+        },
+        status: "pending",
+        createdAt: new Date().toISOString()
+    };
 
-        await db.collection("jobs").add(job);
+    // 1️⃣ Save the job
+    await db.collection("jobs").add(job);
 
-        window.location.href = "booking-confirmed.html";
-    }
+    // 2️⃣ Mark the slot as booked in Firestore
+    await db.collection("availability")
+        .doc(date)
+        .collection("slots")
+        .doc(time)
+        .update({ booked: true });
 
-    window.submitBooking = submitBooking;
+    // 3️⃣ Redirect to confirmation page
+    window.location.href = "booking-confirmed.html";
+}
+
+window.submitBooking = submitBooking;
 </script>
 </body>
 </html>
