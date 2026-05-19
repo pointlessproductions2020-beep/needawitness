@@ -175,12 +175,27 @@ export async function checkAvailability(db, dateStr) {
         const snap = await ref.get();
 
         if (!snap.exists) {
-            // If no document exists, assume available
+            // No document = available
             results[slot] = true;
-        } else {
-            const data = snap.data();
-            results[slot] = data.available !== false;
+            continue;
         }
+
+        const data = snap.data();
+
+        // ❗ NEW: If booked, slot is unavailable
+        if (data.booked === true) {
+            results[slot] = false;
+            continue;
+        }
+
+        // If explicitly marked unavailable
+        if (data.available === false) {
+            results[slot] = false;
+            continue;
+        }
+
+        // Otherwise available
+        results[slot] = true;
     }
 
     return results;
