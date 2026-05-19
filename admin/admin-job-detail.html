@@ -486,11 +486,10 @@
                         <b>Witness Type:</b> <span id="witnessTypeText">–</span>
                     </div>
 
-                    <!-- ⭐ ADDED WITNESS SERVICE DISPLAY ⭐ -->
                     <div style="font-size:13px;margin-bottom:8px;">
                         <b>Witness Service:</b> <span id="witnessServiceText">–</span>
                     </div>
-                                        <div style="font-size:13px;margin-bottom:8px;">
+                    <div style="font-size:13px;margin-bottom:8px;">
                         <b>Assigned Witnesses:</b> <span id="assignedCountText">0</span>
                     </div>
                     <div style="font-size:13px;margin-bottom:8px;">
@@ -530,7 +529,6 @@
 </div>
 
 <script>
-
 let jobId = null;
 let jobDocRef = null;
 let jobData = null;
@@ -568,25 +566,33 @@ async function loadJob() {
 
 /* --------- POPULATE FIELDS --------- */
 function populateJobFields() {
-    const j = jobData;
+    const j = jobData || {};
+    const customer = j.customer || {};
+    const addOns = j.addOns || {};
 
-    document.getElementById("jobTitle").innerText = j.coupleName || "Job Detail";
-    document.getElementById("jobSubtitle").innerText =
-        (j.date || "") + (j.time ? " at " + j.time : "") + (j.location ? " • " + j.location : "");
+    // Title + subtitle
+    document.getElementById("jobTitle").innerText = customer.name || "Job Detail";
+    const subtitleParts = [];
+    if (j.date) subtitleParts.push(j.date);
+    if (j.time) subtitleParts.push("at " + j.time);
+    if (customer.location) subtitleParts.push("• " + customer.location);
+    document.getElementById("jobSubtitle").innerText = subtitleParts.join(" ");
 
-    coupleName.value = j.coupleName || "";
-    coupleEmail.value = j.coupleEmail || "";
-    couplePhone.value = j.couplePhone || "";
+    // Couple / customer fields
+    coupleName.value = customer.name || "";
+    coupleEmail.value = customer.email || "";
+    couplePhone.value = customer.phone || "";
 
     jobDate.value = j.date || "";
     jobTime.value = j.time || "";
-    jobLocation.value = j.location || "";
+    jobLocation.value = customer.location || j.location || "";
     ceremonyType.value = j.ceremonyType || "civil";
-    jobNotes.value = j.notes || "";
+    jobNotes.value = customer.notes || j.notes || "";
     adminNotes.value = j.adminNotes || "";
 
+    // Payments
     totalPrice.value = j.totalPrice || 0;
-    depositAmount.value = j.depositAmount || 20;
+    depositAmount.value = j.deposit || 0;
     amountPaid.value = j.amountPaid || 0;
     amountDue.value = j.amountDue || 0;
     paymentStatus.value = j.paymentStatus || "unpaid";
@@ -599,9 +605,11 @@ function populateJobFields() {
         paymentDeadline.value = toLocalInputDateTime(d);
     } else if (j.paymentDeadline) {
         paymentDeadline.value = j.paymentDeadline;
+    } else {
+        paymentDeadline.value = "";
     }
 
-    // badges
+    // Badges
     const status = j.status || "pending";
     const ps = j.paymentStatus || "unpaid";
 
@@ -622,14 +630,12 @@ function populateJobFields() {
          ps === "deposit" ? "pay-deposit" :
          ps === "late-cancel" ? "pay-late" : "pay-unpaid");
 
-    // snapshot: witness type
+    // Snapshot: witness type (based on count)
+    const wc = j.witnessCount || 1;
     document.getElementById("witnessTypeText").innerText =
-        j.witnessType === "couple" ? "Couple Team" :
-        j.witnessType === "either" ? "Either" : "Single Witness";
+        wc === 2 ? "Two Witnesses" : "Single Witness";
 
-    // ⭐ NEW: Witness Service (1 or 2 witnesses)
-    let serviceText = "One Witness (£100)";
-    if (j.witnessCount === 2) serviceText = "Two Witnesses (£150)";
+    let serviceText = wc === 2 ? "Two Witnesses (£150)" : "One Witness (£100)";
     document.getElementById("witnessServiceText").innerText = serviceText;
 
     const assignedCount = (j.assignedWitnesses && j.assignedWitnesses.length) || 0;
@@ -648,7 +654,8 @@ function populateJobFields() {
 
     renderAssignedWitnesses();
 }
-    /* --------- ASSIGNED WITNESSES --------- */
+
+/* --------- ASSIGNED WITNESSES --------- */
 async function renderAssignedWitnesses() {
     const container = document.getElementById("assignedWitnesses");
     container.innerHTML = "";
@@ -741,6 +748,7 @@ function confirmAddWitness() {
         status: "assigned"
     }).then(() => {
         jobData.assignedWitnesses = updated;
+        jobData.status = "assigned";
         renderAssignedWitnesses();
         populateJobFields();
         closeAddWitness();
@@ -758,6 +766,7 @@ function removeWitness(wid) {
         status: updated.length ? "assigned" : "pending"
     }).then(() => {
         jobData.assignedWitnesses = updated;
+        jobData.status = updated.length ? "assigned" : "pending";
         renderAssignedWitnesses();
         populateJobFields();
     });
@@ -765,18 +774,25 @@ function removeWitness(wid) {
 
 /* --------- SAVE JOB DETAILS --------- */
 function saveJobDetails() {
+    const currentCustomer = jobData.customer || {};
+
+    const updatedCustomer = {
+        ...currentCustomer,
+        name: coupleName.value.trim(),
+        email: coupleEmail.value.trim(),
+        phone: couplePhone.value.trim(),
+        location: jobLocation.value.trim(),
+        notes: jobNotes.value.trim()
+    };
+
     const updates = {
-        coupleName: coupleName.value.trim(),
-        coupleEmail: coupleEmail.value.trim(),
-        couplePhone: couplePhone.value.trim(),
+        customer: updatedCustomer,
         date: jobDate.value,
         time: jobTime.value,
-        location: jobLocation.value.trim(),
         ceremonyType: ceremonyType.value,
-        notes: jobNotes.value.trim(),
         adminNotes: adminNotes.value.trim(),
         totalPrice: Number(totalPrice.value) || 0,
-        depositAmount: Number(depositAmount.value) || 0,
+        deposit: Number(depositAmount.value) || 0,
         amountPaid: Number(amountPaid.value) || 0,
         amountDue: Number(amountDue.value) || 0,
         paymentStatus: paymentStatus.value,
@@ -805,7 +821,7 @@ function markDepositPaid() {
         if (!doc.exists) return;
         const j = doc.data();
         const total = j.totalPrice || 0;
-        const deposit = j.depositAmount || 20;
+        const deposit = j.deposit || 0;
         const newPaid = (j.amountPaid || 0) + deposit;
         const newDue = Math.max(total - newPaid, 0);
 
@@ -901,11 +917,15 @@ function buildTimeline() {
     const container = document.getElementById("timeline");
     container.innerHTML = "";
 
-    const j = jobData;
+    const j = jobData || {};
     const items = [];
 
-    if (j.createdAt && j.createdAt.toDate) {
-        items.push({ label: "Job created", time: j.createdAt.toDate() });
+    if (j.createdAt) {
+        if (j.createdAt.toDate) {
+            items.push({ label: "Job created", time: j.createdAt.toDate() });
+        } else if (typeof j.createdAt === "string") {
+            items.push({ label: "Job created", time: new Date(j.createdAt) });
+        }
     }
 
     if (j.depositPaidAt && j.depositPaidAt.toDate) {
@@ -979,7 +999,6 @@ function adminLogout() {
 
 /* INIT */
 loadJob();
-
 </script>
 
 </body>
