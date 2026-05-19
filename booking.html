@@ -27,10 +27,9 @@
         box-shadow: 0 4px 15px rgba(0,0,0,0.08);
     }
 
-    h2 {
+    h2, h3 {
         font-family: "Playfair Display", serif;
         color: #D4AF37;
-        text-align: center;
         margin-top: 0;
     }
 
@@ -83,10 +82,25 @@
         cursor: pointer;
         margin-top: 25px;
         font-weight: 600;
+        transition: 0.2s ease;
     }
 
     button:hover {
         opacity: 0.9;
+    }
+
+    button:disabled {
+        background: #bfa76b;
+        cursor: not-allowed;
+        opacity: 0.7;
+    }
+
+    .loading {
+        margin-top: 10px;
+        text-align: center;
+        font-size: 0.95rem;
+        color: #555;
+        display: none;
     }
 </style>
 </head>
@@ -105,7 +119,6 @@
         <p><strong>Bank Holiday Adjustment:</strong> <span id="sum-bankholiday">None</span></p>
     </div>
 
-    <!-- ⭐ WITNESS SERVICE OPTIONS ⭐ -->
     <h3>Witness Service</h3>
 
     <div class="addon-box">
@@ -165,7 +178,8 @@
         Total Price: £<span id="totalPrice">0</span>
     </div>
 
-    <button onclick="submitBooking()">Confirm Booking</button>
+    <button id="submitBtn" onclick="submitBooking()">Confirm Booking</button>
+    <div id="loading" class="loading">Processing your booking… please wait</div>
 </div>
 
 <!-- Firebase -->
@@ -288,6 +302,12 @@
 
     // ⭐⭐⭐ SUBMIT BOOKING ⭐⭐⭐
     async function submitBooking() {
+        const btn = document.getElementById("submitBtn");
+        const loading = document.getElementById("loading");
+
+        btn.disabled = true;
+        loading.style.display = "block";
+
         const witnessCount = Number(document.querySelector('input[name="witnessCount"]:checked').value);
 
         const job = {
