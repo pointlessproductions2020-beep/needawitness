@@ -174,6 +174,26 @@
             <canvas id="revenueChart" width="300" height="300"></canvas>
         </div>
 
+        <!-- MONTHLY REVENUE -->
+        <div class="section">
+            <h3>Monthly Revenue</h3>
+            <canvas id="monthlyRevenueChart" height="200"></canvas>
+        </div>
+
+        <!-- TODAY & THIS WEEK -->
+        <div class="section">
+            <h3>Today & This Week</h3>
+            <div id="todayJobs">Loading...</div>
+            <hr>
+            <div id="weekJobs">Loading...</div>
+        </div>
+
+        <!-- WITNESS LEADERBOARD -->
+        <div class="section">
+            <h3>Top Witnesses</h3>
+            <div id="witnessLeaderboard">Loading...</div>
+        </div>
+
         <!-- PENDING WITNESSES -->
         <div class="section">
             <h3>Pending Witnesses</h3>
@@ -204,8 +224,8 @@
 <!-- CHART.JS -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<!-- DASHBOARD LOGIC -->
-<script src="admin-revenue-chart.js"></script>
+<!-- ANALYTICS MODULE -->
+<script src="admin-analytics.js"></script>
 
 <script>
 auth.onAuthStateChanged(async (user) => {
@@ -217,7 +237,12 @@ auth.onAuthStateChanged(async (user) => {
     loadWitnesses();
     loadPendingJobs();
     loadNextJob();
-    loadRevenue(); // from external JS
+
+    // Analytics
+    loadRevenue();
+    loadMonthlyRevenue();
+    loadTodayAndWeekJobs();
+    loadWitnessLeaderboard();
 });
 
 /* ------------------------------
