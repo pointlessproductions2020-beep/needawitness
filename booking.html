@@ -228,8 +228,8 @@
             const meters = routeData.features[0].properties.summary.distance;
             const miles = meters / 1609.34;
 
-            // 3. Calculate travel cost (£2 per mile, round trip)
-            const travelCost = Math.round(miles * 2 * 2);
+           // 3. Calculate travel cost (£1 per mile, round trip)
+            const travelCost = Math.round(miles * 2);
 
             document.getElementById("travelCost").textContent = travelCost;
 
