@@ -167,6 +167,13 @@
             <div id="nextJob">Loading...</div>
         </div>
 
+        <!-- REVENUE PANEL -->
+        <div class="section">
+            <h3>Revenue Overview</h3>
+            <div id="revenueTotals">Loading...</div>
+            <canvas id="revenueChart" width="300" height="300"></canvas>
+        </div>
+
         <!-- PENDING WITNESSES -->
         <div class="section">
             <h3>Pending Witnesses</h3>
@@ -194,6 +201,12 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 <script src="../hub/firebase.js"></script>
 
+<!-- CHART.JS -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- DASHBOARD LOGIC -->
+<script src="admin-revenue-chart.js"></script>
+
 <script>
 auth.onAuthStateChanged(async (user) => {
     if (!user) {
@@ -204,6 +217,7 @@ auth.onAuthStateChanged(async (user) => {
     loadWitnesses();
     loadPendingJobs();
     loadNextJob();
+    loadRevenue(); // from external JS
 });
 
 /* ------------------------------
