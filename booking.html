@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Complete Your Booking – Need A Witness UK</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+    body {
+        margin: 0;
+        font-family: Inter, sans-serif;
+        background: #faf8f5;
+        padding: 20px;
+        color: #333;
+    }
+
+    .container {
+        max-width: 700px;
+        margin: auto;
+        background: white;
+        padding: 30px;
+        border-radius: 14px;
+        border-left: 4px solid #D4AF37;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    }
+
+    h2 {
+        font-family: "Playfair Display", serif;
+        color: #D4AF37;
+        text-align: center;
+        margin-top: 0;
+    }
+
+    label {
+        font-weight: 600;
+        display: block;
+        margin-top: 15px;
+    }
+
+    input, textarea, select {
+        width: 100%;
+        padding: 12px;
+        margin-top: 6px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 15px;
+        background: #fafafa;
+    }
+
+    textarea {
+        height: 100px;
+    }
+
+    .summary-box, .addon-box {
+        background: #fff;
+        padding: 15px;
+        border-radius: 10px;
+        border: 1px solid #e5e5e5;
+        margin-top: 15px;
+    }
+
+    .total-box {
+        background: #f3e4c8;
+        padding: 18px;
+        border-radius: 10px;
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin-top: 20px;
+        text-align: center;
+    }
+
+    button {
+        width: 100%;
+        padding: 16px;
+        background: #D4AF37;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 18px;
+        cursor: pointer;
+        margin-top: 25px;
+        font-weight: 600;
+    }
+
+    button:hover {
+        opacity: 0.9;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>Complete Your Booking</h2>
+
+    <div class="summary-box">
+        <p><strong>Date:</strong> <span id="sum-date"></span></p>
+        <p><strong>Time:</strong> <span id="sum-time"></span></p>
+        <p><strong>Base Price:</strong> £<span id="sum-price"></span></p>
+        <p><strong>Deposit:</strong> £<span id="sum-deposit"></span></p>
+        <p><strong>Sunday Surcharge:</strong> £<span id="sum-sunday">0</span></p>
+        <p><strong>Bank Holiday Adjustment:</strong> <span id="sum-bankholiday">None</span></p>
+    </div>
+
+    <h3>Add‑Ons</h3>
+
+    <div class="addon-box">
+        <label><input type="checkbox" id="confetti"> Confetti Moment (+£20)</label>
+    </div>
+
+    <div class="addon-box">
+        <label><input type="checkbox" id="photoVideo"> Photo & Video Add‑On (+£30)</label>
+    </div>
+
+    <div class="addon-box">
+        <label><input type="checkbox" id="lastMinute"> Last‑Minute Booking (auto‑detected)</label>
+        <small>Automatically applied if your ceremony is within 24 hours.</small>
+    </div>
+
+    <div class="addon-box">
+        <label>Travel Outside Kent (postcode):</label>
+        <input type="text" id="travelPostcode" placeholder="Enter ceremony postcode">
+        <small>Calculated from CT14 7QE at £2 per mile (round trip included).</small>
+        <p><strong>Travel Cost:</strong> £<span id="travelCost">0</span></p>
+    </div>
+
+    <h3>Your Details</h3>
+
+    <label>Your Name</label>
+    <input id="cust-name" type="text">
+
+    <label>Your Email</label>
+    <input id="cust-email" type="email">
+
+    <label>Your Phone</label>
+    <input id="cust-phone" type="text">
+
+    <label>Ceremony Location</label>
+    <input id="cust-location" type="text">
+
+    <label>Notes (optional)</label>
+    <textarea id="cust-notes"></textarea>
+
+    <div class="total-box">
+        Total Price: £<span id="totalPrice">0</span>
+    </div>
+
+    <button onclick="submitBooking()">Confirm Booking</button>
+</div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="hub/firebase.js"></script>
+
+<script type="module">
+    import { isBankHoliday, isSunday } from "/hub/availability.js";
+
+    // Read URL params
+    const params = new URLSearchParams(window.location.search);
+    const date = params.get("date");
+    const time = params.get("time");
+    const basePrice = Number(params.get("price"));
+    const deposit = Number(params.get("deposit"));
+
+    // Fill summary
+    document.getElementById("sum-date").textContent = date;
+    document.getElementById("sum-time").textContent = time;
+    document.getElementById("sum-price").textContent = basePrice;
+    document.getElementById("sum-deposit").textContent = deposit;
+
+    // Sunday surcharge
+    let sundayFee = isSunday(date) ? 50 : 0;
+    document.getElementById("sum-sunday").textContent = sundayFee;
+
+    // Bank holiday
+    let bankHolidayMultiplier = isBankHoliday(date) ? 2 : 1;
+    document.getElementById("sum-bankholiday").textContent =
+        bankHolidayMultiplier === 2 ? "Double Price" : "None";
+
+    // Last-minute detection
+    const ceremonyDate = new Date(date + "T" + time);
+    const now = new Date();
+    const hoursDiff = (ceremonyDate - now) / (1000 * 60 * 60);
+    const lastMinuteFee = hoursDiff < 24 ? 50 : 0;
+    if (lastMinuteFee > 0) document.getElementById("lastMinute").checked = true;
+
+    // Travel calculation
+    async function calculateTravel() {
+        const postcode = document.getElementById("travelPostcode").value.trim();
+        if (!postcode) {
+            document.getElementById("travelCost").textContent = 0;
+            updateTotal();
+            return;
+        }
+
+        const origin = "CT14 7QE";
+        const url = `https://api.distancematrix.ai/maps/api/distancematrix/json?origins=${origin}&destinations=${postcode}&key=YOUR_API_KEY`;
+
+        try {
+            const res = await fetch(url);
+            const data = await res.json();
+
+            const meters = data.rows[0].elements[0].distance.value;
+            const miles = meters / 1609.34;
+
+            const travelCost = Math.round(miles * 2 * 2); // £2 per mile, round trip
+            document.getElementById("travelCost").textContent = travelCost;
+
+        } catch (e) {
+            document.getElementById("travelCost").textContent = 0;
+        }
+
+        updateTotal();
+    }
+
+    document.getElementById("travelPostcode").addEventListener("change", calculateTravel);
+
+    // Total calculation
+    function updateTotal() {
+        let total = basePrice;
+
+        total += sundayFee;
+        total *= bankHolidayMultiplier;
+
+        if (document.getElementById("confetti").checked) total += 20;
+        if (document.getElementById("photoVideo").checked) total += 30;
+        if (document.getElementById("lastMinute").checked) total += 50;
+
+        total += Number(document.getElementById("travelCost").textContent);
+
+        document.getElementById("totalPrice").textContent = total;
+    }
+
+    document.querySelectorAll("input[type=checkbox]").forEach(cb =>
+        cb.addEventListener("change", updateTotal)
+    );
+
+    updateTotal();
+
+    // Submit booking
+    async function submitBooking() {
+        const job = {
+            date,
+            time,
+            basePrice,
+            deposit,
+            sundayFee,
+            bankHolidayMultiplier,
+            addOns: {
+                confetti: document.getElementById("confetti").checked,
+                photoVideo: document.getElementById("photoVideo").checked,
+                lastMinute: document.getElementById("lastMinute").checked,
+                travelPostcode: document.getElementById("travelPostcode").value.trim(),
+                travelCost: Number(document.getElementById("travelCost").textContent)
+            },
+            totalPrice: Number(document.getElementById("totalPrice").textContent),
+            customer: {
+                name: document.getElementById("cust-name").value.trim(),
+                email: document.getElementById("cust-email").value.trim(),
+                phone: document.getElementById("cust-phone").value.trim(),
+                location: document.getElementById("cust-location").value.trim(),
+                notes: document.getElementById("cust-notes").value.trim()
+            },
+            status: "pending",
+            createdAt: new Date().toISOString()
+        };
+
+        await db.collection("jobs").add(job);
+
+        window.location.href = "booking-confirmed.html";
+    }
+
+    window.submitBooking = submitBooking;
+</script>
+
+</body>
+</html>
