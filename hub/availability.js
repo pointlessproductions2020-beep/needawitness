@@ -42,7 +42,7 @@ export const UK_BANK_HOLIDAYS = [
     // 2026
     "2026-01-01", "2026-04-03", "2026-04-06",
     "2026-05-04", "2026-05-25", "2026-08-31",
-    "2026-12-25", "2026-12-28", // substitute
+    "2026-12-25", "2026-12-28",
 
     // 2027
     "2027-01-01", "2027-03-26", "2027-03-29",
@@ -84,7 +84,6 @@ export function calculatePrice(witnessType, dateStr) {
     const sunday = isSunday(dateStr);
     const bank = isBankHoliday(dateStr);
 
-    // Base prices
     const base = {
         single: 100,
         couple: 150,
@@ -93,11 +92,8 @@ export function calculatePrice(witnessType, dateStr) {
 
     let price = base[witnessType];
 
-    if (bank) {
-        price *= 2; // double
-    } else if (sunday) {
-        price += 50; // Sunday surcharge
-    }
+    if (bank) price *= 2;
+    else if (sunday) price += 50;
 
     return price;
 }
@@ -138,10 +134,8 @@ export async function getAvailableWitnesses(db, dateStr, timeStr) {
         const a = w.availability[dayName];
         if (!a.enabled) return;
 
-        // Check working hours
         if (timeStr < a.start || timeStr >= a.end) return;
 
-        // Check job conflicts
         let conflict = false;
         jobs.forEach(job => {
             if (!job.assignedWitnesses?.includes(id)) return;
@@ -159,7 +153,8 @@ export async function getAvailableWitnesses(db, dateStr, timeStr) {
 }
 
 // ========================================
-// 8. Check availability for all slots (using /availability)
+// 8. Check availability for all slots
+//    (NOW WITH BOOKED SLOT DETECTION)
 // ========================================
 export async function checkAvailability(db, dateStr) {
     const slots = generateSlots();
@@ -175,26 +170,24 @@ export async function checkAvailability(db, dateStr) {
         const snap = await ref.get();
 
         if (!snap.exists) {
-            // No document = available
             results[slot] = true;
             continue;
         }
 
         const data = snap.data();
 
-        // ❗ NEW: If booked, slot is unavailable
+        // ❗ NEW: Booked slot = unavailable
         if (data.booked === true) {
             results[slot] = false;
             continue;
         }
 
-        // If explicitly marked unavailable
+        // Explicit unavailable
         if (data.available === false) {
             results[slot] = false;
             continue;
         }
 
-        // Otherwise available
         results[slot] = true;
     }
 
