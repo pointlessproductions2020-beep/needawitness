@@ -449,6 +449,10 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script src="hub/firebase.js"></script>
 
+<!-- Load availability.js BEFORE using it -->
+<script src="/hub/availability.js?v=10"></script>
+
+
 <!-- Enhanced Availability Script -->
 <script>
     const { checkAvailability, calculatePrice, calculateDeposit } = window.availability;
