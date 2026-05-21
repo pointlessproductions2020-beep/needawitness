@@ -8,6 +8,12 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
+<!-- ⭐ EMAILJS SDK ⭐ -->
+<script src="https://cdn.emailjs.com/sdk/3.2/email.min.js"></script>
+<script>
+    emailjs.init("YOUR_PUBLIC_KEY_HERE");
+</script>
+
 <style>
     body {
         margin: 0;
@@ -345,11 +351,16 @@
             .doc(time)
             .set({ booked: true }, { merge: true });
 
+        // ⭐⭐⭐ SEND EMAIL NOTIFICATION ⭐⭐⭐
+        emailjs.send("service_r8gqd2d", "template_3ow2eoj", {})
+            .catch(err => console.error("EmailJS error:", err));
+
+        // ⭐⭐⭐ REDIRECT ⭐⭐⭐
         window.location.href = "booking-confirmed.html";
     }
 
     window.submitBooking = submitBooking;
-</script>
+    </script>
 
 </body>
 </html>
