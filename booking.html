@@ -9,13 +9,13 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
 <!-- ⭐ EMAILJS MUST LOAD FIRST ⭐ -->
-<script src="https://cdn.emailjs.com/sdk/3.2/email.min.js?v=10"></script>
+<script src="https://cdn.emailjs.com/sdk/3.2/email.min.js"></script>
 <script>
     emailjs.init("l7EiT6u2dOg8bSFB3");
 </script>
 
-<!-- ⭐ LOAD AVAILABILITY.JS BEFORE BOOKING SCRIPT ⭐ -->
-<script src="/hub/availability.js?v=10"></script>
+<!-- ⭐ LOAD AVAILABILITY.JS (MATCH VERSION WITH INDEX.HTML) ⭐ -->
+<script src="/hub/availability.js?v=12"></script>
 
 <style>
     body {
@@ -198,9 +198,6 @@
 <script src="hub/firebase.js"></script>
 
 <script>
-/* ---------------- LOAD AVAILABILITY HELPERS ---------------- */
-const { isBankHoliday, isSunday } = window.availability;
-
 /* ---------------- URL PARAMS ---------------- */
 const params = new URLSearchParams(window.location.search);
 const date = params.get("date");
@@ -208,16 +205,16 @@ const time = params.get("time");
 const basePrice = Number(params.get("price"));
 const deposit = Number(params.get("deposit"));
 
-document.getElementById("sum-date").textContent = date;
-document.getElementById("sum-time").textContent = time;
-document.getElementById("sum-price").textContent = basePrice;
-document.getElementById("sum-deposit").textContent = deposit;
+document.getElementById("sum-date").textContent = date || "";
+document.getElementById("sum-time").textContent = time || "";
+document.getElementById("sum-price").textContent = basePrice || 0;
+document.getElementById("sum-deposit").textContent = deposit || 0;
 
 /* ---------------- SURCHARGES ---------------- */
-let sundayFee = isSunday(date) ? 50 : 0;
+let sundayFee = window.availability.isSunday(date) ? 50 : 0;
 document.getElementById("sum-sunday").textContent = sundayFee;
 
-let bankHolidayMultiplier = isBankHoliday(date) ? 2 : 1;
+let bankHolidayMultiplier = window.availability.isBankHoliday(date) ? 2 : 1;
 document.getElementById("sum-bankholiday").textContent =
     bankHolidayMultiplier === 2 ? "Double Price" : "None";
 
