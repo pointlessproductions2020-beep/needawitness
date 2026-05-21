@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
 <!-- ⭐ EMAILJS SDK ⭐ -->
-<script src="https://cdn.emailjs.com/sdk/3.2/email.min.js"></script>
+<script src="https://cdn.emailjs.com/sdk/3.2/email.min.js?v=3"></script>
 <script>
     emailjs.init("l7EiT6u2dOg8bSFB3");
 </script>
@@ -193,173 +193,171 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script src="hub/firebase.js"></script>
 
-<script type="module">
-    import { isBankHoliday, isSunday } from "/hub/availability.js";
+<script>
+/* ---------------- LOAD AVAILABILITY HELPERS ---------------- */
+const { isBankHoliday, isSunday } = window.availability;
 
-    // Read URL params
-    const params = new URLSearchParams(window.location.search);
-    const date = params.get("date");
-    const time = params.get("time");
-    const basePrice = Number(params.get("price"));
-    const deposit = Number(params.get("deposit"));
+/* ---------------- URL PARAMS ---------------- */
+const params = new URLSearchParams(window.location.search);
+const date = params.get("date");
+const time = params.get("time");
+const basePrice = Number(params.get("price"));
+const deposit = Number(params.get("deposit"));
 
-    // Fill summary
-    document.getElementById("sum-date").textContent = date;
-    document.getElementById("sum-time").textContent = time;
-    document.getElementById("sum-price").textContent = basePrice;
-    document.getElementById("sum-deposit").textContent = deposit;
+document.getElementById("sum-date").textContent = date;
+document.getElementById("sum-time").textContent = time;
+document.getElementById("sum-price").textContent = basePrice;
+document.getElementById("sum-deposit").textContent = deposit;
 
-    // Sunday surcharge
-    let sundayFee = isSunday(date) ? 50 : 0;
-    document.getElementById("sum-sunday").textContent = sundayFee;
+/* ---------------- SURCHARGES ---------------- */
+let sundayFee = isSunday(date) ? 50 : 0;
+document.getElementById("sum-sunday").textContent = sundayFee;
 
-    // Bank holiday
-    let bankHolidayMultiplier = isBankHoliday(date) ? 2 : 1;
-    document.getElementById("sum-bankholiday").textContent =
-        bankHolidayMultiplier === 2 ? "Double Price" : "None";
+let bankHolidayMultiplier = isBankHoliday(date) ? 2 : 1;
+document.getElementById("sum-bankholiday").textContent =
+    bankHolidayMultiplier === 2 ? "Double Price" : "None";
 
-    // Last-minute detection
-    const ceremonyDate = new Date(date + "T" + time);
-    const now = new Date();
-    const hoursDiff = (ceremonyDate - now) / (1000 * 60 * 60);
-    const lastMinuteFee = hoursDiff < 24 ? 50 : 0;
-    if (lastMinuteFee > 0) document.getElementById("lastMinute").checked = true;
+/* ---------------- LAST MINUTE ---------------- */
+const ceremonyDate = new Date(date + "T" + time);
+const now = new Date();
+const hoursDiff = (ceremonyDate - now) / (1000 * 60 * 60);
+if (hoursDiff < 24) document.getElementById("lastMinute").checked = true;
 
-    // ⭐⭐⭐ TRAVEL CALCULATION ⭐⭐⭐
-    async function calculateTravel() {
-        const postcode = document.getElementById("travelPostcode").value.trim();
-        if (!postcode) {
+/* ---------------- TRAVEL CALCULATION ---------------- */
+async function calculateTravel() {
+    const postcode = document.getElementById("travelPostcode").value.trim();
+    if (!postcode) {
+        document.getElementById("travelCost").textContent = 0;
+        updateTotal();
+        return;
+    }
+
+    const originPostcode = "CT14 7QE";
+
+    try {
+        const [originCoords, destCoords] = await Promise.all([
+            fetch(`https://api.postcodes.io/postcodes/${originPostcode.replace(/\s+/g, "")}`).then(r => r.json()),
+            fetch(`https://api.postcodes.io/postcodes/${postcode.replace(/\s+/g, "")}`).then(r => r.json())
+        ]);
+
+        if (originCoords.status !== 200 || destCoords.status !== 200) {
             document.getElementById("travelCost").textContent = 0;
             updateTotal();
             return;
         }
 
-        const originPostcode = "CT14 7QE";
+        const origin = `${originCoords.result.longitude},${originCoords.result.latitude}`;
+        const dest = `${destCoords.result.longitude},${destCoords.result.latitude}`;
 
-        try {
-            const [originCoords, destCoords] = await Promise.all([
-                fetch(`https://api.postcodes.io/postcodes/${originPostcode.replace(/\s+/g, "")}`).then(r => r.json()),
-                fetch(`https://api.postcodes.io/postcodes/${postcode.replace(/\s+/g, "")}`).then(r => r.json())
-            ]);
+        const orsKey = "eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6IjBiYjMxNzAwMGRlNDQ5M2NhNTYwYjljYTIwY2NlZDk0IiwiaCI6Im11cm11cjY0In0=";
 
-            if (originCoords.status !== 200 || destCoords.status !== 200) {
-                document.getElementById("travelCost").textContent = 0;
-                updateTotal();
-                return;
-            }
+        const routeRes = await fetch(
+            `https://api.openrouteservice.org/v2/directions/driving-car?api_key=${orsKey}&start=${origin}&end=${dest}`
+        );
 
-            const origin = `${originCoords.result.longitude},${originCoords.result.latitude}`;
-            const dest = `${destCoords.result.longitude},${destCoords.result.latitude}`;
+        const routeData = await routeRes.json();
 
-            const orsKey = "eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6IjBiYjMxNzAwMGRlNDQ5M2NhNTYwYjljYTIwY2NlZDk0IiwiaCI6Im11cm11cjY0In0=";
+        const meters = routeData.features[0].properties.summary.distance;
+        const miles = meters / 1609.34;
 
-            const routeRes = await fetch(
-                `https://api.openrouteservice.org/v2/directions/driving-car?api_key=${orsKey}&start=${origin}&end=${dest}`
-            );
+        const travelCost = Math.round(miles * 2);
 
-            const routeData = await routeRes.json();
+        document.getElementById("travelCost").textContent = travelCost;
 
-            const meters = routeData.features[0].properties.summary.distance;
-            const miles = meters / 1609.34;
-
-            const travelCost = Math.round(miles * 2);
-
-            document.getElementById("travelCost").textContent = travelCost;
-
-        } catch (err) {
-            console.error(err);
-            document.getElementById("travelCost").textContent = 0;
-        }
-
-        updateTotal();
+    } catch (err) {
+        console.error(err);
+        document.getElementById("travelCost").textContent = 0;
     }
-
-    document.getElementById("travelPostcode").addEventListener("change", calculateTravel);
-
-    // ⭐⭐⭐ TOTAL PRICE CALCULATION ⭐⭐⭐
-    function updateTotal() {
-        const witnessCount = document.querySelector('input[name="witnessCount"]:checked').value;
-        const witnessFee = (witnessCount === "2") ? 150 : 100;
-
-        let total = witnessFee;
-
-        total += sundayFee;
-        total *= bankHolidayMultiplier;
-
-        if (document.getElementById("confetti").checked) total += 20;
-        if (document.getElementById("photoVideo").checked) total += 30;
-        if (document.getElementById("lastMinute").checked) total += 50;
-
-        total += Number(document.getElementById("travelCost").textContent);
-
-        document.getElementById("totalPrice").textContent = total;
-    }
-
-    document.querySelectorAll("input[type=checkbox]").forEach(cb =>
-        cb.addEventListener("change", updateTotal)
-    );
-
-    document.querySelectorAll('input[name="witnessCount"]').forEach(r =>
-        r.addEventListener("change", updateTotal)
-    );
 
     updateTotal();
+}
 
-    // ⭐⭐⭐ SUBMIT BOOKING ⭐⭐⭐
-    async function submitBooking() {
-        const btn = document.getElementById("submitBtn");
-        const loading = document.getElementById("loading");
+document.getElementById("travelPostcode").addEventListener("change", calculateTravel);
 
-        btn.disabled = true;
-        loading.style.display = "block";
+/* ---------------- TOTAL PRICE ---------------- */
+function updateTotal() {
+    const witnessCount = document.querySelector('input[name="witnessCount"]:checked').value;
+    const witnessFee = (witnessCount === "2") ? 150 : 100;
 
-        const witnessCount = Number(document.querySelector('input[name="witnessCount"]:checked').value);
+    let total = witnessFee;
 
-        const job = {
-            date,
-            time,
-            witnessCount,
-            basePrice,
-            deposit,
-            sundayFee,
-            bankHolidayMultiplier,
-            addOns: {
-                confetti: document.getElementById("confetti").checked,
-                photoVideo: document.getElementById("photoVideo").checked,
-                lastMinute: document.getElementById("lastMinute").checked,
-                travelPostcode: document.getElementById("travelPostcode").value.trim(),
-                travelCost: Number(document.getElementById("travelCost").textContent)
-            },
-            totalPrice: Number(document.getElementById("totalPrice").textContent),
-            customer: {
-                name: document.getElementById("cust-name").value.trim(),
-                email: document.getElementById("cust-email").value.trim(),
-                phone: document.getElementById("cust-phone").value.trim(),
-                location: document.getElementById("cust-location").value.trim(),
-                notes: document.getElementById("cust-notes").value.trim()
-            },
-            status: "pending",
-            createdAt: new Date().toISOString()
-        };
+    total += sundayFee;
+    total *= bankHolidayMultiplier;
 
-        await db.collection("jobs").add(job);
+    if (document.getElementById("confetti").checked) total += 20;
+    if (document.getElementById("photoVideo").checked) total += 30;
+    if (document.getElementById("lastMinute").checked) total += 50;
 
-        await db.collection("availability")
-            .doc(date)
-            .collection("slots")
-            .doc(time)
-            .set({ booked: true }, { merge: true });
+    total += Number(document.getElementById("travelCost").textContent);
 
-        // ⭐⭐⭐ SEND EMAIL NOTIFICATION ⭐⭐⭐
-        emailjs.send("service_r8gqd2d", "template_3ow2eoj", {})
-            .catch(err => console.error("EmailJS error:", err));
+    document.getElementById("totalPrice").textContent = total;
+}
 
-        // ⭐⭐⭐ REDIRECT ⭐⭐⭐
-        window.location.href = "booking-confirmed.html";
-    }
+document.querySelectorAll("input[type=checkbox]").forEach(cb =>
+    cb.addEventListener("change", updateTotal)
+);
 
-    window.submitBooking = submitBooking;
-    </script>
+document.querySelectorAll('input[name="witnessCount"]').forEach(r =>
+    r.addEventListener("change", updateTotal)
+);
+
+updateTotal();
+
+/* ---------------- SUBMIT BOOKING ---------------- */
+async function submitBooking() {
+    const btn = document.getElementById("submitBtn");
+    const loading = document.getElementById("loading");
+
+    btn.disabled = true;
+    loading.style.display = "block";
+
+    const witnessCount = Number(document.querySelector('input[name="witnessCount"]:checked').value);
+
+    const job = {
+        date,
+        time,
+        witnessCount,
+        basePrice,
+        deposit,
+        sundayFee,
+        bankHolidayMultiplier,
+        addOns: {
+            confetti: document.getElementById("confetti").checked,
+            photoVideo: document.getElementById("photoVideo").checked,
+            lastMinute: document.getElementById("lastMinute").checked,
+            travelPostcode: document.getElementById("travelPostcode").value.trim(),
+            travelCost: Number(document.getElementById("travelCost").textContent)
+        },
+        totalPrice: Number(document.getElementById("totalPrice").textContent),
+        customer: {
+            name: document.getElementById("cust-name").value.trim(),
+            email: document.getElementById("cust-email").value.trim(),
+            phone: document.getElementById("cust-phone").value.trim(),
+            location: document.getElementById("cust-location").value.trim(),
+            notes: document.getElementById("cust-notes").value.trim()
+        },
+        status: "pending",
+        createdAt: new Date().toISOString()
+    };
+
+    await db.collection("jobs").add(job);
+
+    await db.collection("availability")
+        .doc(date)
+        .collection("slots")
+        .doc(time)
+        .set({ booked: true }, { merge: true });
+
+    // ⭐ SEND ADMIN EMAIL
+    emailjs.send("service_r8gqd2d", "template_3ow2eoj", {})
+        .catch(err => console.error("EmailJS error:", err));
+
+    // Redirect
+    window.location.href = "booking-confirmed.html";
+}
+
+window.submitBooking = submitBooking;
+</script>
 
 </body>
 </html>
