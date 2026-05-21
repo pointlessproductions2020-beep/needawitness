@@ -1,7 +1,7 @@
 // ===============================
 // 1. Generate 1-hour slots (9–5)
 // ===============================
-export function generateSlots() {
+function generateSlots() {
     const slots = [];
     for (let hour = 9; hour <= 16; hour++) {
         const h = hour.toString().padStart(2, "0");
@@ -13,7 +13,7 @@ export function generateSlots() {
 // ========================================
 // 2. Convert a time into a 3-hour block
 // ========================================
-export function getBlockedWindow(timeStr) {
+function getBlockedWindow(timeStr) {
     const [hour, minute] = timeStr.split(":").map(Number);
 
     const start = new Date();
@@ -28,7 +28,7 @@ export function getBlockedWindow(timeStr) {
 // ========================================
 // 3. Hard-coded UK Bank Holidays (2024–2030)
 // ========================================
-export const UK_BANK_HOLIDAYS = [
+const UK_BANK_HOLIDAYS = [
     // 2024
     "2024-01-01", "2024-03-29", "2024-04-01",
     "2024-05-06", "2024-05-27", "2024-08-26",
@@ -68,19 +68,19 @@ export const UK_BANK_HOLIDAYS = [
 // ========================================
 // 4. Detect Sunday / Bank Holiday
 // ========================================
-export function isSunday(dateStr) {
+function isSunday(dateStr) {
     const d = new Date(dateStr);
     return d.getDay() === 0;
 }
 
-export function isBankHoliday(dateStr) {
+function isBankHoliday(dateStr) {
     return UK_BANK_HOLIDAYS.includes(dateStr);
 }
 
 // ========================================
 // 5. Pricing Engine
 // ========================================
-export function calculatePrice(witnessType, dateStr) {
+function calculatePrice(witnessType, dateStr) {
     const sunday = isSunday(dateStr);
     const bank = isBankHoliday(dateStr);
 
@@ -101,7 +101,7 @@ export function calculatePrice(witnessType, dateStr) {
 // ========================================
 // 6. Deposit Engine
 // ========================================
-export function calculateDeposit(dateStr) {
+function calculateDeposit(dateStr) {
     if (isBankHoliday(dateStr)) return 50;
     if (isSunday(dateStr)) return 40;
     return 20;
@@ -110,7 +110,7 @@ export function calculateDeposit(dateStr) {
 // ========================================
 // 7. Check witness availability for a slot
 // ========================================
-export async function getAvailableWitnesses(db, dateStr, timeStr) {
+async function getAvailableWitnesses(db, dateStr, timeStr) {
     const date = new Date(dateStr);
     const dayName = date.toLocaleDateString("en-GB", { weekday: "long" });
 
@@ -155,7 +155,7 @@ export async function getAvailableWitnesses(db, dateStr, timeStr) {
 // ========================================
 // 8. Check availability for all slots
 // ========================================
-export async function checkAvailability(db, dateStr) {
+async function checkAvailability(db, dateStr) {
     const slots = generateSlots();
     const results = {};
 
