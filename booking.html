@@ -8,11 +8,14 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-<!-- ⭐ EMAILJS SDK ⭐ -->
-<script src="https://cdn.emailjs.com/sdk/3.2/email.min.js?v=3"></script>
+<!-- ⭐ EMAILJS MUST LOAD FIRST ⭐ -->
+<script src="https://cdn.emailjs.com/sdk/3.2/email.min.js?v=10"></script>
 <script>
     emailjs.init("l7EiT6u2dOg8bSFB3");
 </script>
+
+<!-- ⭐ LOAD AVAILABILITY.JS BEFORE BOOKING SCRIPT ⭐ -->
+<script src="/hub/availability.js?v=10"></script>
 
 <style>
     body {
@@ -110,6 +113,7 @@
     }
 </style>
 </head>
+
 <body>
 
 <div class="container">
@@ -352,7 +356,6 @@ async function submitBooking() {
     emailjs.send("service_r8gqd2d", "template_3ow2eoj", {})
         .catch(err => console.error("EmailJS error:", err));
 
-    // Redirect
     window.location.href = "booking-confirmed.html";
 }
 
