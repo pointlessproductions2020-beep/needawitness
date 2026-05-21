@@ -16,234 +16,233 @@
     <meta property="og:url" content="https://needawitness.uk">
     <meta property="og:image" content="https://needawitness.uk/logo.png">
 
-<style>
-    body {
-        margin: 0;
-        font-family: 'Helvetica Neue', Arial, sans-serif;
-        background: #faf8f5;
-        color: #333;
-        line-height: 1.6;
-    }
-
-    h1, h2, h3 {
-        font-family: 'Georgia', serif;
-        color: #2b2b2b;
-    }
-
-    .hero {
-        background: url('photo.png') center/cover no-repeat;
-        padding: 140px 20px 160px;
-        text-align: center;
-        color: white;
-        position: relative;
-    }
-
-    .hero::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: rgba(0,0,0,0.45);
-    }
-
-    .hero-content {
-        position: relative;
-        z-index: 2;
-        max-width: 800px;
-        margin: 0 auto;
-    }
-
-    .hero img {
-        max-width: 420px;
-        width: 90%;
-        margin-bottom: 20px;
-    }
-
-    .hero h1 {
-        font-size: 2.6rem;
-        margin-bottom: 10px;
-        color: #fff;
-    }
-
-    .hero p {
-        font-size: 1.3rem;
-        margin-bottom: 25px;
-        color: #f7f7f7;
-    }
-
-    .btn {
-        display: inline-block;
-        background: #d4a762;
-        color: white;
-        padding: 14px 28px;
-        border-radius: 6px;
-        text-decoration: none;
-        font-weight: bold;
-    }
-
-    .btn:hover {
-        background: #c3954f;
-    }
-
-    .top-cta {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        z-index: 3;
-    }
-
-    .top-cta a {
-        background: #d4a762;
-        color: white;
-        padding: 10px 18px;
-        border-radius: 6px;
-        font-weight: bold;
-        text-decoration: none;
-        font-size: 0.95rem;
-    }
-
-    .top-cta a:hover {
-        background: #c3954f;
-    }
-
-    section {
-        max-width: 900px;
-        margin: 60px auto;
-        padding: 0 20px;
-    }
-
-    .pricing-box, .addon-box, .availability-box {
-        background: white;
-        padding: 25px;
-        border-radius: 8px;
-        border: 1px solid #e5e5e5;
-        margin-bottom: 20px;
-    }
-
-    .faq-item {
-        margin-bottom: 20px;
-    }
-
-    .image-center {
-        display: block;
-        margin: 20px auto;
-        max-width: 100%;
-        border-radius: 10px;
-    }
-
-    .about-images {
-        display: flex;
-        gap: 20px;
-        justify-content: center;
-        margin-top: 20px;
-        flex-wrap: wrap;
-    }
-
-    .about-images img {
-        width: 45%;
-        border-radius: 10px;
-        min-width: 260px;
-    }
-
-    footer {
-        text-align: center;
-        padding: 40px 20px;
-        background: #f1eee9;
-        margin-top: 60px;
-        font-size: 0.9rem;
-    }
-
-    .slots-grid {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        margin-top: 10px;
-    }
-
-    .slot-button {
-        padding: 10px 16px;
-        border-radius: 8px;
-        border: 1px solid #d4a762;
-        background: #fff;
-        color: #333;
-        cursor: pointer;
-        font-size: 0.95rem;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        transition: 0.2s;
-        min-width: 140px;
-        justify-content: center;
-        flex-direction: column;
-
-        opacity: 0;
-        transform: translateY(5px);
-        animation: fadeIn 0.3s ease forwards;
-    }
-
-    @keyframes fadeIn {
-        to {
-            opacity: 1;
-            transform: translateY(0);
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background: #faf8f5;
+            color: #333;
+            line-height: 1.6;
         }
-    }
 
-    .slot-button:hover {
-        background: #f3e4c8;
-    }
+        h1, h2, h3 {
+            font-family: 'Georgia', serif;
+            color: #2b2b2b;
+        }
 
-    .slot-selected {
-        background: #d4a762 !important;
-        color: white !important;
-        box-shadow: 0 0 0 2px rgba(212, 167, 98, 0.3);
-    }
+        .hero {
+            background: url('photo.png') center/cover no-repeat;
+            padding: 140px 20px 160px;
+            text-align: center;
+            color: white;
+            position: relative;
+        }
 
-    .slot-unavailable {
-        background: #eee !important;
-        color: #999 !important;
-        border-color: #ccc !important;
-        cursor: not-allowed;
-    }
+        .hero::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.45);
+        }
 
-    .slot-price {
-        font-size: 0.8rem;
-        opacity: 0.8;
-    }
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+            margin: 0 auto;
+        }
 
-    .availability-note {
-        font-size: 0.9rem;
-        color: #666;
-        margin-top: 8px;
-    }
+        .hero img {
+            max-width: 420px;
+            width: 90%;
+            margin-bottom: 20px;
+        }
 
-    .error-message {
-        color: #b00020;
-        font-size: 0.9rem;
-        margin-top: 8px;
-    }
+        .hero h1 {
+            font-size: 2.6rem;
+            margin-bottom: 10px;
+            color: #fff;
+        }
 
-    #slots {
-        min-height: 140px;
-        padding-bottom: 30px;
-        position: relative;
-        z-index: 10;
-    }
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 25px;
+            color: #f7f7f7;
+        }
 
-    /* GOLD LOADING SPINNER */
-    .spinner {
-        width: 40px;
-        height: 40px;
-        border: 4px solid #f3e4c8;
-        border-top: 4px solid #d4a762;
-        border-radius: 50%;
-        animation: spin 0.9s linear infinite;
-        margin: 20px auto;
-        display: none;
-    }
+        .btn {
+            display: inline-block;
+            background: #d4a762;
+            color: white;
+            padding: 14px 28px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+        }
 
-    @keyframes spin {
-        to { transform: rotate(360deg); }
-    }
-</style>
+        .btn:hover {
+            background: #c3954f;
+        }
+
+        .top-cta {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 3;
+        }
+
+        .top-cta a {
+            background: #d4a762;
+            color: white;
+            padding: 10px 18px;
+            border-radius: 6px;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 0.95rem;
+        }
+
+        .top-cta a:hover {
+            background: #c3954f;
+        }
+
+        section {
+            max-width: 900px;
+            margin: 60px auto;
+            padding: 0 20px;
+        }
+
+        .pricing-box, .addon-box, .availability-box {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            border: 1px solid #e5e5e5;
+            margin-bottom: 20px;
+        }
+
+        .faq-item {
+            margin-bottom: 20px;
+        }
+
+        .image-center {
+            display: block;
+            margin: 20px auto;
+            max-width: 100%;
+            border-radius: 10px;
+        }
+
+        .about-images {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .about-images img {
+            width: 45%;
+            border-radius: 10px;
+            min-width: 260px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            background: #f1eee9;
+            margin-top: 60px;
+            font-size: 0.9rem;
+        }
+
+        .slots-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .slot-button {
+            padding: 10px 16px;
+            border-radius: 8px;
+            border: 1px solid #d4a762;
+            background: #fff;
+            color: #333;
+            cursor: pointer;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: 0.2s;
+            min-width: 140px;
+            justify-content: center;
+            flex-direction: column;
+
+            opacity: 0;
+            transform: translateY(5px);
+            animation: fadeIn 0.3s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .slot-button:hover {
+            background: #f3e4c8;
+        }
+
+        .slot-selected {
+            background: #d4a762 !important;
+            color: white !important;
+            box-shadow: 0 0 0 2px rgba(212, 167, 98, 0.3);
+        }
+
+        .slot-unavailable {
+            background: #eee !important;
+            color: #999 !important;
+            border-color: #ccc !important;
+            cursor: not-allowed;
+        }
+
+        .slot-price {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+
+        .availability-note {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 8px;
+        }
+
+        .error-message {
+            color: #b00020;
+            font-size: 0.9rem;
+            margin-top: 8px;
+        }
+
+        #slots {
+            min-height: 140px;
+            padding-bottom: 30px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3e4c8;
+            border-top: 4px solid #d4a762;
+            border-radius: 50%;
+            animation: spin 0.9s linear infinite;
+            margin: 20px auto;
+            display: none;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
 </head>
 
 <body>
@@ -380,9 +379,9 @@
 
 <section id="availability">
     <h2>Check Our Availability</h2>
-    
- <p>OUR FORM IS CURRENTLY DOWN - EMAIL US AT bookings@needawitness.uk:</p>
-   
+
+    <p><strong>OUR FORM IS CURRENTLY DOWN — EMAIL US AT bookings@needawitness.uk</strong></p>
+
     <div class="availability-box">
         <label for="date-picker"><strong>Choose your wedding date:</strong></label><br>
         <input type="date" id="date-picker" style="padding: 10px; margin: 10px 0; font-size: 1rem;">
@@ -395,7 +394,6 @@
 
         <p style="margin-top: 20px;"><strong>Available times:</strong></p>
 
-        <!-- GOLD SPINNER -->
         <div id="slot-spinner" class="spinner"></div>
 
         <div id="slots" class="slots-grid"></div>
@@ -452,12 +450,10 @@
 <script src="hub/firebase.js"></script>
 
 <!-- Load availability.js BEFORE using it -->
-<script src="/hub/availability.js?v=11"></script>
+<script src="/hub/availability.js?v=12"></script>
 
-<!-- Enhanced Availability Script -->
+<!-- Enhanced Availability Script (no duplicate consts) -->
 <script>
-    const { checkAvailability, calculatePrice, calculateDeposit } = window.availability;
-
     function isWithin24Hours(date) {
         const now = new Date();
         const diffMs = date.getTime() - now.getTime();
@@ -488,14 +484,14 @@
 
         spinner.style.display = "block";
 
-        const availability = await checkAvailability(db, dateString);
+        const availability = await window.availability.checkAvailability(db, dateString);
 
         spinner.style.display = "none";
         slotsContainer.innerHTML = "";
 
         Object.keys(availability).forEach(time => {
-            const price = calculatePrice("single", dateString);
-            const deposit = calculateDeposit(dateString);
+            const price = window.availability.calculatePrice("single", dateString);
+            const deposit = window.availability.calculateDeposit(dateString);
 
             const btn = document.createElement("button");
             btn.className = "slot-button";
