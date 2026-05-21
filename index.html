@@ -450,8 +450,8 @@
 <script src="hub/firebase.js"></script>
 
 <!-- Enhanced Availability Script -->
-<script type="module">
-    import { checkAvailability, calculatePrice, calculateDeposit } from '/hub/availability.js';
+<script>
+    const { checkAvailability, calculatePrice, calculateDeposit } = window.availability;
 
     function isWithin24Hours(date) {
         const now = new Date();
