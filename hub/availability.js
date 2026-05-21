@@ -154,7 +154,6 @@ export async function getAvailableWitnesses(db, dateStr, timeStr) {
 
 // ========================================
 // 8. Check availability for all slots
-//    (NOW WITH BOOKED SLOT DETECTION)
 // ========================================
 export async function checkAvailability(db, dateStr) {
     const slots = generateSlots();
@@ -176,13 +175,11 @@ export async function checkAvailability(db, dateStr) {
 
         const data = snap.data();
 
-        // ❗ NEW: Booked slot = unavailable
         if (data.booked === true) {
             results[slot] = false;
             continue;
         }
 
-        // Explicit unavailable
         if (data.available === false) {
             results[slot] = false;
             continue;
@@ -193,3 +190,18 @@ export async function checkAvailability(db, dateStr) {
 
     return results;
 }
+
+// ========================================
+// ⭐ MAKE EVERYTHING AVAILABLE GLOBALLY ⭐
+// ========================================
+window.availability = {
+    generateSlots,
+    getBlockedWindow,
+    UK_BANK_HOLIDAYS,
+    isSunday,
+    isBankHoliday,
+    calculatePrice,
+    calculateDeposit,
+    getAvailableWitnesses,
+    checkAvailability
+};
