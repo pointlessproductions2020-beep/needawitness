@@ -14,7 +14,7 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-<script src="../hub/firebase.js"></script>
+<script src="../firebase.js"></script>
 
 <!-- FullCalendar JS -->
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
@@ -187,13 +187,104 @@
         color: white;
     }
 
-    @media (max-width: 900px) {
-        .main {
-            padding: 20px;
+    /* AVAILABILITY PANEL */
+    #availabilityPanel {
+        position: fixed;
+        top: 0;
+        right: -420px;
+        width: 420px;
+        height: 100vh;
+        background: #1e1e1e;
+        color: white;
+        box-shadow: -4px 0 12px rgba(0,0,0,0.4);
+        transition: right 0.35s ease;
+        z-index: 9999;
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    #availabilityPanel.open {
+        right: 0;
+    }
+
+    .availability-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .availability-header h2 {
+        font-family: "Playfair Display", serif;
+        color: #D4AF37;
+        margin: 0;
+        font-size: 22px;
+    }
+
+    .availability-close {
+        font-size: 28px;
+        cursor: pointer;
+        color: #D4AF37;
+        font-weight: bold;
+    }
+
+    .availability-subtitle {
+        margin-top: 6px;
+        font-size: 13px;
+        color: #ccc;
+    }
+
+    .slots-grid {
+        margin-top: 20px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+
+    .slot-btn {
+        padding: 12px;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+        text-align: center;
+    }
+
+    .slot-available { background:#2e7d32; color:white; }
+    .slot-unavailable { background:#b71c1c; color:white; }
+    .slot-locked { background:#555; color:#bbb; cursor:not-allowed; }
+
+    .availability-actions {
+        margin-top: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .availability-btn {
+        padding: 12px;
+        border-radius: 6px;
+        border: none;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .btn-gold { background:#D4AF37; color:black; }
+    .btn-red { background:#b71c1c; color:white; }
+
+    @media (max-width: 700px) {
+        #availabilityPanel {
+            width: 100%;
+            height: 60vh;
+            right: 0;
+            bottom: -60vh;
+            top: auto;
+            transition: bottom 0.35s ease;
         }
-        .sidebar {
-            position: static;
-            height: auto;
+        #availabilityPanel.open {
+            bottom: 0;
         }
     }
 </style>
@@ -263,17 +354,39 @@
     </div>
 </div>
 
+<!-- AVAILABILITY PANEL -->
+<div id="availabilityPanel">
+    <div class="availability-header">
+        <h2 id="availabilityDateTitle">Availability</h2>
+        <div class="availability-close" onclick="closeAvailabilityPanel()">×</div>
+    </div>
+    <div class="availability-subtitle">Tap a slot to toggle availability.</div>
+
+    <div class="availability-actions">
+        <button class="availability-btn btn-gold" onclick="setWholeDay(false)">Make whole day AVAILABLE</button>
+        <button class="availability-btn btn-red" onclick="setWholeDay(true)">Block whole day (UNAVAILABLE)</button>
+    </div>
+
+    <div class="slots-grid" id="slotsGrid"></div>
+</div>
+
 <script>
 let calendar = null;
 let currentFilter = "all";
+let selectedDate = null;
+
+const WORKING_HOURS = [
+    "09:00","10:00","11:00","12:00",
+    "13:00","14:00","15:00","16:00","17:00"
+];
 
 /* MAP PAYMENT STATUS TO COLOUR */
 function getEventColor(job) {
     const ps = job.paymentStatus || "unpaid";
-    if (ps === "full") return "#4caf50";        // green
-    if (ps === "deposit") return "#D4AF37";     // gold
-    if (ps === "late-cancel") return "#9e9e9e"; // grey
-    return "#e53935";                           // red (unpaid)
+    if (ps === "full") return "#4caf50";
+    if (ps === "deposit") return "#D4AF37";
+    if (ps === "late-cancel") return "#9e9e9e";
+    return "#e53935";
 }
 
 /* INIT CALENDAR */
@@ -284,12 +397,17 @@ function initCalendar(initialEvents) {
         initialView: "dayGridMonth",
         height: "auto",
         events: initialEvents,
+
+        dateClick: function(info) {
+            openAvailabilityPanel(info.dateStr);
+        },
+
         eventClick: function(info) {
-    const jobId = info.event.extendedProps.jobId || info.event.id;
-    if (jobId) {
-        window.location.href = `admin-job-detail.html?id=${jobId}`;
-    }
-}
+            const jobId = info.event.extendedProps.jobId || info.event.id;
+            if (jobId) {
+                window.location.href = `admin-job-detail.html?id=${jobId}`;
+            }
+        }
     });
 
     calendar.render();
@@ -305,8 +423,8 @@ async function loadJobsForCalendar() {
         snapshot.forEach(doc => {
             const job = doc.data();
 
-            const dateStr = job.date;          // e.g. "2025-05-14"
-            const timeStr = job.time || "12:00"; // fallback if no time
+            const dateStr = job.date;
+            const timeStr = job.time || "12:00";
 
             const start = new Date(`${dateStr}T${timeStr}`);
             const end = new Date(start.getTime() + 60 * 60 * 1000);
@@ -319,9 +437,7 @@ async function loadJobsForCalendar() {
                 borderColor: getEventColor(job),
                 jobId: doc.id,
                 jobData: job,
-                extendedProps: {
-                    jobData: job
-                }
+                extendedProps: { jobData: job }
             });
         });
 
@@ -337,14 +453,14 @@ async function loadJobsForCalendar() {
     }
 }
 
-/* APPLY FILTERS TO EVENTS */
+/* APPLY FILTERS */
 function applyFilters() {
     if (!calendar) return;
 
     const events = calendar.getEvents();
 
     events.forEach(ev => {
-        const job = ev.extendedProps.jobData || ev.extendedProps.jobData || {};
+        const job = ev.extendedProps.jobData || {};
         const ps = (job.paymentStatus || "unpaid").toString();
 
         if (currentFilter === "all" || currentFilter === ps) {
@@ -355,16 +471,14 @@ function applyFilters() {
     });
 }
 
-/* FILTER BUTTON CLICK HANDLER */
+/* FILTER BUTTON HANDLER */
 document.addEventListener("click", (e) => {
     if (!e.target.classList.contains("filter-btn")) return;
 
     document.querySelectorAll(".filter-btn").forEach(btn => btn.classList.remove("active"));
-
     e.target.classList.add("active");
 
     currentFilter = e.target.dataset.filter;
-
     applyFilters();
 });
 
@@ -375,7 +489,89 @@ function adminLogout() {
     });
 }
 
-/* INIT ON LOAD */
+/* AVAILABILITY PANEL LOGIC */
+function openAvailabilityPanel(dateStr) {
+    selectedDate = dateStr;
+    document.getElementById("availabilityDateTitle").textContent = `Availability – ${dateStr}`;
+    document.getElementById("availabilityPanel").classList.add("open");
+    loadSlots(dateStr);
+}
+
+function closeAvailabilityPanel() {
+    document.getElementById("availabilityPanel").classList.remove("open");
+}
+
+async function loadSlots(dateStr) {
+    const grid = document.getElementById("slotsGrid");
+    grid.innerHTML = "";
+
+    const locked = await getLockedSlots(dateStr);
+    const states = await getSlotStates(dateStr);
+
+    WORKING_HOURS.forEach(time => {
+        const btn = document.createElement("button");
+        btn.classList.add("slot-btn");
+
+        if (locked.has(time)) {
+            btn.classList.add("slot-locked");
+            btn.textContent = `${time} • JOB`;
+        } else if (states[time]) {
+            btn.classList.add("slot-unavailable");
+            btn.textContent = `${time} • UNAVAILABLE`;
+            btn.onclick = () => toggleSlot(dateStr, time, false);
+        } else {
+            btn.classList.add("slot-available");
+            btn.textContent = `${time} • AVAILABLE`;
+            btn.onclick = () => toggleSlot(dateStr, time, true);
+        }
+
+        grid.appendChild(btn);
+    });
+}
+
+async function getLockedSlots(dateStr) {
+    const locked = new Set();
+    const snap = await db.collection("jobs").where("date", "==", dateStr).get();
+    snap.forEach(doc => {
+        const job = doc.data();
+        locked.add(job.time || "12:00");
+    });
+    return locked;
+}
+
+async function getSlotStates(dateStr) {
+    const states = {};
+    const snap = await db.collection("availability").doc(dateStr).collection("slots").get();
+    snap.forEach(doc => {
+        const data = doc.data();
+        if (data.booked) states[doc.id] = true;
+    });
+    return states;
+}
+
+async function toggleSlot(dateStr, time, booked) {
+    await db.collection("availability").doc(dateStr).collection("slots").doc(time)
+        .set({ booked: booked }, { merge: true });
+    loadSlots(dateStr);
+}
+
+async function setWholeDay(booked) {
+    const dateStr = selectedDate;
+    const locked = await getLockedSlots(dateStr);
+    const batch = db.batch();
+    const ref = db.collection("availability").doc(dateStr);
+
+    WORKING_HOURS.forEach(time => {
+        if (!locked.has(time)) {
+            batch.set(ref.collection("slots").doc(time), { booked: booked }, { merge: true });
+        }
+    });
+
+    await batch.commit();
+    loadSlots(dateStr);
+}
+
+/* INIT */
 document.addEventListener("DOMContentLoaded", () => {
     const allBtn = document.querySelector('.filter-btn[data-filter="all"]');
     if (allBtn) allBtn.classList.add("active");
