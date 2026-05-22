@@ -107,13 +107,6 @@
         padding: 30px 40px;
     }
 
-    .main-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 20px;
-    }
-
     .main-header h1 {
         font-family: "Playfair Display", serif;
         color: #D4AF37;
@@ -187,17 +180,7 @@
         color: white;
     }
 
-    @media (max-width: 900px) {
-        .main {
-            padding: 20px;
-        }
-        .sidebar {
-            position: static;
-            height: auto;
-        }
-    }
-
-    /* AVAILABILITY PANEL – DARK GREY + GOLD */
+    /* AVAILABILITY PANEL */
     #availabilityPanel {
         position: fixed !important;
         top: 0;
@@ -335,6 +318,23 @@
 
         <div class="card">
 
+            <!-- AVAILABILITY BUTTON -->
+            <button 
+                onclick="openAvailabilityPanel(new Date().toISOString().split('T')[0])"
+                style="
+                    padding: 10px 16px;
+                    background: #D4AF37;
+                    color: white;
+                    border: none;
+                    border-radius: 6px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    margin-bottom: 15px;
+                "
+            >
+                Edit Availability
+            </button>
+
             <!-- FILTER BUTTONS -->
             <div style="margin-bottom: 15px; display:flex; gap:10px; flex-wrap:wrap;">
                 <button class="filter-btn" data-filter="all">All</button>
@@ -393,10 +393,10 @@ const WORKING_HOURS = [
 /* MAP PAYMENT STATUS TO COLOUR */
 function getEventColor(job) {
     const ps = job.paymentStatus || "unpaid";
-    if (ps === "full") return "#4caf50";        // green
-    if (ps === "deposit") return "#D4AF37";     // gold
-    if (ps === "late-cancel") return "#9e9e9e"; // grey
-    return "#e53935";                           // red (unpaid)
+    if (ps === "full") return "#4caf50";
+    if (ps === "deposit") return "#D4AF37";
+    if (ps === "late-cancel") return "#9e9e9e";
+    return "#e53935";
 }
 
 /* INIT CALENDAR */
@@ -433,8 +433,8 @@ async function loadJobsForCalendar() {
         snapshot.forEach(doc => {
             const job = doc.data();
 
-            const dateStr = job.date;              // "YYYY-MM-DD"
-            const timeStr = job.time || "12:00";   // fallback
+            const dateStr = job.date;
+            const timeStr = job.time || "12:00";
 
             const start = new Date(`${dateStr}T${timeStr}`);
             const end = new Date(start.getTime() + 60 * 60 * 1000);
@@ -447,9 +447,7 @@ async function loadJobsForCalendar() {
                 borderColor: getEventColor(job),
                 jobId: doc.id,
                 jobData: job,
-                extendedProps: {
-                    jobData: job
-                }
+                extendedProps: { jobData: job }
             });
         });
 
@@ -465,7 +463,7 @@ async function loadJobsForCalendar() {
     }
 }
 
-/* APPLY FILTERS TO EVENTS */
+/* APPLY FILTERS */
 function applyFilters() {
     if (!calendar) return;
 
@@ -483,16 +481,14 @@ function applyFilters() {
     });
 }
 
-/* FILTER BUTTON CLICK HANDLER */
+/* FILTER BUTTON HANDLER */
 document.addEventListener("click", (e) => {
     if (!e.target.classList.contains("filter-btn")) return;
 
     document.querySelectorAll(".filter-btn").forEach(btn => btn.classList.remove("active"));
-
     e.target.classList.add("active");
 
     currentFilter = e.target.dataset.filter;
-
     applyFilters();
 });
 
@@ -582,13 +578,17 @@ async function setWholeDay(booked) {
     const ref = db.collection("availability").doc(dateStr);
 
     WORKING_HOURS.forEach(time => {
-        if (!locked.has(time)) {
-            batch.set(ref.collection("slots").doc(time), { booked: booked }, { merge: true });
-        }
-    });
+    if (!locked.has(time)) {
+        batch.set(
+            ref.collection("slots").doc(time),
+            { booked: booked },
+            { merge: true }
+        );
+    }
+});
 
-    await batch.commit();
-    loadSlots(dateStr);
+await batch.commit();
+loadSlots(dateStr);
 }
 
 /* INIT ON LOAD */
