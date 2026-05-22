@@ -14,7 +14,7 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-<script src="../firebase.js"></script>
+<script src="../hub/firebase.js"></script>
 
 <!-- FullCalendar JS -->
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
@@ -187,9 +187,19 @@
         color: white;
     }
 
-    /* AVAILABILITY PANEL */
+    @media (max-width: 900px) {
+        .main {
+            padding: 20px;
+        }
+        .sidebar {
+            position: static;
+            height: auto;
+        }
+    }
+
+    /* AVAILABILITY PANEL – DARK GREY + GOLD */
     #availabilityPanel {
-        position: fixed;
+        position: fixed !important;
         top: 0;
         right: -420px;
         width: 420px;
@@ -198,7 +208,7 @@
         color: white;
         box-shadow: -4px 0 12px rgba(0,0,0,0.4);
         transition: right 0.35s ease;
-        z-index: 9999;
+        z-index: 99999;
         padding: 24px;
         display: flex;
         flex-direction: column;
@@ -277,10 +287,10 @@
     @media (max-width: 700px) {
         #availabilityPanel {
             width: 100%;
-            height: 60vh;
             right: 0;
-            bottom: -60vh;
+            height: 60vh;
             top: auto;
+            bottom: -60vh;
             transition: bottom 0.35s ease;
         }
         #availabilityPanel.open {
@@ -354,7 +364,7 @@
     </div>
 </div>
 
-<!-- AVAILABILITY PANEL -->
+<!-- AVAILABILITY PANEL OUTSIDE .layout -->
 <div id="availabilityPanel">
     <div class="availability-header">
         <h2 id="availabilityDateTitle">Availability</h2>
@@ -383,10 +393,10 @@ const WORKING_HOURS = [
 /* MAP PAYMENT STATUS TO COLOUR */
 function getEventColor(job) {
     const ps = job.paymentStatus || "unpaid";
-    if (ps === "full") return "#4caf50";
-    if (ps === "deposit") return "#D4AF37";
-    if (ps === "late-cancel") return "#9e9e9e";
-    return "#e53935";
+    if (ps === "full") return "#4caf50";        // green
+    if (ps === "deposit") return "#D4AF37";     // gold
+    if (ps === "late-cancel") return "#9e9e9e"; // grey
+    return "#e53935";                           // red (unpaid)
 }
 
 /* INIT CALENDAR */
@@ -423,8 +433,8 @@ async function loadJobsForCalendar() {
         snapshot.forEach(doc => {
             const job = doc.data();
 
-            const dateStr = job.date;
-            const timeStr = job.time || "12:00";
+            const dateStr = job.date;              // "YYYY-MM-DD"
+            const timeStr = job.time || "12:00";   // fallback
 
             const start = new Date(`${dateStr}T${timeStr}`);
             const end = new Date(start.getTime() + 60 * 60 * 1000);
@@ -437,7 +447,9 @@ async function loadJobsForCalendar() {
                 borderColor: getEventColor(job),
                 jobId: doc.id,
                 jobData: job,
-                extendedProps: { jobData: job }
+                extendedProps: {
+                    jobData: job
+                }
             });
         });
 
@@ -453,7 +465,7 @@ async function loadJobsForCalendar() {
     }
 }
 
-/* APPLY FILTERS */
+/* APPLY FILTERS TO EVENTS */
 function applyFilters() {
     if (!calendar) return;
 
@@ -471,14 +483,16 @@ function applyFilters() {
     });
 }
 
-/* FILTER BUTTON HANDLER */
+/* FILTER BUTTON CLICK HANDLER */
 document.addEventListener("click", (e) => {
     if (!e.target.classList.contains("filter-btn")) return;
 
     document.querySelectorAll(".filter-btn").forEach(btn => btn.classList.remove("active"));
+
     e.target.classList.add("active");
 
     currentFilter = e.target.dataset.filter;
+
     applyFilters();
 });
 
@@ -550,13 +564,19 @@ async function getSlotStates(dateStr) {
 }
 
 async function toggleSlot(dateStr, time, booked) {
-    await db.collection("availability").doc(dateStr).collection("slots").doc(time)
+    await db.collection("availability")
+        .doc(dateStr)
+        .collection("slots")
+        .doc(time)
         .set({ booked: booked }, { merge: true });
+
     loadSlots(dateStr);
 }
 
 async function setWholeDay(booked) {
     const dateStr = selectedDate;
+    if (!dateStr) return;
+
     const locked = await getLockedSlots(dateStr);
     const batch = db.batch();
     const ref = db.collection("availability").doc(dateStr);
@@ -571,7 +591,7 @@ async function setWholeDay(booked) {
     loadSlots(dateStr);
 }
 
-/* INIT */
+/* INIT ON LOAD */
 document.addEventListener("DOMContentLoaded", () => {
     const allBtn = document.querySelector('.filter-btn[data-filter="all"]');
     if (allBtn) allBtn.classList.add("active");
