@@ -11,7 +11,8 @@
     body {
         margin: 0;
         font-family: Inter, sans-serif;
-        background: #f7f7f7;
+        background: #f5f4f2;
+        color: #222;
     }
 
     .layout {
@@ -21,53 +22,62 @@
 
     /* SIDEBAR */
     .sidebar {
-        width: 240px;
-        background: white;
-        border-right: 1px solid #eee;
-        padding: 24px;
+        width: 250px;
+        background: #ffffff;
+        border-right: 1px solid #e6e2da;
+        padding: 28px;
         display: flex;
         flex-direction: column;
+        box-shadow: 2px 0 10px rgba(0,0,0,0.04);
     }
 
     .sidebar h2 {
         font-family: "Playfair Display", serif;
-        color: #D4AF37;
-        margin: 0 0 26px 0;
-        font-size: 24px;
+        color: #c8a24a;
+        margin: 0 0 32px 0;
+        font-size: 26px;
+        letter-spacing: 0.5px;
     }
 
     .sidebar a {
-        color: #333;
+        color: #444;
         text-decoration: none;
-        padding: 10px 0;
+        padding: 12px 0;
         display: block;
         font-size: 15px;
         font-weight: 500;
+        transition: 0.2s;
     }
 
     .sidebar a:hover {
-        color: #D4AF37;
+        color: #c8a24a;
+        transform: translateX(3px);
     }
 
     .sidebar a.active {
-        color: #D4AF37;
+        color: #c8a24a;
         font-weight: 600;
     }
 
     .logout-btn {
         margin-top: auto;
-        padding: 11px;
-        background: #D4AF37;
+        padding: 12px;
+        background: #c8a24a;
         color: white;
         text-align: center;
-        border-radius: 6px;
+        border-radius: 8px;
         cursor: pointer;
         font-weight: 600;
         font-size: 14px;
+        transition: 0.2s;
+    }
+
+    .logout-btn:hover {
+        opacity: 0.9;
     }
 
     .sidebar-footer {
-        margin-top: 18px;
+        margin-top: 20px;
         padding-top: 14px;
         border-top: 1px solid #eee;
         font-size: 12px;
@@ -78,37 +88,44 @@
     /* MAIN */
     .main {
         flex: 1;
-        padding: 30px 32px;
+        padding: 40px 48px;
         overflow-y: auto;
     }
 
     h2 {
         font-family: "Playfair Display", serif;
-        color: #D4AF37;
+        color: #c8a24a;
         margin-top: 0;
+        font-size: 30px;
     }
 
     .section {
-        background: white;
-        padding: 20px;
-        border-radius: 12px;
-        margin-bottom: 25px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        background: #ffffff;
+        padding: 22px;
+        border-radius: 14px;
+        margin-bottom: 26px;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.06);
     }
 
+    .section h3 {
+        margin: 0 0 14px 0;
+        font-family: "Playfair Display", serif;
+        color: #c8a24a;
+        font-size: 20px;
+    }
+
+    /* JOB CARDS */
     .job-card {
         padding: 16px;
         border-bottom: 1px solid #eee;
         cursor: pointer;
-        transition: background 0.15s;
+        transition: background 0.15s, transform 0.15s;
+        border-radius: 10px;
     }
 
     .job-card:hover {
         background: #fafafa;
-    }
-
-    .job-card:last-child {
-        border-bottom: none;
+        transform: translateY(-2px);
     }
 
     .job-title {
@@ -136,25 +153,44 @@
     .assigned { background: #d6ffe0; color: #006d2a; }
     .available { background: #d6e8ff; color: #004a99; }
 
-    /* DARK DRAWER */
-    #jobDrawer {
+    /* CINEMATIC GLASS PANEL */
+    #jobOverlay {
         position: fixed;
-        top: 0;
-        right: -420px;
-        width: 420px;
-        height: 100vh;
-        background: #1e1e1e;
-        color: #f5f5f5;
-        box-shadow: -4px 0 12px rgba(0,0,0,0.5);
-        transition: right 0.35s ease;
+        inset: 0;
+        background: rgba(0,0,0,0.45);
+        backdrop-filter: blur(6px);
+        display: none;
+        align-items: center;
+        justify-content: center;
         z-index: 9999;
-        padding: 22px;
+    }
+
+    #jobOverlay.open {
+        display: flex;
+    }
+
+    #jobDrawer {
+        width: 520px;
+        max-width: 92%;
+        max-height: 90vh;
+        padding: 24px;
+        border-radius: 20px;
+        background: rgba(255,255,255,0.12);
+        backdrop-filter: blur(22px);
+        -webkit-backdrop-filter: blur(22px);
+        border: 1px solid rgba(255,255,255,0.25);
+        box-shadow: 0 18px 40px rgba(0,0,0,0.55);
+        color: #fff;
+        transform: scale(0.85);
+        opacity: 0;
+        transition: transform 0.28s ease, opacity 0.28s ease;
         display: flex;
         flex-direction: column;
     }
 
     #jobDrawer.open {
-        right: 0;
+        transform: scale(1);
+        opacity: 1;
     }
 
     .drawer-header {
@@ -167,20 +203,20 @@
         margin: 0;
         font-family: "Playfair Display", serif;
         font-size: 22px;
-        color: #D4AF37;
+        color: #f5f5f5;
     }
 
     .drawer-close {
-        font-size: 26px;
+        font-size: 28px;
         cursor: pointer;
-        color: #D4AF37;
+        color: #c8a24a;
         font-weight: bold;
     }
 
     .drawer-section {
         margin-top: 18px;
         padding-top: 12px;
-        border-top: 1px solid #333;
+        border-top: 1px solid rgba(255,255,255,0.25);
         font-size: 14px;
     }
 
@@ -193,26 +229,32 @@
     .drawer-stat {
         margin-bottom: 10px;
         font-size: 15px;
-        color: #D4AF37;
+        color: #c8a24a;
         font-weight: 600;
     }
 
     .drawer-label {
         font-size: 12px;
-        color: #aaa;
+        color: #ddd;
         margin-bottom: 14px;
     }
 
     .drawer-btn {
         margin-top: 20px;
         padding: 12px;
-        background: #D4AF37;
+        background: #c8a24a;
         color: #1e1e1e;
         border: none;
-        border-radius: 6px;
+        border-radius: 999px;
         font-weight: 600;
         cursor: pointer;
         width: 100%;
+        font-size: 14px;
+        transition: 0.2s;
+    }
+
+    .drawer-btn:hover {
+        opacity: 0.9;
     }
 
     .drawer-btn.cancel {
@@ -223,14 +265,8 @@
     @media (max-width: 700px) {
         #jobDrawer {
             width: 100%;
-            right: 0;
-            height: 60vh;
-            bottom: -60vh;
-            top: auto;
-            transition: bottom 0.35s ease;
-        }
-        #jobDrawer.open {
-            bottom: 0;
+            border-radius: 20px 20px 0 0;
+            max-height: 80vh;
         }
     }
 </style>
@@ -256,24 +292,21 @@
         </div>
     </div>
 
-    <!-- MAIN CONTENT -->
+    <!-- MAIN -->
     <div class="main">
 
         <h2>My Jobs</h2>
 
-        <!-- ASSIGNED JOBS -->
         <div class="section">
             <h3>Assigned Jobs</h3>
             <div id="assignedJobs">Loading...</div>
         </div>
 
-        <!-- PENDING REQUESTS -->
         <div class="section">
             <h3>Pending Requests</h3>
             <div id="pendingRequests">Loading...</div>
         </div>
 
-        <!-- AVAILABLE JOBS -->
         <div class="section">
             <h3>Available Jobs</h3>
             <div id="availableJobs">Loading...</div>
@@ -282,43 +315,45 @@
     </div>
 </div>
 
-<!-- DARK JOB DETAILS DRAWER -->
-<div id="jobDrawer">
-    <div class="drawer-header">
-        <h2 id="drawerTitle">Job Details</h2>
-        <div class="drawer-close" onclick="closeDrawer()">×</div>
+<!-- CINEMATIC GLASS PANEL -->
+<div id="jobOverlay">
+    <div id="jobDrawer">
+        <div class="drawer-header">
+            <h2 id="drawerTitle">Job Details</h2>
+            <div class="drawer-close" onclick="closeDrawer()">×</div>
+        </div>
+
+        <div class="drawer-section">
+            <h4>Date & Time</h4>
+            <div id="drawerDate"></div>
+            <div id="drawerTime"></div>
+        </div>
+
+        <div class="drawer-section">
+            <h4>Location</h4>
+            <div id="drawerLocation"></div>
+        </div>
+
+        <div class="drawer-section" id="drawerNotesSection" style="display:none;">
+            <h4>Notes</h4>
+            <div id="drawerNotes"></div>
+        </div>
+
+        <div class="drawer-section">
+            <h4>Earnings</h4>
+
+            <div class="drawer-stat" id="drawerJobEarnings">£0</div>
+            <div class="drawer-label">Earnings for this job</div>
+
+            <div class="drawer-stat" id="drawerPreviousEarnings">£0</div>
+            <div class="drawer-label">Previous jobs</div>
+
+            <div class="drawer-stat" id="drawerTotalEarnings">£0</div>
+            <div class="drawer-label">Total earnings</div>
+        </div>
+
+        <button id="drawerActionBtn" class="drawer-btn">Action</button>
     </div>
-
-    <div class="drawer-section">
-        <h4>Date & Time</h4>
-        <div id="drawerDate"></div>
-        <div id="drawerTime"></div>
-    </div>
-
-    <div class="drawer-section">
-        <h4>Location</h4>
-        <div id="drawerLocation"></div>
-    </div>
-
-    <div class="drawer-section" id="drawerNotesSection" style="display:none;">
-        <h4>Notes</h4>
-        <div id="drawerNotes"></div>
-    </div>
-
-    <div class="drawer-section">
-        <h4>Earnings</h4>
-
-        <div class="drawer-stat" id="drawerJobEarnings">£0</div>
-        <div class="drawer-label">Earnings for this job</div>
-
-        <div class="drawer-stat" id="drawerPreviousEarnings">£0</div>
-        <div class="drawer-label">Previous jobs</div>
-
-        <div class="drawer-stat" id="drawerTotalEarnings">£0</div>
-        <div class="drawer-label">Total earnings</div>
-    </div>
-
-    <button id="drawerActionBtn" class="drawer-btn">Action</button>
 </div>
 
 <!-- FIREBASE -->
@@ -332,6 +367,7 @@ let currentUser = null;
 let userData = null;
 let allJobs = [];
 
+/* AUTH */
 auth.onAuthStateChanged(async (user) => {
     if (!user) {
         window.location.href = "login.html";
@@ -346,10 +382,9 @@ auth.onAuthStateChanged(async (user) => {
     loadJobs();
 });
 
-/* LOAD ALL JOBS FOR EARNINGS CALC */
+/* LOAD JOBS */
 function loadJobs() {
-    db.collection("jobs")
-      .onSnapshot(snapshot => {
+    db.collection("jobs").onSnapshot(snapshot => {
         allJobs = [];
         snapshot.forEach(doc => {
             let j = doc.data();
@@ -375,9 +410,7 @@ function getEarnings(job) {
     return pot / count;
 }
 
-/* -------------------------
-   ASSIGNED JOBS
--------------------------- */
+/* ASSIGNED JOBS */
 function loadAssignedJobs() {
     let html = "";
 
@@ -397,9 +430,7 @@ function loadAssignedJobs() {
     document.getElementById("assignedJobs").innerHTML = html || "<p>No assigned jobs.</p>";
 }
 
-/* -------------------------
-   PENDING REQUESTS
--------------------------- */
+/* PENDING REQUESTS */
 function loadPendingRequests() {
     let html = "";
 
@@ -419,9 +450,7 @@ function loadPendingRequests() {
     document.getElementById("pendingRequests").innerHTML = html || "<p>No pending requests.</p>";
 }
 
-/* -------------------------
-   AVAILABLE JOBS
--------------------------- */
+/* AVAILABLE JOBS */
 function loadAvailableJobs() {
     let html = "";
 
@@ -444,9 +473,7 @@ function loadAvailableJobs() {
     document.getElementById("availableJobs").innerHTML = html || "<p>No available jobs.</p>";
 }
 
-/* -------------------------
-   DRAWER LOGIC
--------------------------- */
+/* DRAWER */
 function openDrawer(jobId) {
     const job = allJobs.find(j => j.id === jobId);
     if (!job) return;
@@ -463,7 +490,7 @@ function openDrawer(jobId) {
         document.getElementById("drawerNotesSection").style.display = "none";
     }
 
-    /* Earnings breakdown */
+    /* Earnings */
     const thisJob = getEarnings(job);
 
     const previous = allJobs
@@ -496,16 +523,23 @@ function openDrawer(jobId) {
         btn.style.display = "none";
     }
 
-    document.getElementById("jobDrawer").classList.add("open");
+    document.getElementById("jobOverlay").classList.add("open");
+    requestAnimationFrame(() => {
+        document.getElementById("jobDrawer").classList.add("open");
+    });
 }
 
 function closeDrawer() {
-    document.getElementById("jobDrawer").classList.remove("open");
+    const drawer = document.getElementById("jobDrawer");
+    const overlay = document.getElementById("jobOverlay");
+
+    drawer.classList.remove("open");
+    setTimeout(() => {
+        overlay.classList.remove("open");
+    }, 280);
 }
 
-/* -------------------------
-   REQUEST / CANCEL
--------------------------- */
+/* REQUEST / CANCEL */
 function requestJob(jobId) {
     db.collection("jobs").doc(jobId).update({
         requestBy: currentUser.uid,
@@ -524,9 +558,7 @@ function cancelRequest(jobId) {
     closeDrawer();
 }
 
-/* -------------------------
-   LOGOUT
--------------------------- */
+/* LOGOUT */
 function logout() {
     auth.signOut().then(() => {
         window.location.href = "login.html";
