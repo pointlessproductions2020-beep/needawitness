@@ -133,12 +133,31 @@
         justify-content: center;
         background: #faf7ec;
         box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        position: relative;
     }
 
     #photoPreview {
         width: 100%;
         height: 100%;
         object-fit: cover;
+    }
+
+    /* GOLD RING LOADER */
+    .ring-loader {
+        position: absolute;
+        width: 130px;
+        height: 130px;
+        border-radius: 50%;
+        border: 6px solid rgba(200,162,74,0.25);
+        border-top-color: #c8a24a;
+        animation: ringSpin 1s linear infinite;
+        display: none;
+        z-index: 10;
+    }
+
+    @keyframes ringSpin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
     }
 
     .photo-actions {
@@ -218,8 +237,9 @@
         transition: 0.2s;
     }
 
-    .save-btn:hover {
-        opacity: 0.9;
+    .save-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
     }
 
     #statusMessage {
@@ -292,6 +312,7 @@
             <div class="photo-row">
                 <div class="photo-wrapper">
                     <img id="photoPreview" src="/hub/default-single.png" alt="Profile photo">
+                    <div class="ring-loader" id="ringLoader"></div>
                 </div>
                 <div class="photo-actions">
                     <button class="photo-btn" type="button" onclick="document.getElementById('photoInput').click()">
@@ -333,7 +354,7 @@
             <textarea id="bio" placeholder="Tell couples a bit about yourself…"></textarea>
 
             <div class="save-bar">
-                <button class="save-btn" type="button" onclick="saveProfile()">Save Changes</button>
+                <button class="save-btn" type="button" onclick="saveProfile()" disabled>Save Changes</button>
             </div>
             <div id="statusMessage"></div>
         </div>
@@ -352,6 +373,8 @@ const WORKER_URL = "https://shrill-math-1bfc.pointlessproductions2020.workers.de
 // DOM refs
 const photoInput = document.getElementById("photoInput");
 const photoPreview = document.getElementById("photoPreview");
+const ringLoader = document.getElementById("ringLoader");
+const saveBtn = document.querySelector(".save-btn");
 const statusMessage = document.getElementById("statusMessage");
 
 const singleFields = document.getElementById("singleFields");
@@ -368,10 +391,27 @@ const bioInput = document.getElementById("bio");
 // Holds compressed image blob
 let compressedBlob = null;
 
+/* LOADER CONTROL */
+function showLoader() {
+    ringLoader.style.display = "block";
+    saveBtn.disabled = true;
+    saveBtn.style.opacity = "0.5";
+}
+
+function hideLoader() {
+    ringLoader.style.display = "none";
+    saveBtn.disabled = false;
+    saveBtn.style.opacity = "1";
+}
+
 /* IMAGE PREVIEW + COMPRESSION */
 photoInput.addEventListener("change", async (e) => {
     const file = e.target.files[0];
     if (!file) return;
+
+    showLoader();
+    statusMessage.textContent = "Processing photo…";
+    statusMessage.style.color = "#c8a24a";
 
     const img = new Image();
     img.src = URL.createObjectURL(file);
@@ -394,6 +434,10 @@ photoInput.addEventListener("change", async (e) => {
             (blob) => {
                 compressedBlob = blob;
                 photoPreview.src = URL.createObjectURL(blob);
+
+                hideLoader();
+                statusMessage.textContent = "Photo ready.";
+                statusMessage.style.color = "#2e7d32";
             },
             "image/jpeg",
             0.85
@@ -405,14 +449,25 @@ photoInput.addEventListener("change", async (e) => {
 async function uploadPhoto(uid) {
     if (!photoInput.files.length) return null;
 
-    // ⛔ Prevent uploading the original large file
     if (!compressedBlob) {
         statusMessage.textContent = "Please wait… processing photo.";
         statusMessage.style.color = "#c0392b";
         return null;
     }
 
-    const file = compressedBlob; // ✅ Always the small 512×512 JPEG
+    const file = compressedBlob;
+
+    // Reject oversized files BEFORE upload
+    if (file.size > 5 * 1024 * 1024) {
+        statusMessage.textContent = "Image too large — please choose a smaller one.";
+        statusMessage.style.color = "#c0392b";
+        return null;
+    }
+
+    showLoader();
+    statusMessage.textContent = "Uploading…";
+    statusMessage.style.color = "#c8a24a";
+
     const formData = new FormData();
     formData.append("file", file, `${uid}.jpg`);
 
@@ -423,18 +478,25 @@ async function uploadPhoto(uid) {
         });
 
         if (!res.ok) {
+            hideLoader();
             console.error("Upload failed:", await res.text());
-            statusMessage.textContent = "Photo upload failed. Please try again.";
+            statusMessage.textContent = "Upload failed — please try again.";
             statusMessage.style.color = "#c0392b";
             return null;
         }
 
         const json = await res.json();
+        hideLoader();
+
+        statusMessage.textContent = "Upload complete!";
+        statusMessage.style.color = "#2e7d32";
+
         return json.url || null;
 
     } catch (err) {
+        hideLoader();
         console.error("Upload failed:", err);
-        statusMessage.textContent = "Photo upload failed. Please check your connection.";
+        statusMessage.textContent = "Network error — please try again.";
         statusMessage.style.color = "#c0392b";
         return null;
     }
@@ -479,6 +541,8 @@ auth.onAuthStateChanged(async (user) => {
     phoneInput.value = data.phone || "";
     locationInput.value = data.location || "";
     bioInput.value = data.bio || "";
+
+    saveBtn.disabled = false;
 });
 
 /* SAVE PROFILE */
@@ -520,7 +584,7 @@ async function saveProfile() {
     statusMessage.textContent = "Profile updated successfully.";
     statusMessage.style.color = "#2e7d32";
 
-    setTimeout(() => {
+   setTimeout(() => {
         window.location.href = "profile.html";
     }, 800);
 }
