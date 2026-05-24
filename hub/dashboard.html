@@ -14,7 +14,7 @@
     body {
         margin: 0;
         font-family: Inter, sans-serif;
-        background: #f7f7f7;
+        background: #f5f4f2;
         color: #222;
     }
 
@@ -25,53 +25,62 @@
 
     /* SIDEBAR */
     .sidebar {
-        width: 240px;
+        width: 250px;
         background: #ffffff;
-        border-right: 1px solid #eee;
-        padding: 24px;
+        border-right: 1px solid #e6e2da;
+        padding: 28px;
         display: flex;
         flex-direction: column;
+        box-shadow: 2px 0 10px rgba(0,0,0,0.04);
     }
 
     .sidebar h2 {
         font-family: "Playfair Display", serif;
-        color: #D4AF37;
-        margin: 0 0 26px 0;
-        font-size: 24px;
+        color: #c8a24a;
+        margin: 0 0 32px 0;
+        font-size: 26px;
+        letter-spacing: 0.5px;
     }
 
     .sidebar a {
-        color: #333;
+        color: #444;
         text-decoration: none;
-        padding: 10px 0;
+        padding: 12px 0;
         display: block;
         font-size: 15px;
         font-weight: 500;
+        transition: 0.2s;
     }
 
     .sidebar a:hover {
-        color: #D4AF37;
+        color: #c8a24a;
+        transform: translateX(3px);
     }
 
     .sidebar a.active {
-        color: #D4AF37;
+        color: #c8a24a;
         font-weight: 600;
     }
 
     .logout-btn {
         margin-top: auto;
-        padding: 11px;
-        background: #D4AF37;
+        padding: 12px;
+        background: #c8a24a;
         color: white;
         text-align: center;
-        border-radius: 6px;
+        border-radius: 8px;
         cursor: pointer;
         font-weight: 600;
         font-size: 14px;
+        transition: 0.2s;
+    }
+
+    .logout-btn:hover {
+        opacity: 0.9;
     }
 
     .sidebar-footer {
-        margin-top: 18px;
+        margin-top: 20px;
         padding-top: 14px;
         border-top: 1px solid #eee;
         font-size: 12px;
@@ -82,99 +91,109 @@
     /* MAIN */
     .main {
         flex: 1;
-        padding: 28px 32px;
+        padding: 40px 48px;
         overflow-y: auto;
     }
 
+    /* HYBRID HEADER */
     .main-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 22px;
+        margin-bottom: 26px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #e8dcc2;
     }
 
     .main-header-title {
         font-family: "Playfair Display", serif;
-        font-size: 26px;
-        color: #D4AF37;
+        font-size: 32px;
+        color: #c8a24a;
+        margin-bottom: 4px;
     }
 
     .main-header-subtitle {
         font-size: 14px;
         color: #777;
-        margin-top: 4px;
     }
 
     .header-right {
         display: flex;
         align-items: center;
-        gap: 12px;
+        gap: 14px;
     }
 
     .header-photo {
-        width: 52px;
-        height: 52px;
+        width: 54px;
+        height: 54px;
         border-radius: 50%;
         object-fit: cover;
-        border: 2px solid #D4AF37;
+        border: 2px solid #c8a24a;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.08);
     }
 
     .earnings-btn {
-        padding: 9px 14px;
-        border-radius: 6px;
+        padding: 10px 16px;
+        border-radius: 999px;
         border: none;
-        background: #D4AF37;
+        background: #c8a24a;
         color: #fff;
         font-weight: 600;
         font-size: 13px;
         cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .earnings-btn:hover {
+        opacity: 0.9;
     }
 
     /* CARDS */
     .cards {
         display: flex;
-        gap: 18px;
-        margin-bottom: 24px;
+        gap: 20px;
+        margin-bottom: 28px;
         flex-wrap: wrap;
     }
 
     .card {
         background: #ffffff;
-        padding: 18px 18px 16px;
-        border-radius: 12px;
+        padding: 20px 20px 18px;
+        border-radius: 14px;
         flex: 1;
-        min-width: 200px;
-        box-shadow: 0 3px 10px rgba(0,0,0,0.05);
-        border-left: 4px solid #D4AF37;
+        min-width: 220px;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+        border-left: 4px solid #c8a24a;
     }
 
     .card h3 {
         margin: 0;
         font-family: "Playfair Display", serif;
-        color: #D4AF37;
-        font-size: 16px;
+        color: #c8a24a;
+        font-size: 18px;
     }
 
     .card p {
-        font-size: 22px;
+        font-size: 26px;
         margin: 10px 0 0;
         font-weight: 600;
+        color: #333;
     }
 
     /* SECTIONS */
     .section {
         background: #ffffff;
-        padding: 18px 18px 20px;
-        border-radius: 12px;
-        margin-bottom: 22px;
-        box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        padding: 22px 22px 24px;
+        border-radius: 14px;
+        margin-bottom: 26px;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.06);
     }
 
     .section h3 {
         margin-top: 0;
         font-family: "Playfair Display", serif;
-        color: #D4AF37;
-        font-size: 18px;
+        color: #c8a24a;
+        font-size: 20px;
     }
 
     .job-item {
@@ -194,11 +213,11 @@
 
     .fc-toolbar-title {
         font-family: "Playfair Display", serif;
-        color: #D4AF37;
+        color: #c8a24a;
         font-size: 18px !important;
     }
 
-    /* EARNINGS DRAWER (DARK) */
+    /* EARNINGS DRAWER */
     #earningsDrawer {
         position: fixed;
         top: 0;
@@ -229,13 +248,13 @@
         margin: 0;
         font-family: "Playfair Display", serif;
         font-size: 22px;
-        color: #D4AF37;
+        color: #c8a24a;
     }
 
     .drawer-close {
         font-size: 26px;
         cursor: pointer;
-        color: #D4AF37;
+        color: #c8a24a;
         font-weight: bold;
     }
 
@@ -283,6 +302,20 @@
         color: #fff;
     }
 
+    @media (max-width: 700px) {
+        #earningsDrawer {
+            width: 100%;
+            right: 0;
+            height: 60vh;
+            top: auto;
+            bottom: -60vh;
+            transition: bottom 0.35s ease;
+        }
+        #earningsDrawer.open {
+            bottom: 0;
+        }
+    }
+
     @media (max-width: 900px) {
         .layout {
             flex-direction: column;
@@ -307,21 +340,7 @@
             display: none;
         }
         .main {
-            padding: 20px;
-        }
-    }
-
-    @media (max-width: 700px) {
-        #earningsDrawer {
-            width: 100%;
-            right: 0;
-            height: 60vh;
-            top: auto;
-            bottom: -60vh;
-            transition: bottom 0.35s ease;
-        }
-        #earningsDrawer.open {
-            bottom: 0;
+            padding: 24px;
         }
     }
 </style>
@@ -337,8 +356,11 @@
         <a href="dashboard.html" class="active">Dashboard</a>
         <a href="myjobs.html">My Jobs</a>
         <a href="availability.html">Availability</a>
-        <a href="profile-edit.html">Profile</a>
+        <a href="profile.html">Profile</a>
+        <a href="profile-edit.html">Edit Profile</a>
+
         <div class="logout-btn" onclick="logout()">Logout</div>
+
         <div class="sidebar-footer">
             © Need A Witness UK<br>
             Witness Hub v1.0
@@ -347,6 +369,8 @@
 
     <!-- MAIN -->
     <div class="main">
+
+        <!-- HYBRID HEADER -->
         <div class="main-header">
             <div>
                 <div class="main-header-title">Dashboard</div>
@@ -354,12 +378,11 @@
                     Welcome back, <span id="username">Loading...</span>
                 </div>
             </div>
+
             <div class="header-right">
-    <button class="earnings-btn" onclick="openEarningsDrawer()">
-        View Earnings
-    </button>
-    <img id="headerPhoto" class="header-photo" src="/hub/default-single.png" alt="Profile photo">
-</div>
+                <button class="earnings-btn" onclick="openEarningsDrawer()">View Earnings</button>
+                <img id="headerPhoto" class="header-photo" src="/hub/default-single.png" alt="Profile photo">
+            </div>
         </div>
 
         <!-- CARDS -->
@@ -378,11 +401,11 @@
             </div>
         </div>
 
-        <!-- CALENDAR + NOTE -->
+        <!-- CALENDAR -->
         <div class="section">
             <h3>Your Calendar</h3>
             <p style="font-size:13px;color:#777;margin-top:0;">
-                Click a date for more options – see your jobs and earnings for that day.
+                Click a date to view jobs and earnings for that day.
             </p>
             <div id="calendar"></div>
         </div>
@@ -408,6 +431,7 @@
             <p><strong>Location:</strong> <span id="profileLocation">Loading...</span></p>
             <p><strong>Bio:</strong> <span id="profileBio">Loading...</span></p>
         </div>
+
     </div>
 </div>
 
@@ -452,7 +476,7 @@
 
 <script>
 let currentUser = null;
-let jobsCache = []; // all jobs for this witness
+let jobsCache = [];
 let calendar = null;
 let selectedDate = null;
 
@@ -460,16 +484,11 @@ let selectedDate = null;
 function getProfilePhoto(data) {
     return data.photoURL ||
         (data.type === "couple"
-            ? "hub/default-couple.png"
-            : "hub/default-single.png");
+            ? "/hub/default-couple.png"
+            : "/hub/default-single.png");
 }
 
-/* EARNINGS HELPERS
-   - Admin fee = depositAmount or deposit (e.g. £20)
-   - Witness pot = totalPrice - admin fee
-   - If witnessType === "couple" → one account gets full pot
-   - Else → pot split equally between assignedWitnesses
-*/
+/* EARNINGS HELPERS */
 function getJobEarnings(job) {
     const total = job.totalPrice || 0;
     const adminFee = job.depositAmount || job.deposit || 0;
@@ -497,10 +516,10 @@ function closeEarningsDrawer() {
     document.getElementById("earningsDrawer").classList.remove("open");
 }
 
-/* UPDATE EARNINGS SUMMARY (MONTH + ALL TIME + SELECTED DAY) */
+/* UPDATE EARNINGS SUMMARY */
 function updateEarningsSummary() {
     const now = new Date();
-    const monthStr = now.toISOString().slice(0,7); // YYYY-MM
+    const monthStr = now.toISOString().slice(0,7);
 
     let monthTotal = 0;
     let allTimeTotal = 0;
@@ -523,7 +542,7 @@ function updateEarningsSummary() {
     }
 }
 
-/* UPDATE DAY EARNINGS IN DRAWER */
+/* UPDATE DAY EARNINGS */
 function updateDayEarnings(dateStr) {
     selectedDate = dateStr;
     const listEl = document.getElementById("drawerJobsList");
@@ -554,11 +573,10 @@ function updateDayEarnings(dateStr) {
         `;
     });
 
-    listEl.innerHTML = html;
+        listEl.innerHTML = html;
     dayTotalEl.textContent = formatCurrency(total);
 }
-
-/* INIT CALENDAR */
+    /* INIT CALENDAR */
 function initCalendar() {
     const calendarEl = document.getElementById("calendar");
 
@@ -635,15 +653,6 @@ function loadJobs(uid) {
         });
 }
 
-/* FIX: Add this function */
-function getProfilePhoto(data) {
-    return data.photoURL ||
-        (data.type === "couple"
-            ? "/hub/default-couple.png"
-            : "/hub/default-single.png");
-}
-
-    
 /* AUTH + PROFILE LOAD */
 auth.onAuthStateChanged(async (user) => {
     if (!user) {
