@@ -355,11 +355,11 @@
                 </div>
             </div>
             <div class="header-right">
-                <button class="earnings-btn" onclick="openEarningsDrawer()">
-                    View Earnings
-                </button>
-                <img id="headerPhoto" class="header-photo" src="hub/default-single.png" alt="Profile photo">
-            </div>
+    <button class="earnings-btn" onclick="openEarningsDrawer()">
+        View Earnings
+    </button>
+    <img id="headerPhoto" class="header-photo" src="/hub/default-single.png" alt="Profile photo">
+</div>
         </div>
 
         <!-- CARDS -->
@@ -635,6 +635,15 @@ function loadJobs(uid) {
         });
 }
 
+/* FIX: Add this function */
+function getProfilePhoto(data) {
+    return data.photoURL ||
+        (data.type === "couple"
+            ? "/hub/default-couple.png"
+            : "/hub/default-single.png");
+}
+
+    
 /* AUTH + PROFILE LOAD */
 auth.onAuthStateChanged(async (user) => {
     if (!user) {
