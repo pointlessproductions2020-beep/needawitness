@@ -235,8 +235,8 @@
 function getProfilePhoto(data) {
     return data.photoURL ||
         (data.type === "couple"
-            ? "hub/default-couple.png"
-            : "hub/default-single.png");
+            ? "/hub/default-couple.png"
+            : "/hub/default-single.png");
 }
 
 auth.onAuthStateChanged(async user => {
