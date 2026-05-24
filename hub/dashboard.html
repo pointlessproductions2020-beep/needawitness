@@ -7,11 +7,15 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
+<!-- FullCalendar CSS -->
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
+
 <style>
     body {
         margin: 0;
         font-family: Inter, sans-serif;
         background: #f7f7f7;
+        color: #222;
     }
 
     .layout {
@@ -22,9 +26,9 @@
     /* SIDEBAR */
     .sidebar {
         width: 240px;
-        background: white;
+        background: #ffffff;
         border-right: 1px solid #eee;
-        padding: 25px;
+        padding: 24px;
         display: flex;
         flex-direction: column;
     }
@@ -32,17 +36,16 @@
     .sidebar h2 {
         font-family: "Playfair Display", serif;
         color: #D4AF37;
-        margin-top: 0;
-        margin-bottom: 30px;
+        margin: 0 0 26px 0;
         font-size: 24px;
     }
 
     .sidebar a {
         color: #333;
         text-decoration: none;
-        padding: 12px 0;
+        padding: 10px 0;
         display: block;
-        font-size: 16px;
+        font-size: 15px;
         font-weight: 500;
     }
 
@@ -50,70 +53,106 @@
         color: #D4AF37;
     }
 
+    .sidebar a.active {
+        color: #D4AF37;
+        font-weight: 600;
+    }
+
     .logout-btn {
         margin-top: auto;
-        padding: 12px;
+        padding: 11px;
         background: #D4AF37;
         color: white;
         text-align: center;
         border-radius: 6px;
         cursor: pointer;
         font-weight: 600;
+        font-size: 14px;
     }
 
     .sidebar-footer {
-        margin-top: 20px;
-        padding-top: 15px;
+        margin-top: 18px;
+        padding-top: 14px;
         border-top: 1px solid #eee;
         font-size: 12px;
         color: #777;
         line-height: 1.4;
     }
 
-    /* MAIN CONTENT */
+    /* MAIN */
     .main {
         flex: 1;
-        padding: 30px;
+        padding: 28px 32px;
         overflow-y: auto;
     }
 
-    .header {
-        font-size: 26px;
-        margin-bottom: 25px;
+    .main-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
+        margin-bottom: 22px;
+    }
+
+    .main-header-title {
         font-family: "Playfair Display", serif;
+        font-size: 26px;
+        color: #D4AF37;
+    }
+
+    .main-header-subtitle {
+        font-size: 14px;
+        color: #777;
+        margin-top: 4px;
+    }
+
+    .header-right {
+        display: flex;
+        align-items: center;
+        gap: 12px;
     }
 
     .header-photo {
-        width: 55px;
-        height: 55px;
+        width: 52px;
+        height: 52px;
         border-radius: 50%;
         object-fit: cover;
         border: 2px solid #D4AF37;
     }
 
+    .earnings-btn {
+        padding: 9px 14px;
+        border-radius: 6px;
+        border: none;
+        background: #D4AF37;
+        color: #fff;
+        font-weight: 600;
+        font-size: 13px;
+        cursor: pointer;
+    }
+
     /* CARDS */
     .cards {
         display: flex;
-        gap: 20px;
-        margin-bottom: 30px;
+        gap: 18px;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
     }
 
     .card {
-        background: white;
-        padding: 20px;
+        background: #ffffff;
+        padding: 18px 18px 16px;
         border-radius: 12px;
         flex: 1;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        min-width: 200px;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.05);
         border-left: 4px solid #D4AF37;
     }
 
     .card h3 {
-        margin-top: 0;
+        margin: 0;
         font-family: "Playfair Display", serif;
         color: #D4AF37;
+        font-size: 16px;
     }
 
     .card p {
@@ -124,26 +163,166 @@
 
     /* SECTIONS */
     .section {
-        background: white;
-        padding: 20px;
+        background: #ffffff;
+        padding: 18px 18px 20px;
         border-radius: 12px;
-        margin-bottom: 25px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        margin-bottom: 22px;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.05);
     }
 
     .section h3 {
         margin-top: 0;
         font-family: "Playfair Display", serif;
         color: #D4AF37;
+        font-size: 18px;
     }
 
     .job-item {
-        padding: 12px 0;
+        padding: 10px 0;
         border-bottom: 1px solid #eee;
+        font-size: 14px;
     }
 
     .job-item:last-child {
         border-bottom: none;
+    }
+
+    #calendar {
+        max-width: 100%;
+        margin-top: 10px;
+    }
+
+    .fc-toolbar-title {
+        font-family: "Playfair Display", serif;
+        color: #D4AF37;
+        font-size: 18px !important;
+    }
+
+    /* EARNINGS DRAWER (DARK) */
+    #earningsDrawer {
+        position: fixed;
+        top: 0;
+        right: -420px;
+        width: 420px;
+        height: 100vh;
+        background: #1e1e1e;
+        color: #f5f5f5;
+        box-shadow: -4px 0 12px rgba(0,0,0,0.5);
+        transition: right 0.35s ease;
+        z-index: 9999;
+        padding: 22px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    #earningsDrawer.open {
+        right: 0;
+    }
+
+    .drawer-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .drawer-header h2 {
+        margin: 0;
+        font-family: "Playfair Display", serif;
+        font-size: 22px;
+        color: #D4AF37;
+    }
+
+    .drawer-close {
+        font-size: 26px;
+        cursor: pointer;
+        color: #D4AF37;
+        font-weight: bold;
+    }
+
+    .drawer-subtitle {
+        margin-top: 6px;
+        font-size: 13px;
+        color: #ccc;
+    }
+
+    .drawer-section {
+        margin-top: 18px;
+        padding-top: 12px;
+        border-top: 1px solid #333;
+        font-size: 14px;
+    }
+
+    .drawer-section h4 {
+        margin: 0 0 8px 0;
+        font-size: 14px;
+        color: #f5f5f5;
+    }
+
+    .drawer-stat {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 6px;
+        font-size: 14px;
+    }
+
+    .drawer-stat span:first-child {
+        color: #ccc;
+    }
+
+    .drawer-job {
+        padding: 8px 0;
+        border-bottom: 1px solid #333;
+        font-size: 13px;
+    }
+
+    .drawer-job:last-child {
+        border-bottom: none;
+    }
+
+    .drawer-job strong {
+        color: #fff;
+    }
+
+    @media (max-width: 900px) {
+        .layout {
+            flex-direction: column;
+        }
+        .sidebar {
+            width: 100%;
+            border-right: none;
+            border-bottom: 1px solid #eee;
+            flex-direction: row;
+            align-items: center;
+            gap: 18px;
+            overflow-x: auto;
+        }
+        .sidebar h2 {
+            margin-bottom: 0;
+        }
+        .sidebar a {
+            padding: 8px 0;
+            white-space: nowrap;
+        }
+        .logout-btn, .sidebar-footer {
+            display: none;
+        }
+        .main {
+            padding: 20px;
+        }
+    }
+
+    @media (max-width: 700px) {
+        #earningsDrawer {
+            width: 100%;
+            right: 0;
+            height: 60vh;
+            top: auto;
+            bottom: -60vh;
+            transition: bottom 0.35s ease;
+        }
+        #earningsDrawer.open {
+            bottom: 0;
+        }
     }
 </style>
 </head>
@@ -155,29 +334,35 @@
     <!-- SIDEBAR -->
     <div class="sidebar">
         <h2>Witness Hub</h2>
-        <a href="dashboard.html">Dashboard</a>
+        <a href="dashboard.html" class="active">Dashboard</a>
         <a href="myjobs.html">My Jobs</a>
         <a href="availability.html">Availability</a>
         <a href="profile-edit.html">Profile</a>
-
         <div class="logout-btn" onclick="logout()">Logout</div>
-
         <div class="sidebar-footer">
             © Need A Witness UK<br>
             Witness Hub v1.0
         </div>
     </div>
 
-    <!-- MAIN CONTENT -->
+    <!-- MAIN -->
     <div class="main">
-
-        <!-- HEADER -->
-        <div class="header">
-            <div>Welcome, <span id="username">Loading...</span></div>
-            <img id="headerPhoto" class="header-photo" src="default-avatar.png">
+        <div class="main-header">
+            <div>
+                <div class="main-header-title">Dashboard</div>
+                <div class="main-header-subtitle">
+                    Welcome back, <span id="username">Loading...</span>
+                </div>
+            </div>
+            <div class="header-right">
+                <button class="earnings-btn" onclick="openEarningsDrawer()">
+                    View Earnings
+                </button>
+                <img id="headerPhoto" class="header-photo" src="hub/default-single.png" alt="Profile photo">
+            </div>
         </div>
 
-        <!-- STATS CARDS -->
+        <!-- CARDS -->
         <div class="cards">
             <div class="card">
                 <h3>Jobs Today</h3>
@@ -188,9 +373,18 @@
                 <p id="totalJobs">0</p>
             </div>
             <div class="card">
-                <h3>Rating</h3>
-                <p id="rating">⭐ 5.0</p>
+                <h3>Earnings This Month</h3>
+                <p id="earningsMonth">£0.00</p>
             </div>
+        </div>
+
+        <!-- CALENDAR + NOTE -->
+        <div class="section">
+            <h3>Your Calendar</h3>
+            <p style="font-size:13px;color:#777;margin-top:0;">
+                Click a date for more options – see your jobs and earnings for that day.
+            </p>
+            <div id="calendar"></div>
         </div>
 
         <!-- TODAY'S JOBS -->
@@ -199,13 +393,13 @@
             <div id="todaysJobs">Loading...</div>
         </div>
 
-        <!-- AVAILABILITY -->
+        <!-- AVAILABILITY SUMMARY -->
         <div class="section">
             <h3>Your Availability</h3>
             <div id="availabilitySummary">Loading...</div>
         </div>
 
-        <!-- PROFILE -->
+        <!-- PROFILE SUMMARY -->
         <div class="section">
             <h3>Your Profile</h3>
             <p><strong>Name:</strong> <span id="profileName">Loading...</span></p>
@@ -214,111 +408,293 @@
             <p><strong>Location:</strong> <span id="profileLocation">Loading...</span></p>
             <p><strong>Bio:</strong> <span id="profileBio">Loading...</span></p>
         </div>
-
     </div>
 </div>
 
-<!-- FIREBASE -->
+<!-- EARNINGS DRAWER -->
+<div id="earningsDrawer">
+    <div class="drawer-header">
+        <h2>Earnings</h2>
+        <div class="drawer-close" onclick="closeEarningsDrawer()">×</div>
+    </div>
+    <div class="drawer-subtitle">
+        Your earnings overview and jobs for the selected date.
+    </div>
+
+    <div class="drawer-section">
+        <h4>Summary</h4>
+        <div class="drawer-stat">
+            <span>This month</span>
+            <span id="drawerMonthTotal">£0.00</span>
+        </div>
+        <div class="drawer-stat">
+            <span>All time</span>
+            <span id="drawerAllTimeTotal">£0.00</span>
+        </div>
+        <div class="drawer-stat">
+            <span>Selected day</span>
+            <span id="drawerDayTotal">£0.00</span>
+        </div>
+    </div>
+
+    <div class="drawer-section">
+        <h4 id="drawerDayTitle">Jobs on selected day</h4>
+        <div id="drawerJobsList">Select a date on the calendar.</div>
+    </div>
+</div>
+
+<!-- FIREBASE + FULLCALENDAR -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 <script src="firebase.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
 
 <script>
-auth.onAuthStateChanged(async (user) => {
-    if (!user) {
-        window.location.href = "login.html";
+let currentUser = null;
+let jobsCache = []; // all jobs for this witness
+let calendar = null;
+let selectedDate = null;
+
+/* PROFILE PHOTO HELPER */
+function getProfilePhoto(data) {
+    return data.photoURL ||
+        (data.type === "couple"
+            ? "hub/default-couple.png"
+            : "hub/default-single.png");
+}
+
+/* EARNINGS HELPERS
+   - Admin fee = depositAmount or deposit (e.g. £20)
+   - Witness pot = totalPrice - admin fee
+   - If witnessType === "couple" → one account gets full pot
+   - Else → pot split equally between assignedWitnesses
+*/
+function getJobEarnings(job) {
+    const total = job.totalPrice || 0;
+    const adminFee = job.depositAmount || job.deposit || 0;
+    const pot = Math.max(total - adminFee, 0);
+
+    if (job.witnessType === "couple") {
+        return pot;
+    }
+
+    const count = (job.assignedWitnesses && job.assignedWitnesses.length) ? job.assignedWitnesses.length : 1;
+    return pot / count;
+}
+
+function formatCurrency(amount) {
+    return "£" + (amount || 0).toFixed(2);
+}
+
+/* EARNINGS DRAWER CONTROL */
+function openEarningsDrawer() {
+    document.getElementById("earningsDrawer").classList.add("open");
+    updateEarningsSummary();
+}
+
+function closeEarningsDrawer() {
+    document.getElementById("earningsDrawer").classList.remove("open");
+}
+
+/* UPDATE EARNINGS SUMMARY (MONTH + ALL TIME + SELECTED DAY) */
+function updateEarningsSummary() {
+    const now = new Date();
+    const monthStr = now.toISOString().slice(0,7); // YYYY-MM
+
+    let monthTotal = 0;
+    let allTimeTotal = 0;
+
+    jobsCache.forEach(j => {
+        const amt = getJobEarnings(j);
+        allTimeTotal += amt;
+
+        if (j.date && j.date.startsWith(monthStr)) {
+            monthTotal += amt;
+        }
+    });
+
+    document.getElementById("earningsMonth").innerText = formatCurrency(monthTotal);
+    document.getElementById("drawerMonthTotal").innerText = formatCurrency(monthTotal);
+    document.getElementById("drawerAllTimeTotal").innerText = formatCurrency(allTimeTotal);
+
+    if (selectedDate) {
+        updateDayEarnings(selectedDate);
+    }
+}
+
+/* UPDATE DAY EARNINGS IN DRAWER */
+function updateDayEarnings(dateStr) {
+    selectedDate = dateStr;
+    const listEl = document.getElementById("drawerJobsList");
+    const titleEl = document.getElementById("drawerDayTitle");
+    const dayTotalEl = document.getElementById("drawerDayTotal");
+
+    titleEl.textContent = `Jobs on ${dateStr}`;
+
+    const jobsForDay = jobsCache.filter(j => j.date === dateStr);
+    if (!jobsForDay.length) {
+        listEl.innerHTML = "<p>No jobs on this day.</p>";
+        dayTotalEl.textContent = "£0.00";
         return;
     }
 
-    const doc = await db.collection("users").doc(user.uid).get();
-    if (!doc.exists) {
-        logout();
-        return;
-    }
+    let html = "";
+    let total = 0;
 
-    const data = doc.data();
+    jobsForDay.forEach(j => {
+        const amt = getJobEarnings(j);
+        total += amt;
+        html += `
+            <div class="drawer-job">
+                <strong>${j.coupleName || j.coupleNames || "Ceremony"}</strong><br>
+                ${j.time || ""} at ${j.location || "Location TBC"}<br>
+                <span style="color:#D4AF37;">${formatCurrency(amt)}</span>
+            </div>
+        `;
+    });
 
-    /* 🔒 APPROVAL CHECK */
-    if (data.approved !== true || data.status === "pending") {
-        window.location.href = "pending.html";
-        return;
-    }
+    listEl.innerHTML = html;
+    dayTotalEl.textContent = formatCurrency(total);
+}
 
-    /* HEADER PHOTO */
-    headerPhoto.src = data.photoURL || "default-avatar.png";
+/* INIT CALENDAR */
+function initCalendar() {
+    const calendarEl = document.getElementById("calendar");
 
-    /* WELCOME NAME */
-    username.innerText =
-        data.type === "couple"
-            ? (data.teamName || "Your Team")
-            : (data.name || "Witness");
+    calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: "dayGridMonth",
+        height: "auto",
+        events: jobsCache.map(jobToEvent),
+        dateClick: function(info) {
+            const dateStr = info.dateStr;
+            selectedDate = dateStr;
+            openEarningsDrawer();
+            updateDayEarnings(dateStr);
+        }
+    });
 
-    /* PROFILE SECTION */
-    profileName.innerText =
-        data.type === "couple"
-            ? `${data.partner1Name} & ${data.partner2Name} (${data.teamName})`
-            : data.name;
+    calendar.render();
+}
 
-    profileEmail.innerText = data.email;
-    profilePhone.innerText = data.phone;
-    profileLocation.innerText = data.location || "Not set";
-    profileBio.innerText = data.bio || "No bio yet";
+/* CONVERT JOB TO CALENDAR EVENT */
+function jobToEvent(j) {
+    const dateStr = j.date;
+    const timeStr = j.time || "12:00";
 
-    /* RATING */
-    rating.innerText = `⭐ ${data.rating ? data.rating.toFixed(1) : "5.0"}`;
+    const start = new Date(`${dateStr}T${timeStr}`);
+    const end = new Date(start.getTime() + 60 * 60 * 1000);
 
-    /* AVAILABILITY */
-    const dayNames = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+    return {
+        title: j.coupleName || j.coupleNames || "Ceremony",
+        start: start.toISOString(),
+        end: end.toISOString(),
+        backgroundColor: "#D4AF37",
+        borderColor: "#D4AF37"
+    };
+}
 
-    if (data.availability) {
-        let html = "";
-        dayNames.forEach(day => {
-            const info = data.availability[day];
-            if (!info) return;
-
-            html += `<p><strong>${day}:</strong> ${
-                info.enabled ? `${info.start}–${info.end}` : "Not available"
-            }</p>`;
-        });
-        availabilitySummary.innerHTML = html;
-    } else {
-        availabilitySummary.innerHTML = "<p>No availability set yet.</p>";
-    }
-
-    /* LOAD JOBS */
-    loadJobs(user.uid);
-});
-
-/* LOAD TODAY'S JOBS + TOTAL JOBS */
+/* LOAD JOBS FOR DASHBOARD + CALENDAR + EARNINGS */
 function loadJobs(uid) {
     const today = new Date().toISOString().split("T")[0];
 
     db.collection("jobs")
         .where("assignedWitnesses", "array-contains", uid)
         .onSnapshot(snapshot => {
+            jobsCache = [];
             let total = 0;
             let todayList = "";
 
             snapshot.forEach(doc => {
                 const j = doc.data();
+                jobsCache.push(j);
                 total++;
 
                 if (j.date === today) {
                     todayList += `
                         <div class="job-item">
-                            <strong>${j.coupleName}</strong><br>
-                            ${j.time} at ${j.location}
+                            <strong>${j.coupleName || j.coupleNames || "Ceremony"}</strong><br>
+                            ${j.time || ""} at ${j.location || "Location TBC"}
                         </div>
                     `;
                 }
             });
 
-            totalJobs.innerText = total;
-            todaysJobs.innerHTML = todayList || "<p>No jobs today.</p>";
-            jobsToday.innerText = todayList ? todayList.split("job-item").length - 1 : 0;
+            document.getElementById("totalJobs").innerText = total;
+            document.getElementById("todaysJobs").innerHTML = todayList || "<p>No jobs today.</p>";
+            document.getElementById("jobsToday").innerText = todayList ? (todayList.match(/job-item/g) || []).length : 0;
+
+            if (!calendar) {
+                initCalendar();
+            } else {
+                calendar.removeAllEvents();
+                calendar.addEventSource(jobsCache.map(jobToEvent));
+            }
+
+            updateEarningsSummary();
         });
 }
+
+/* AUTH + PROFILE LOAD */
+auth.onAuthStateChanged(async (user) => {
+    if (!user) {
+        window.location.href = "login.html";
+        return;
+    }
+
+    currentUser = user;
+
+    const docSnap = await db.collection("users").doc(user.uid).get();
+    if (!docSnap.exists) {
+        logout();
+        return;
+    }
+
+    const data = docSnap.data();
+
+    // Approval check
+    if (data.approved !== true || data.status === "pending") {
+        window.location.href = "pending.html";
+        return;
+    }
+
+    // Header + name
+    document.getElementById("headerPhoto").src = getProfilePhoto(data);
+    document.getElementById("username").innerText =
+        data.type === "couple"
+            ? (data.teamName || "Your Team")
+            : (data.name || "Witness");
+
+    // Profile section
+    document.getElementById("profileName").innerText =
+        data.type === "couple"
+            ? `${data.partner1Name || ""} & ${data.partner2Name || ""}${data.teamName ? " (" + data.teamName + ")" : ""}`
+            : (data.name || "Not set");
+
+    document.getElementById("profileEmail").innerText = data.email || "Not set";
+    document.getElementById("profilePhone").innerText = data.phone || "Not set";
+    document.getElementById("profileLocation").innerText = data.location || "Not set";
+    document.getElementById("profileBio").innerText = data.bio || "No bio yet";
+
+    // Availability summary
+    const dayNames = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+    if (data.availability) {
+        let html = "";
+        dayNames.forEach(day => {
+            const info = data.availability[day];
+            if (!info) return;
+            html += `<p><strong>${day}:</strong> ${
+                info.enabled ? `${info.start}–${info.end}` : "Not available"
+            }</p>`;
+        });
+        document.getElementById("availabilitySummary").innerHTML = html || "<p>No availability set yet.</p>";
+    } else {
+        document.getElementById("availabilitySummary").innerHTML = "<p>No availability set yet.</p>";
+    }
+
+    // Jobs + earnings
+    loadJobs(user.uid);
+});
 
 /* LOGOUT */
 function logout() {
