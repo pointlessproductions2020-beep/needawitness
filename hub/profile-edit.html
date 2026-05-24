@@ -348,26 +348,49 @@ const phoneInput = document.getElementById("phone");
 const locationInput = document.getElementById("location");
 const bioInput = document.getElementById("bio");
 
-/* Preview photo when selected */
-photoInput.addEventListener("change", (e) => {
+/* Preview + compress + crop to 512x512 */
+let compressedBlob = null;
+
+photoInput.addEventListener("change", async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = () => {
-        photoPreview.src = reader.result;
+    const img = new Image();
+    img.src = URL.createObjectURL(file);
+
+    img.onload = () => {
+        const size = 512;
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+
+        canvas.width = size;
+        canvas.height = size;
+
+        const minSide = Math.min(img.width, img.height);
+        const sx = (img.width - minSide) / 2;
+        const sy = (img.height - minSide) / 2;
+
+        ctx.drawImage(img, sx, sy, minSide, minSide, 0, 0, size, size);
+
+        canvas.toBlob(
+            (blob) => {
+                compressedBlob = blob;
+
+                photoPreview.src = URL.createObjectURL(blob);
+            },
+            "image/jpeg",
+            0.85
+        );
     };
-    reader.readAsDataURL(file);
 });
 
 /* Upload photo to Cloudflare Worker */
 async function uploadPhoto(uid) {
     if (!photoInput.files.length) return null;
 
-    const file = photoInput.files[0];
+    const file = compressedBlob || photoInput.files[0];
     const formData = new FormData();
-    formData.append("file", file);
-    formData.append("filename", `${uid}.jpg`);
+        formData.append("file", file, `${uid}.jpg`);
 
     try {
         const res = await fetch(WORKER_URL, {
