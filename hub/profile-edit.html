@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>My Profile – Witness Hub</title>
+<title>Edit Profile – Witness Hub</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
@@ -76,15 +76,6 @@
         opacity: 0.9;
     }
 
-    .sidebar-footer {
-        margin-top: 20px;
-        padding-top: 14px;
-        border-top: 1px solid #eee;
-        font-size: 12px;
-        color: #777;
-        line-height: 1.4;
-    }
-
     /* MAIN */
     .main {
         flex: 1;
@@ -110,7 +101,7 @@
         text-align: center;
     }
 
-    .profile-card {
+    .edit-card {
         background: #ffffff;
         border-radius: 18px;
         box-shadow: 0 10px 26px rgba(0,0,0,0.06);
@@ -125,28 +116,21 @@
         to { opacity: 1; transform: translateY(0); }
     }
 
-    .profile-top {
-        display: flex;
-        gap: 24px;
-        align-items: center;
-        flex-wrap: wrap;
-    }
-
     .photo-wrapper {
-        width: 120px;
-        height: 120px;
+        width: 140px;
+        height: 140px;
         border-radius: 50%;
         border: 3px solid #c8a24a;
         overflow: hidden;
+        margin: 0 auto 20px auto;
+        background: #faf7ec;
+        position: relative;
         display: flex;
         align-items: center;
         justify-content: center;
-        background: #faf7ec;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-        position: relative;
     }
 
-    .profile-photo {
+    #previewPhoto {
         width: 100%;
         height: 100%;
         object-fit: cover;
@@ -154,8 +138,8 @@
 
     .ring-loader {
         position: absolute;
-        width: 120px;
-        height: 120px;
+        width: 140px;
+        height: 140px;
         border-radius: 50%;
         border: 6px solid rgba(200,162,74,0.25);
         border-top-color: #c8a24a;
@@ -169,169 +153,53 @@
         to { transform: rotate(360deg); }
     }
 
-    .profile-main {
-        flex: 1;
-        min-width: 0;
+    .form-group {
+        margin-bottom: 18px;
     }
 
-    .profile-name {
-        font-family: "Playfair Display", serif;
-        font-size: 24px;
-        margin-bottom: 4px;
-        color: #333;
-    }
-
-    .profile-sub {
-        font-size: 13px;
-        color: #777;
-        margin-bottom: 10px;
-    }
-
-    .profile-meta {
-        font-size: 13px;
-        color: #555;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-    }
-
-    .meta-pill {
-        padding: 6px 10px;
-        border-radius: 999px;
-        background: #faf4e2;
-        color: #7a642e;
-        font-size: 12px;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-    }
-
-    .meta-pill span.icon {
+    .form-group label {
         font-size: 14px;
-    }
-
-    .profile-section {
-        margin-top: 20px;
-        border-top: 1px solid #f0ece4;
-        padding-top: 16px;
-    }
-
-    .section-title {
-        font-size: 13px;
         font-weight: 600;
-        letter-spacing: 0.06em;
-        text-transform: uppercase;
-        color: #a18a4a;
-        margin-bottom: 8px;
+        color: #7a642e;
+        display: block;
+        margin-bottom: 6px;
     }
 
-    .section-underline {
-        width: 40px;
-        height: 2px;
-        background: #c8a24a;
-        border-radius: 999px;
-        margin-bottom: 10px;
-    }
-
-    .profile-bio {
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 8px;
+        border: 1px solid #ddd;
         font-size: 14px;
-        color: #444;
-        line-height: 1.6;
-        white-space: pre-wrap;
+        font-family: Inter, sans-serif;
+        background: #fff;
     }
 
-    .profile-bio.empty {
-        color: #999;
-        font-style: italic;
+    textarea {
+        resize: vertical;
+        min-height: 90px;
     }
 
-    .profile-footer {
-        margin-top: 18px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 12px;
-        flex-wrap: wrap;
-    }
-
-    .edit-btn {
-        padding: 10px 18px;
+    .save-btn {
+        width: 100%;
+        padding: 12px;
         background: #c8a24a;
         color: white;
-        border-radius: 999px;
         border: none;
-        font-size: 14px;
+        border-radius: 10px;
+        font-size: 15px;
         font-weight: 600;
         cursor: pointer;
+        margin-top: 10px;
         transition: 0.2s;
     }
 
-    .edit-btn:hover {
+    .save-btn:hover {
         opacity: 0.9;
-        transform: translateY(-1px);
     }
 
-    .status-text {
-        font-size: 12px;
-        color: #777;
-    }
-
-    /* COMPLETENESS BAR */
-    .complete-bar-wrap {
-        margin-top: 14px;
-    }
-
-    .complete-label {
-        font-size: 12px;
-        color: #777;
-        margin-bottom: 4px;
-    }
-
-    .complete-bar {
-        width: 100%;
-        height: 6px;
-        border-radius: 999px;
-        background: #eee3c9;
-        overflow: hidden;
-    }
-
-    .complete-fill {
-        height: 100%;
-        width: 0%;
-        background: linear-gradient(90deg, #c8a24a, #e0c57a);
-        transition: width 0.4s ease;
-    }
-
-    @media (max-width: 900px) {
-        .layout {
-            flex-direction: column;
-        }
-        .sidebar {
-            width: 100%;
-            border-right: none;
-            border-bottom: 1px solid #eee;
-            flex-direction: row;
-            align-items: center;
-            gap: 18px;
-            overflow-x: auto;
-        }
-        .sidebar h2 {
-            margin-bottom: 0;
-        }
-        .sidebar a {
-            padding: 8px 0;
-            white-space: nowrap;
-        }
-        .logout-btn, .sidebar-footer {
-            display: none;
-        }
-        .main {
-            padding: 24px;
-        }
-        .profile-card {
-            padding: 24px 20px 20px;
-        }
-    }
 </style>
 </head>
 
@@ -345,75 +213,75 @@
         <a href="dashboard.html">Dashboard</a>
         <a href="myjobs.html">My Jobs</a>
         <a href="availability.html">Availability</a>
-        <a href="profile.html" class="active">Profile</a>
-        <a href="profile-edit.html">Edit Profile</a>
+        <a href="profile.html">Profile</a>
+        <a href="profile-edit.html" class="active">Edit Profile</a>
 
         <div class="logout-btn" onclick="logout()">Logout</div>
-
-        <div class="sidebar-footer">
-            © Need A Witness UK<br>
-            Witness Hub v1.0
-        </div>
     </div>
 
     <!-- MAIN -->
     <div class="main">
-        <div class="header">Your Witness Profile</div>
-        <div class="subheader">
-            This is how couples will see you when choosing their witnesses.
-        </div>
+        <div class="header">Edit Your Profile</div>
+        <div class="subheader">Update your details so couples can get to know you.</div>
 
-        <div class="profile-card">
-            <div class="profile-top">
-                <div class="photo-wrapper">
-                    <img id="profilePhoto" class="profile-photo" src="/hub/default-single.png" alt="Profile photo">
-                    <div class="ring-loader" id="ringLoader"></div>
-                </div>
+        <div class="edit-card">
 
-                <div class="profile-main">
-                    <div id="profileName" class="profile-name">Loading…</div>
-                    <div id="profileSub" class="profile-sub"></div>
+            <div class="photo-wrapper">
+                <img id="previewPhoto" src="/hub/default-single.png">
+                <div class="ring-loader" id="ringLoader"></div>
+            </div>
 
-                    <div class="profile-meta">
-                        <div class="meta-pill" id="locationPill" style="display:none;">
-                            <span class="icon">📍</span>
-                            <span id="locationText"></span>
-                        </div>
-                        <div class="meta-pill" id="phonePill" style="display:none;">
-                            <span class="icon">📞</span>
-                            <span id="phoneText"></span>
-                        </div>
-                        <div class="meta-pill" id="typePill" style="display:none;">
-                            <span class="icon">👥</span>
-                            <span id="typeText"></span>
-                        </div>
-                    </div>
+            <input type="file" id="photoInput" accept="image/*">
 
-                    <div class="complete-bar-wrap">
-                        <div class="complete-label" id="completeLabel">Profile completeness: 0%</div>
-                        <div class="complete-bar">
-                            <div class="complete-fill" id="completeFill"></div>
-                        </div>
-                    </div>
+            <div class="form-group">
+                <label>Witness Type</label>
+                <select id="type">
+                    <option value="single">Single Witness</option>
+                    <option value="couple">Couple Witness Team</option>
+                </select>
+            </div>
+
+            <div id="singleFields">
+                <div class="form-group">
+                    <label>Your Name</label>
+                    <input id="name" type="text">
                 </div>
             </div>
 
-            <div class="profile-section">
-                <div class="section-title">About</div>
-                <div class="section-underline"></div>
-                <div id="bioText" class="profile-bio empty">
-                    Add a short bio so couples can get a feel for who you are.
+            <div id="coupleFields" style="display:none;">
+                <div class="form-group">
+                    <label>Team Name</label>
+                    <input id="teamName" type="text">
+                </div>
+
+                <div class="form-group">
+                    <label>Partner 1 Name</label>
+                    <input id="partner1Name" type="text">
+                </div>
+
+                <div class="form-group">
+                    <label>Partner 2 Name</label>
+                    <input id="partner2Name" type="text">
                 </div>
             </div>
 
-            <div class="profile-footer">
-                <div class="status-text" id="statusText">
-                    Loading your profile…
-                </div>
-                <button class="edit-btn" type="button" onclick="window.location.href='profile-edit.html'">
-                    Edit Profile
-                </button>
+            <div class="form-group">
+                <label>Phone Number</label>
+                <input id="phone" type="text">
             </div>
+
+            <div class="form-group">
+                <label>Location</label>
+                <input id="location" type="text">
+            </div>
+
+            <div class="form-group">
+                <label>Bio</label>
+                <textarea id="bio"></textarea>
+            </div>
+
+            <button class="save-btn" id="saveBtn">Save Changes</button>
+
         </div>
     </div>
 </div>
@@ -425,135 +293,100 @@
 <script src="firebase.js"></script>
 
 <script>
-const profilePhoto = document.getElementById("profilePhoto");
+const photoInput = document.getElementById("photoInput");
+const previewPhoto = document.getElementById("previewPhoto");
 const ringLoader = document.getElementById("ringLoader");
 
-const profileName = document.getElementById("profileName");
-const profileSub = document.getElementById("profileSub");
-
-const locationPill = document.getElementById("locationPill");
-const phonePill = document.getElementById("phonePill");
-const typePill = document.getElementById("typePill");
-
-const locationText = document.getElementById("locationText");
-const phoneText = document.getElementById("phoneText");
-const typeText = document.getElementById("typeText");
-
-const bioText = document.getElementById("bioText");
-const statusText = document.getElementById("statusText");
-
-const completeLabel = document.getElementById("completeLabel");
-const completeFill = document.getElementById("completeFill");
-
-function showLoader() {
-    ringLoader.style.display = "block";
-}
-
-function hideLoader() {
-    ringLoader.style.display = "none";
-}
-
-/* SIMPLE COMPLETENESS CALC */
-function calculateCompleteness(data) {
-    let fields = 0;
-    let filled = 0;
-
-    const check = (val) => {
-        fields++;
-        if (val && val.toString().trim() !== "") filled++;
-    };
-
-    check(data.type === "couple" ? data.teamName : data.name);
-    check(data.location);
-    check(data.phone);
-    check(data.bio);
-    check(data.photoURL);
-
-    if (fields === 0) return 0;
-    return Math.round((filled / fields) * 100);
-}
+let uploadedPhotoURL = null;
 
 /* LOAD USER DATA */
-auth.onAuthStateChanged(async (user) => {
+auth.onAuthStateChanged(async user => {
     if (!user) {
         window.location.href = "login.html";
         return;
     }
 
-    showLoader();
-    statusText.textContent = "Loading your profile…";
-
     const doc = await db.collection("users").doc(user.uid).get();
+    const data = doc.data() || {};
 
-    if (!doc.exists) {
-        hideLoader();
-        profileName.textContent = "Profile not found";
-        statusText.textContent = "We couldn't find your profile. Try editing it to create one.";
-        return;
+    // Load photo
+    previewPhoto.src = data.photoURL || "/hub/default-single.png";
+
+    // Load fields
+    document.getElementById("type").value = data.type || "single";
+    document.getElementById("name").value = data.name || "";
+    document.getElementById("teamName").value = data.teamName || "";
+    document.getElementById("partner1Name").value = data.partner1Name || "";
+    document.getElementById("partner2Name").value = data.partner2Name || "";
+    document.getElementById("phone").value = data.phone || "";
+    document.getElementById("location").value = data.location || "";
+    document.getElementById("bio").value = data.bio || "";
+
+    toggleFields();
+});
+
+/* TOGGLE SINGLE/COUPLE FIELDS */
+document.getElementById("type").addEventListener("change", toggleFields);
+
+function toggleFields() {
+    const type = document.getElementById("type").value;
+    document.getElementById("singleFields").style.display = type === "single" ? "block" : "none";
+    document.getElementById("coupleFields").style.display = type === "couple" ? "block" : "none";
+}
+
+/* PHOTO UPLOAD */
+photoInput.addEventListener("change", async () => {
+    const file = photoInput.files[0];
+    if (!file) return;
+
+    ringLoader.style.display = "block";
+
+    const reader = new FileReader();
+    reader.onload = e => {
+        previewPhoto.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+
+    // Upload to Cloudflare Worker
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const upload = await fetch("https://needawitness-worker.mystery.workers.dev", {
+        method: "POST",
+        body: formData
+    });
+
+    const result = await upload.json();
+    uploadedPhotoURL = result.url;
+
+    ringLoader.style.display = "none";
+});
+
+/* SAVE CHANGES */
+document.getElementById("saveBtn").addEventListener("click", async () => {
+    const user = auth.currentUser;
+    if (!user) return;
+
+    const type = document.getElementById("type").value;
+
+    const payload = {
+        type,
+        name: document.getElementById("name").value.trim(),
+        teamName: document.getElementById("teamName").value.trim(),
+        partner1Name: document.getElementById("partner1Name").value.trim(),
+        partner2Name: document.getElementById("partner2Name").value.trim(),
+        phone: document.getElementById("phone").value.trim(),
+        location: document.getElementById("location").value.trim(),
+        bio: document.getElementById("bio").value.trim(),
+    };
+
+    if (uploadedPhotoURL) {
+        payload.photoURL = uploadedPhotoURL;
     }
 
-    const data = doc.data();
+    await db.collection("users").doc(user.uid).set(payload, { merge: true });
 
-    // Photo
-    if (data.photoURL) {
-        profilePhoto.src = data.photoURL;
-    } else {
-        profilePhoto.src = data.type === "couple"
-            ? "/hub/default-couple.png"
-            : "/hub/default-single.png";
-    }
-
-    // Name / Team
-    if (data.type === "couple") {
-        const team = data.teamName || "Your team name";
-        profileName.textContent = team;
-
-        const p1 = data.partner1Name || "Partner 1";
-        const p2 = data.partner2Name || "Partner 2";
-        profileSub.textContent = `${p1} & ${p2}`;
-
-        typePill.style.display = "inline-flex";
-        typeText.textContent = "Couple witness team";
-    } else {
-        const name = data.name || "Your name";
-        profileName.textContent = name;
-        profileSub.textContent = "Individual witness";
-
-        typePill.style.display = "inline-flex";
-        typeText.textContent = "Individual witness";
-    }
-
-    // Location
-    if (data.location && data.location.trim() !== "") {
-        locationPill.style.display = "inline-flex";
-        locationText.textContent = data.location;
-    }
-
-    // Phone
-    if (data.phone && data.phone.trim() !== "") {
-        phonePill.style.display = "inline-flex";
-        phoneText.textContent = data.phone;
-    }
-
-    // Bio
-    if (data.bio && data.bio.trim() !== "") {
-        bioText.textContent = data.bio;
-        bioText.classList.remove("empty");
-    } else {
-        bioText.textContent = "Add a short bio so couples can get a feel for who you are.";
-        bioText.classList.add("empty");
-    }
-
-    // Completeness
-    const completeness = calculateCompleteness(data);
-    completeLabel.textContent = `Profile completeness: ${completeness}%`;
-    completeFill.style.width = `${completeness}%`;
-
-    statusText.textContent = completeness < 70
-        ? "Your profile could use a little polish. Edit it to stand out to couples."
-        : "Your profile is looking great. You're ready to be booked.";
-
-    hideLoader();
+    window.location.href = "profile.html";
 });
 
 /* LOGOUT */
