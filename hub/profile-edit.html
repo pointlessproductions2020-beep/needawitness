@@ -583,7 +583,7 @@ async function handlePhotoFile(file) {
         const formData = new FormData();
         formData.append("file", croppedBlob, "profile.jpg");
 
-        const upload = await fetch("https://needawitness-worker.mystery.workers.dev", {
+       const upload = await fetch("https://shrill-math-1bfc.pointlessproductions2020.workers.dev/", {
             method: "POST",
             body: formData
         });
