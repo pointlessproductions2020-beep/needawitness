@@ -11,7 +11,8 @@
     body {
         margin: 0;
         font-family: Inter, sans-serif;
-        background: #f7f7f7;
+        background: #f5f4f2;
+        color: #333;
     }
 
     .layout {
@@ -21,53 +22,62 @@
 
     /* SIDEBAR */
     .sidebar {
-        width: 240px;
-        background: white;
-        border-right: 1px solid #eee;
-        padding: 24px;
+        width: 250px;
+        background: #ffffff;
+        border-right: 1px solid #e6e2da;
+        padding: 28px;
         display: flex;
         flex-direction: column;
+        box-shadow: 2px 0 10px rgba(0,0,0,0.04);
     }
 
     .sidebar h2 {
         font-family: "Playfair Display", serif;
-        color: #D4AF37;
-        margin: 0 0 26px 0;
-        font-size: 24px;
+        color: #c8a24a;
+        margin: 0 0 32px 0;
+        font-size: 26px;
+        letter-spacing: 0.5px;
     }
 
     .sidebar a {
-        color: #333;
+        color: #444;
         text-decoration: none;
-        padding: 10px 0;
+        padding: 12px 0;
         display: block;
         font-size: 15px;
         font-weight: 500;
+        transition: 0.2s;
     }
 
     .sidebar a:hover {
-        color: #D4AF37;
+        color: #c8a24a;
+        transform: translateX(3px);
     }
 
     .sidebar a.active {
-        color: #D4AF37;
+        color: #c8a24a;
         font-weight: 600;
     }
 
     .logout-btn {
         margin-top: auto;
-        padding: 11px;
-        background: #D4AF37;
+        padding: 12px;
+        background: #c8a24a;
         color: white;
         text-align: center;
-        border-radius: 6px;
+        border-radius: 8px;
         cursor: pointer;
         font-weight: 600;
         font-size: 14px;
+        transition: 0.2s;
+    }
+
+    .logout-btn:hover {
+        opacity: 0.9;
     }
 
     .sidebar-footer {
-        margin-top: 18px;
+        margin-top: 20px;
         padding-top: 14px;
         border-top: 1px solid #eee;
         font-size: 12px;
@@ -78,49 +88,51 @@
     /* MAIN */
     .main {
         flex: 1;
-        padding: 30px 32px;
+        padding: 40px 48px;
         overflow-y: auto;
     }
 
     .header {
-        font-size: 26px;
+        font-size: 32px;
         font-family: "Playfair Display", serif;
-        color: #D4AF37;
-        margin-bottom: 20px;
+        color: #c8a24a;
+        margin-bottom: 10px;
     }
 
     .subheader {
-        font-size: 13px;
+        font-size: 14px;
         color: #777;
-        margin-bottom: 22px;
+        margin-bottom: 28px;
     }
 
     .card {
         background: white;
-        padding: 26px 24px 24px;
-        border-radius: 14px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-        max-width: 720px;
+        padding: 32px 30px;
+        border-radius: 16px;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+        max-width: 760px;
     }
 
+    /* PHOTO */
     .photo-row {
         display: flex;
         align-items: center;
-        gap: 18px;
-        margin-bottom: 18px;
+        gap: 22px;
+        margin-bottom: 24px;
         flex-wrap: wrap;
     }
 
     .photo-wrapper {
-        width: 120px;
-        height: 120px;
+        width: 130px;
+        height: 130px;
         border-radius: 50%;
-        border: 2px solid #D4AF37;
+        border: 3px solid #c8a24a;
         overflow: hidden;
         display: flex;
         align-items: center;
         justify-content: center;
         background: #faf7ec;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
     }
 
     #photoPreview {
@@ -129,32 +141,28 @@
         object-fit: cover;
     }
 
-    .photo-placeholder {
-        font-size: 12px;
-        color: #b89b3c;
-        text-align: center;
-        padding: 10px;
-    }
-
     .photo-actions {
         display: flex;
         flex-direction: column;
-        gap: 6px;
+        gap: 8px;
         font-size: 13px;
     }
 
     .photo-btn {
-        display: inline-block;
-        padding: 8px 12px;
-        border-radius: 6px;
-        border: 1px solid #D4AF37;
+        padding: 9px 14px;
+        border-radius: 8px;
+        border: 1px solid #c8a24a;
         background: #fff;
-        color: #D4AF37;
+        color: #c8a24a;
         font-size: 13px;
         font-weight: 600;
         cursor: pointer;
-        text-align: center;
-        max-width: 180px;
+        max-width: 200px;
+        transition: 0.2s;
+    }
+
+    .photo-btn:hover {
+        background: #faf4e2;
     }
 
     .photo-hint {
@@ -162,51 +170,60 @@
         color: #777;
     }
 
+    /* FORM */
     label {
         font-weight: 600;
         display: block;
-        margin-top: 16px;
+        margin-top: 18px;
         font-size: 14px;
     }
 
     input, textarea {
         width: 100%;
-        padding: 11px;
+        padding: 12px;
         margin-top: 6px;
-        border-radius: 8px;
+        border-radius: 10px;
         border: 1px solid #ccc;
         font-size: 14px;
         background: #fafafa;
+        transition: 0.2s;
+    }
+
+    input:focus, textarea:focus {
+        border-color: #c8a24a;
+        outline: none;
+        background: #fff;
     }
 
     textarea {
-        height: 110px;
+        height: 120px;
         resize: none;
     }
 
     .save-bar {
-        margin-top: 22px;
+        margin-top: 28px;
         display: flex;
         justify-content: flex-end;
     }
 
     .save-btn {
-        padding: 11px 20px;
-        background: #D4AF37;
+        padding: 12px 22px;
+        background: #c8a24a;
         color: white;
         border: none;
-        border-radius: 8px;
+        border-radius: 10px;
         font-size: 15px;
         cursor: pointer;
         font-weight: 600;
+        transition: 0.2s;
     }
 
     .save-btn:hover {
-        opacity: 0.95;
+        opacity: 0.9;
     }
 
     #statusMessage {
-        margin-top: 10px;
+        margin-top: 12px;
         font-size: 13px;
         color: #777;
     }
@@ -235,7 +252,7 @@
             display: none;
         }
         .main {
-            padding: 20px;
+            padding: 24px;
         }
     }
 </style>
@@ -263,64 +280,64 @@
     </div>
 
     <!-- MAIN -->
-<div class="main">
-    <div class="header">Edit Your Profile</div>
-    <div class="subheader">
-        Update your details and profile photo. Couples will see this when choosing their witnesses.
-    </div>
+    <div class="main">
+        <div class="header">Edit Your Profile</div>
+        <div class="subheader">
+            Update your details and profile photo. Couples will see this when choosing their witnesses.
+        </div>
 
-    <div class="card">
+        <div class="card">
 
-        <!-- PHOTO SECTION -->
-        <div class="photo-row">
-            <div class="photo-wrapper">
-                <img id="photoPreview" src="/hub/default-single.png" alt="Profile photo">
+            <!-- PHOTO -->
+            <div class="photo-row">
+                <div class="photo-wrapper">
+                    <img id="photoPreview" src="/hub/default-single.png" alt="Profile photo">
+                </div>
+                <div class="photo-actions">
+                    <button class="photo-btn" type="button" onclick="document.getElementById('photoInput').click()">
+                        Upload New Photo
+                    </button>
+                    <span class="photo-hint">
+                        Clear, front-facing photo works best. JPG or PNG recommended.
+                    </span>
+                    <input id="photoInput" type="file" accept="image/*" style="display:none;">
+                </div>
             </div>
-            <div class="photo-actions">
-                <button class="photo-btn" type="button" onclick="document.getElementById('photoInput').click()">
-                    Upload New Photo
-                </button>
-                <span class="photo-hint">
-                    Clear, front-facing photo works best. JPG or PNG recommended.
-                </span>
-                <input id="photoInput" type="file" accept="image/*" style="display:none;">
+
+            <!-- SINGLE -->
+            <div id="singleFields">
+                <label for="name">Name</label>
+                <input id="name" type="text" placeholder="Your full name">
             </div>
+
+            <!-- COUPLE -->
+            <div id="coupleFields" style="display:none;">
+                <label for="teamName">Team Name</label>
+                <input id="teamName" type="text" placeholder="e.g., The Dover Duo">
+
+                <label for="partner1">Partner 1 Name</label>
+                <input id="partner1" type="text" placeholder="First partner's name">
+
+                <label for="partner2">Partner 2 Name</label>
+                <input id="partner2" type="text" placeholder="Second partner's name">
+            </div>
+
+            <!-- SHARED -->
+            <label for="phone">Phone</label>
+            <input id="phone" type="text" placeholder="Contact number for job updates">
+
+            <label for="location">Location</label>
+            <input id="location" type="text" placeholder="e.g., Dover, Kent">
+
+            <label for="bio">Bio</label>
+            <textarea id="bio" placeholder="Tell couples a bit about yourself…"></textarea>
+
+            <div class="save-bar">
+                <button class="save-btn" type="button" onclick="saveProfile()">Save Changes</button>
+            </div>
+            <div id="statusMessage"></div>
         </div>
-
-        <!-- SINGLE WITNESS FIELDS -->
-        <div id="singleFields">
-            <label for="name">Name</label>
-            <input id="name" type="text" placeholder="Your full name">
-        </div>
-
-        <!-- COUPLE WITNESS FIELDS -->
-        <div id="coupleFields" style="display:none;">
-            <label for="teamName">Team Name</label>
-            <input id="teamName" type="text" placeholder="e.g., The Dover Duo">
-
-            <label for="partner1">Partner 1 Name</label>
-            <input id="partner1" type="text" placeholder="First partner's name">
-
-            <label for="partner2">Partner 2 Name</label>
-            <input id="partner2" type="text" placeholder="Second partner's name">
-        </div>
-
-        <!-- SHARED FIELDS -->
-        <label for="phone">Phone</label>
-        <input id="phone" type="text" placeholder="Contact number for job updates">
-
-        <label for="location">Location</label>
-        <input id="location" type="text" placeholder="e.g., Dover, Kent">
-
-        <label for="bio">Bio</label>
-        <textarea id="bio" placeholder="Tell couples a bit about yourself, your experience, and what makes you a great witness…"></textarea>
-
-        <div class="save-bar">
-            <button class="save-btn" type="button" onclick="saveProfile()">Save Changes</button>
-        </div>
-        <div id="statusMessage"></div>
     </div>
-</div>
 </div>
 
 <!-- FIREBASE -->
@@ -348,9 +365,10 @@ const phoneInput = document.getElementById("phone");
 const locationInput = document.getElementById("location");
 const bioInput = document.getElementById("bio");
 
-/* Preview + compress + crop to 512x512 */
+// Holds compressed image blob
 let compressedBlob = null;
 
+/* IMAGE PREVIEW + COMPRESSION */
 photoInput.addEventListener("change", async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -375,7 +393,6 @@ photoInput.addEventListener("change", async (e) => {
         canvas.toBlob(
             (blob) => {
                 compressedBlob = blob;
-
                 photoPreview.src = URL.createObjectURL(blob);
             },
             "image/jpeg",
@@ -384,13 +401,13 @@ photoInput.addEventListener("change", async (e) => {
     };
 });
 
-/* Upload photo to Cloudflare Worker */
+/* UPLOAD PHOTO */
 async function uploadPhoto(uid) {
     if (!photoInput.files.length) return null;
 
     const file = compressedBlob || photoInput.files[0];
     const formData = new FormData();
-        formData.append("file", file, `${uid}.jpg`);
+    formData.append("file", file, `${uid}.jpg`);
 
     try {
         const res = await fetch(WORKER_URL, {
@@ -416,7 +433,7 @@ async function uploadPhoto(uid) {
     }
 }
 
-/* Load user data */
+/* LOAD USER DATA */
 auth.onAuthStateChanged(async (user) => {
     if (!user) {
         window.location.href = "login.html";
@@ -428,7 +445,7 @@ auth.onAuthStateChanged(async (user) => {
 
     const data = doc.data();
 
-    // Load photo with absolute fallback
+    // Load photo
     if (data.photoURL) {
         photoPreview.src = data.photoURL;
     } else {
@@ -457,7 +474,7 @@ auth.onAuthStateChanged(async (user) => {
     bioInput.value = data.bio || "";
 });
 
-/* Save profile */
+/* SAVE PROFILE */
 async function saveProfile() {
     const user = auth.currentUser;
     if (!user) return;
@@ -476,13 +493,13 @@ async function saveProfile() {
         bio: safeTrim(bioInput.value),
     };
 
-    // Upload photo if a new one is selected
+    // Upload photo if selected
     const photoURL = await uploadPhoto(user.uid);
     if (photoURL) {
         updatedData.photoURL = photoURL;
     }
 
-    // Name fields based on type
+    // Name fields
     if (data.type === "couple") {
         updatedData.teamName = safeTrim(teamNameInput.value);
         updatedData.partner1Name = safeTrim(partner1Input.value);
@@ -496,13 +513,12 @@ async function saveProfile() {
     statusMessage.textContent = "Profile updated successfully.";
     statusMessage.style.color = "#2e7d32";
 
-    // Small delay then go back to profile
     setTimeout(() => {
         window.location.href = "profile.html";
     }, 800);
 }
 
-/* Logout */
+/* LOGOUT */
 function logout() {
     auth.signOut().then(() => {
         window.location.href = "login.html";
