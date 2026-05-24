@@ -122,12 +122,17 @@
         border-radius: 50%;
         border: 3px solid #c8a24a;
         overflow: hidden;
-        margin: 0 auto 20px auto;
+        margin: 0 auto 16px auto;
         background: #faf7ec;
         position: relative;
         display: flex;
         align-items: center;
         justify-content: center;
+        cursor: pointer;
+    }
+
+    .photo-wrapper.dragover {
+        box-shadow: 0 0 0 3px rgba(200,162,74,0.4);
     }
 
     #previewPhoto {
@@ -153,6 +158,13 @@
         to { transform: rotate(360deg); }
     }
 
+    .photo-hint {
+        font-size: 12px;
+        color: #777;
+        text-align: center;
+        margin-bottom: 18px;
+    }
+
     .form-group {
         margin-bottom: 18px;
     }
@@ -175,6 +187,19 @@
         font-size: 14px;
         font-family: Inter, sans-serif;
         background: #fff;
+        box-sizing: border-box;
+    }
+
+    .form-group input.error,
+    .form-group textarea.error,
+    .form-group select.error {
+        border-color: #d9534f;
+    }
+
+    .error-text {
+        font-size: 12px;
+        color: #d9534f;
+        margin-top: 4px;
     }
 
     textarea {
@@ -196,10 +221,73 @@
         transition: 0.2s;
     }
 
-    .save-btn:hover {
+    .save-btn:disabled {
+        opacity: 0.6;
+        cursor: default;
+    }
+
+    .save-btn:hover:not(:disabled) {
         opacity: 0.9;
     }
 
+    /* TOAST */
+    .toast {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        background: #2f7d32;
+        color: #fff;
+        padding: 10px 16px;
+        border-radius: 999px;
+        font-size: 13px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.18);
+        opacity: 0;
+        transform: translateY(10px);
+        pointer-events: none;
+        transition: opacity 0.25s ease, transform 0.25s ease;
+        z-index: 9999;
+    }
+
+    .toast.show {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+    }
+
+    .toast.error {
+        background: #d9534f;
+    }
+
+    @media (max-width: 900px) {
+        .layout {
+            flex-direction: column;
+        }
+        .sidebar {
+            width: 100%;
+            border-right: none;
+            border-bottom: 1px solid #eee;
+            flex-direction: row;
+            align-items: center;
+            gap: 18px;
+            overflow-x: auto;
+        }
+        .sidebar h2 {
+            margin-bottom: 0;
+        }
+        .sidebar a {
+            padding: 8px 0;
+            white-space: nowrap;
+        }
+        .logout-btn {
+            display: none;
+        }
+        .main {
+            padding: 24px;
+        }
+        .edit-card {
+            padding: 24px 20px 20px;
+        }
+    }
 </style>
 </head>
 
@@ -226,58 +314,69 @@
 
         <div class="edit-card">
 
-            <div class="photo-wrapper">
-                <img id="previewPhoto" src="/hub/default-single.png">
+            <div id="photoDrop" class="photo-wrapper">
+                <img id="previewPhoto" src="/hub/default-single.png" alt="Profile photo">
                 <div class="ring-loader" id="ringLoader"></div>
             </div>
+            <div class="photo-hint">
+                Click or drag & drop a photo to update your profile picture.
+            </div>
 
-            <input type="file" id="photoInput" accept="image/*">
+            <input type="file" id="photoInput" accept="image/*" style="display:none;">
 
             <div class="form-group">
-                <label>Witness Type</label>
+                <label for="type">Witness Type</label>
                 <select id="type">
                     <option value="single">Single Witness</option>
                     <option value="couple">Couple Witness Team</option>
                 </select>
+                <div class="error-text" id="typeError"></div>
             </div>
 
             <div id="singleFields">
                 <div class="form-group">
-                    <label>Your Name</label>
+                    <label for="name">Your Name</label>
                     <input id="name" type="text">
+                    <div class="error-text" id="nameError"></div>
                 </div>
             </div>
 
             <div id="coupleFields" style="display:none;">
                 <div class="form-group">
-                    <label>Team Name</label>
+                    <label for="teamName">Team Name</label>
                     <input id="teamName" type="text">
+                    <div class="error-text" id="teamNameError"></div>
                 </div>
 
                 <div class="form-group">
-                    <label>Partner 1 Name</label>
+                    <label for="partner1Name">Partner 1 Name</label>
                     <input id="partner1Name" type="text">
+                    <div class="error-text" id="partner1Error"></div>
                 </div>
 
                 <div class="form-group">
-                    <label>Partner 2 Name</label>
+                    <label for="partner2Name">Partner 2 Name</label>
                     <input id="partner2Name" type="text">
+                    <div class="error-text" id="partner2Error"></div>
                 </div>
             </div>
 
             <div class="form-group">
-                <label>Phone Number</label>
+                <label for="phone">Phone Number</label>
                 <input id="phone" type="text">
+                <div class="error-text" id="phoneError"></div>
             </div>
 
             <div class="form-group">
-                <label>Location</label>
+                <label for="location">Location</label>
                 <input id="location" type="text">
+                <div class="error-text" id="locationError"></div>
             </div>
 
             <div class="form-group">
-                <label>Bio</label>
+                <label for="bio">Bio</label>
                 <textarea id="bio"></textarea>
+                <div class="error-text" id="bioError"></div>
             </div>
 
             <button class="save-btn" id="saveBtn">Save Changes</button>
@@ -285,6 +384,8 @@
         </div>
     </div>
 </div>
+
+<div id="toast" class="toast"></div>
 
 <!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -294,10 +395,211 @@
 
 <script>
 const photoInput = document.getElementById("photoInput");
+const photoDrop = document.getElementById("photoDrop");
 const previewPhoto = document.getElementById("previewPhoto");
 const ringLoader = document.getElementById("ringLoader");
+const toast = document.getElementById("toast");
+const saveBtn = document.getElementById("saveBtn");
 
 let uploadedPhotoURL = null;
+let autosaveTimer = null;
+let initialLoaded = false;
+
+/* TOAST */
+function showToast(message, isError = false) {
+    toast.textContent = message;
+    toast.classList.toggle("error", isError);
+    toast.classList.add("show");
+    setTimeout(() => {
+        toast.classList.remove("show");
+    }, 2500);
+}
+
+/* SIMPLE CENTER CROP TO SQUARE */
+function cropToSquare(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = e => {
+            const img = new Image();
+            img.onload = () => {
+                const size = Math.min(img.width, img.height);
+                const sx = (img.width - size) / 2;
+                const sy = (img.height - size) / 2;
+
+                const canvas = document.createElement("canvas");
+                canvas.width = 600;
+                canvas.height = 600;
+                const ctx = canvas.getContext("2d");
+                ctx.drawImage(img, sx, sy, size, size, 0, 0, 600, 600);
+
+                canvas.toBlob(blob => {
+                    if (!blob) return reject("Failed to crop");
+                    resolve(blob);
+                }, "image/jpeg", 0.9);
+            };
+            img.onerror = reject;
+            img.src = e.target.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
+}
+
+/* VALIDATION */
+function clearErrors() {
+    const fields = ["type","name","teamName","partner1Name","partner2Name","phone","location","bio"];
+    fields.forEach(id => {
+        const input = document.getElementById(id);
+        if (input) input.classList.remove("error");
+    });
+    const errorIds = ["typeError","nameError","teamNameError","partner1Error","partner2Error","phoneError","locationError","bioError"];
+    errorIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = "";
+    });
+}
+
+function validateForm() {
+    clearErrors();
+    let valid = true;
+
+    const type = document.getElementById("type").value;
+    const name = document.getElementById("name").value.trim();
+    const teamName = document.getElementById("teamName").value.trim();
+    const partner1 = document.getElementById("partner1Name").value.trim();
+    const partner2 = document.getElementById("partner2Name").value.trim();
+    const phone = document.getElementById("phone").value.trim();
+    const location = document.getElementById("location").value.trim();
+    const bio = document.getElementById("bio").value.trim();
+
+    if (!type) {
+        document.getElementById("typeError").textContent = "Please select a witness type.";
+        document.getElementById("type").classList.add("error");
+        valid = false;
+    }
+
+    if (type === "single") {
+        if (!name) {
+            document.getElementById("nameError").textContent = "Please enter your name.";
+            document.getElementById("name").classList.add("error");
+            valid = false;
+        }
+    } else {
+        if (!teamName) {
+            document.getElementById("teamNameError").textContent = "Please enter a team name.";
+            document.getElementById("teamName").classList.add("error");
+            valid = false;
+        }
+        if (!partner1) {
+            document.getElementById("partner1Error").textContent = "Please enter Partner 1's name.";
+            document.getElementById("partner1Name").classList.add("error");
+            valid = false;
+        }
+        if (!partner2) {
+            document.getElementById("partner2Error").textContent = "Please enter Partner 2's name.";
+            document.getElementById("partner2Name").classList.add("error");
+            valid = false;
+        }
+    }
+
+    if (phone && phone.length < 7) {
+        document.getElementById("phoneError").textContent = "That phone number looks a bit short.";
+        document.getElementById("phone").classList.add("error");
+        valid = false;
+    }
+
+    if (!location) {
+        document.getElementById("locationError").textContent = "Please add a general location.";
+        document.getElementById("location").classList.add("error");
+        valid = false;
+    }
+
+    if (!bio) {
+        document.getElementById("bioError").textContent = "A short bio really helps couples get a feel for you.";
+        document.getElementById("bio").classList.add("error");
+        valid = false;
+    }
+
+    return valid;
+}
+
+/* AUTOSAVE */
+function scheduleAutosave() {
+    if (!initialLoaded) return; // don't autosave while loading
+    if (autosaveTimer) clearTimeout(autosaveTimer);
+    autosaveTimer = setTimeout(() => {
+        saveProfile(true);
+    }, 1500);
+}
+
+/* TOGGLE SINGLE/COUPLE FIELDS */
+document.getElementById("type").addEventListener("change", () => {
+    toggleFields();
+    scheduleAutosave();
+});
+
+function toggleFields() {
+    const type = document.getElementById("type").value;
+    document.getElementById("singleFields").style.display = type === "single" ? "block" : "none";
+    document.getElementById("coupleFields").style.display = type === "couple" ? "block" : "none";
+}
+
+/* PHOTO CLICK + DRAG & DROP */
+photoDrop.addEventListener("click", () => photoInput.click());
+
+photoDrop.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    photoDrop.classList.add("dragover");
+});
+
+photoDrop.addEventListener("dragleave", () => {
+    photoDrop.classList.remove("dragover");
+});
+
+photoDrop.addEventListener("drop", (e) => {
+    e.preventDefault();
+    photoDrop.classList.remove("dragover");
+    const file = e.dataTransfer.files[0];
+    if (file) handlePhotoFile(file);
+});
+
+photoInput.addEventListener("change", () => {
+    const file = photoInput.files[0];
+    if (file) handlePhotoFile(file);
+});
+
+async function handlePhotoFile(file) {
+    try {
+        ringLoader.style.display = "block";
+
+        const croppedBlob = await cropToSquare(file);
+
+        const reader = new FileReader();
+        reader.onload = e => {
+            previewPhoto.src = e.target.result;
+        };
+        reader.readAsDataURL(croppedBlob);
+
+        const formData = new FormData();
+        formData.append("file", croppedBlob, "profile.jpg");
+
+        const upload = await fetch("https://needawitness-worker.mystery.workers.dev", {
+            method: "POST",
+            body: formData
+        });
+
+        const result = await upload.json();
+        uploadedPhotoURL = result.url;
+
+        showToast("Profile photo updated");
+        scheduleAutosave();
+    } catch (err) {
+        console.error(err);
+        showToast("Could not update photo", true);
+    } finally {
+        ringLoader.style.display = "none";
+    }
+}
 
 /* LOAD USER DATA */
 auth.onAuthStateChanged(async user => {
@@ -309,10 +611,8 @@ auth.onAuthStateChanged(async user => {
     const doc = await db.collection("users").doc(user.uid).get();
     const data = doc.data() || {};
 
-    // Load photo
     previewPhoto.src = data.photoURL || "/hub/default-single.png";
 
-    // Load fields
     document.getElementById("type").value = data.type || "single";
     document.getElementById("name").value = data.name || "";
     document.getElementById("teamName").value = data.teamName || "";
@@ -323,49 +623,30 @@ auth.onAuthStateChanged(async user => {
     document.getElementById("bio").value = data.bio || "";
 
     toggleFields();
+    initialLoaded = true;
 });
 
-/* TOGGLE SINGLE/COUPLE FIELDS */
-document.getElementById("type").addEventListener("change", toggleFields);
-
-function toggleFields() {
-    const type = document.getElementById("type").value;
-    document.getElementById("singleFields").style.display = type === "single" ? "block" : "none";
-    document.getElementById("coupleFields").style.display = type === "couple" ? "block" : "none";
-}
-
-/* PHOTO UPLOAD */
-photoInput.addEventListener("change", async () => {
-    const file = photoInput.files[0];
-    if (!file) return;
-
-    ringLoader.style.display = "block";
-
-    const reader = new FileReader();
-    reader.onload = e => {
-        previewPhoto.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
-
-    // Upload to Cloudflare Worker
-    const formData = new FormData();
-    formData.append("file", file);
-
-    const upload = await fetch("https://needawitness-worker.mystery.workers.dev", {
-        method: "POST",
-        body: formData
-    });
-
-    const result = await upload.json();
-    uploadedPhotoURL = result.url;
-
-    ringLoader.style.display = "none";
+/* TRACK CHANGES FOR AUTOSAVE */
+["name","teamName","partner1Name","partner2Name","phone","location","bio"].forEach(id => {
+    const el = document.getElementById(id);
+    el.addEventListener("input", scheduleAutosave);
 });
 
-/* SAVE CHANGES */
-document.getElementById("saveBtn").addEventListener("click", async () => {
+/* SAVE BUTTON */
+saveBtn.addEventListener("click", () => {
+    saveProfile(false);
+});
+
+async function saveProfile(isAutosave) {
     const user = auth.currentUser;
     if (!user) return;
+
+    if (!isAutosave) {
+        if (!validateForm()) {
+            showToast("Please fix the highlighted fields.", true);
+            return;
+        }
+    }
 
     const type = document.getElementById("type").value;
 
@@ -384,10 +665,25 @@ document.getElementById("saveBtn").addEventListener("click", async () => {
         payload.photoURL = uploadedPhotoURL;
     }
 
-    await db.collection("users").doc(user.uid).set(payload, { merge: true });
+    try {
+        saveBtn.disabled = true;
+        await db.collection("users").doc(user.uid).set(payload, { merge: true });
 
-    window.location.href = "profile.html";
-});
+        if (isAutosave) {
+            showToast("Changes autosaved");
+        } else {
+            showToast("Profile saved");
+            setTimeout(() => {
+                window.location.href = "profile.html";
+            }, 600);
+        }
+    } catch (err) {
+        console.error(err);
+        showToast("Could not save profile", true);
+    } finally {
+        saveBtn.disabled = false;
+    }
+}
 
 /* LOGOUT */
 function logout() {
