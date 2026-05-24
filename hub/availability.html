@@ -11,7 +11,8 @@
     body {
         margin: 0;
         font-family: Inter, sans-serif;
-        background: #f7f7f7;
+        background: #f5f4f2;
+        color: #222;
     }
 
     .layout {
@@ -21,53 +22,62 @@
 
     /* SIDEBAR */
     .sidebar {
-        width: 240px;
-        background: white;
-        border-right: 1px solid #eee;
-        padding: 24px;
+        width: 250px;
+        background: #ffffff;
+        border-right: 1px solid #e6e2da;
+        padding: 28px;
         display: flex;
         flex-direction: column;
+        box-shadow: 2px 0 10px rgba(0,0,0,0.04);
     }
 
     .sidebar h2 {
         font-family: "Playfair Display", serif;
-        color: #D4AF37;
-        margin: 0 0 26px 0;
-        font-size: 24px;
+        color: #c8a24a;
+        margin: 0 0 32px 0;
+        font-size: 26px;
+        letter-spacing: 0.5px;
     }
 
     .sidebar a {
-        color: #333;
+        color: #444;
         text-decoration: none;
-        padding: 10px 0;
+        padding: 12px 0;
         display: block;
         font-size: 15px;
         font-weight: 500;
+        transition: 0.2s;
     }
 
     .sidebar a:hover {
-        color: #D4AF37;
+        color: #c8a24a;
+        transform: translateX(3px);
     }
 
     .sidebar a.active {
-        color: #D4AF37;
+        color: #c8a24a;
         font-weight: 600;
     }
 
     .logout-btn {
         margin-top: auto;
-        padding: 11px;
-        background: #D4AF37;
+        padding: 12px;
+        background: #c8a24a;
         color: white;
         text-align: center;
-        border-radius: 6px;
+        border-radius: 8px;
         cursor: pointer;
         font-weight: 600;
         font-size: 14px;
+        transition: 0.2s;
+    }
+
+    .logout-btn:hover {
+        opacity: 0.9;
     }
 
     .sidebar-footer {
-        margin-top: 18px;
+        margin-top: 20px;
         padding-top: 14px;
         border-top: 1px solid #eee;
         font-size: 12px;
@@ -78,34 +88,53 @@
     /* MAIN */
     .main {
         flex: 1;
-        padding: 30px 32px;
+        padding: 40px 48px;
         overflow-y: auto;
     }
 
-    h2 {
-        font-family: "Playfair Display", serif;
-        color: #D4AF37;
-        margin-top: 0;
+    /* HYBRID HEADER */
+    .main-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 26px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #e8dcc2;
     }
 
+    .main-header-title {
+        font-family: "Playfair Display", serif;
+        font-size: 30px;
+        color: #c8a24a;
+        margin-bottom: 4px;
+    }
+
+    .main-header-subtitle {
+        font-size: 14px;
+        color: #777;
+    }
+
+    /* SECTIONS */
     .section {
-        background: white;
-        padding: 20px;
-        border-radius: 12px;
-        margin-bottom: 25px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        background: #ffffff;
+        padding: 22px 22px 24px;
+        border-radius: 14px;
+        margin-bottom: 26px;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.06);
     }
 
     .section-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 12px;
+        margin-bottom: 14px;
     }
 
     .section-header h3 {
         margin: 0;
-        font-size: 18px;
+        font-family: "Playfair Display", serif;
+        color: #c8a24a;
+        font-size: 20px;
     }
 
     /* WEEKLY TEMPLATE */
@@ -123,7 +152,7 @@
     }
 
     .weekly-day {
-        width: 90px;
+        width: 100px;
         font-weight: 600;
     }
 
@@ -140,14 +169,19 @@
 
     .save-weekly-btn {
         margin-top: 12px;
-        padding: 10px 14px;
-        background: #D4AF37;
+        padding: 10px 16px;
+        background: #c8a24a;
         color: white;
         border: none;
-        border-radius: 6px;
+        border-radius: 999px;
         font-weight: 600;
         cursor: pointer;
         font-size: 14px;
+        transition: 0.2s;
+    }
+
+    .save-weekly-btn:hover {
+        opacity: 0.9;
     }
 
     /* CALENDAR */
@@ -160,6 +194,7 @@
 
     .calendar-header span {
         font-weight: 600;
+        font-size: 15px;
     }
 
     .calendar-nav button {
@@ -168,12 +203,17 @@
         cursor: pointer;
         font-size: 18px;
         padding: 4px 8px;
+        color: #444;
+    }
+
+    .calendar-nav button:hover {
+        color: #c8a24a;
     }
 
     .calendar-grid {
         display: grid;
         grid-template-columns: repeat(7, 1fr);
-        gap: 6px;
+        gap: 8px;
         font-size: 13px;
     }
 
@@ -185,34 +225,42 @@
     }
 
     .calendar-cell {
-        min-height: 60px;
-        border-radius: 8px;
-        padding: 4px 6px;
+        min-height: 100px;
+        border-radius: 12px;
+        padding: 8px 10px;
         cursor: pointer;
         color: #fff;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
         box-sizing: border-box;
+        position: relative;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .calendar-cell:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(0,0,0,0.12);
     }
 
     .calendar-cell.disabled {
         cursor: default;
         opacity: 0.4;
+        box-shadow: none;
     }
 
     .calendar-date {
         font-weight: 600;
-        font-size: 13px;
+        font-size: 14px;
     }
 
     .calendar-tag {
-        font-size: 11px;
-        opacity: 0.9;
+        font-size: 12px;
+        opacity: 0.95;
     }
 
     /* COLOURS */
-    .bg-gold { background: #D4AF37; }
+    .bg-gold { background: #c8a24a; }
     .bg-grey { background: #b0b0b0; }
     .bg-red { background: #c0392b; }
     .bg-blue { background: #2980b9; }
@@ -222,10 +270,11 @@
     /* MOBILE LIST */
     .calendar-list {
         display: none;
-        max-height: 400px;
+        max-height: 420px;
         overflow-y: auto;
         border-radius: 10px;
         border: 1px solid #eee;
+        margin-top: 10px;
     }
 
     .calendar-list-item {
@@ -251,25 +300,41 @@
         font-size: 12px;
     }
 
-    /* DRAWER */
-    #availabilityDrawer {
+    /* EXPANDING PANEL OVERLAY */
+    .availability-overlay {
         position: fixed;
-        top: 0;
-        right: -420px;
-        width: 420px;
-        height: 100vh;
-        background: #1e1e1e;
-        color: #f5f5f5;
-        box-shadow: -4px 0 12px rgba(0,0,0,0.5);
-        transition: right 0.35s ease;
+        inset: 0;
+        background: rgba(0,0,0,0.35);
+        display: none;
+        align-items: center;
+        justify-content: center;
         z-index: 9999;
-        padding: 22px;
-        display: flex;
-        flex-direction: column;
     }
 
-    #availabilityDrawer.open {
-        right: 0;
+    .availability-overlay.open {
+        display: flex;
+    }
+
+    .availability-panel {
+        background: #1e1e1e;
+        color: #f5f5f5;
+        border-radius: 18px;
+        width: 520px;
+        max-width: 95%;
+        max-height: 90vh;
+        padding: 22px 22px 20px;
+        box-shadow: 0 18px 40px rgba(0,0,0,0.55);
+        display: flex;
+        flex-direction: column;
+        transform-origin: center center;
+        transform: scale(0.9);
+        opacity: 0;
+        transition: transform 0.26s ease, opacity 0.26s ease;
+    }
+
+    .availability-panel.open {
+        transform: scale(1);
+        opacity: 1;
     }
 
     .drawer-header {
@@ -282,13 +347,13 @@
         margin: 0;
         font-family: "Playfair Display", serif;
         font-size: 20px;
-        color: #D4AF37;
+        color: #c8a24a;
     }
 
     .drawer-close {
-        font-size: 26px;
+        font-size: 24px;
         cursor: pointer;
-        color: #D4AF37;
+        color: #c8a24a;
         font-weight: bold;
     }
 
@@ -310,6 +375,7 @@
         align-items: center;
         gap: 10px;
         margin-bottom: 8px;
+        flex-wrap: wrap;
     }
 
     .drawer-row label {
@@ -378,33 +444,63 @@
     .drawer-btn {
         margin-top: 18px;
         padding: 11px;
-        background: #D4AF37;
+        background: #c8a24a;
         color: #1e1e1e;
         border: none;
-        border-radius: 6px;
+        border-radius: 999px;
         font-weight: 600;
         cursor: pointer;
         width: 100%;
         font-size: 14px;
+        transition: 0.2s;
     }
 
-    @media (max-width: 800px) {
+    .drawer-btn:hover {
+        opacity: 0.9;
+    }
+
+    /* MOBILE BOTTOM SHEET MODE */
+    @media (max-width: 900px) {
+        .layout {
+            flex-direction: column;
+        }
+        .sidebar {
+            width: 100%;
+            border-right: none;
+            border-bottom: 1px solid #eee;
+            flex-direction: row;
+            align-items: center;
+            gap: 18px;
+            overflow-x: auto;
+        }
+        .sidebar h2 {
+            margin-bottom: 0;
+        }
+        .sidebar a {
+            padding: 8px 0;
+            white-space: nowrap;
+        }
+        .logout-btn, .sidebar-footer {
+            display: none;
+        }
+        .main {
+            padding: 24px;
+        }
+
         .calendar-grid {
             display: none;
         }
         .calendar-list {
             display: block;
         }
-        #availabilityDrawer {
-            width: 100%;
-            right: 0;
-            height: 60vh;
-            bottom: -60vh;
-            top: auto;
-            transition: bottom 0.35s ease;
+
+        .availability-overlay {
+            align-items: flex-end;
         }
-        #availabilityDrawer.open {
-            bottom: 0;
+        .availability-panel {
+            width: 100%;
+            max-width: 100%;
+            border-radius: 18px 18px 0 0;
         }
     }
 </style>
@@ -421,6 +517,7 @@
         <a href="myjobs.html">My Jobs</a>
         <a href="availability.html" class="active">Availability</a>
         <a href="profile.html">Profile</a>
+        <a href="profile-edit.html">Edit Profile</a>
 
         <div class="logout-btn" onclick="logout()">Logout</div>
 
@@ -433,7 +530,14 @@
     <!-- MAIN -->
     <div class="main">
 
-        <h2>Your Availability</h2>
+        <div class="main-header">
+            <div>
+                <div class="main-header-title">Availability</div>
+                <div class="main-header-subtitle">
+                    Set your weekly template and fine‑tune specific dates.
+                </div>
+            </div>
+        </div>
 
         <!-- WEEKLY TEMPLATE -->
         <div class="section">
@@ -478,42 +582,44 @@
     </div>
 </div>
 
-<!-- DRAWER -->
-<div id="availabilityDrawer">
-    <div class="drawer-header">
-        <h2 id="drawerTitle">Date</h2>
-        <div class="drawer-close" onclick="closeDrawer()">×</div>
-    </div>
-
-    <div class="drawer-section">
-        <h4>Day Settings</h4>
-        <div class="drawer-row">
-            <label>
-                <input type="checkbox" id="drawerDisableDay">
-                Disable this day (no availability)
-            </label>
+<!-- EXPANDING PANEL OVERLAY -->
+<div class="availability-overlay" id="availabilityOverlay">
+    <div class="availability-panel" id="availabilityPanel">
+        <div class="drawer-header">
+            <h2 id="drawerTitle">Date</h2>
+            <div class="drawer-close" onclick="closeDrawer()">×</div>
         </div>
-        <div class="drawer-row">
-            <label>Start</label>
-            <input type="time" id="drawerStart">
-            <label>End</label>
-            <input type="time" id="drawerEnd">
+
+        <div class="drawer-section">
+            <h4>Day Settings</h4>
+            <div class="drawer-row">
+                <label>
+                    <input type="checkbox" id="drawerDisableDay">
+                    Disable this day (no availability)
+                </label>
+            </div>
+            <div class="drawer-row">
+                <label>Start</label>
+                <input type="time" id="drawerStart">
+                <label>End</label>
+                <input type="time" id="drawerEnd">
+            </div>
         </div>
-    </div>
 
-    <div class="drawer-section">
-        <h4>Slots for this day</h4>
-        <div class="slot-list" id="slotList">
-            <!-- slots injected -->
+        <div class="drawer-section">
+            <h4>Slots for this day</h4>
+            <div class="slot-list" id="slotList">
+                <!-- slots injected -->
+            </div>
         </div>
-    </div>
 
-    <div class="drawer-section">
-        <h4>Notes</h4>
-        <textarea id="drawerNotes" class="drawer-notes" placeholder="Optional notes for this date"></textarea>
-    </div>
+        <div class="drawer-section">
+            <h4>Notes</h4>
+            <textarea id="drawerNotes" class="drawer-notes" placeholder="Optional notes for this date"></textarea>
+        </div>
 
-    <button class="drawer-btn" onclick="saveDateSettings()">Save Changes</button>
+        <button class="drawer-btn" onclick="saveDateSettings()">Save Changes</button>
+    </div>
 </div>
 
 <!-- FIREBASE -->
@@ -534,8 +640,8 @@ let currentMonth = new Date().getMonth();
 let currentYear = new Date().getFullYear();
 
 let weeklyTemplate = {}; // from user doc
-let dateOverrides = {};  // cache per date override
-let slotCache = {};      // cache per date slots availability
+let dateOverrides = {};  // per-date override
+let slotCache = {};      // per-date slots availability
 
 let selectedDateStr = null;
 
@@ -648,9 +754,10 @@ function renderCalendar() {
     const first = new Date(currentYear, currentMonth, 1);
     const last = new Date(currentYear, currentMonth + 1, 0);
 
-    let startOffset = (first.getDay() + 6) % 7; // make Monday=0
+    let startOffset = (first.getDay() + 6) % 7; // Monday=0
     for (let i = 0; i < startOffset; i++) {
         const empty = document.createElement("div");
+        empty.className = "calendar-cell disabled";
         grid.appendChild(empty);
     }
 
@@ -671,7 +778,7 @@ function renderCalendar() {
         cell.onclick = () => openDrawer(dateStr);
         grid.appendChild(cell);
 
-        // list item
+        // list item (mobile)
         const item = document.createElement("div");
         item.className = `calendar-list-item ${bgClass}`;
         item.innerHTML = `
@@ -692,27 +799,22 @@ function getDayColourAndLabel(dateStr, dayName) {
 
     const weekly = weeklyTemplate[dayName] || { enabled: false };
 
-    // count slots
     const slotValues = Object.values(slots);
     const totalSlots = slotValues.length;
     const availableSlots = slotValues.filter(v => v === true).length;
 
-    // override disabled day
     if (override && override.enabled === false) {
         return { bgClass: "bg-black", label: "Overridden: Off" };
     }
 
-    // bank holiday
     if (isBH) {
         return { bgClass: "bg-red", label: "Bank Holiday" };
     }
 
-    // sunday
     if (isSun) {
         return { bgClass: "bg-blue", label: weekly.enabled ? "Sunday (on)" : "Sunday (off)" };
     }
 
-    // partial / full availability
     if (!weekly.enabled) {
         if (availableSlots > 0) {
             return { bgClass: "bg-green", label: "Partially available" };
@@ -747,7 +849,7 @@ function changeMonth(delta) {
     preloadMonthData(currentYear, currentMonth).then(renderCalendar);
 }
 
-/* DRAWER */
+/* DRAWER / PANEL */
 async function openDrawer(dateStr) {
     selectedDateStr = dateStr;
 
@@ -777,15 +879,27 @@ async function openDrawer(dateStr) {
         notesInput.value = "";
     }
 
-    await loadDateData(dateStr); // refresh slots
+    await loadDateData(dateStr);
     renderSlots(dateStr, weekly);
 
-    document.getElementById("availabilityDrawer").classList.add("open");
+    const overlay = document.getElementById("availabilityOverlay");
+    const panel = document.getElementById("availabilityPanel");
+
+    overlay.classList.add("open");
+    requestAnimationFrame(() => {
+        panel.classList.add("open");
+    });
 }
 
 function closeDrawer() {
-    document.getElementById("availabilityDrawer").classList.remove("open");
-    selectedDateStr = null;
+    const overlay = document.getElementById("availabilityOverlay");
+    const panel = document.getElementById("availabilityPanel");
+
+    panel.classList.remove("open");
+    setTimeout(() => {
+        overlay.classList.remove("open");
+        selectedDateStr = null;
+    }, 260);
 }
 
 function renderSlots(dateStr, weekly) {
@@ -796,7 +910,7 @@ function renderSlots(dateStr, weekly) {
     const slotState = slotCache[dateStr] || {};
 
     slots.forEach(timeStr => {
-        const baseAvailable = slotState[timeStr] !== false; // true or undefined => treat as available
+        const baseAvailable = slotState[timeStr] !== false;
         const label = timeStr;
 
         const item = document.createElement("div");
@@ -846,7 +960,6 @@ async function saveDateSettings() {
             notes
         }, { merge: true });
 
-        // mark all slots unavailable
         const slots = window.availability.generateSlots();
         const batch = db.batch();
         slots.forEach(timeStr => {
@@ -862,7 +975,6 @@ async function saveDateSettings() {
             notes
         }, { merge: true });
 
-        // update slots based on toggles
         const toggles = document.querySelectorAll(".slot-toggle");
         const batch = db.batch();
         toggles.forEach(input => {
