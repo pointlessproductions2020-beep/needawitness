@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Edit Profile – Witness Hub</title>
+<title>My Profile – Witness Hub</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
@@ -89,6 +89,9 @@
     .main {
         flex: 1;
         padding: 40px 48px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
         overflow-y: auto;
     }
 
@@ -96,35 +99,42 @@
         font-size: 32px;
         font-family: "Playfair Display", serif;
         color: #c8a24a;
-        margin-bottom: 10px;
+        margin-bottom: 6px;
+        text-align: center;
     }
 
     .subheader {
         font-size: 14px;
         color: #777;
         margin-bottom: 28px;
+        text-align: center;
     }
 
-    .card {
-        background: white;
-        padding: 32px 30px;
-        border-radius: 16px;
-        box-shadow: 0 6px 18px rgba(0,0,0,0.06);
-        max-width: 760px;
+    .profile-card {
+        background: #ffffff;
+        border-radius: 18px;
+        box-shadow: 0 10px 26px rgba(0,0,0,0.06);
+        padding: 30px 32px 26px;
+        max-width: 640px;
+        width: 100%;
+        animation: fadeInUp 0.4s ease-out;
     }
 
-    /* PHOTO */
-    .photo-row {
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .profile-top {
         display: flex;
+        gap: 24px;
         align-items: center;
-        gap: 22px;
-        margin-bottom: 24px;
         flex-wrap: wrap;
     }
 
     .photo-wrapper {
-        width: 130px;
-        height: 130px;
+        width: 120px;
+        height: 120px;
         border-radius: 50%;
         border: 3px solid #c8a24a;
         overflow: hidden;
@@ -136,17 +146,16 @@
         position: relative;
     }
 
-    #photoPreview {
+    .profile-photo {
         width: 100%;
         height: 100%;
         object-fit: cover;
     }
 
-    /* GOLD RING LOADER */
     .ring-loader {
         position: absolute;
-        width: 130px;
-        height: 130px;
+        width: 120px;
+        height: 120px;
         border-radius: 50%;
         border: 6px solid rgba(200,162,74,0.25);
         border-top-color: #c8a24a;
@@ -160,92 +169,137 @@
         to { transform: rotate(360deg); }
     }
 
-    .photo-actions {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        font-size: 13px;
+    .profile-main {
+        flex: 1;
+        min-width: 0;
     }
 
-    .photo-btn {
-        padding: 9px 14px;
-        border-radius: 8px;
-        border: 1px solid #c8a24a;
-        background: #fff;
-        color: #c8a24a;
+    .profile-name {
+        font-family: "Playfair Display", serif;
+        font-size: 24px;
+        margin-bottom: 4px;
+        color: #333;
+    }
+
+    .profile-sub {
+        font-size: 13px;
+        color: #777;
+        margin-bottom: 10px;
+    }
+
+    .profile-meta {
+        font-size: 13px;
+        color: #555;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .meta-pill {
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: #faf4e2;
+        color: #7a642e;
+        font-size: 12px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .meta-pill span.icon {
+        font-size: 14px;
+    }
+
+    .profile-section {
+        margin-top: 20px;
+        border-top: 1px solid #f0ece4;
+        padding-top: 16px;
+    }
+
+    .section-title {
         font-size: 13px;
         font-weight: 600;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: #a18a4a;
+        margin-bottom: 8px;
+    }
+
+    .section-underline {
+        width: 40px;
+        height: 2px;
+        background: #c8a24a;
+        border-radius: 999px;
+        margin-bottom: 10px;
+    }
+
+    .profile-bio {
+        font-size: 14px;
+        color: #444;
+        line-height: 1.6;
+        white-space: pre-wrap;
+    }
+
+    .profile-bio.empty {
+        color: #999;
+        font-style: italic;
+    }
+
+    .profile-footer {
+        margin-top: 18px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .edit-btn {
+        padding: 10px 18px;
+        background: #c8a24a;
+        color: white;
+        border-radius: 999px;
+        border: none;
+        font-size: 14px;
+        font-weight: 600;
         cursor: pointer;
-        max-width: 200px;
         transition: 0.2s;
     }
 
-    .photo-btn:hover {
-        background: #faf4e2;
+    .edit-btn:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
     }
 
-    .photo-hint {
+    .status-text {
         font-size: 12px;
         color: #777;
     }
 
-    /* FORM */
-    label {
-        font-weight: 600;
-        display: block;
-        margin-top: 18px;
-        font-size: 14px;
+    /* COMPLETENESS BAR */
+    .complete-bar-wrap {
+        margin-top: 14px;
     }
 
-    input, textarea {
-        width: 100%;
-        padding: 12px;
-        margin-top: 6px;
-        border-radius: 10px;
-        border: 1px solid #ccc;
-        font-size: 14px;
-        background: #fafafa;
-        transition: 0.2s;
-    }
-
-    input:focus, textarea:focus {
-        border-color: #c8a24a;
-        outline: none;
-        background: #fff;
-    }
-
-    textarea {
-        height: 120px;
-        resize: none;
-    }
-
-    .save-bar {
-        margin-top: 28px;
-        display: flex;
-        justify-content: flex-end;
-    }
-
-    .save-btn {
-        padding: 12px 22px;
-        background: #c8a24a;
-        color: white;
-        border: none;
-        border-radius: 10px;
-        font-size: 15px;
-        cursor: pointer;
-        font-weight: 600;
-        transition: 0.2s;
-    }
-
-    .save-btn:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-    }
-
-    #statusMessage {
-        margin-top: 12px;
-        font-size: 13px;
+    .complete-label {
+        font-size: 12px;
         color: #777;
+        margin-bottom: 4px;
+    }
+
+    .complete-bar {
+        width: 100%;
+        height: 6px;
+        border-radius: 999px;
+        background: #eee3c9;
+        overflow: hidden;
+    }
+
+    .complete-fill {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, #c8a24a, #e0c57a);
+        transition: width 0.4s ease;
     }
 
     @media (max-width: 900px) {
@@ -274,6 +328,9 @@
         .main {
             padding: 24px;
         }
+        .profile-card {
+            padding: 24px 20px 20px;
+        }
     }
 </style>
 </head>
@@ -288,8 +345,8 @@
         <a href="dashboard.html">Dashboard</a>
         <a href="myjobs.html">My Jobs</a>
         <a href="availability.html">Availability</a>
-        <a href="profile.html">Profile</a>
-        <a href="profile-edit.html" class="active">Edit Profile</a>
+        <a href="profile.html" class="active">Profile</a>
+        <a href="profile-edit.html">Edit Profile</a>
 
         <div class="logout-btn" onclick="logout()">Logout</div>
 
@@ -301,62 +358,62 @@
 
     <!-- MAIN -->
     <div class="main">
-        <div class="header">Edit Your Profile</div>
+        <div class="header">Your Witness Profile</div>
         <div class="subheader">
-            Update your details and profile photo. Couples will see this when choosing their witnesses.
+            This is how couples will see you when choosing their witnesses.
         </div>
 
-        <div class="card">
-
-            <!-- PHOTO -->
-            <div class="photo-row">
+        <div class="profile-card">
+            <div class="profile-top">
                 <div class="photo-wrapper">
-                    <img id="photoPreview" src="/hub/default-single.png" alt="Profile photo">
+                    <img id="profilePhoto" class="profile-photo" src="/hub/default-single.png" alt="Profile photo">
                     <div class="ring-loader" id="ringLoader"></div>
                 </div>
-                <div class="photo-actions">
-                    <button class="photo-btn" type="button" onclick="document.getElementById('photoInput').click()">
-                        Upload New Photo
-                    </button>
-                    <span class="photo-hint">
-                        Clear, front-facing photo works best. JPG or PNG recommended.
-                    </span>
-                    <input id="photoInput" type="file" accept="image/*" style="display:none;">
+
+                <div class="profile-main">
+                    <div id="profileName" class="profile-name">Loading…</div>
+                    <div id="profileSub" class="profile-sub"></div>
+
+                    <div class="profile-meta">
+                        <div class="meta-pill" id="locationPill" style="display:none;">
+                            <span class="icon">📍</span>
+                            <span id="locationText"></span>
+                        </div>
+                        <div class="meta-pill" id="phonePill" style="display:none;">
+                            <span class="icon">📞</span>
+                            <span id="phoneText"></span>
+                        </div>
+                        <div class="meta-pill" id="typePill" style="display:none;">
+                            <span class="icon">👥</span>
+                            <span id="typeText"></span>
+                        </div>
+                    </div>
+
+                    <div class="complete-bar-wrap">
+                        <div class="complete-label" id="completeLabel">Profile completeness: 0%</div>
+                        <div class="complete-bar">
+                            <div class="complete-fill" id="completeFill"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- SINGLE -->
-            <div id="singleFields">
-                <label for="name">Name</label>
-                <input id="name" type="text" placeholder="Your full name">
+            <div class="profile-section">
+                <div class="section-title">About</div>
+                <div class="section-underline"></div>
+                <div id="bioText" class="profile-bio empty">
+                    Add a short bio so couples can get a feel for who you are.
+                </div>
             </div>
 
-            <!-- COUPLE -->
-            <div id="coupleFields" style="display:none;">
-                <label for="teamName">Team Name</label>
-                <input id="teamName" type="text" placeholder="e.g., The Dover Duo">
-
-                <label for="partner1">Partner 1 Name</label>
-                <input id="partner1" type="text" placeholder="First partner's name">
-
-                <label for="partner2">Partner 2 Name</label>
-                <input id="partner2" type="text" placeholder="Second partner's name">
+            <div class="profile-footer">
+                <div class="status-text" id="statusText">
+                    Loading your profile…
+                </div>
+                <button class="edit-btn" type="button" onclick="window.location.href='profile-edit.html'">
+                    Edit Profile
+                </button>
             </div>
-
-            <!-- SHARED -->
-            <label for="phone">Phone</label>
-            <input id="phone" type="text" placeholder="Contact number for job updates">
-
-            <label for="location">Location</label>
-            <input id="location" type="text" placeholder="e.g., Dover, Kent">
-
-            <label for="bio">Bio</label>
-            <textarea id="bio" placeholder="Tell couples a bit about yourself…"></textarea>
-
-            <div class="save-bar">
-                <button class="save-btn" type="button" onclick="saveProfile()" disabled>Save Changes</button>
-            </div>
-            <div id="statusMessage"></div>
         </div>
     </div>
 </div>
@@ -368,138 +425,52 @@
 <script src="firebase.js"></script>
 
 <script>
-const WORKER_URL = "https://shrill-math-1bfc.pointlessproductions2020.workers.dev/";
-
-// DOM refs
-const photoInput = document.getElementById("photoInput");
-const photoPreview = document.getElementById("photoPreview");
+const profilePhoto = document.getElementById("profilePhoto");
 const ringLoader = document.getElementById("ringLoader");
-const saveBtn = document.querySelector(".save-btn");
-const statusMessage = document.getElementById("statusMessage");
 
-const singleFields = document.getElementById("singleFields");
-const coupleFields = document.getElementById("coupleFields");
+const profileName = document.getElementById("profileName");
+const profileSub = document.getElementById("profileSub");
 
-const nameInput = document.getElementById("name");
-const teamNameInput = document.getElementById("teamName");
-const partner1Input = document.getElementById("partner1");
-const partner2Input = document.getElementById("partner2");
-const phoneInput = document.getElementById("phone");
-const locationInput = document.getElementById("location");
-const bioInput = document.getElementById("bio");
+const locationPill = document.getElementById("locationPill");
+const phonePill = document.getElementById("phonePill");
+const typePill = document.getElementById("typePill");
 
-// Holds compressed image blob
-let compressedBlob = null;
+const locationText = document.getElementById("locationText");
+const phoneText = document.getElementById("phoneText");
+const typeText = document.getElementById("typeText");
 
-/* LOADER CONTROL */
+const bioText = document.getElementById("bioText");
+const statusText = document.getElementById("statusText");
+
+const completeLabel = document.getElementById("completeLabel");
+const completeFill = document.getElementById("completeFill");
+
 function showLoader() {
     ringLoader.style.display = "block";
-    saveBtn.disabled = true;
-    saveBtn.style.opacity = "0.5";
 }
 
 function hideLoader() {
     ringLoader.style.display = "none";
-    saveBtn.disabled = false;
-    saveBtn.style.opacity = "1";
 }
 
-/* IMAGE PREVIEW + COMPRESSION */
-photoInput.addEventListener("change", async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+/* SIMPLE COMPLETENESS CALC */
+function calculateCompleteness(data) {
+    let fields = 0;
+    let filled = 0;
 
-    showLoader();
-    statusMessage.textContent = "Processing photo…";
-    statusMessage.style.color = "#c8a24a";
-
-    const img = new Image();
-    img.src = URL.createObjectURL(file);
-
-    img.onload = () => {
-        const size = 512;
-        const canvas = document.createElement("canvas");
-        const ctx = canvas.getContext("2d");
-
-        canvas.width = size;
-        canvas.height = size;
-
-        const minSide = Math.min(img.width, img.height);
-        const sx = (img.width - minSide) / 2;
-        const sy = (img.height - minSide) / 2;
-
-        ctx.drawImage(img, sx, sy, minSide, minSide, 0, 0, size, size);
-
-        canvas.toBlob(
-            (blob) => {
-                compressedBlob = blob;
-                photoPreview.src = URL.createObjectURL(blob);
-
-                hideLoader();
-                statusMessage.textContent = "Photo ready.";
-                statusMessage.style.color = "#2e7d32";
-            },
-            "image/jpeg",
-            0.85
-        );
+    const check = (val) => {
+        fields++;
+        if (val && val.toString().trim() !== "") filled++;
     };
-});
 
-/* UPLOAD PHOTO */
-async function uploadPhoto(uid) {
-    if (!photoInput.files.length) return null;
+    check(data.type === "couple" ? data.teamName : data.name);
+    check(data.location);
+    check(data.phone);
+    check(data.bio);
+    check(data.photoURL);
 
-    if (!compressedBlob) {
-        statusMessage.textContent = "Please wait… processing photo.";
-        statusMessage.style.color = "#c0392b";
-        return null;
-    }
-
-    const file = compressedBlob;
-
-    // Reject oversized files BEFORE upload
-    if (file.size > 5 * 1024 * 1024) {
-        statusMessage.textContent = "Image too large — please choose a smaller one.";
-        statusMessage.style.color = "#c0392b";
-        return null;
-    }
-
-    showLoader();
-    statusMessage.textContent = "Uploading…";
-    statusMessage.style.color = "#c8a24a";
-
-    const formData = new FormData();
-    formData.append("file", file, `${uid}.jpg`);
-
-    try {
-        const res = await fetch(WORKER_URL, {
-            method: "POST",
-            body: formData
-        });
-
-        if (!res.ok) {
-            hideLoader();
-            console.error("Upload failed:", await res.text());
-            statusMessage.textContent = "Upload failed — please try again.";
-            statusMessage.style.color = "#c0392b";
-            return null;
-        }
-
-        const json = await res.json();
-        hideLoader();
-
-        statusMessage.textContent = "Upload complete!";
-        statusMessage.style.color = "#2e7d32";
-
-        return json.url || null;
-
-    } catch (err) {
-        hideLoader();
-        console.error("Upload failed:", err);
-        statusMessage.textContent = "Network error — please try again.";
-        statusMessage.style.color = "#c0392b";
-        return null;
-    }
+    if (fields === 0) return 0;
+    return Math.round((filled / fields) * 100);
 }
 
 /* LOAD USER DATA */
@@ -509,85 +480,81 @@ auth.onAuthStateChanged(async (user) => {
         return;
     }
 
+    showLoader();
+    statusText.textContent = "Loading your profile…";
+
     const doc = await db.collection("users").doc(user.uid).get();
-    if (!doc.exists) return;
+
+    if (!doc.exists) {
+        hideLoader();
+        profileName.textContent = "Profile not found";
+        statusText.textContent = "We couldn't find your profile. Try editing it to create one.";
+        return;
+    }
 
     const data = doc.data();
 
-    // Load photo
+    // Photo
     if (data.photoURL) {
-        photoPreview.src = data.photoURL;
+        profilePhoto.src = data.photoURL;
     } else {
-        photoPreview.src = data.type === "couple"
+        profilePhoto.src = data.type === "couple"
             ? "/hub/default-couple.png"
             : "/hub/default-single.png";
     }
 
-    // Show correct fields
+    // Name / Team
     if (data.type === "couple") {
-        singleFields.style.display = "none";
-        coupleFields.style.display = "block";
+        const team = data.teamName || "Your team name";
+        profileName.textContent = team;
 
-        teamNameInput.value = data.teamName || "";
-        partner1Input.value = data.partner1Name || "";
-        partner2Input.value = data.partner2Name || "";
+        const p1 = data.partner1Name || "Partner 1";
+        const p2 = data.partner2Name || "Partner 2";
+        profileSub.textContent = `${p1} & ${p2}`;
+
+        typePill.style.display = "inline-flex";
+        typeText.textContent = "Couple witness team";
     } else {
-        singleFields.style.display = "block";
-        coupleFields.style.display = "none";
+        const name = data.name || "Your name";
+        profileName.textContent = name;
+        profileSub.textContent = "Individual witness";
 
-        nameInput.value = data.name || "";
+        typePill.style.display = "inline-flex";
+        typeText.textContent = "Individual witness";
     }
 
-    phoneInput.value = data.phone || "";
-    locationInput.value = data.location || "";
-    bioInput.value = data.bio || "";
+    // Location
+    if (data.location && data.location.trim() !== "") {
+        locationPill.style.display = "inline-flex";
+        locationText.textContent = data.location;
+    }
 
-    saveBtn.disabled = false;
+    // Phone
+    if (data.phone && data.phone.trim() !== "") {
+        phonePill.style.display = "inline-flex";
+        phoneText.textContent = data.phone;
+    }
+
+    // Bio
+    if (data.bio && data.bio.trim() !== "") {
+        bioText.textContent = data.bio;
+        bioText.classList.remove("empty");
+    } else {
+        bioText.textContent = "Add a short bio so couples can get a feel for who you are.";
+        bioText.classList.add("empty");
+    }
+
+    // Completeness
+    const completeness = calculateCompleteness(data);
+    completeLabel.textContent = `Profile completeness: ${completeness}%`;
+    completeFill.style.width = `${completeness}%`;
+
+    statusText.textContent = completeness < 70
+        ? "Your profile could use a little polish. Edit it to stand out to couples."
+        : "Your profile is looking great. You're ready to be booked.";
+
+    hideLoader();
 });
-
-/* SAVE PROFILE */
-async function saveProfile() {
-    const user = auth.currentUser;
-    if (!user) return;
-
-    statusMessage.textContent = "Saving your profile…";
-    statusMessage.style.color = "#777";
-
-    const doc = await db.collection("users").doc(user.uid).get();
-    const data = doc.data() || {};
-
-    const safeTrim = (val) => (val || "").toString().trim();
-
-    let updatedData = {
-        phone: safeTrim(phoneInput.value),
-        location: safeTrim(locationInput.value),
-        bio: safeTrim(bioInput.value),
-    };
-
-    // Upload photo if selected
-    const photoURL = await uploadPhoto(user.uid);
-    if (photoURL) {
-        updatedData.photoURL = photoURL;
-    }
-
-    // Name fields
-    if (data.type === "couple") {
-        updatedData.teamName = safeTrim(teamNameInput.value);
-        updatedData.partner1Name = safeTrim(partner1Input.value);
-        updatedData.partner2Name = safeTrim(partner2Input.value);
-    } else {
-        updatedData.name = safeTrim(nameInput.value);
-    }
-
-    await db.collection("users").doc(user.uid).update(updatedData);
-
-    statusMessage.textContent = "Profile updated successfully.";
-    statusMessage.style.color = "#2e7d32";
-
-   setTimeout(() => {
-        window.location.href = "profile.html";
-    }, 800);
-}
 
 /* LOGOUT */
 function logout() {
