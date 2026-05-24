@@ -24,7 +24,7 @@
         width: 240px;
         background: white;
         border-right: 1px solid #eee;
-        padding: 25px;
+        padding: 24px;
         display: flex;
         flex-direction: column;
     }
@@ -32,17 +32,16 @@
     .sidebar h2 {
         font-family: "Playfair Display", serif;
         color: #D4AF37;
-        margin-top: 0;
-        margin-bottom: 30px;
+        margin: 0 0 26px 0;
         font-size: 24px;
     }
 
     .sidebar a {
         color: #333;
         text-decoration: none;
-        padding: 12px 0;
+        padding: 10px 0;
         display: block;
-        font-size: 16px;
+        font-size: 15px;
         font-weight: 500;
     }
 
@@ -50,30 +49,36 @@
         color: #D4AF37;
     }
 
+    .sidebar a.active {
+        color: #D4AF37;
+        font-weight: 600;
+    }
+
     .logout-btn {
         margin-top: auto;
-        padding: 12px;
+        padding: 11px;
         background: #D4AF37;
         color: white;
         text-align: center;
         border-radius: 6px;
         cursor: pointer;
         font-weight: 600;
+        font-size: 14px;
     }
 
     .sidebar-footer {
-        margin-top: 20px;
-        padding-top: 15px;
+        margin-top: 18px;
+        padding-top: 14px;
         border-top: 1px solid #eee;
         font-size: 12px;
         color: #777;
         line-height: 1.4;
     }
 
-    /* MAIN CONTENT */
+    /* MAIN */
     .main {
         flex: 1;
-        padding: 30px;
+        padding: 30px 32px;
         overflow-y: auto;
     }
 
@@ -92,9 +97,14 @@
     }
 
     .job-card {
-        padding: 15px;
+        padding: 16px;
         border-bottom: 1px solid #eee;
         cursor: pointer;
+        transition: background 0.15s;
+    }
+
+    .job-card:hover {
+        background: #fafafa;
     }
 
     .job-card:last-child {
@@ -104,26 +114,13 @@
     .job-title {
         font-weight: 600;
         font-size: 17px;
+        color: #222;
     }
 
     .job-meta {
         color: #555;
         margin: 4px 0 10px;
-    }
-
-    .btn {
-        background: #D4AF37;
-        color: white;
-        padding: 10px 16px;
-        border-radius: 6px;
-        border: none;
-        cursor: pointer;
-        font-weight: 600;
-        margin-top: 10px;
-    }
-
-    .btn.cancel {
-        background: #999;
+        font-size: 14px;
     }
 
     .status-badge {
@@ -137,6 +134,105 @@
 
     .pending { background: #fff4d6; color: #8a6d00; }
     .assigned { background: #d6ffe0; color: #006d2a; }
+    .available { background: #d6e8ff; color: #004a99; }
+
+    /* DARK DRAWER */
+    #jobDrawer {
+        position: fixed;
+        top: 0;
+        right: -420px;
+        width: 420px;
+        height: 100vh;
+        background: #1e1e1e;
+        color: #f5f5f5;
+        box-shadow: -4px 0 12px rgba(0,0,0,0.5);
+        transition: right 0.35s ease;
+        z-index: 9999;
+        padding: 22px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    #jobDrawer.open {
+        right: 0;
+    }
+
+    .drawer-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .drawer-header h2 {
+        margin: 0;
+        font-family: "Playfair Display", serif;
+        font-size: 22px;
+        color: #D4AF37;
+    }
+
+    .drawer-close {
+        font-size: 26px;
+        cursor: pointer;
+        color: #D4AF37;
+        font-weight: bold;
+    }
+
+    .drawer-section {
+        margin-top: 18px;
+        padding-top: 12px;
+        border-top: 1px solid #333;
+        font-size: 14px;
+    }
+
+    .drawer-section h4 {
+        margin: 0 0 8px 0;
+        font-size: 14px;
+        color: #f5f5f5;
+    }
+
+    .drawer-stat {
+        margin-bottom: 10px;
+        font-size: 15px;
+        color: #D4AF37;
+        font-weight: 600;
+    }
+
+    .drawer-label {
+        font-size: 12px;
+        color: #aaa;
+        margin-bottom: 14px;
+    }
+
+    .drawer-btn {
+        margin-top: 20px;
+        padding: 12px;
+        background: #D4AF37;
+        color: #1e1e1e;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        width: 100%;
+    }
+
+    .drawer-btn.cancel {
+        background: #555;
+        color: #fff;
+    }
+
+    @media (max-width: 700px) {
+        #jobDrawer {
+            width: 100%;
+            right: 0;
+            height: 60vh;
+            bottom: -60vh;
+            top: auto;
+            transition: bottom 0.35s ease;
+        }
+        #jobDrawer.open {
+            bottom: 0;
+        }
+    }
 </style>
 </head>
 
@@ -148,9 +244,9 @@
     <div class="sidebar">
         <h2>Witness Hub</h2>
         <a href="dashboard.html">Dashboard</a>
-        <a href="myjobs.html" style="color:#D4AF37;font-weight:600;">My Jobs</a>
+        <a href="myjobs.html" class="active">My Jobs</a>
         <a href="availability.html">Availability</a>
-        <a href="profile-edit.html">Profile</a>
+        <a href="profile.html">Profile</a>
 
         <div class="logout-btn" onclick="logout()">Logout</div>
 
@@ -186,6 +282,45 @@
     </div>
 </div>
 
+<!-- DARK JOB DETAILS DRAWER -->
+<div id="jobDrawer">
+    <div class="drawer-header">
+        <h2 id="drawerTitle">Job Details</h2>
+        <div class="drawer-close" onclick="closeDrawer()">×</div>
+    </div>
+
+    <div class="drawer-section">
+        <h4>Date & Time</h4>
+        <div id="drawerDate"></div>
+        <div id="drawerTime"></div>
+    </div>
+
+    <div class="drawer-section">
+        <h4>Location</h4>
+        <div id="drawerLocation"></div>
+    </div>
+
+    <div class="drawer-section" id="drawerNotesSection" style="display:none;">
+        <h4>Notes</h4>
+        <div id="drawerNotes"></div>
+    </div>
+
+    <div class="drawer-section">
+        <h4>Earnings</h4>
+
+        <div class="drawer-stat" id="drawerJobEarnings">£0</div>
+        <div class="drawer-label">Earnings for this job</div>
+
+        <div class="drawer-stat" id="drawerPreviousEarnings">£0</div>
+        <div class="drawer-label">Previous jobs</div>
+
+        <div class="drawer-stat" id="drawerTotalEarnings">£0</div>
+        <div class="drawer-label">Total earnings</div>
+    </div>
+
+    <button id="drawerActionBtn" class="drawer-btn">Action</button>
+</div>
+
 <!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
@@ -195,6 +330,7 @@
 <script>
 let currentUser = null;
 let userData = null;
+let allJobs = [];
 
 auth.onAuthStateChanged(async (user) => {
     if (!user) {
@@ -207,100 +343,168 @@ auth.onAuthStateChanged(async (user) => {
     const doc = await db.collection("users").doc(user.uid).get();
     userData = doc.data();
 
-    loadAssignedJobs();
-    loadPendingRequests();
-    loadAvailableJobs();
+    loadJobs();
 });
+
+/* LOAD ALL JOBS FOR EARNINGS CALC */
+function loadJobs() {
+    db.collection("jobs")
+      .onSnapshot(snapshot => {
+        allJobs = [];
+        snapshot.forEach(doc => {
+            let j = doc.data();
+            j.id = doc.id;
+            allJobs.push(j);
+        });
+
+        loadAssignedJobs();
+        loadPendingRequests();
+        loadAvailableJobs();
+    });
+}
+
+/* EARNINGS CALC */
+function getEarnings(job) {
+    const total = job.totalPrice || 0;
+    const adminFee = job.depositAmount || job.deposit || 0;
+    const pot = Math.max(total - adminFee, 0);
+
+    if (job.witnessType === "couple") return pot;
+
+    const count = job.assignedWitnesses?.length || 1;
+    return pot / count;
+}
 
 /* -------------------------
    ASSIGNED JOBS
 -------------------------- */
 function loadAssignedJobs() {
-    db.collection("jobs")
-      .where("assignedWitnesses", "array-contains", currentUser.uid)
-      .onSnapshot(snapshot => {
-        let html = "";
+    let html = "";
 
-        snapshot.forEach(doc => {
-            const j = doc.data();
-            html += `
-                <a href="job-details.html?id=${doc.id}" style="text-decoration:none;color:inherit;">
-                    <div class="job-card">
-                        <div class="job-title">${j.coupleName}
-                            <span class="status-badge assigned">Assigned</span>
-                        </div>
-                        <div class="job-meta">${j.date} at ${j.time} — ${j.location}</div>
-                    </div>
-                </a>
-            `;
-        });
+    allJobs
+      .filter(j => j.assignedWitnesses?.includes(currentUser.uid))
+      .forEach(j => {
+        html += `
+            <div class="job-card" onclick="openDrawer('${j.id}')">
+                <div class="job-title">${j.coupleName}
+                    <span class="status-badge assigned">Assigned</span>
+                </div>
+                <div class="job-meta">${j.date} at ${j.time} — ${j.location}</div>
+            </div>
+        `;
+      });
 
-        assignedJobs.innerHTML = html || "<p>No assigned jobs.</p>";
-    });
+    document.getElementById("assignedJobs").innerHTML = html || "<p>No assigned jobs.</p>";
 }
 
 /* -------------------------
    PENDING REQUESTS
 -------------------------- */
 function loadPendingRequests() {
-    db.collection("jobs")
-      .where("requestBy", "==", currentUser.uid)
-      .where("requestStatus", "==", "pending")
-      .onSnapshot(snapshot => {
-        let html = "";
+    let html = "";
 
-        snapshot.forEach(doc => {
-            const j = doc.data();
-            html += `
-                <a href="job-details.html?id=${doc.id}" style="text-decoration:none;color:inherit;">
-                    <div class="job-card">
-                        <div class="job-title">${j.coupleName}
-                            <span class="status-badge pending">Pending</span>
-                        </div>
-                        <div class="job-meta">${j.date} at ${j.time} — ${j.location}</div>
-                    </div>
-                </a>
-                <button class="btn cancel" onclick="cancelRequest('${doc.id}')">Cancel Request</button>
-            `;
-        });
+    allJobs
+      .filter(j => j.requestBy === currentUser.uid && j.requestStatus === "pending")
+      .forEach(j => {
+        html += `
+            <div class="job-card" onclick="openDrawer('${j.id}')">
+                <div class="job-title">${j.coupleName}
+                    <span class="status-badge pending">Pending</span>
+                </div>
+                <div class="job-meta">${j.date} at ${j.time} — ${j.location}</div>
+            </div>
+        `;
+      });
 
-        pendingRequests.innerHTML = html || "<p>No pending requests.</p>";
-    });
+    document.getElementById("pendingRequests").innerHTML = html || "<p>No pending requests.</p>";
 }
 
 /* -------------------------
    AVAILABLE JOBS
 -------------------------- */
 function loadAvailableJobs() {
-    db.collection("jobs")
-      .where("status", "==", "pending")
-      .onSnapshot(snapshot => {
-        let html = "";
+    let html = "";
 
-        snapshot.forEach(doc => {
-            const j = doc.data();
+    allJobs
+      .filter(j => j.status === "pending")
+      .forEach(j => {
+        if (j.witnessType === "single" && userData.type !== "single") return;
+        if (j.witnessType === "couple" && userData.type !== "couple") return;
 
-            // FILTER BY WITNESS TYPE
-            if (j.witnessType === "single" && userData.type !== "single") return;
-            if (j.witnessType === "couple" && userData.type !== "couple") return;
+        html += `
+            <div class="job-card" onclick="openDrawer('${j.id}')">
+                <div class="job-title">${j.coupleName}
+                    <span class="status-badge available">Available</span>
+                </div>
+                <div class="job-meta">${j.date} at ${j.time} — ${j.location}</div>
+            </div>
+        `;
+      });
 
-            html += `
-                <a href="job-details.html?id=${doc.id}" style="text-decoration:none;color:inherit;">
-                    <div class="job-card">
-                        <div class="job-title">${j.coupleName}</div>
-                        <div class="job-meta">${j.date} at ${j.time} — ${j.location}</div>
-                    </div>
-                </a>
-                <button class="btn" onclick="requestJob('${doc.id}')">Request Job</button>
-            `;
-        });
-
-        availableJobs.innerHTML = html || "<p>No available jobs.</p>";
-    });
+    document.getElementById("availableJobs").innerHTML = html || "<p>No available jobs.</p>";
 }
 
 /* -------------------------
-   REQUEST JOB
+   DRAWER LOGIC
+-------------------------- */
+function openDrawer(jobId) {
+    const job = allJobs.find(j => j.id === jobId);
+    if (!job) return;
+
+    document.getElementById("drawerTitle").textContent = job.coupleName;
+    document.getElementById("drawerDate").textContent = job.date;
+    document.getElementById("drawerTime").textContent = job.time;
+    document.getElementById("drawerLocation").textContent = job.location;
+
+    if (job.notes) {
+        document.getElementById("drawerNotesSection").style.display = "block";
+        document.getElementById("drawerNotes").textContent = job.notes;
+    } else {
+        document.getElementById("drawerNotesSection").style.display = "none";
+    }
+
+    /* Earnings breakdown */
+    const thisJob = getEarnings(job);
+
+    const previous = allJobs
+        .filter(j => j.assignedWitnesses?.includes(currentUser.uid))
+        .filter(j => j.date < job.date)
+        .reduce((sum, j) => sum + getEarnings(j), 0);
+
+    const total = previous + thisJob;
+
+    document.getElementById("drawerJobEarnings").textContent = "£" + thisJob.toFixed(2);
+    document.getElementById("drawerPreviousEarnings").textContent = "£" + previous.toFixed(2);
+    document.getElementById("drawerTotalEarnings").textContent = "£" + total.toFixed(2);
+
+    /* Action button */
+    const btn = document.getElementById("drawerActionBtn");
+
+    if (job.assignedWitnesses?.includes(currentUser.uid)) {
+        btn.style.display = "none";
+    } else if (job.requestBy === currentUser.uid) {
+        btn.style.display = "block";
+        btn.textContent = "Cancel Request";
+        btn.className = "drawer-btn cancel";
+        btn.onclick = () => cancelRequest(job.id);
+    } else if (job.status === "pending") {
+        btn.style.display = "block";
+        btn.textContent = "Request Job";
+        btn.className = "drawer-btn";
+        btn.onclick = () => requestJob(job.id);
+    } else {
+        btn.style.display = "none";
+    }
+
+    document.getElementById("jobDrawer").classList.add("open");
+}
+
+function closeDrawer() {
+    document.getElementById("jobDrawer").classList.remove("open");
+}
+
+/* -------------------------
+   REQUEST / CANCEL
 -------------------------- */
 function requestJob(jobId) {
     db.collection("jobs").doc(jobId).update({
@@ -308,17 +512,16 @@ function requestJob(jobId) {
         requestTeamName: userData.type === "couple" ? userData.teamName : userData.name,
         requestStatus: "pending"
     });
+    closeDrawer();
 }
 
-/* -------------------------
-   CANCEL REQUEST
--------------------------- */
 function cancelRequest(jobId) {
     db.collection("jobs").doc(jobId).update({
         requestBy: "",
         requestTeamName: "",
         requestStatus: null
     });
+    closeDrawer();
 }
 
 /* -------------------------
