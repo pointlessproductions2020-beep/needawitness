@@ -263,64 +263,64 @@
     </div>
 
     <!-- MAIN -->
-    <div class="main">
-        <div class="header">Edit Your Profile</div>
-        <div class="subheader">
-            Update your details and profile photo. Couples will see this when choosing their witnesses.
-        </div>
-
-        <div class="card">
-
-            <!-- PHOTO SECTION -->
-            <div class="photo-row">
-                <div class="photo-wrapper">
-                    <img id="photoPreview" src="hub/default-single.png" alt="Profile photo">
-                </div>
-                <div class="photo-actions">
-                    <button class="photo-btn" type="button" onclick="document.getElementById('photoInput').click()">
-                        Upload New Photo
-                    </button>
-                    <span class="photo-hint">
-                        Clear, front-facing photo works best. JPG or PNG recommended.
-                    </span>
-                    <input id="photoInput" type="file" accept="image/*" style="display:none;">
-                </div>
-            </div>
-
-            <!-- SINGLE WITNESS FIELDS -->
-            <div id="singleFields">
-                <label for="name">Name</label>
-                <input id="name" type="text" placeholder="Your full name">
-            </div>
-
-            <!-- COUPLE WITNESS FIELDS -->
-            <div id="coupleFields" style="display:none;">
-                <label for="teamName">Team Name</label>
-                <input id="teamName" type="text" placeholder="e.g., The Dover Duo">
-
-                <label for="partner1">Partner 1 Name</label>
-                <input id="partner1" type="text" placeholder="First partner's name">
-
-                <label for="partner2">Partner 2 Name</label>
-                <input id="partner2" type="text" placeholder="Second partner's name">
-            </div>
-
-            <!-- SHARED FIELDS -->
-            <label for="phone">Phone</label>
-            <input id="phone" type="text" placeholder="Contact number for job updates">
-
-            <label for="location">Location</label>
-            <input id="location" type="text" placeholder="e.g., Dover, Kent">
-
-            <label for="bio">Bio</label>
-            <textarea id="bio" placeholder="Tell couples a bit about yourself, your experience, and what makes you a great witness…"></textarea>
-
-            <div class="save-bar">
-                <button class="save-btn" type="button" onclick="saveProfile()">Save Changes</button>
-            </div>
-            <div id="statusMessage"></div>
-        </div>
+<div class="main">
+    <div class="header">Edit Your Profile</div>
+    <div class="subheader">
+        Update your details and profile photo. Couples will see this when choosing their witnesses.
     </div>
+
+    <div class="card">
+
+        <!-- PHOTO SECTION -->
+        <div class="photo-row">
+            <div class="photo-wrapper">
+                <img id="photoPreview" src="/hub/default-single.png" alt="Profile photo">
+            </div>
+            <div class="photo-actions">
+                <button class="photo-btn" type="button" onclick="document.getElementById('photoInput').click()">
+                    Upload New Photo
+                </button>
+                <span class="photo-hint">
+                    Clear, front-facing photo works best. JPG or PNG recommended.
+                </span>
+                <input id="photoInput" type="file" accept="image/*" style="display:none;">
+            </div>
+        </div>
+
+        <!-- SINGLE WITNESS FIELDS -->
+        <div id="singleFields">
+            <label for="name">Name</label>
+            <input id="name" type="text" placeholder="Your full name">
+        </div>
+
+        <!-- COUPLE WITNESS FIELDS -->
+        <div id="coupleFields" style="display:none;">
+            <label for="teamName">Team Name</label>
+            <input id="teamName" type="text" placeholder="e.g., The Dover Duo">
+
+            <label for="partner1">Partner 1 Name</label>
+            <input id="partner1" type="text" placeholder="First partner's name">
+
+            <label for="partner2">Partner 2 Name</label>
+            <input id="partner2" type="text" placeholder="Second partner's name">
+        </div>
+
+        <!-- SHARED FIELDS -->
+        <label for="phone">Phone</label>
+        <input id="phone" type="text" placeholder="Contact number for job updates">
+
+        <label for="location">Location</label>
+        <input id="location" type="text" placeholder="e.g., Dover, Kent">
+
+        <label for="bio">Bio</label>
+        <textarea id="bio" placeholder="Tell couples a bit about yourself, your experience, and what makes you a great witness…"></textarea>
+
+        <div class="save-bar">
+            <button class="save-btn" type="button" onclick="saveProfile()">Save Changes</button>
+        </div>
+        <div id="statusMessage"></div>
+    </div>
+</div>
 </div>
 
 <!-- FIREBASE -->
@@ -405,13 +405,13 @@ auth.onAuthStateChanged(async (user) => {
 
     const data = doc.data();
 
-    // Load photo (fallback handled by dashboard)
+    // Load photo with absolute fallback
     if (data.photoURL) {
         photoPreview.src = data.photoURL;
     } else {
         photoPreview.src = data.type === "couple"
-            ? "hub/default-couple.png"
-            : "hub/default-single.png";
+            ? "/hub/default-couple.png"
+            : "/hub/default-single.png";
     }
 
     // Show correct fields
