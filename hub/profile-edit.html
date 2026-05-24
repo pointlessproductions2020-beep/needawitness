@@ -405,7 +405,14 @@ photoInput.addEventListener("change", async (e) => {
 async function uploadPhoto(uid) {
     if (!photoInput.files.length) return null;
 
-    const file = compressedBlob || photoInput.files[0];
+    // ⛔ Prevent uploading the original large file
+    if (!compressedBlob) {
+        statusMessage.textContent = "Please wait… processing photo.";
+        statusMessage.style.color = "#c0392b";
+        return null;
+    }
+
+    const file = compressedBlob; // ✅ Always the small 512×512 JPEG
     const formData = new FormData();
     formData.append("file", file, `${uid}.jpg`);
 
