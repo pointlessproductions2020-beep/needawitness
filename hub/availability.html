@@ -12,104 +12,508 @@
         margin: 0;
         font-family: Inter, sans-serif;
         background: #f7f7f7;
-        padding: 30px;
     }
 
-    .container {
-        max-width: 650px;
-        margin: auto;
+    .layout {
+        display: flex;
+        min-height: 100vh;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+        width: 240px;
         background: white;
-        padding: 30px;
-        border-radius: 14px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-        border-left: 4px solid #D4AF37;
+        border-right: 1px solid #eee;
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
     }
 
-    h2 {
-        text-align: center;
-        margin-top: 0;
+    .sidebar h2 {
         font-family: "Playfair Display", serif;
         color: #D4AF37;
-        font-size: 28px;
+        margin: 0 0 26px 0;
+        font-size: 24px;
     }
 
-    .day {
-        margin-bottom: 22px;
-        padding-bottom: 18px;
-        border-bottom: 1px solid #eee;
-    }
-
-    .day label {
-        font-weight: 600;
+    .sidebar a {
+        color: #333;
+        text-decoration: none;
+        padding: 10px 0;
         display: block;
-        font-size: 17px;
-        margin-bottom: 6px;
+        font-size: 15px;
+        font-weight: 500;
     }
 
-    .toggle {
-        margin-top: 5px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
+    .sidebar a:hover {
+        color: #D4AF37;
+    }
+
+    .sidebar a.active {
+        color: #D4AF37;
+        font-weight: 600;
+    }
+
+    .logout-btn {
+        margin-top: auto;
+        padding: 11px;
+        background: #D4AF37;
+        color: white;
+        text-align: center;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
         font-size: 14px;
     }
 
-    .time-row {
-        display: flex;
-        gap: 12px;
-        margin-top: 10px;
+    .sidebar-footer {
+        margin-top: 18px;
+        padding-top: 14px;
+        border-top: 1px solid #eee;
+        font-size: 12px;
+        color: #777;
+        line-height: 1.4;
     }
 
-    input[type="time"] {
+    /* MAIN */
+    .main {
         flex: 1;
-        padding: 12px;
-        border-radius: 8px;
-        border: 1px solid #ccc;
-        font-size: 15px;
+        padding: 30px 32px;
+        overflow-y: auto;
     }
 
-    button {
-        width: 100%;
-        padding: 14px;
+    h2 {
+        font-family: "Playfair Display", serif;
+        color: #D4AF37;
+        margin-top: 0;
+    }
+
+    .section {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        margin-bottom: 25px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    }
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+    }
+
+    .section-header h3 {
+        margin: 0;
+        font-size: 18px;
+    }
+
+    /* WEEKLY TEMPLATE */
+    .weekly-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 0;
+        border-bottom: 1px solid #f0f0f0;
+        font-size: 14px;
+    }
+
+    .weekly-row:last-child {
+        border-bottom: none;
+    }
+
+    .weekly-day {
+        width: 90px;
+        font-weight: 600;
+    }
+
+    .weekly-row input[type="time"] {
+        padding: 6px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        font-size: 13px;
+    }
+
+    .weekly-row input[type="checkbox"] {
+        transform: scale(1.1);
+    }
+
+    .save-weekly-btn {
+        margin-top: 12px;
+        padding: 10px 14px;
         background: #D4AF37;
         color: white;
         border: none;
-        border-radius: 8px;
-        font-size: 17px;
-        cursor: pointer;
+        border-radius: 6px;
         font-weight: 600;
-        margin-top: 25px;
+        cursor: pointer;
+        font-size: 14px;
     }
 
-    button:hover {
+    /* CALENDAR */
+    .calendar-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .calendar-header span {
+        font-weight: 600;
+    }
+
+    .calendar-nav button {
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        font-size: 18px;
+        padding: 4px 8px;
+    }
+
+    .calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 6px;
+        font-size: 13px;
+    }
+
+    .calendar-day-name {
+        text-align: center;
+        font-weight: 600;
+        color: #777;
+        padding-bottom: 4px;
+    }
+
+    .calendar-cell {
+        min-height: 60px;
+        border-radius: 8px;
+        padding: 4px 6px;
+        cursor: pointer;
+        color: #fff;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        box-sizing: border-box;
+    }
+
+    .calendar-cell.disabled {
+        cursor: default;
+        opacity: 0.4;
+    }
+
+    .calendar-date {
+        font-weight: 600;
+        font-size: 13px;
+    }
+
+    .calendar-tag {
+        font-size: 11px;
         opacity: 0.9;
     }
 
-    .back {
-        text-align: center;
-        margin-top: 18px;
-        display: block;
-        color: #333;
-        font-weight: 500;
-        text-decoration: none;
+    /* COLOURS */
+    .bg-gold { background: #D4AF37; }
+    .bg-grey { background: #b0b0b0; }
+    .bg-red { background: #c0392b; }
+    .bg-blue { background: #2980b9; }
+    .bg-black { background: #222; }
+    .bg-green { background: #27ae60; }
+
+    /* MOBILE LIST */
+    .calendar-list {
+        display: none;
+        max-height: 400px;
+        overflow-y: auto;
+        border-radius: 10px;
+        border: 1px solid #eee;
     }
 
-    .back:hover {
+    .calendar-list-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 12px;
+        cursor: pointer;
+        border-bottom: 1px solid #f0f0f0;
+        color: #fff;
+    }
+
+    .calendar-list-item:last-child {
+        border-bottom: none;
+    }
+
+    .calendar-list-date {
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+    .calendar-list-label {
+        font-size: 12px;
+    }
+
+    /* DRAWER */
+    #availabilityDrawer {
+        position: fixed;
+        top: 0;
+        right: -420px;
+        width: 420px;
+        height: 100vh;
+        background: #1e1e1e;
+        color: #f5f5f5;
+        box-shadow: -4px 0 12px rgba(0,0,0,0.5);
+        transition: right 0.35s ease;
+        z-index: 9999;
+        padding: 22px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    #availabilityDrawer.open {
+        right: 0;
+    }
+
+    .drawer-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .drawer-header h2 {
+        margin: 0;
+        font-family: "Playfair Display", serif;
+        font-size: 20px;
         color: #D4AF37;
+    }
+
+    .drawer-close {
+        font-size: 26px;
+        cursor: pointer;
+        color: #D4AF37;
+        font-weight: bold;
+    }
+
+    .drawer-section {
+        margin-top: 16px;
+        padding-top: 12px;
+        border-top: 1px solid #333;
+        font-size: 14px;
+    }
+
+    .drawer-section h4 {
+        margin: 0 0 8px 0;
+        font-size: 14px;
+        color: #f5f5f5;
+    }
+
+    .drawer-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 8px;
+    }
+
+    .drawer-row label {
+        font-size: 13px;
+    }
+
+    .drawer-row input[type="time"] {
+        padding: 6px;
+        border-radius: 6px;
+        border: 1px solid #555;
+        background: #111;
+        color: #f5f5f5;
+        font-size: 13px;
+    }
+
+    .drawer-row input[type="checkbox"] {
+        transform: scale(1.1);
+    }
+
+    .slot-list {
+        max-height: 220px;
+        overflow-y: auto;
+        border-radius: 8px;
+        border: 1px solid #333;
+        padding: 6px;
+    }
+
+    .slot-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 6px 8px;
+        border-bottom: 1px solid #333;
+        font-size: 13px;
+    }
+
+    .slot-item:last-child {
+        border-bottom: none;
+    }
+
+    .slot-label {
+        font-weight: 500;
+    }
+
+    .slot-status {
+        font-size: 11px;
+        opacity: 0.8;
+    }
+
+    .slot-toggle {
+        transform: scale(1.1);
+    }
+
+    .drawer-notes {
+        width: 100%;
+        min-height: 60px;
+        border-radius: 6px;
+        border: 1px solid #555;
+        background: #111;
+        color: #f5f5f5;
+        padding: 8px;
+        font-size: 13px;
+        resize: vertical;
+    }
+
+    .drawer-btn {
+        margin-top: 18px;
+        padding: 11px;
+        background: #D4AF37;
+        color: #1e1e1e;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        width: 100%;
+        font-size: 14px;
+    }
+
+    @media (max-width: 800px) {
+        .calendar-grid {
+            display: none;
+        }
+        .calendar-list {
+            display: block;
+        }
+        #availabilityDrawer {
+            width: 100%;
+            right: 0;
+            height: 60vh;
+            bottom: -60vh;
+            top: auto;
+            transition: bottom 0.35s ease;
+        }
+        #availabilityDrawer.open {
+            bottom: 0;
+        }
     }
 </style>
 </head>
 
 <body>
 
-<div class="container">
-    <h2>Your Weekly Availability</h2>
+<div class="layout">
 
-    <div id="days"></div>
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <h2>Witness Hub</h2>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="myjobs.html">My Jobs</a>
+        <a href="availability.html" class="active">Availability</a>
+        <a href="profile.html">Profile</a>
 
-    <button onclick="saveAvailability()">Save Availability</button>
+        <div class="logout-btn" onclick="logout()">Logout</div>
 
-    <a class="back" href="dashboard.html">← Back to Dashboard</a>
+        <div class="sidebar-footer">
+            © Need A Witness UK<br>
+            Witness Hub v1.0
+        </div>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main">
+
+        <h2>Your Availability</h2>
+
+        <!-- WEEKLY TEMPLATE -->
+        <div class="section">
+            <div class="section-header">
+                <h3>Weekly Template</h3>
+            </div>
+            <div id="weeklyTemplate"></div>
+            <button class="save-weekly-btn" onclick="saveWeeklyTemplate()">Save Weekly Template</button>
+        </div>
+
+        <!-- CALENDAR -->
+        <div class="section">
+            <div class="section-header">
+                <h3>Calendar</h3>
+                <div class="calendar-header">
+                    <div><span id="monthLabel"></span></div>
+                    <div class="calendar-nav">
+                        <button onclick="changeMonth(-1)">‹</button>
+                        <button onclick="changeMonth(1)">›</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Desktop grid -->
+            <div class="calendar-grid" id="calendarGrid">
+                <div class="calendar-day-name">Mon</div>
+                <div class="calendar-day-name">Tue</div>
+                <div class="calendar-day-name">Wed</div>
+                <div class="calendar-day-name">Thu</div>
+                <div class="calendar-day-name">Fri</div>
+                <div class="calendar-day-name">Sat</div>
+                <div class="calendar-day-name">Sun</div>
+                <!-- days injected here -->
+            </div>
+
+            <!-- Mobile list -->
+            <div class="calendar-list" id="calendarList">
+                <!-- items injected here -->
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- DRAWER -->
+<div id="availabilityDrawer">
+    <div class="drawer-header">
+        <h2 id="drawerTitle">Date</h2>
+        <div class="drawer-close" onclick="closeDrawer()">×</div>
+    </div>
+
+    <div class="drawer-section">
+        <h4>Day Settings</h4>
+        <div class="drawer-row">
+            <label>
+                <input type="checkbox" id="drawerDisableDay">
+                Disable this day (no availability)
+            </label>
+        </div>
+        <div class="drawer-row">
+            <label>Start</label>
+            <input type="time" id="drawerStart">
+            <label>End</label>
+            <input type="time" id="drawerEnd">
+        </div>
+    </div>
+
+    <div class="drawer-section">
+        <h4>Slots for this day</h4>
+        <div class="slot-list" id="slotList">
+            <!-- slots injected -->
+        </div>
+    </div>
+
+    <div class="drawer-section">
+        <h4>Notes</h4>
+        <textarea id="drawerNotes" class="drawer-notes" placeholder="Optional notes for this date"></textarea>
+    </div>
+
+    <button class="drawer-btn" onclick="saveDateSettings()">Save Changes</button>
 </div>
 
 <!-- FIREBASE -->
@@ -118,60 +522,368 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 <script src="firebase.js"></script>
 
-<script>
-const dayNames = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+<!-- AVAILABILITY ENGINE (your existing file) -->
+<script src="availability.js"></script>
 
+<script>
+let currentUser = null;
+let userData = null;
+
+const dayNames = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+let currentMonth = new Date().getMonth();
+let currentYear = new Date().getFullYear();
+
+let weeklyTemplate = {}; // from user doc
+let dateOverrides = {};  // cache per date override
+let slotCache = {};      // cache per date slots availability
+
+let selectedDateStr = null;
+
+/* AUTH */
 auth.onAuthStateChanged(async (user) => {
     if (!user) {
         window.location.href = "login.html";
         return;
     }
+    currentUser = user;
 
-    const container = document.getElementById("days");
-
-    // Load existing availability
     const doc = await db.collection("users").doc(user.uid).get();
-    const availability = doc.data().availability || {};
+    userData = doc.data() || {};
 
-    dayNames.forEach(day => {
-        const saved = availability[day] || { enabled: false, start: "09:00", end: "16:00" };
+    weeklyTemplate = userData.availability || {};
+    renderWeeklyTemplate();
 
-        container.innerHTML += `
-            <div class="day">
-                <label>${day}</label>
-
-                <div class="toggle">
-                    <input type="checkbox" id="${day}-enabled" ${saved.enabled ? "checked" : ""}>
-                    <span>Available</span>
-                </div>
-
-                <div class="time-row">
-                    <input type="time" id="${day}-start" value="${saved.start}">
-                    <input type="time" id="${day}-end" value="${saved.end}">
-                </div>
-            </div>
-        `;
-    });
+    await preloadMonthData(currentYear, currentMonth);
+    renderCalendar();
 });
 
-async function saveAvailability() {
-    const user = auth.currentUser;
-    if (!user) return;
-
-    const availability = {};
+/* WEEKLY TEMPLATE UI */
+function renderWeeklyTemplate() {
+    const container = document.getElementById("weeklyTemplate");
+    container.innerHTML = "";
 
     dayNames.forEach(day => {
-        availability[day] = {
-            enabled: document.getElementById(`${day}-enabled`).checked,
-            start: document.getElementById(`${day}-start`).value,
-            end: document.getElementById(`${day}-end`).value
+        const saved = weeklyTemplate[day] || { enabled: false, start: "09:00", end: "16:00" };
+        const row = document.createElement("div");
+        row.className = "weekly-row";
+        row.innerHTML = `
+            <div class="weekly-day">${day}</div>
+            <input type="checkbox" id="weekly-${day}-enabled" ${saved.enabled ? "checked" : ""}>
+            <span>Available</span>
+            <input type="time" id="weekly-${day}-start" value="${saved.start}">
+            <input type="time" id="weekly-${day}-end" value="${saved.end}">
+        `;
+        container.appendChild(row);
+    });
+}
+
+async function saveWeeklyTemplate() {
+    if (!currentUser) return;
+
+    const updated = {};
+    dayNames.forEach(day => {
+        updated[day] = {
+            enabled: document.getElementById(`weekly-${day}-enabled`).checked,
+            start: document.getElementById(`weekly-${day}-start`).value || "09:00",
+            end: document.getElementById(`weekly-${day}-end`).value || "16:00"
         };
     });
 
-    await db.collection("users").doc(user.uid).update({ availability });
+    await db.collection("users").doc(currentUser.uid).update({
+        availability: updated
+    });
 
-    alert("Availability saved successfully");
-    window.location.href = "dashboard.html";
+    weeklyTemplate = updated;
+    alert("Weekly template saved.");
+    await preloadMonthData(currentYear, currentMonth);
+    renderCalendar();
+}
+
+/* CALENDAR DATA PRELOAD */
+async function preloadMonthData(year, month) {
+    dateOverrides = {};
+    slotCache = {};
+
+    const first = new Date(year, month, 1);
+    const last = new Date(year, month + 1, 0);
+
+    const promises = [];
+    for (let d = new Date(first); d <= last; d.setDate(d.getDate() + 1)) {
+        const dateStr = d.toISOString().slice(0,10);
+        promises.push(loadDateData(dateStr));
+    }
+    await Promise.all(promises);
+}
+
+async function loadDateData(dateStr) {
+    // override doc
+    const overrideRef = db.collection("availability").doc(dateStr).collection("meta").doc("override");
+    const overrideSnap = await overrideRef.get();
+    if (overrideSnap.exists) {
+        dateOverrides[dateStr] = overrideSnap.data();
+    } else {
+        dateOverrides[dateStr] = null;
+    }
+
+    // slots availability via existing engine
+    try {
+        const results = await window.availability.checkAvailability(db, dateStr);
+        slotCache[dateStr] = results;
+    } catch (e) {
+        slotCache[dateStr] = {};
+    }
+}
+
+/* CALENDAR RENDER */
+function renderCalendar() {
+    const monthLabel = document.getElementById("monthLabel");
+    const monthName = new Date(currentYear, currentMonth, 1).toLocaleString("en-GB", { month: "long", year: "numeric" });
+    monthLabel.textContent = monthName;
+
+    const grid = document.getElementById("calendarGrid");
+    const list = document.getElementById("calendarList");
+    grid.querySelectorAll(".calendar-cell").forEach(el => el.remove());
+    list.innerHTML = "";
+
+    const first = new Date(currentYear, currentMonth, 1);
+    const last = new Date(currentYear, currentMonth + 1, 0);
+
+    let startOffset = (first.getDay() + 6) % 7; // make Monday=0
+    for (let i = 0; i < startOffset; i++) {
+        const empty = document.createElement("div");
+        grid.appendChild(empty);
+    }
+
+    for (let d = new Date(first); d <= last; d.setDate(d.getDate() + 1)) {
+        const dateStr = d.toISOString().slice(0,10);
+        const dayNum = d.getDate();
+        const dayName = d.toLocaleDateString("en-GB", { weekday: "long" });
+
+        const { bgClass, label } = getDayColourAndLabel(dateStr, dayName);
+
+        // grid cell
+        const cell = document.createElement("div");
+        cell.className = `calendar-cell ${bgClass}`;
+        cell.innerHTML = `
+            <div class="calendar-date">${dayNum}</div>
+            <div class="calendar-tag">${label}</div>
+        `;
+        cell.onclick = () => openDrawer(dateStr);
+        grid.appendChild(cell);
+
+        // list item
+        const item = document.createElement("div");
+        item.className = `calendar-list-item ${bgClass}`;
+        item.innerHTML = `
+            <div class="calendar-list-date">${dayName} ${dayNum}</div>
+            <div class="calendar-list-label">${label}</div>
+        `;
+        item.onclick = () => openDrawer(dateStr);
+        list.appendChild(item);
+    }
+}
+
+function getDayColourAndLabel(dateStr, dayName) {
+    const isBH = window.availability.isBankHoliday(dateStr);
+    const isSun = window.availability.isSunday(dateStr);
+
+    const override = dateOverrides[dateStr];
+    const slots = slotCache[dateStr] || {};
+
+    const weekly = weeklyTemplate[dayName] || { enabled: false };
+
+    // count slots
+    const slotValues = Object.values(slots);
+    const totalSlots = slotValues.length;
+    const availableSlots = slotValues.filter(v => v === true).length;
+
+    // override disabled day
+    if (override && override.enabled === false) {
+        return { bgClass: "bg-black", label: "Overridden: Off" };
+    }
+
+    // bank holiday
+    if (isBH) {
+        return { bgClass: "bg-red", label: "Bank Holiday" };
+    }
+
+    // sunday
+    if (isSun) {
+        return { bgClass: "bg-blue", label: weekly.enabled ? "Sunday (on)" : "Sunday (off)" };
+    }
+
+    // partial / full availability
+    if (!weekly.enabled) {
+        if (availableSlots > 0) {
+            return { bgClass: "bg-green", label: "Partially available" };
+        }
+        return { bgClass: "bg-grey", label: "Unavailable" };
+    }
+
+    if (totalSlots === 0) {
+        return { bgClass: "bg-gold", label: "Available" };
+    }
+
+    if (availableSlots === 0) {
+        return { bgClass: "bg-grey", label: "Unavailable" };
+    }
+
+    if (availableSlots === totalSlots) {
+        return { bgClass: "bg-gold", label: "Available" };
+    }
+
+    return { bgClass: "bg-green", label: "Partially available" };
+}
+
+function changeMonth(delta) {
+    currentMonth += delta;
+    if (currentMonth < 0) {
+        currentMonth = 11;
+        currentYear--;
+    } else if (currentMonth > 11) {
+        currentMonth = 0;
+        currentYear++;
+    }
+    preloadMonthData(currentYear, currentMonth).then(renderCalendar);
+}
+
+/* DRAWER */
+async function openDrawer(dateStr) {
+    selectedDateStr = dateStr;
+
+    const d = new Date(dateStr);
+    const dayName = d.toLocaleDateString("en-GB", { weekday: "long" });
+    const nice = d.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+
+    document.getElementById("drawerTitle").textContent = `${dayName} ${nice}`;
+
+    const weekly = weeklyTemplate[dayName] || { enabled: false, start: "09:00", end: "16:00" };
+    const override = dateOverrides[dateStr];
+
+    const disableDayCheckbox = document.getElementById("drawerDisableDay");
+    const startInput = document.getElementById("drawerStart");
+    const endInput = document.getElementById("drawerEnd");
+    const notesInput = document.getElementById("drawerNotes");
+
+    if (override) {
+        disableDayCheckbox.checked = (override.enabled === false);
+        startInput.value = override.start || weekly.start;
+        endInput.value = override.end || weekly.end;
+        notesInput.value = override.notes || "";
+    } else {
+        disableDayCheckbox.checked = false;
+        startInput.value = weekly.start;
+        endInput.value = weekly.end;
+        notesInput.value = "";
+    }
+
+    await loadDateData(dateStr); // refresh slots
+    renderSlots(dateStr, weekly);
+
+    document.getElementById("availabilityDrawer").classList.add("open");
+}
+
+function closeDrawer() {
+    document.getElementById("availabilityDrawer").classList.remove("open");
+    selectedDateStr = null;
+}
+
+function renderSlots(dateStr, weekly) {
+    const slotList = document.getElementById("slotList");
+    slotList.innerHTML = "";
+
+    const slots = window.availability.generateSlots();
+    const slotState = slotCache[dateStr] || {};
+
+    slots.forEach(timeStr => {
+        const baseAvailable = slotState[timeStr] !== false; // true or undefined => treat as available
+        const label = timeStr;
+
+        const item = document.createElement("div");
+        item.className = "slot-item";
+
+        const statusParts = [];
+        if (!baseAvailable) statusParts.push("Blocked");
+        if (timeStr < weekly.start || timeStr >= weekly.end) statusParts.push("Outside weekly");
+
+        const statusText = statusParts.length ? statusParts.join(" • ") : "Available";
+
+        const checked = baseAvailable && !(timeStr < weekly.start || timeStr >= weekly.end);
+
+        item.innerHTML = `
+            <div>
+                <div class="slot-label">${label}</div>
+                <div class="slot-status">${statusText}</div>
+            </div>
+            <input type="checkbox" class="slot-toggle" data-time="${timeStr}" ${checked ? "checked" : ""}>
+        `;
+
+        slotList.appendChild(item);
+    });
+}
+
+/* SAVE DATE SETTINGS */
+async function saveDateSettings() {
+    if (!currentUser || !selectedDateStr) return;
+
+    const dateStr = selectedDateStr;
+    const d = new Date(dateStr);
+    const dayName = d.toLocaleDateString("en-GB", { weekday: "long" });
+    const weekly = weeklyTemplate[dayName] || { enabled: false, start: "09:00", end: "16:00" };
+
+    const disableDay = document.getElementById("drawerDisableDay").checked;
+    const start = document.getElementById("drawerStart").value || weekly.start;
+    const end = document.getElementById("drawerEnd").value || weekly.end;
+    const notes = document.getElementById("drawerNotes").value || "";
+
+    const overrideRef = db.collection("availability").doc(dateStr).collection("meta").doc("override");
+
+    if (disableDay) {
+        await overrideRef.set({
+            enabled: false,
+            start,
+            end,
+            notes
+        }, { merge: true });
+
+        // mark all slots unavailable
+        const slots = window.availability.generateSlots();
+        const batch = db.batch();
+        slots.forEach(timeStr => {
+            const ref = db.collection("availability").doc(dateStr).collection("slots").doc(timeStr);
+            batch.set(ref, { available: false }, { merge: true });
+        });
+        await batch.commit();
+    } else {
+        await overrideRef.set({
+            enabled: true,
+            start,
+            end,
+            notes
+        }, { merge: true });
+
+        // update slots based on toggles
+        const toggles = document.querySelectorAll(".slot-toggle");
+        const batch = db.batch();
+        toggles.forEach(input => {
+            const timeStr = input.getAttribute("data-time");
+            const ref = db.collection("availability").doc(dateStr).collection("slots").doc(timeStr);
+            const available = input.checked;
+            batch.set(ref, { available }, { merge: true });
+        });
+        await batch.commit();
+    }
+
+    await preloadMonthData(currentYear, currentMonth);
+    renderCalendar();
+    closeDrawer();
+}
+
+/* LOGOUT */
+function logout() {
+    auth.signOut().then(() => {
+        window.location.href = "login.html";
+    });
 }
 </script>
 
