@@ -12,6 +12,9 @@
         margin: 0;
         font-family: Inter, sans-serif;
         background: #f7f7f7;
+    }
+
+    .layout {
         display: flex;
         min-height: 100vh;
     }
@@ -21,7 +24,7 @@
         width: 240px;
         background: white;
         border-right: 1px solid #eee;
-        padding: 25px;
+        padding: 24px;
         display: flex;
         flex-direction: column;
     }
@@ -29,17 +32,16 @@
     .sidebar h2 {
         font-family: "Playfair Display", serif;
         color: #D4AF37;
-        margin-top: 0;
-        margin-bottom: 30px;
+        margin: 0 0 26px 0;
         font-size: 24px;
     }
 
     .sidebar a {
         color: #333;
         text-decoration: none;
-        padding: 12px 0;
+        padding: 10px 0;
         display: block;
-        font-size: 16px;
+        font-size: 15px;
         font-weight: 500;
     }
 
@@ -47,46 +49,52 @@
         color: #D4AF37;
     }
 
+    .sidebar a.active {
+        color: #D4AF37;
+        font-weight: 600;
+    }
+
     .logout-btn {
         margin-top: auto;
-        padding: 12px;
+        padding: 11px;
         background: #D4AF37;
         color: white;
         text-align: center;
         border-radius: 6px;
         cursor: pointer;
         font-weight: 600;
+        font-size: 14px;
     }
 
     .sidebar-footer {
-        margin-top: 20px;
-        padding-top: 15px;
+        margin-top: 18px;
+        padding-top: 14px;
         border-top: 1px solid #eee;
         font-size: 12px;
         color: #777;
         line-height: 1.4;
     }
 
-    /* MAIN CONTENT */
+    /* MAIN */
     .main {
         flex: 1;
-        padding: 40px;
+        padding: 30px 32px;
         overflow-y: auto;
     }
 
     .header {
-        font-size: 28px;
+        font-size: 26px;
         font-family: "Playfair Display", serif;
         color: #D4AF37;
-        margin-bottom: 25px;
+        margin-bottom: 20px;
     }
 
     .card {
         background: white;
-        padding: 30px;
+        padding: 28px 26px;
         border-radius: 14px;
         box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-        max-width: 650px;
+        max-width: 720px;
     }
 
     .profile-photo {
@@ -101,13 +109,14 @@
 
     .profile-row {
         margin-bottom: 14px;
-        font-size: 16px;
+        font-size: 15px;
+        color: #444;
     }
 
     .profile-row strong {
         display: inline-block;
         width: 140px;
-        color: #444;
+        color: #222;
     }
 
     .edit-btn {
@@ -119,53 +128,100 @@
         border-radius: 8px;
         text-decoration: none;
         font-weight: 600;
-        font-size: 16px;
+        font-size: 15px;
     }
 
     .edit-btn:hover {
         opacity: 0.9;
+    }
+
+    @media (max-width: 900px) {
+        .layout {
+            flex-direction: column;
+        }
+        .sidebar {
+            width: 100%;
+            border-right: none;
+            border-bottom: 1px solid #eee;
+            flex-direction: row;
+            align-items: center;
+            gap: 18px;
+            overflow-x: auto;
+        }
+        .sidebar h2 {
+            margin-bottom: 0;
+        }
+        .sidebar a {
+            padding: 8px 0;
+            white-space: nowrap;
+        }
+        .logout-btn, .sidebar-footer {
+            display: none;
+        }
+        .main {
+            padding: 20px;
+        }
     }
 </style>
 </head>
 
 <body>
 
-<!-- SIDEBAR -->
-<div class="sidebar">
-    <h2>Witness Hub</h2>
-    <a href="dashboard.html">Dashboard</a>
-    <a href="myjobs.html">My Jobs</a>
-    <a href="availability.html">Availability</a>
-    <a href="profile.html" style="color:#D4AF37;font-weight:600;">Profile</a>
-    <a href="profile-edit.html">Edit Profile</a>
+<div class="layout">
 
-    <div class="logout-btn" onclick="logout()">Logout</div>
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <h2>Witness Hub</h2>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="myjobs.html">My Jobs</a>
+        <a href="availability.html">Availability</a>
+        <a href="profile.html" class="active">Profile</a>
+        <a href="profile-edit.html">Edit Profile</a>
 
-    <div class="sidebar-footer">
-        © Need A Witness UK<br>
-        Witness Hub v1.0
+        <div class="logout-btn" onclick="logout()">Logout</div>
+
+        <div class="sidebar-footer">
+            © Need A Witness UK<br>
+            Witness Hub v1.0
+        </div>
     </div>
-</div>
 
-<!-- MAIN CONTENT -->
-<div class="main">
-    <div class="header">Your Profile</div>
+    <!-- MAIN -->
+    <div class="main">
+        <div class="header">Your Profile</div>
 
-    <div class="card">
+        <div class="card">
 
-        <!-- PROFILE PHOTO -->
-        <img id="profilePhoto" class="profile-photo" src="default-avatar.png">
+            <!-- PROFILE PHOTO -->
+            <img id="profilePhoto" class="profile-photo" src="hub/default-single.png">
 
-        <div class="profile-row"><strong>Email:</strong> <span id="email"></span></div>
-        <div class="profile-row"><strong>Name:</strong> <span id="name"></span></div>
-        <div class="profile-row"><strong>Team Name:</strong> <span id="teamName"></span></div>
-        <div class="profile-row"><strong>Partner 1:</strong> <span id="partner1"></span></div>
-        <div class="profile-row"><strong>Partner 2:</strong> <span id="partner2"></span></div>
-        <div class="profile-row"><strong>Phone:</strong> <span id="phone"></span></div>
-        <div class="profile-row"><strong>Location:</strong> <span id="location"></span></div>
-        <div class="profile-row"><strong>Bio:</strong> <span id="bio"></span></div>
+            <div class="profile-row"><strong>Email:</strong> <span id="email"></span></div>
 
-        <a class="edit-btn" href="profile-edit.html">Edit Profile</a>
+            <!-- SINGLE -->
+            <div id="singleNameRow" class="profile-row">
+                <strong>Name:</strong> <span id="name"></span>
+            </div>
+
+            <!-- COUPLE -->
+            <div id="teamNameRow" class="profile-row" style="display:none;">
+                <strong>Team Name:</strong> <span id="teamName"></span>
+            </div>
+
+            <div id="partner1Row" class="profile-row" style="display:none;">
+                <strong>Partner 1:</strong> <span id="partner1"></span>
+            </div>
+
+            <div id="partner2Row" class="profile-row" style="display:none;">
+                <strong>Partner 2:</strong> <span id="partner2"></span>
+            </div>
+
+            <!-- SHARED -->
+            <div class="profile-row"><strong>Phone:</strong> <span id="phone"></span></div>
+            <div class="profile-row"><strong>Location:</strong> <span id="location"></span></div>
+            <div class="profile-row"><strong>Bio:</strong> <span id="bio"></span></div>
+
+            <a class="edit-btn" href="profile-edit.html">Edit Profile</a>
+        </div>
     </div>
 </div>
 
@@ -176,6 +232,13 @@
 <script src="firebase.js"></script>
 
 <script>
+function getProfilePhoto(data) {
+    return data.photoURL ||
+        (data.type === "couple"
+            ? "hub/default-couple.png"
+            : "hub/default-single.png");
+}
+
 auth.onAuthStateChanged(async user => {
     if (!user) {
         window.location.href = "login.html";
@@ -185,29 +248,34 @@ auth.onAuthStateChanged(async user => {
     const doc = await db.collection("users").doc(user.uid).get();
     const data = doc.data();
 
-    // Load photo
-    const photo = document.getElementById("profilePhoto");
-    photo.src = data.photoURL || "default-avatar.png";
+    // Photo
+    document.getElementById("profilePhoto").src = getProfilePhoto(data);
 
-    // Shared fields
-    email.textContent = user.email;
-    phone.textContent = data.phone || "Not set";
-    location.textContent = data.location || "Not set";
-    bio.textContent = data.bio || "No bio yet";
+    // Shared
+    document.getElementById("email").textContent = user.email;
+    document.getElementById("phone").textContent = data.phone || "Not set";
+    document.getElementById("location").textContent = data.location || "Not set";
+    document.getElementById("bio").textContent = data.bio || "No bio yet";
 
     // Single vs Couple
-    if (data.type === "single") {
-        name.textContent = data.name;
-        teamName.textContent = "—";
-        partner1.textContent = "—";
-        partner2.textContent = "—";
-    }
-
     if (data.type === "couple") {
-        name.textContent = "—";
-        teamName.textContent = data.teamName;
-        partner1.textContent = data.partner1Name;
-        partner2.textContent = data.partner2Name;
+        document.getElementById("singleNameRow").style.display = "none";
+
+        document.getElementById("teamNameRow").style.display = "block";
+        document.getElementById("partner1Row").style.display = "block";
+        document.getElementById("partner2Row").style.display = "block";
+
+        document.getElementById("teamName").textContent = data.teamName || "—";
+        document.getElementById("partner1").textContent = data.partner1Name || "—";
+        document.getElementById("partner2").textContent = data.partner2Name || "—";
+    } else {
+        document.getElementById("singleNameRow").style.display = "block";
+
+        document.getElementById("teamNameRow").style.display = "none";
+        document.getElementById("partner1Row").style.display = "none";
+        document.getElementById("partner2Row").style.display = "none";
+
+        document.getElementById("name").textContent = data.name || "Not set";
     }
 });
 
