@@ -341,20 +341,36 @@ async function submitBooking() {
         createdAt: new Date().toISOString()
     };
 
+    // Save job
     await db.collection("jobs").add(job);
 
+    // Mark slot as booked
     await db.collection("availability")
         .doc(date)
         .collection("slots")
         .doc(time)
         .set({ booked: true }, { merge: true });
 
-    // ⭐ SEND ADMIN EMAIL
-    emailjs.send("service_r8gqd2d", "template_3ow2eoj", {})
-        .catch(err => console.error("EmailJS error:", err));
+    // ⭐ SEND ADMIN EMAIL WITH FULL DETAILS
+    emailjs.send("service_r8gqd2d", "template_50xe6ck", {
+        name: job.customer.name,
+        email: job.customer.email,
+        phone: job.customer.phone,
+        date: job.date,
+        time: job.time,
+        location: job.customer.location,
+        witnessCount: job.witnessCount,
+        totalPrice: job.totalPrice,
+        deposit: job.deposit,
+        travelPostcode: job.addOns.travelPostcode,
+        travelCost: job.addOns.travelCost,
+        notes: job.customer.notes
+    }).catch(err => console.error("EmailJS error:", err));
 
+    // Redirect
     window.location.href = "booking-confirmed.html";
 }
+
 
 window.submitBooking = submitBooking;
 </script>
