@@ -1,159 +1,171 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin Dashboard – Need A Witness UK</title>
+<!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>Admin Dashboard – Need A Witness UK</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-<style>
-    body {
-        margin: 0;
-        font-family: Inter, sans-serif;
-        background: #f7f7f7;
-    }
+<style> body { margin: 0; font-family: Inter, sans-serif; background: #f7f7f7; }
 
-    .layout {
-        display: flex;
-        min-height: 100vh;
-    }
+.layout {
+    display: flex;
+    min-height: 100vh;
+}
 
-    /* SIDEBAR */
-    .sidebar {
-        width: 240px;
-        background: white;
-        border-right: 1px solid #eee;
-        padding: 25px;
-        display: flex;
-        flex-direction: column;
-    }
+/* SIDEBAR */
+.sidebar {
+    width: 240px;
+    background: white;
+    border-right: 1px solid #eee;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+}
 
-    .sidebar h2 {
-        font-family: "Playfair Display", serif;
-        color: #D4AF37;
-        margin-top: 0;
-        margin-bottom: 30px;
-        font-size: 24px;
-    }
+.sidebar h2 {
+    font-family: "Playfair Display", serif;
+    color: #D4AF37;
+    margin-top: 0;
+    margin-bottom: 30px;
+    font-size: 24px;
+}
 
-    .sidebar a {
-        color: #333;
-        text-decoration: none;
-        padding: 12px 0;
-        display: block;
-        font-size: 16px;
-        font-weight: 500;
-    }
+.sidebar a {
+    color: #333;
+    text-decoration: none;
+    padding: 12px 0;
+    display: block;
+    font-size: 16px;
+    font-weight: 500;
+}
 
-    .sidebar a:hover,
-    .sidebar a.active {
-        color: #D4AF37;
-        font-weight: 600;
-    }
+.sidebar a:hover,
+.sidebar a.active {
+    color: #D4AF37;
+    font-weight: 600;
+}
 
-    .logout-btn {
-        margin-top: auto;
-        padding: 12px;
-        background: #D4AF37;
-        color: white;
-        text-align: center;
-        border-radius: 6px;
-        cursor: pointer;
-        font-weight: 600;
-    }
+.logout-btn {
+    margin-top: auto;
+    padding: 12px;
+    background: #D4AF37;
+    color: white;
+    text-align: center;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+}
 
-    .sidebar-footer {
-        margin-top: 20px;
-        padding-top: 15px;
-        border-top: 1px solid #eee;
-        font-size: 12px;
-        color: #777;
-        line-height: 1.4;
-    }
+.sidebar-footer {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+    font-size: 12px;
+    color: #777;
+    line-height: 1.4;
+}
 
-    /* MAIN CONTENT */
-    .main {
-        flex: 1;
-        padding: 30px;
-        overflow-y: auto;
-    }
+/* MAIN CONTENT */
+.main {
+    flex: 1;
+    padding: 30px;
+    overflow-y: auto;
+}
 
-    .header {
-        font-size: 28px;
-        margin-bottom: 25px;
-        font-family: "Playfair Display", serif;
-        color: #D4AF37;
-    }
+.header {
+    font-size: 28px;
+    margin-bottom: 25px;
+    font-family: "Playfair Display", serif;
+    color: #D4AF37;
+}
 
-    .section {
-        background: white;
-        padding: 20px;
-        border-radius: 12px;
-        margin-bottom: 25px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-    }
+.section {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 25px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
 
-    .section h3 {
-        margin-top: 0;
-        font-family: "Playfair Display", serif;
-        color: #D4AF37;
-    }
+.section h3 {
+    margin-top: 0;
+    font-family: "Playfair Display", serif;
+    color: #D4AF37;
+}
 
-    .item {
-        padding: 12px 0;
-        border-bottom: 1px solid #eee;
-        cursor: pointer;
-    }
+.item {
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+}
 
-    .item:last-child {
-        border-bottom: none;
-    }
+.item:last-child {
+    border-bottom: none;
+}
 
-    .item:hover {
-        background: #fafafa;
-    }
+.item:hover {
+    background: #fafafa;
+}
 
-    .status-badge {
-        display: inline-block;
-        padding: 4px 8px;
-        border-radius: 999px;
-        font-size: 11px;
-        font-weight: 600;
-        margin-left: 6px;
-    }
+.status-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-left: 6px;
+}
 
-    .pending { background: #fff4d6; color: #8a6d00; }
-    .rejected { background: #ffe6e6; color: #8a0000; }
-    .active { background: #d6ffe0; color: #006d2a; }
-</style>
-</head>
+.pending { background: #fff4d6; color: #8a6d00; }
+.rejected { background: #ffe6e6; color: #8a0000; }
+.active { background: #d6ffe0; color: #006d2a; }
+
+/* GRID LAYOUT */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+}
+
+#revenueChart,
+#monthlyRevenueChart {
+    max-width: 100%;
+    height: 220px !important;
+}
+
+@media (max-width: 900px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+</style> </head>
 
 <body>
 
 <div class="layout">
 
-    <!-- SIDEBAR -->
-    <div class="sidebar">
-        <h2>Admin Panel</h2>
+<!-- SIDEBAR -->
+<div class="sidebar">
+    <h2>Admin Panel</h2>
 
-        <a href="admin-dashboard.html" class="active">Dashboard</a>
-        <a href="admin-witnesses.html">Witnesses</a>
-        <a href="admin-jobs.html">Jobs</a>
-        <a href="admin-calendar.html">Calendar</a>
+    <a href="admin-dashboard.html" class="active">Dashboard</a>
+    <a href="admin-witnesses.html">Witnesses</a>
+    <a href="admin-jobs.html">Jobs</a>
+    <a href="admin-calendar.html">Calendar</a>
 
-        <div class="logout-btn" onclick="logout()">Logout</div>
+    <div class="logout-btn" onclick="logout()">Logout</div>
 
-        <div class="sidebar-footer">
-            © Need A Witness UK<br>
-            Admin Panel v1.0
-        </div>
+    <div class="sidebar-footer">
+        © Need A Witness UK<br>
+        Admin Panel v1.0
     </div>
+</div>
 
-    <!-- MAIN CONTENT -->
-    <div class="main">
+<!-- MAIN CONTENT -->
+<div class="main">
 
-        <div class="header">Admin Dashboard</div>
+    <div class="header">Admin Dashboard</div>
+
+    <!-- GRID WRAPPER -->
+    <div class="dashboard-grid">
 
         <!-- PENDING JOBS -->
         <div class="section">
@@ -167,19 +179,6 @@
             <div id="nextJob">Loading...</div>
         </div>
 
-        <!-- REVENUE PANEL -->
-        <div class="section">
-            <h3>Revenue Overview</h3>
-            <div id="revenueTotals">Loading...</div>
-            <canvas id="revenueChart" width="300" height="300"></canvas>
-        </div>
-
-        <!-- MONTHLY REVENUE -->
-        <div class="section">
-            <h3>Monthly Revenue</h3>
-            <canvas id="monthlyRevenueChart" height="200"></canvas>
-        </div>
-
         <!-- TODAY & THIS WEEK -->
         <div class="section">
             <h3>Today & This Week</h3>
@@ -188,175 +187,153 @@
             <div id="weekJobs">Loading...</div>
         </div>
 
+        <!-- REVENUE PANEL -->
+        <div class="section">
+            <h3>Revenue Overview</h3>
+            <div id="revenueTotals">Loading...</div>
+            <canvas id="revenueChart"></canvas>
+        </div>
+
+        <!-- MONTHLY REVENUE -->
+        <div class="section">
+            <h3>Monthly Revenue</h3>
+            <canvas id="monthlyRevenueChart"></canvas>
+        </div>
+
         <!-- WITNESS LEADERBOARD -->
         <div class="section">
             <h3>Top Witnesses</h3>
             <div id="witnessLeaderboard">Loading...</div>
         </div>
 
-        <!-- PENDING WITNESSES -->
-        <div class="section">
-            <h3>Pending Witnesses</h3>
-            <div id="pendingList">Loading...</div>
-        </div>
-
-        <!-- ACTIVE WITNESSES -->
-        <div class="section">
-            <h3>Active Witnesses</h3>
-            <div id="activeList">Loading...</div>
-        </div>
-
-        <!-- REJECTED WITNESSES -->
-        <div class="section">
-            <h3>Rejected Witnesses</h3>
-            <div id="rejectedList">Loading...</div>
-        </div>
-
     </div>
+
+    <!-- FULL-WIDTH SECTIONS -->
+    <div class="section">
+        <h3>Pending Witnesses</h3>
+        <div id="pendingList">Loading...</div>
+    </div>
+
+    <div class="section">
+        <h3>Active Witnesses</h3>
+        <div id="activeList">Loading...</div>
+    </div>
+
+    <div class="section">
+        <h3>Rejected Witnesses</h3>
+        <div id="rejectedList">Loading...</div>
+    </div>
+
 </div>
 
-<!-- FIREBASE -->
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-<script src="../hub/firebase.js"></script>
+</div>
 
-<!-- CHART.JS -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- FIREBASE --> <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script> <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script> <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script> <script src="../hub/firebase.js"></script>
 
-<!-- ANALYTICS MODULE -->
-<script src="admin-analytics.js"></script>
+<!-- CHART.JS --> <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<script>
-auth.onAuthStateChanged(async (user) => {
-    if (!user) {
-        window.location.href = "../hub/login.html";
-        return;
-    }
+<!-- ANALYTICS MODULE --> <script src="admin-analytics.js"></script>
 
-    loadWitnesses();
-    loadPendingJobs();
-    loadNextJob();
+<script> auth.onAuthStateChanged(async (user) => { if (!user) { window.location.href = "../hub/login.html"; return; }
 
-    // Analytics
-    loadRevenue();
-    loadMonthlyRevenue();
-    loadTodayAndWeekJobs();
-    loadWitnessLeaderboard();
+loadWitnesses();
+loadPendingJobs();
+loadNextJob();
+
+// Analytics
+loadRevenue();
+loadMonthlyRevenue();
+loadTodayAndWeekJobs();
+loadWitnessLeaderboard();
+
 });
 
-/* ------------------------------
-   LOAD WITNESSES
------------------------------- */
-function loadWitnesses() {
-    db.collection("users").onSnapshot(snapshot => {
-        let pendingHTML = "";
-        let activeHTML = "";
-        let rejectedHTML = "";
+/* ------------------------------ LOAD WITNESSES ------------------------------ */ function loadWitnesses() { db.collection("users").onSnapshot(snapshot => { let pendingHTML = ""; let activeHTML = ""; let rejectedHTML = "";
+
+    snapshot.forEach(doc => {
+        const u = doc.data();
+        const id = doc.id;
+
+        const name = u.type === "couple"
+            ? `${u.partner1Name} & ${u.partner2Name} (${u.teamName})`
+            : u.name;
+
+        const clickable = `<div class="item" onclick="viewWitness('${id}')"><strong>${name}</strong>`;
+
+        if (u.status === "pending") {
+            pendingHTML += `${clickable}<span class="status-badge pending">Pending</span></div>`;
+        }
+
+        if (u.status === "active") {
+            activeHTML += `${clickable}<span class="status-badge active">Active</span></div>`;
+        }
+
+        if (u.status === "rejected") {
+            rejectedHTML += `${clickable}<span class="status-badge rejected">Rejected</span></div>`;
+        }
+    });
+
+    pendingList.innerHTML = pendingHTML || "<p>No pending witnesses.</p>";
+    activeList.innerHTML = activeHTML || "<p>No active witnesses yet.</p>";
+    rejectedList.innerHTML = rejectedHTML || "<p>No rejected witnesses.</p>";
+});
+
+}
+
+/* ------------------------------ LOAD PENDING JOBS ------------------------------ */ function loadPendingJobs() { db.collection("jobs") .where("status", "==", "pending") .onSnapshot(snapshot => { let html = "";
 
         snapshot.forEach(doc => {
-            const u = doc.data();
-            const id = doc.id;
-
-            const name = u.type === "couple"
-                ? `${u.partner1Name} & ${u.partner2Name} (${u.teamName})`
-                : u.name;
-
-            const clickable = `<div class="item" onclick="viewWitness('${id}')"><strong>${name}</strong>`;
-
-            if (u.status === "pending") {
-                pendingHTML += `${clickable}<span class="status-badge pending">Pending</span></div>`;
-            }
-
-            if (u.status === "active") {
-                activeHTML += `${clickable}<span class="status-badge active">Active</span></div>`;
-            }
-
-            if (u.status === "rejected") {
-                rejectedHTML += `${clickable}<span class="status-badge rejected">Rejected</span></div>`;
-            }
-        });
-
-        pendingList.innerHTML = pendingHTML || "<p>No pending witnesses.</p>";
-        activeList.innerHTML = activeHTML || "<p>No active witnesses yet.</p>";
-        rejectedList.innerHTML = rejectedHTML || "<p>No rejected witnesses.</p>";
-    });
-}
-
-/* ------------------------------
-   LOAD PENDING JOBS
------------------------------- */
-function loadPendingJobs() {
-    db.collection("jobs")
-        .where("status", "==", "pending")
-        .onSnapshot(snapshot => {
-            let html = "";
-
-            snapshot.forEach(doc => {
-                const j = doc.data();
-                const id = doc.id;
-
-                html += `
-                    <div class="item" onclick="viewJob('${id}')">
-                        <strong>${j.customer?.name || "Unknown"}</strong>
-                        <span class="status-badge pending">Pending</span><br>
-                        ${j.date} at ${j.time}
-                    </div>
-                `;
-            });
-
-            pendingJobs.innerHTML = html || "<p>No pending jobs.</p>";
-        });
-}
-
-/* ------------------------------
-   LOAD NEXT UPCOMING JOB
------------------------------- */
-function loadNextJob() {
-    db.collection("jobs")
-        .orderBy("date")
-        .orderBy("time")
-        .limit(1)
-        .onSnapshot(snapshot => {
-            if (snapshot.empty) {
-                nextJob.innerHTML = "<p>No upcoming jobs.</p>";
-                return;
-            }
-
-            const doc = snapshot.docs[0];
             const j = doc.data();
             const id = doc.id;
 
-            nextJob.innerHTML = `
+            html += `
                 <div class="item" onclick="viewJob('${id}')">
-                    <strong>${j.customer?.name || "Unknown"}</strong><br>
-                    ${j.date} at ${j.time}<br>
-                    <span class="status-badge ${j.status}">${j.status}</span>
+                    <strong>${j.customer?.name || "Unknown"}</strong>
+                    <span class="status-badge pending">Pending</span><br>
+                    ${j.date} at ${j.time}
                 </div>
             `;
         });
-}
 
-/* ------------------------------
-   NAVIGATION
------------------------------- */
-function viewWitness(uid) {
-    window.location.href = "admin-witness-detail.html?id=" + uid;
-}
-
-function viewJob(jid) {
-    window.location.href = "admin-job-detail.html?id=" + jid;
-}
-
-/* ------------------------------
-   LOGOUT
------------------------------- */
-function logout() {
-    auth.signOut().then(() => {
-        window.location.href = "../hub/login.html";
+        pendingJobs.innerHTML = html || "<p>No pending jobs.</p>";
     });
-}
-</script>
 
-</body>
+}
+
+/* ------------------------------ LOAD NEXT UPCOMING JOB ------------------------------ */ function loadNextJob() { const today = new Date().toISOString().split("T")[0];
+
+db.collection("jobs")
+    .where("status", "==", "approved")
+    .where("date", ">=", today)
+    .orderBy("date")
+    .orderBy("time")
+    .limit(1)
+    .onSnapshot(snapshot => {
+        if (snapshot.empty) {
+            nextJob.innerHTML = "<p>No upcoming jobs.</p>";
+            return;
+        }
+
+        const doc = snapshot.docs[0];
+        const j = doc.data();
+        const id = doc.id;
+
+        nextJob.innerHTML = `
+            <div class="item" onclick="viewJob('${id}')">
+                <strong>${j.customer?.name || "Unknown"}</strong><br>
+                ${j.date} at ${j.time}<br>
+                <span class="status-badge ${j.status}">${j.status}</span>
+            </div>
+        `;
+    });
+
+}
+
+/* ------------------------------ NAVIGATION ------------------------------ */ function viewWitness(uid) { window.location.href = "admin-witness-detail.html?id=" + uid; }
+
+function viewJob(jid) { window.location.href = "admin-job-detail.html?id=" + jid; }
+
+/* ------------------------------ LOGOUT ------------------------------ */ function logout() { auth.signOut().then(() => { window.location.href = "../hub/login.html"; }); } </script>
+
+</body> 
 </html>
