@@ -103,7 +103,7 @@ body {
     color: #C19A2B;
 }
 
-/* MINI CARDS (4 IN A ROW) */
+/* MINI CARDS */
 .mini-card-row {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -132,7 +132,7 @@ body {
     color: #C19A2B;
 }
 
-/* REVENUE FILTER BAR */
+/* FILTER BAR */
 .filter-bar {
     display: flex;
     gap: 10px;
@@ -162,8 +162,8 @@ body {
 }
 
 canvas {
-    width: 100% !important;
-    height: 100% !important;
+    width: 100%;
+    height: 300px;
 }
 
 /* STATUS BADGES */
@@ -215,7 +215,7 @@ canvas {
 
     <div class="header">Admin Dashboard</div>
 
-    <!-- MINI CARDS (4 IN A ROW) -->
+    <!-- MINI CARDS -->
     <div class="mini-card-row">
         <div class="mini-card">
             <div class="label">Total Jobs</div>
@@ -242,7 +242,6 @@ canvas {
     <div class="section">
         <h3>Revenue Overview</h3>
 
-        <!-- FILTER BAR -->
         <div class="filter-bar">
             <div class="filter-btn active" onclick="setRevenueFilter('week')">Week</div>
             <div class="filter-btn" onclick="setRevenueFilter('month')">Month</div>
@@ -251,11 +250,11 @@ canvas {
             <div class="filter-btn" onclick="setRevenueFilter('all')">All Time</div>
         </div>
 
-        <!-- CHART -->
         <div class="chart-container">
             <canvas id="revenueChart"></canvas>
         </div>
     </div>
+
     <!-- PENDING JOBS -->
     <div class="section">
         <h3>Pending Jobs</h3>
@@ -290,7 +289,7 @@ canvas {
         <div id="witnessLeaderboard">Loading...</div>
     </div>
 
-    <!-- FULL-WIDTH SECTIONS -->
+    <!-- WITNESS LISTS -->
     <div class="section">
         <h3>Pending Witnesses</h3>
         <div id="pendingList">Loading...</div>
@@ -305,6 +304,10 @@ canvas {
         <h3>Rejected Witnesses</h3>
         <div id="rejectedList">Loading...</div>
     </div>
+
+</div> <!-- end .main -->
+</div> <!-- end .layout -->
+
 <!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
@@ -324,19 +327,17 @@ auth.onAuthStateChanged(async (user) => {
         return;
     }
 
-    // Load witness lists
     loadWitnesses();
-
-    // Load job sections
     loadPendingJobs();
     loadNextJob();
 
-    // Load analytics
-    loadRevenue();            // Will be replaced with dynamic filter logic
+    // NEW analytics engine
+    loadRevenueData();
     loadMonthlyRevenue();
     loadTodayAndWeekJobs();
     loadWitnessLeaderboard();
 });
+
 /* ------------------------------ LOAD WITNESSES ------------------------------ */
 function loadWitnesses() {
     db.collection("users").onSnapshot(snapshot => {
@@ -406,7 +407,7 @@ function loadNextJob() {
 
     db.collection("jobs")
         .where("status", "==", "approved")
-        .where("date", ">=", today)
+        .where("date", ">", today)
         .orderBy("date")
         .orderBy("time")
         .limit(1)
@@ -446,9 +447,6 @@ function logout() {
     });
 }
 </script>
-</div> <!-- end .main -->
-
-</div> <!-- end .layout -->
 
 </body>
 </html>
