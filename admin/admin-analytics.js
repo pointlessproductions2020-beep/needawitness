@@ -10,7 +10,6 @@ let revenueChartInstance = null;
 function setRevenueFilter(type, el) {
     revenueFilter = type;
 
-    // Update button UI
     document.querySelectorAll(".filter-btn").forEach(btn => btn.classList.remove("active"));
     el.classList.add("active");
 
@@ -88,7 +87,6 @@ function buildRevenueChart(data) {
 
     if (revenueChartInstance) revenueChartInstance.destroy();
 
-    // GOLD → CHAMPAGNE → TRANSPARENT gradient
     const gradient = ctx.createLinearGradient(0, 0, 0, 300);
     gradient.addColorStop(0, "#C19A2B");
     gradient.addColorStop(0.5, "#E8D7A8");
