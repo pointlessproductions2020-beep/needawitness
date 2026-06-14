@@ -167,7 +167,7 @@
         <h2>Admin Panel</h2>
         <a href="admin-dashboard.html">Dashboard</a>
         <a href="admin-witnesses.html">Witnesses</a>
-        <a href="admin-jobs.html">Jobs</a>
+        <a href="admin-jobs.html" class="active">Jobs</a>
 
         <div class="logout-btn" onclick="logout()">Logout</div>
 
@@ -258,10 +258,28 @@ function renderFiltered() {
     let rows = "";
 
     allJobs.forEach(j => {
-        const couple = j.coupleName || "—";
-        const date = j.date || "—";
-        const time = j.time || "—";
-        const location = j.location || "—";
+
+        // ⭐ Support BOTH old and new job formats
+        const couple =
+            j.customer?.name ||
+            j.coupleName ||
+            "—";
+
+        const date =
+            j.customer?.date ||
+            j.date ||
+            "—";
+
+        const time =
+            j.customer?.time ||
+            j.time ||
+            "—";
+
+        const location =
+            j.customer?.location ||
+            j.location ||
+            "—";
+
         const status = j.status || "pending";
 
         const witnesses = j.assignedWitnesses?.length
