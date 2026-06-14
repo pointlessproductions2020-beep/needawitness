@@ -243,11 +243,11 @@ canvas {
         <h3>Revenue Overview</h3>
 
         <div class="filter-bar">
-            <div class="filter-btn active" onclick="setRevenueFilter('week')">Week</div>
-            <div class="filter-btn" onclick="setRevenueFilter('month')">Month</div>
-            <div class="filter-btn" onclick="setRevenueFilter('year')">Year</div>
-            <div class="filter-btn" onclick="setRevenueFilter('12months')">12 Months</div>
-            <div class="filter-btn" onclick="setRevenueFilter('all')">All Time</div>
+            <div class="filter-btn active" onclick="setRevenueFilter('week', this)">Week</div>
+            <div class="filter-btn" onclick="setRevenueFilter('month', this)">Month</div>
+            <div class="filter-btn" onclick="setRevenueFilter('year', this)">Year</div>
+            <div class="filter-btn" onclick="setRevenueFilter('12months', this)">12 Months</div>
+            <div class="filter-btn" onclick="setRevenueFilter('all', this)">All Time</div>
         </div>
 
         <div class="chart-container">
@@ -331,7 +331,6 @@ auth.onAuthStateChanged(async (user) => {
     loadPendingJobs();
     loadNextJob();
 
-    // NEW analytics engine
     loadRevenueData();
     loadMonthlyRevenue();
     loadTodayAndWeekJobs();
