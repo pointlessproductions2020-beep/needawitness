@@ -3,16 +3,16 @@
    Luxury Gold + Champagne Gradient Line Chart
    ============================================================ */
 
-let revenueFilter = "month"; // default
+let revenueFilter = "month"; 
 let revenueChartInstance = null;
 
 /* ------------------------------ FILTER HANDLER ------------------------------ */
-function setRevenueFilter(type) {
+function setRevenueFilter(type, el) {
     revenueFilter = type;
 
     // Update button UI
     document.querySelectorAll(".filter-btn").forEach(btn => btn.classList.remove("active"));
-    event.target.classList.add("active");
+    el.classList.add("active");
 
     loadRevenueData();
 }
@@ -23,13 +23,9 @@ function loadRevenueData() {
         const jobs = [];
         snapshot.forEach(doc => jobs.push(doc.data()));
 
-        // Apply filter
         const filtered = applyRevenueFilter(jobs, revenueFilter);
 
-        // Build chart
         buildRevenueChart(filtered);
-
-        // Update mini cards
         updateMiniCards(jobs);
     });
 }
@@ -43,7 +39,7 @@ function applyRevenueFilter(jobs, filter) {
         if (!j.date) return;
 
         const jobDate = new Date(j.date);
-        const key = j.date; // daily buckets
+        const key = j.date;
 
         let include = false;
 
@@ -94,9 +90,9 @@ function buildRevenueChart(data) {
 
     // GOLD → CHAMPAGNE → TRANSPARENT gradient
     const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-    gradient.addColorStop(0, "#C19A2B");      // luxury gold
-    gradient.addColorStop(0.5, "#E8D7A8");    // champagne glow
-    gradient.addColorStop(1, "rgba(255,255,255,0)"); // fade out
+    gradient.addColorStop(0, "#C19A2B");
+    gradient.addColorStop(0.5, "#E8D7A8");
+    gradient.addColorStop(1, "rgba(255,255,255,0)");
 
     revenueChartInstance = new Chart(ctx, {
         type: "line",
@@ -116,6 +112,8 @@ function buildRevenueChart(data) {
         },
         options: {
             responsive: true,
+            maintainAspectRatio: false,
+            devicePixelRatio: 2,
             scales: {
                 y: { beginAtZero: true }
             },
@@ -167,7 +165,7 @@ function loadMonthlyRevenue() {
             const j = doc.data();
             if (!j.date) return;
 
-            const monthKey = j.date.slice(0, 7); // YYYY-MM
+            const monthKey = j.date.slice(0, 7);
             if (!buckets[monthKey]) buckets[monthKey] = 0;
 
             buckets[monthKey] += j.amountPaid || 0;
@@ -192,6 +190,9 @@ function loadMonthlyRevenue() {
                 }]
             },
             options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                devicePixelRatio: 2,
                 scales: {
                     y: { beginAtZero: true }
                 }
