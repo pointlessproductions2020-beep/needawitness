@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Complete Your Booking – Need A Witness UK</title>
+<meta name="description" content="Complete your Need A Witness UK booking securely online.">
+
+<!-- ⭐ EMAILJS MUST LOAD FIRST ⭐ -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<script>
+    emailjs.init("l7EiT6u2dOg8bSFB3");
+</script>
+
+<!-- ⭐ LOAD AVAILABILITY.JS (MATCH VERSION WITH INDEX.HTML) ⭐ -->
+<script src="/hub/availability.js?v=12"></script>
+
+<style>
+    :root {
+        --ink: #25231f;
+        --muted: #6e685f;
+        --cream: #f8f5ef;
+        --paper: #fffdf9;
+        --gold: #b98a45;
+        --gold-dark: #946d34;
+        --gold-soft: #efe2cc;
+        --line: #e7dfd2;
+        --green: #446052;
+        --shadow: 0 18px 50px rgba(45, 38, 28, 0.10);
+        --radius-lg: 28px;
+        --radius-md: 18px;
+        --radius-sm: 12px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+        margin: 0;
+        font-family: "Helvetica Neue", Arial, sans-serif;
+        background:
+            radial-gradient(circle at top left, rgba(185,138,69,0.10), transparent 34rem),
+            var(--cream);
+        color: var(--ink);
+        line-height: 1.6;
+    }
+
+    a { color: inherit; }
+
+    .site-header {
+        background: rgba(255,253,249,0.94);
+        border-bottom: 1px solid var(--line);
+        backdrop-filter: blur(14px);
+    }
+
+    .header-inner {
+        width: min(1160px, calc(100% - 40px));
+        min-height: 86px;
+        margin: auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+    }
+
+    .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        text-decoration: none;
+        font-weight: 800;
+    }
+
+    .brand img {
+        width: 56px;
+        height: 56px;
+        object-fit: contain;
+    }
+
+    .brand span {
+        max-width: 145px;
+        line-height: 1.15;
+    }
+
+    .back-link {
+        text-decoration: none;
+        color: var(--gold-dark);
+        font-weight: 750;
+        font-size: 0.92rem;
+    }
+
+    .page-shell {
+        width: min(1120px, calc(100% - 40px));
+        margin: 0 auto;
+        padding: 54px 0 80px;
+    }
+
+    .page-intro {
+        max-width: 760px;
+        margin: 0 auto 30px;
+        text-align: center;
+    }
+
+    .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        margin-bottom: 14px;
+        color: var(--gold-dark);
+        font-weight: 800;
+        font-size: 0.76rem;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+    }
+
+    .eyebrow::before,
+    .eyebrow::after {
+        content: "";
+        width: 26px;
+        height: 1px;
+        background: currentColor;
+    }
+
+    h1, h2, h3 {
+        margin-top: 0;
+        font-family: Georgia, "Times New Roman", serif;
+        color: var(--ink);
+        line-height: 1.15;
+    }
+
+    h1 {
+        margin-bottom: 14px;
+        font-size: clamp(2.35rem, 6vw, 4.3rem);
+        letter-spacing: -0.035em;
+    }
+
+    .intro-copy {
+        margin: 0 auto;
+        max-width: 640px;
+        color: var(--muted);
+        font-size: 1.04rem;
+    }
+
+    .progress {
+        max-width: 760px;
+        margin: 30px auto 42px;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        position: relative;
+    }
+
+    .progress::before {
+        content: "";
+        position: absolute;
+        top: 19px;
+        left: 16.5%;
+        right: 16.5%;
+        height: 1px;
+        background: var(--line);
+    }
+
+    .progress-step {
+        position: relative;
+        z-index: 1;
+        text-align: center;
+        color: var(--muted);
+        font-size: 0.78rem;
+        font-weight: 750;
+    }
+
+    .step-number {
+        width: 40px;
+        height: 40px;
+        margin: 0 auto 8px;
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+        border: 1px solid var(--line);
+        background: var(--paper);
+        color: var(--muted);
+    }
+
+    .progress-step.done .step-number {
+        background: var(--green);
+        border-color: var(--green);
+        color: white;
+    }
+
+    .progress-step.active { color: var(--ink); }
+
+    .progress-step.active .step-number {
+        background: var(--gold);
+        border-color: var(--gold);
+        color: white;
+        box-shadow: 0 0 0 6px rgba(185,138,69,0.13);
+    }
+
+    .booking-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 350px;
+        align-items: start;
+        gap: 28px;
+    }
+
+    .main-column,
+    .summary-column {
+        display: grid;
+        gap: 22px;
+    }
+
+    .summary-column {
+        position: sticky;
+        top: 24px;
+    }
+
+    .card {
+        background: var(--paper);
+        border: 1px solid var(--line);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+    }
+
+    .card-header {
+        padding: 25px 28px 20px;
+        border-bottom: 1px solid var(--line);
+    }
+
+    .section-kicker {
+        display: block;
+        margin-bottom: 7px;
+        color: var(--gold-dark);
+        font-size: 0.72rem;
+        font-weight: 850;
+        letter-spacing: 0.13em;
+        text-transform: uppercase;
+    }
+
+    .card-header h2 {
+        margin-bottom: 7px;
+        font-size: 1.65rem;
+    }
+
+    .card-header p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.92rem;
+    }
+
+    .card-body { padding: 26px 28px 30px; }
+
+    .choice-list {
+        display: grid;
+        gap: 13px;
+    }
+
+    .choice-card {
+        position: relative;
+        display: grid;
+        grid-template-columns: 24px minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 13px;
+        min-height: 76px;
+        padding: 17px 18px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius-md);
+        background: white;
+        cursor: pointer;
+        transition: border-color .2s ease, transform .2s ease, box-shadow .2s ease;
+    }
+
+    .choice-card:hover {
+        border-color: rgba(185,138,69,0.72);
+        transform: translateY(-1px);
+        box-shadow: 0 9px 24px rgba(45,38,28,0.07);
+    }
+
+    .choice-card input {
+        width: 19px;
+        height: 19px;
+        margin: 0;
+        accent-color: var(--gold-dark);
+    }
+
+    .choice-copy strong {
+        display: block;
+        color: var(--ink);
+        font-size: 0.98rem;
+    }
+
+    .choice-copy small {
+        display: block;
+        margin-top: 3px;
+        color: var(--muted);
+        line-height: 1.4;
+    }
+
+    .choice-price {
+        color: var(--gold-dark);
+        font-weight: 850;
+        white-space: nowrap;
+    }
+
+    .auto-card {
+        margin-top: 13px;
+        display: grid;
+        grid-template-columns: 42px minmax(0,1fr);
+        gap: 14px;
+        align-items: center;
+        padding: 16px 18px;
+        border: 1px dashed #d8c6a7;
+        border-radius: var(--radius-md);
+        background: #fcf7ef;
+    }
+
+    .auto-card .icon {
+        width: 42px;
+        height: 42px;
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+        background: var(--gold-soft);
+        color: var(--gold-dark);
+        font-weight: 900;
+    }
+
+    .auto-card strong { display: block; }
+    .auto-card small { color: var(--muted); }
+    .auto-card input { position: absolute; opacity: 0; pointer-events: none; }
+
+    .field-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+    }
+
+    .field-group.full { grid-column: 1 / -1; }
+
+    label.field-label {
+        display: block;
+        margin-bottom: 7px;
+        color: var(--ink);
+        font-size: 0.88rem;
+        font-weight: 750;
+    }
+
+    .required { color: var(--gold-dark); }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    textarea,
+    select {
+        width: 100%;
+        padding: 13px 14px;
+        border: 1px solid #d9d2c7;
+        border-radius: var(--radius-sm);
+        background: white;
+        color: var(--ink);
+        font: inherit;
+        outline: none;
+        transition: border-color .2s ease, box-shadow .2s ease;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+        border-color: var(--gold);
+        box-shadow: 0 0 0 4px rgba(185,138,69,0.12);
+    }
+
+    textarea {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+    .field-help {
+        display: block;
+        margin-top: 6px;
+        color: var(--muted);
+        font-size: 0.78rem;
+    }
+
+    .travel-result {
+        margin-top: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        padding: 13px 15px;
+        border-radius: var(--radius-sm);
+        background: var(--cream);
+        font-size: 0.9rem;
+    }
+
+    .travel-result strong { color: var(--gold-dark); }
+
+    .status-message {
+        display: none;
+        margin-top: 12px;
+        padding: 12px 14px;
+        border-radius: var(--radius-sm);
+        font-size: 0.84rem;
+        line-height: 1.45;
+    }
+
+    .status-message.show { display: block; }
+    .status-message.success {
+        background: #edf5ef;
+        border: 1px solid #bfd6c5;
+        color: #31543d;
+    }
+    .status-message.warning {
+        background: #fff7e8;
+        border: 1px solid #ead4a9;
+        color: #76571f;
+    }
+    .status-message.error {
+        background: #fff0ef;
+        border: 1px solid #e4bbb7;
+        color: #7a342e;
+    }
+
+    .confirmation-box {
+        margin-top: 18px;
+        padding: 16px 17px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius-md);
+        background: #fcfaf6;
+    }
+
+    .confirmation-label {
+        display: grid;
+        grid-template-columns: 20px minmax(0, 1fr);
+        gap: 11px;
+        align-items: start;
+        cursor: pointer;
+        font-size: 0.88rem;
+        font-weight: 700;
+        line-height: 1.5;
+    }
+
+    .confirmation-label input {
+        width: 18px;
+        height: 18px;
+        margin: 2px 0 0;
+        accent-color: var(--gold-dark);
+    }
+
+    .confirmation-box small {
+        display: block;
+        margin: 8px 0 0 31px;
+        color: var(--muted);
+        line-height: 1.45;
+    }
+
+    .form-error {
+        display: none;
+        margin-top: 14px;
+        padding: 12px 14px;
+        border-radius: var(--radius-sm);
+        background: #fff0ef;
+        border: 1px solid #e4bbb7;
+        color: #7a342e;
+        font-size: 0.84rem;
+    }
+
+    .form-error.show { display: block; }
+
+    .booking-summary .card-body { padding-top: 18px; }
+
+    .summary-date {
+        margin-bottom: 18px;
+        padding: 18px;
+        border-radius: var(--radius-md);
+        background: var(--ink);
+        color: white;
+    }
+
+    .summary-date span {
+        display: block;
+        color: rgba(255,255,255,0.7);
+        font-size: 0.74rem;
+        font-weight: 800;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+    }
+
+    .summary-date strong {
+        display: block;
+        margin-top: 4px;
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 1.35rem;
+        line-height: 1.25;
+    }
+
+    .summary-time {
+        margin-top: 6px;
+        font-size: 0.92rem;
+        color: rgba(255,255,255,0.86);
+    }
+
+    .summary-list {
+        display: grid;
+        gap: 0;
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 16px;
+        padding: 11px 0;
+        border-bottom: 1px solid var(--line);
+        font-size: 0.9rem;
+    }
+
+    .summary-row span:first-child { color: var(--muted); }
+    .summary-row strong { text-align: right; }
+
+    .summary-row.bank-holiday strong { color: var(--gold-dark); }
+
+    .total-box {
+        margin-top: 18px;
+        padding: 18px;
+        border-radius: var(--radius-md);
+        background: var(--gold-soft);
+        text-align: center;
+    }
+
+    .total-label {
+        display: block;
+        color: var(--gold-dark);
+        font-size: 0.75rem;
+        font-weight: 850;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+    }
+
+    .total-price {
+        display: block;
+        margin-top: 2px;
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.15;
+    }
+
+    .deposit-note {
+        margin: 8px 0 0;
+        color: var(--muted);
+        font-size: 0.79rem;
+    }
+
+    button {
+        width: 100%;
+        min-height: 55px;
+        margin-top: 18px;
+        padding: 14px 18px;
+        border: 0;
+        border-radius: 999px;
+        background: var(--gold);
+        color: white;
+        font-size: 1rem;
+        font-weight: 850;
+        cursor: pointer;
+        box-shadow: 0 12px 24px rgba(148,109,52,0.22);
+        transition: background .2s ease, transform .2s ease, box-shadow .2s ease;
+    }
+
+    button:hover {
+        background: var(--gold-dark);
+        transform: translateY(-1px);
+        box-shadow: 0 15px 30px rgba(148,109,52,0.28);
+    }
+
+    button:disabled {
+        opacity: 0.65;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .trust-list {
+        margin: 15px 0 0;
+        padding: 0;
+        list-style: none;
+        display: grid;
+        gap: 8px;
+        color: var(--muted);
+        font-size: 0.8rem;
+    }
+
+    .trust-list li::before {
+        content: "✓";
+        margin-right: 8px;
+        color: var(--green);
+        font-weight: 900;
+    }
+
+    .loading {
+        display: none;
+        margin-top: 12px;
+        text-align: center;
+        color: var(--muted);
+        font-size: 0.88rem;
+    }
+
+    .support-note {
+        padding: 20px 22px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius-md);
+        background: rgba(255,253,249,0.72);
+        text-align: center;
+        color: var(--muted);
+        font-size: 0.88rem;
+    }
+
+    .support-note strong { color: var(--ink); }
+
+    @media (max-width: 900px) {
+        .booking-layout { grid-template-columns: 1fr; }
+        .summary-column { position: static; }
+        .booking-summary { order: -1; }
+    }
+
+    @media (max-width: 620px) {
+        .header-inner,
+        .page-shell { width: min(100% - 24px, 1120px); }
+
+        .header-inner { min-height: 72px; }
+        .brand img { width: 46px; height: 46px; }
+        .brand span { font-size: 0.88rem; }
+        .back-link { font-size: 0.82rem; }
+
+        .page-shell { padding: 34px 0 55px; }
+        .page-intro { margin-bottom: 20px; }
+        .intro-copy { font-size: 0.96rem; }
+
+        .progress { margin: 24px auto 30px; }
+        .progress-step { font-size: 0.68rem; }
+        .step-number { width: 36px; height: 36px; }
+        .progress::before { top: 17px; }
+
+        .card { border-radius: 20px; }
+        .card-header { padding: 21px 20px 17px; }
+        .card-body { padding: 20px; }
+        .card-header h2 { font-size: 1.45rem; }
+
+        .field-grid { grid-template-columns: 1fr; gap: 15px; }
+        .field-group.full { grid-column: auto; }
+
+        .choice-card {
+            grid-template-columns: 22px minmax(0, 1fr);
+            min-height: 70px;
+            padding: 15px;
+        }
+
+        .choice-price {
+            grid-column: 2;
+            justify-self: start;
+            margin-top: -4px;
+        }
+    }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+    <div class="header-inner">
+        <a class="brand" href="index-redesign.html" aria-label="Need A Witness UK homepage">
+            <img src="logo.png" alt="Need A Witness UK logo">
+            <span>Need A Witness UK</span>
+        </a>
+        <a class="back-link" href="index-redesign.html">← Back to availability</a>
+    </div>
+</header>
+
+<main class="page-shell">
+    <section class="page-intro">
+        <span class="eyebrow">Secure your date</span>
+        <h1>Complete Your Booking</h1>
+        <p class="intro-copy">Review your ceremony details, choose the service you need and tell us where to meet you. Every request is personally reviewed.</p>
+    </section>
+
+    <div class="progress" aria-label="Booking progress">
+        <div class="progress-step done">
+            <div class="step-number">✓</div>
+            <span>Choose a date</span>
+        </div>
+        <div class="progress-step active">
+            <div class="step-number">2</div>
+            <span>Your details</span>
+        </div>
+        <div class="progress-step">
+            <div class="step-number">3</div>
+            <span>Confirmation</span>
+        </div>
+    </div>
+
+    <div class="booking-layout">
+        <div class="main-column">
+            <section class="card">
+                <div class="card-header">
+                    <span class="section-kicker">Step 1</span>
+                    <h2>Choose Your Witness Service</h2>
+                    <p>Select one witness, or add a second witness if your ceremony requires two.</p>
+                </div>
+                <div class="card-body">
+                    <div class="choice-list">
+                        <label class="choice-card">
+                            <input type="radio" name="witnessCount" value="1" checked>
+                            <span class="choice-copy">
+                                <strong>One professional witness</strong>
+                                <small>A friendly, reliable witness attending your ceremony.</small>
+                            </span>
+                            <span class="choice-price">£100</span>
+                        </label>
+
+                        <label class="choice-card">
+                            <input type="radio" name="witnessCount" value="2">
+                            <span class="choice-copy">
+                                <strong>Two professional witnesses</strong>
+                                <small>Choose this when you need both required witnesses supplied.</small>
+                            </span>
+                            <span class="choice-price">£150</span>
+                        </label>
+                    </div>
+                </div>
+            </section>
+
+            <section class="card">
+                <div class="card-header">
+                    <span class="section-kicker">Optional</span>
+                    <h2>Personalise Your Booking</h2>
+                    <p>Add anything extra you would like us to provide on the day.</p>
+                </div>
+                <div class="card-body">
+                    <div class="choice-list">
+                        <label class="choice-card">
+                            <input type="checkbox" id="confetti">
+                            <span class="choice-copy">
+                                <strong>Confetti moment</strong>
+                                <small>A simple celebratory confetti moment after your ceremony.</small>
+                            </span>
+                            <span class="choice-price">+£20</span>
+                        </label>
+
+                        <label class="choice-card">
+                            <input type="checkbox" id="photoVideo">
+                            <span class="choice-copy">
+                                <strong>Photo and video add-on</strong>
+                                <small>A few informal photos and short video clips captured for you.</small>
+                            </span>
+                            <span class="choice-price">+£30</span>
+                        </label>
+                    </div>
+
+                    <label class="auto-card">
+                        <input type="checkbox" id="lastMinute" disabled>
+                        <span class="icon">24h</span>
+                        <span>
+                            <strong>Short-notice booking</strong>
+                            <small>A £50 fee is applied automatically only when the ceremony is within 24 hours.</small>
+                        </span>
+                    </label>
+                </div>
+            </section>
+
+            <section class="card">
+                <div class="card-header">
+                    <span class="section-kicker">Travel</span>
+                    <h2>Ceremony Postcode</h2>
+                    <p>Travel anywhere within Kent is included. A mileage charge applies only when the ceremony is outside Kent.</p>
+                </div>
+                <div class="card-body">
+                    <div class="field-group">
+                        <label class="field-label" for="travelPostcode">Ceremony postcode <span class="required">*</span></label>
+                        <input type="text" id="travelPostcode" placeholder="e.g. CT1 2DB" autocomplete="postal-code" required>
+                        <small class="field-help">Kent and Medway venues: free travel. Outside Kent: £1 per mile for the return journey from CT14 7QE.</small>
+                        <div id="postcodeStatus" class="status-message" role="status" aria-live="polite"></div>
+                    </div>
+                    <div class="travel-result">
+                        <span id="travelLabel">Travel within Kent</span>
+                        <strong>£<span id="travelCost">0</span></strong>
+                    </div>
+                </div>
+            </section>
+
+            <section class="card">
+                <div class="card-header">
+                    <span class="section-kicker">Step 2</span>
+                    <h2>Your Details</h2>
+                    <p>We'll use these details to review your request and send your confirmation.</p>
+                </div>
+                <div class="card-body">
+                    <div class="field-grid">
+                        <div class="field-group">
+                            <label class="field-label" for="cust-name">Your name <span class="required">*</span></label>
+                            <input id="cust-name" type="text" autocomplete="name" placeholder="Full name">
+                        </div>
+
+                        <div class="field-group">
+                            <label class="field-label" for="cust-phone">Phone number <span class="required">*</span></label>
+                            <input id="cust-phone" type="tel" autocomplete="tel" placeholder="Your best contact number">
+                        </div>
+
+                        <div class="field-group full">
+                            <label class="field-label" for="cust-email">Email address <span class="required">*</span></label>
+                            <input id="cust-email" type="email" autocomplete="email" placeholder="you@example.com">
+                        </div>
+
+                        <div class="field-group full">
+                            <label class="field-label" for="cust-location">Ceremony venue name and address <span class="required">*</span></label>
+                            <input id="cust-location" type="text" autocomplete="street-address" placeholder="e.g. Canterbury Register Office, 16 Station Road West" required>
+                            <small class="field-help">Please enter the registered ceremony venue rather than your home or correspondence address.</small>
+                            <div id="venueWarning" class="status-message warning" role="alert">
+                                This looks like it may be a residential address. Please check that you have entered the register office, registered religious building or council-approved ceremony venue.
+                            </div>
+                        </div>
+
+                        <div class="field-group full confirmation-box">
+                            <label class="confirmation-label" for="venue-confirmation">
+                                <input id="venue-confirmation" type="checkbox" required>
+                                <span>I confirm that the address above is the registered or approved venue where the legal ceremony will take place. <span class="required">*</span></span>
+                            </label>
+                            <small>We may contact you to verify the venue before accepting the booking.</small>
+                        </div>
+
+                        <div class="field-group full">
+                            <label class="field-label" for="cust-notes">Anything else we should know?</label>
+                            <textarea id="cust-notes" placeholder="Optional notes, accessibility needs or useful ceremony information"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <aside class="summary-column">
+            <section class="card booking-summary">
+                <div class="card-header">
+                    <span class="section-kicker">Your booking</span>
+                    <h2>Booking Summary</h2>
+                </div>
+                <div class="card-body">
+                    <div class="summary-date">
+                        <span>Ceremony date</span>
+                        <strong id="sum-date"></strong>
+                        <div class="summary-time">Arrival time: <b id="sum-time"></b></div>
+                    </div>
+
+                    <div class="summary-list">
+                        <div class="summary-row">
+                            <span>Base price</span>
+                            <strong>£<span id="sum-price"></span></strong>
+                        </div>
+                        <div class="summary-row">
+                            <span>Deposit</span>
+                            <strong>£<span id="sum-deposit"></span></strong>
+                        </div>
+                        <div class="summary-row">
+                            <span>Sunday surcharge</span>
+                            <strong>£<span id="sum-sunday">0</span></strong>
+                        </div>
+                        <div class="summary-row bank-holiday">
+                            <span>Bank holiday adjustment</span>
+                            <strong id="sum-bankholiday">None</strong>
+                        </div>
+                    </div>
+
+                    <div class="total-box">
+                        <span class="total-label">Total booking price</span>
+                        <span class="total-price">£<span id="totalPrice">0</span></span>
+                        <p class="deposit-note">Your request will be personally reviewed before final confirmation.</p>
+                    </div>
+
+                    <button id="submitBtn" onclick="submitBooking()">Secure My Booking</button>
+                    <div id="formError" class="form-error" role="alert"></div>
+                    <div id="loading" class="loading">Processing your booking… please wait</div>
+
+                    <ul class="trust-list">
+                        <li>Personal review of every request</li>
+                        <li>Confirmation sent by email</li>
+                        <li>Your details are used only for your booking</li>
+                    </ul>
+                </div>
+            </section>
+
+            <div class="support-note">
+                <strong>Need help before booking?</strong><br>
+                Return to the homepage and contact us with any questions.
+            </div>
+        </aside>
+    </div>
+</main>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="hub/firebase.js"></script>
+
+<script>
+/* ---------------- URL PARAMS ---------------- */
+const params = new URLSearchParams(window.location.search);
+const date = params.get("date");
+const time = params.get("time");
+const basePrice = Number(params.get("price"));
+const deposit = Number(params.get("deposit"));
+
+document.getElementById("sum-date").textContent = date || "";
+document.getElementById("sum-time").textContent = time || "";
+document.getElementById("sum-price").textContent = basePrice || 0;
+document.getElementById("sum-deposit").textContent = deposit || 0;
+
+/* ---------------- SURCHARGES ---------------- */
+let sundayFee = window.availability.isSunday(date) ? 50 : 0;
+document.getElementById("sum-sunday").textContent = sundayFee;
+
+let bankHolidayMultiplier = window.availability.isBankHoliday(date) ? 2 : 1;
+document.getElementById("sum-bankholiday").textContent =
+    bankHolidayMultiplier === 2 ? "Double Price" : "None";
+
+/* ---------------- LAST MINUTE ---------------- */
+const ceremonyDate = new Date(date + "T" + time);
+const now = new Date();
+const hoursDiff = (ceremonyDate - now) / (1000 * 60 * 60);
+if (hoursDiff < 24) document.getElementById("lastMinute").checked = true;
+
+/* ---------------- TRAVEL CALCULATION ---------------- */
+let postcodeIsValid = false;
+let postcodeIsInKent = false;
+
+function setPostcodeStatus(message, type = "") {
+    const box = document.getElementById("postcodeStatus");
+    box.textContent = message;
+    box.className = "status-message" + (message ? ` show ${type}` : "");
+}
+
+function isKentPostcodeResult(result) {
+    const values = [
+        result.admin_county,
+        result.admin_district,
+        result.region,
+        result.parliamentary_constituency,
+        result.european_electoral_region
+    ].filter(Boolean).map(value => String(value).toLowerCase());
+
+    // Medway is a unitary authority but forms part of ceremonial Kent.
+    return values.some(value =>
+        value === "kent" ||
+        value.includes("kent") ||
+        value === "medway" ||
+        value.includes("medway")
+    );
+}
+
+async function calculateTravel() {
+    const postcodeInput = document.getElementById("travelPostcode");
+    const postcode = postcodeInput.value.trim();
+    const travelCostEl = document.getElementById("travelCost");
+    const travelLabelEl = document.getElementById("travelLabel");
+
+    postcodeIsValid = false;
+    postcodeIsInKent = false;
+    travelCostEl.textContent = 0;
+    travelLabelEl.textContent = "Travel cost";
+
+    if (!postcode) {
+        setPostcodeStatus("");
+        updateTotal();
+        return;
+    }
+
+    setPostcodeStatus("Checking postcode…", "warning");
+    const originPostcode = "CT14 7QE";
+
+    try {
+        const [originCoords, destCoords] = await Promise.all([
+            fetch(`https://api.postcodes.io/postcodes/${originPostcode.replace(/\s+/g, "")}`).then(r => r.json()),
+            fetch(`https://api.postcodes.io/postcodes/${postcode.replace(/\s+/g, "")}`).then(r => r.json())
+        ]);
+
+        if (originCoords.status !== 200 || destCoords.status !== 200 || !destCoords.result) {
+            setPostcodeStatus("We couldn't recognise that postcode. Please check it and try again.", "error");
+            updateTotal();
+            return;
+        }
+
+        postcodeIsValid = true;
+        postcodeInput.value = destCoords.result.postcode || postcode.toUpperCase();
+        postcodeIsInKent = isKentPostcodeResult(destCoords.result);
+
+        if (postcodeIsInKent) {
+            travelCostEl.textContent = 0;
+            travelLabelEl.textContent = "Travel within Kent";
+            setPostcodeStatus("Great news — travel to this Kent venue is included at no extra cost.", "success");
+            updateTotal();
+            return;
+        }
+
+        const origin = `${originCoords.result.longitude},${originCoords.result.latitude}`;
+        const dest = `${destCoords.result.longitude},${destCoords.result.latitude}`;
+        const orsKey = "eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6IjBiYjMxNzAwMGRlNDQ5M2NhNTYwYjljYTIwY2NlZDk0IiwiaCI6Im11cm11cjY0In0=";
+
+        const routeRes = await fetch(
+            `https://api.openrouteservice.org/v2/directions/driving-car?api_key=${orsKey}&start=${origin}&end=${dest}`
+        );
+
+        if (!routeRes.ok) throw new Error("Route lookup failed");
+        const routeData = await routeRes.json();
+        const meters = routeData?.features?.[0]?.properties?.summary?.distance;
+        if (!Number.isFinite(meters)) throw new Error("Route distance missing");
+
+        const oneWayMiles = meters / 1609.34;
+        const returnMiles = oneWayMiles * 2;
+        const travelCost = Math.round(returnMiles);
+
+        travelCostEl.textContent = travelCost;
+        travelLabelEl.textContent = "Outside-Kent travel";
+        setPostcodeStatus(
+            `This venue is outside Kent. The calculated return journey is approximately ${Math.round(returnMiles)} miles.`,
+            "warning"
+        );
+    } catch (err) {
+        console.error(err);
+        postcodeIsValid = false;
+        travelCostEl.textContent = 0;
+        setPostcodeStatus("We couldn't calculate travel for that postcode. Please try again or contact us before booking.", "error");
+    }
+
+    updateTotal();
+}
+
+const travelPostcodeInput = document.getElementById("travelPostcode");
+travelPostcodeInput.addEventListener("change", calculateTravel);
+travelPostcodeInput.addEventListener("blur", calculateTravel);
+
+/* ---------------- VENUE CHECK ---------------- */
+const venueInput = document.getElementById("cust-location");
+const venueWarning = document.getElementById("venueWarning");
+
+function checkVenueAddress() {
+    const value = venueInput.value.trim().toLowerCase();
+    if (!value) {
+        venueWarning.classList.remove("show");
+        return;
+    }
+
+    const approvedVenueWords = /register office|registry office|town hall|civic centre|civic center|church|chapel|synagogue|mosque|temple|hotel|manor|barn|castle|hall|estate|venue|restaurant|museum|licensed|approved/i;
+    const residentialWords = /\b(flat|apartment|house|home|bungalow|residence)\b|\b\d+[a-z]?\s+(road|street|avenue|lane|close|drive|gardens|crescent|way|terrace|court)\b/i;
+
+    const looksResidential = residentialWords.test(value) && !approvedVenueWords.test(value);
+    venueWarning.classList.toggle("show", looksResidential);
+}
+
+venueInput.addEventListener("input", checkVenueAddress);
+venueInput.addEventListener("blur", checkVenueAddress);
+
+/* ---------------- TOTAL PRICE ---------------- */
+function updateTotal() {
+    const witnessCount = document.querySelector('input[name="witnessCount"]:checked').value;
+    const witnessFee = (witnessCount === "2") ? 150 : 100;
+
+    let total = witnessFee;
+
+    total += sundayFee;
+    total *= bankHolidayMultiplier;
+
+    if (document.getElementById("confetti").checked) total += 20;
+    if (document.getElementById("photoVideo").checked) total += 30;
+    if (document.getElementById("lastMinute").checked) total += 50;
+
+    total += Number(document.getElementById("travelCost").textContent);
+
+    document.getElementById("totalPrice").textContent = total;
+}
+
+document.querySelectorAll("input[type=checkbox]").forEach(cb =>
+    cb.addEventListener("change", updateTotal)
+);
+
+document.querySelectorAll('input[name="witnessCount"]').forEach(r =>
+    r.addEventListener("change", updateTotal)
+);
+
+updateTotal();
+
+/* ---------------- SUBMIT BOOKING ---------------- */
+async function submitBooking() {
+    const btn = document.getElementById("submitBtn");
+    const loading = document.getElementById("loading");
+    const formError = document.getElementById("formError");
+    const requiredFields = [
+        document.getElementById("cust-name"),
+        document.getElementById("cust-email"),
+        document.getElementById("cust-phone"),
+        document.getElementById("cust-location"),
+        document.getElementById("travelPostcode")
+    ];
+
+    formError.classList.remove("show");
+    formError.textContent = "";
+
+    const emptyField = requiredFields.find(field => !field.value.trim());
+    if (emptyField) {
+        formError.textContent = "Please complete all required fields before securing your booking.";
+        formError.classList.add("show");
+        emptyField.focus();
+        return;
+    }
+
+    if (!document.getElementById("cust-email").checkValidity()) {
+        formError.textContent = "Please enter a valid email address.";
+        formError.classList.add("show");
+        document.getElementById("cust-email").focus();
+        return;
+    }
+
+    if (!postcodeIsValid) {
+        await calculateTravel();
+        if (!postcodeIsValid) {
+            formError.textContent = "Please enter a valid ceremony postcode so we can confirm whether travel is included.";
+            formError.classList.add("show");
+            document.getElementById("travelPostcode").focus();
+            return;
+        }
+    }
+
+    if (!document.getElementById("venue-confirmation").checked) {
+        formError.textContent = "Please confirm that the address entered is the registered or approved ceremony venue.";
+        formError.classList.add("show");
+        document.getElementById("venue-confirmation").focus();
+        return;
+    }
+
+    btn.disabled = true;
+    loading.style.display = "block";
+
+    const witnessCount = Number(document.querySelector('input[name="witnessCount"]:checked').value);
+
+    const job = {
+        date,
+        time,
+        witnessCount,
+        basePrice,
+        deposit,
+        sundayFee,
+        bankHolidayMultiplier,
+        addOns: {
+            confetti: document.getElementById("confetti").checked,
+            photoVideo: document.getElementById("photoVideo").checked,
+            lastMinute: document.getElementById("lastMinute").checked,
+            travelPostcode: document.getElementById("travelPostcode").value.trim(),
+            travelCost: Number(document.getElementById("travelCost").textContent),
+            travelIncludedInKent: postcodeIsInKent
+        },
+        totalPrice: Number(document.getElementById("totalPrice").textContent),
+        customer: {
+            name: document.getElementById("cust-name").value.trim(),
+            email: document.getElementById("cust-email").value.trim(),
+            phone: document.getElementById("cust-phone").value.trim(),
+            location: document.getElementById("cust-location").value.trim(),
+            venueConfirmedApproved: document.getElementById("venue-confirmation").checked,
+            notes: document.getElementById("cust-notes").value.trim()
+        },
+        status: "pending",
+        createdAt: new Date().toISOString()
+    };
+
+    try {
+        // Save job
+        await db.collection("jobs").add(job);
+
+        // Mark slot as booked
+        await db.collection("availability")
+            .doc(date)
+            .collection("slots")
+            .doc(time)
+            .set({ booked: true }, { merge: true });
+
+        // ⭐ SEND ADMIN EMAIL WITH FULL DETAILS
+        emailjs.send("service_r8gqd2d", "template_50xe6ck", {
+        name: job.customer.name,
+        email: job.customer.email,
+        phone: job.customer.phone,
+        date: job.date,
+        time: job.time,
+        location: job.customer.location,
+        witnessCount: job.witnessCount,
+        totalPrice: job.totalPrice,
+        deposit: job.deposit,
+        travelPostcode: job.addOns.travelPostcode,
+        travelCost: job.addOns.travelCost,
+        notes: job.customer.notes
+        }).catch(err => console.error("EmailJS error:", err));
+
+        // Redirect
+        window.location.href = "booking-confirmed.html";
+    } catch (err) {
+        console.error(err);
+        btn.disabled = false;
+        loading.style.display = "none";
+        formError.textContent = "Something went wrong while saving your booking. Please try again or contact us for help.";
+        formError.classList.add("show");
+    }
+}
+
+
+window.submitBooking = submitBooking;
+</script>
+
+</body>
+</html>
