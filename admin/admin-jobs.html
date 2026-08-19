@@ -4,338 +4,121 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Jobs – Admin – Need A Witness UK</title>
-
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-
 <style>
-    body {
-        margin: 0;
-        font-family: Inter, sans-serif;
-        background: #f7f7f7;
-    }
-
-    .layout {
-        display: flex;
-        min-height: 100vh;
-    }
-
-    /* SIDEBAR */
-    .sidebar {
-        width: 240px;
-        background: white;
-        border-right: 1px solid #eee;
-        padding: 25px;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .sidebar h2 {
-        font-family: "Playfair Display", serif;
-        color: #D4AF37;
-        margin-top: 0;
-        margin-bottom: 30px;
-        font-size: 24px;
-    }
-
-    .sidebar a {
-        color: #333;
-        text-decoration: none;
-        padding: 12px 0;
-        display: block;
-        font-size: 16px;
-        font-weight: 500;
-    }
-
-    .sidebar a:hover {
-        color: #D4AF37;
-    }
-
-    .logout-btn {
-        margin-top: auto;
-        padding: 12px;
-        background: #D4AF37;
-        color: white;
-        text-align: center;
-        border-radius: 6px;
-        cursor: pointer;
-        font-weight: 600;
-    }
-
-    .sidebar-footer {
-        margin-top: 20px;
-        padding-top: 15px;
-        border-top: 1px solid #eee;
-        font-size: 12px;
-        color: #777;
-        line-height: 1.4;
-    }
-
-    /* MAIN */
-    .main {
-        flex: 1;
-        padding: 30px;
-        overflow-y: auto;
-    }
-
-    .header {
-        font-size: 26px;
-        margin-bottom: 20px;
-        font-family: "Playfair Display", serif;
-        color: #D4AF37;
-    }
-
-    .section {
-        background: white;
-        padding: 20px;
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-    }
-
-    .search-row {
-        display: flex;
-        gap: 10px;
-        margin-bottom: 15px;
-        flex-wrap: wrap;
-    }
-
-    .search-row input, .search-row select {
-        padding: 10px;
-        border-radius: 8px;
-        border: 1px solid #ccc;
-        font-size: 14px;
-    }
-
-    .search-row input {
-        flex: 1;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 14px;
-    }
-
-    th, td {
-        padding: 10px 8px;
-        border-bottom: 1px solid #eee;
-        text-align: left;
-    }
-
-    th {
-        font-weight: 600;
-        color: #555;
-    }
-
-    .status-badge {
-        display: inline-block;
-        padding: 3px 8px;
-        border-radius: 999px;
-        font-size: 11px;
-        font-weight: 600;
-    }
-
-    .pending { background: #fff4d6; color: #8a6d00; }
-    .approved { background: #d6ffe0; color: #006d2a; }
-    .assigned { background: #d6e9ff; color: #004a99; }
-    .completed { background: #e6ffe6; color: #006600; }
-    .cancelled { background: #ffe6e6; color: #8a0000; }
-
-    .btn {
-        padding: 5px 10px;
-        border-radius: 6px;
-        border: none;
-        cursor: pointer;
-        font-size: 12px;
-        font-weight: 600;
-        margin-right: 4px;
-        margin-bottom: 4px;
-    }
-
-    .btn-view { background: #f0f0f0; color: #333; }
-    .btn-approve { background: #28a745; color: white; }
-    .btn-reject { background: #dc3545; color: white; }
-    .btn-assign { background: #007bff; color: white; }
+:root{--gold:#c99a17;--gold2:#d4af37;--ink:#1f1f1f;--muted:#757575;--line:#ececec;--paper:#fff;--bg:#f7f7f7}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,sans-serif;background:var(--bg);color:var(--ink)}
+.layout{display:flex;min-height:100vh}.sidebar{width:185px;background:#fff;border-right:1px solid #eee;padding:24px 20px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+.sidebar h2{font-family:"Playfair Display",serif;color:var(--gold);margin:0 0 24px;font-size:22px}.sidebar a{color:#262626;text-decoration:none;padding:8px 0;display:block;font-size:13px;font-weight:500}.sidebar a:hover,.sidebar a.active{color:var(--gold);font-weight:600}.logout-btn{margin-top:auto;padding:10px;background:var(--gold2);color:#fff;text-align:center;border-radius:6px;cursor:pointer;font-weight:600;font-size:13px}.sidebar-footer{margin-top:16px;padding-top:14px;border-top:1px solid #eee;font-size:11px;color:#888;line-height:1.5}
+.main{flex:1;padding:26px;overflow:auto}.page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin-bottom:18px}.page-head h1{margin:0;font-family:"Playfair Display",serif;font-size:27px;font-weight:400;color:var(--gold)}.page-head p{margin:4px 0 0;color:#777;font-size:12px}.create-link{color:var(--gold);text-decoration:none;font-size:12px;font-weight:600;white-space:nowrap}
+.stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-bottom:16px}.stat{background:#fff;border-radius:10px;padding:15px 14px;box-shadow:0 3px 10px rgba(0,0,0,.05);cursor:pointer;border:1px solid transparent}.stat:hover{border-color:#eadca9}.stat.active{border-color:var(--gold2);background:#fffdf6}.stat-label{font-size:11px;color:#777}.stat-value{font-family:"Playfair Display",serif;color:var(--gold);font-size:23px;margin-top:3px}
+.section{background:#fff;padding:17px;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.055)}.toolbar{display:grid;grid-template-columns:minmax(240px,1fr) 175px 175px 160px;gap:9px;margin-bottom:13px}.toolbar input,.toolbar select{width:100%;padding:10px 11px;border-radius:7px;border:1px solid #d7d7d7;background:#fff;font:inherit;font-size:13px}.toolbar input:focus,.toolbar select:focus{outline:none;border-color:var(--gold2);box-shadow:0 0 0 2px rgba(212,175,55,.12)}
+.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:12px;min-width:980px}th,td{padding:11px 9px;border-bottom:1px solid #eee;text-align:left;vertical-align:top}th{font-weight:600;color:#666;background:#fcfcfc;position:sticky;top:0}.job-name{font-weight:600;font-size:13px}.job-sub{font-size:11px;color:#777;margin-top:3px;line-height:1.35}.money{font-weight:700;color:#a97800}.nowrap{white-space:nowrap}
+.status-badge,.pay-badge{display:inline-block;padding:3px 8px;border-radius:999px;font-size:10px;font-weight:600;white-space:nowrap}.status-pending{background:#fff4d6;color:#8a6d00}.status-approved{background:#e8f8d8;color:#5d7600}.status-assigned{background:#dcecff;color:#14588f}.status-completed{background:#e7f7eb;color:#20733a}.status-cancelled{background:#ffe5e5;color:#972323}.status-other{background:#eee;color:#555}.pay-unpaid{background:#ffe5e5;color:#9a2626}.pay-deposit{background:#eee6ff;color:#6342a0}.pay-full{background:#dcf8e4;color:#16733a}.pay-other{background:#eee;color:#555}
+.witness-pill{display:inline-block;background:#f5f5f5;border:1px solid #e4e4e4;border-radius:999px;padding:2px 7px;margin:1px 2px 1px 0;font-size:10px}.actions{display:flex;gap:5px;flex-wrap:wrap}.btn{border:1px solid #ddd;background:#fff;color:#333;border-radius:6px;padding:6px 9px;font-size:11px;font-weight:600;cursor:pointer}.btn:hover{border-color:var(--gold2);color:#9a7200}.btn-gold{background:var(--gold2);color:#fff;border-color:var(--gold2)}.btn-danger{border-color:#f0c8c8;color:#a22}.empty{text-align:center;padding:30px;color:#888}.results-note{font-size:11px;color:#777;margin:3px 0 10px}.mobile-job-list{display:none}
+@media(max-width:1050px){.stats{grid-template-columns:repeat(3,1fr)}.toolbar{grid-template-columns:1fr 1fr}.sidebar{width:165px}}
+@media(max-width:760px){.layout{display:block}.sidebar{position:static;width:100%;height:auto;padding:15px 18px}.sidebar h2{margin-bottom:10px}.sidebar a{display:inline-block;margin-right:15px}.logout-btn,.sidebar-footer{display:none}.main{padding:16px}.stats{grid-template-columns:repeat(2,1fr)}.toolbar{grid-template-columns:1fr}.table-wrap{display:none}.mobile-job-list{display:block}.mobile-card{border:1px solid #eee;border-radius:10px;padding:13px;margin-bottom:10px}.mobile-top{display:flex;justify-content:space-between;gap:12px}.mobile-meta{font-size:11px;color:#666;line-height:1.55;margin:7px 0 10px}.page-head{align-items:flex-start}}
 </style>
 </head>
-
 <body>
-
 <div class="layout">
+  <aside class="sidebar">
+    <h2>Admin Panel</h2>
+    <a href="admin-dashboard.html">Dashboard</a>
+    <a href="admin-witnesses.html">Witnesses</a>
+    <a href="admin-jobs.html" class="active">Jobs</a>
+    <a href="admin-create-job.html">Create Job</a>
+    <a href="admin-calendar.html">Calendar</a>
+    <a href="admin-payments.html">Payments</a>
+    <a href="admin-availability.html">Availability</a>
+    <div class="logout-btn" onclick="logout()">Logout</div>
+    <div class="sidebar-footer">© Need A Witness UK<br>Admin Panel</div>
+  </aside>
 
-    <!-- SIDEBAR -->
-    <div class="sidebar">
-        <h2>Admin Panel</h2>
-        <a href="admin-dashboard.html">Dashboard</a>
-        <a href="admin-witnesses.html">Witnesses</a>
-        <a href="admin-jobs.html" class="active">Jobs</a>
-
-        <div class="logout-btn" onclick="logout()">Logout</div>
-
-        <div class="sidebar-footer">
-            © Need A Witness UK<br>
-            Admin Panel v1.0
-        </div>
+  <main class="main">
+    <div class="page-head">
+      <div><h1>Jobs</h1><p>Every enquiry and confirmed ceremony in one place.</p></div>
+      <a class="create-link" href="admin-create-job.html">+ Create job</a>
     </div>
 
-    <!-- MAIN -->
-    <div class="main">
-        <div class="header">Jobs</div>
-
-        <div class="section">
-
-            <!-- SEARCH + FILTERS -->
-            <div class="search-row">
-                <input type="text" id="searchInput" placeholder="Search by couple, location, witness..." oninput="renderFiltered()">
-
-                <select id="statusFilter" onchange="renderFiltered()">
-                    <option value="all">All statuses</option>
-                    <option value="pending">Pending</option>
-                    <option value="approved">Approved</option>
-                    <option value="assigned">Assigned</option>
-                    <option value="completed">Completed</option>
-                    <option value="cancelled">Cancelled</option>
-                </select>
-            </div>
-
-            <!-- JOB TABLE -->
-            <div style="overflow-x:auto;">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Couple</th>
-                            <th>Date</th>
-                            <th>Time</th>
-                            <th>Location</th>
-                            <th>Status</th>
-                            <th>Witnesses</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="jobsTableBody">
-                        <tr><td colspan="7">Loading...</td></tr>
-                    </tbody>
-                </table>
-            </div>
-
-        </div>
+    <div class="stats" id="statsRow">
+      <div class="stat active" data-status="all"><div class="stat-label">All Jobs</div><div class="stat-value" id="countAll">0</div></div>
+      <div class="stat" data-status="pending"><div class="stat-label">Pending</div><div class="stat-value" id="countPending">0</div></div>
+      <div class="stat" data-status="approved"><div class="stat-label">Approved</div><div class="stat-value" id="countApproved">0</div></div>
+      <div class="stat" data-status="assigned"><div class="stat-label">Assigned</div><div class="stat-value" id="countAssigned">0</div></div>
+      <div class="stat" data-status="completed"><div class="stat-label">Completed</div><div class="stat-value" id="countCompleted">0</div></div>
     </div>
 
+    <section class="section">
+      <div class="toolbar">
+        <input type="search" id="searchInput" placeholder="Search couple, email, location, witness…">
+        <select id="statusFilter">
+          <option value="all">All statuses</option><option value="pending">Pending</option><option value="approved">Approved</option><option value="assigned">Assigned</option><option value="completed">Completed</option><option value="cancelled">Cancelled</option>
+        </select>
+        <select id="paymentFilter">
+          <option value="all">All payments</option><option value="unpaid">Unpaid</option><option value="deposit">Deposit paid</option><option value="full">Paid in full</option><option value="late-cancel">Late cancel</option>
+        </select>
+        <select id="sortFilter">
+          <option value="date-asc">Ceremony date ↑</option><option value="date-desc">Ceremony date ↓</option><option value="newest">Newest enquiry</option><option value="price-desc">Highest value</option>
+        </select>
+      </div>
+      <div class="results-note" id="resultsNote">Loading jobs…</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Couple / Contact</th><th>Date & Time</th><th>Location</th><th>Service</th><th>Payment</th><th>Status</th><th>Witnesses</th><th>Total</th><th>Actions</th></tr></thead>
+          <tbody id="jobsTableBody"><tr><td colspan="9">Loading…</td></tr></tbody>
+        </table>
+      </div>
+      <div class="mobile-job-list" id="mobileJobList"></div>
+    </section>
+  </main>
 </div>
 
-<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 <script src="../hub/firebase.js"></script>
-
 <script>
-let allJobs = [];
-
-auth.onAuthStateChanged(async (user) => {
-    if (!user) {
-        window.location.href = "../hub/login.html";
-        return;
-    }
-
-    db.collection("jobs").onSnapshot(snapshot => {
-        allJobs = [];
-        snapshot.forEach(doc => {
-            allJobs.push({ id: doc.id, ...doc.data() });
-        });
-        renderFiltered();
-    });
-});
-
-function statusBadge(status) {
-    return `<span class="status-badge ${status}">${status.charAt(0).toUpperCase() + status.slice(1)}</span>`;
-}
-
-function renderFiltered() {
-    const search = document.getElementById("searchInput").value.toLowerCase();
-    const filter = document.getElementById("statusFilter").value;
-    const tbody = document.getElementById("jobsTableBody");
-
-    let rows = "";
-
-    allJobs.forEach(j => {
-
-        // ⭐ Support BOTH old and new job formats
-        const couple =
-            j.customer?.name ||
-            j.coupleName ||
-            "—";
-
-        const date =
-            j.customer?.date ||
-            j.date ||
-            "—";
-
-        const time =
-            j.customer?.time ||
-            j.time ||
-            "—";
-
-        const location =
-            j.customer?.location ||
-            j.location ||
-            "—";
-
-        const status = j.status || "pending";
-
-        const witnesses = j.assignedWitnesses?.length
-            ? j.assignedWitnesses.join(", ")
-            : "—";
-
-        // filter by status
-        if (filter !== "all" && status !== filter) return;
-
-        // search filter
-        const haystack = (couple + location + witnesses).toLowerCase();
-        if (search && !haystack.includes(search)) return;
-
-        rows += `
-            <tr>
-                <td>${couple}</td>
-                <td>${date}</td>
-                <td>${time}</td>
-                <td>${location}</td>
-                <td>${statusBadge(status)}</td>
-                <td>${witnesses}</td>
-                <td>
-                    <button class="btn btn-view" onclick="viewJob('${j.id}')">View</button>
-                    <button class="btn btn-assign" onclick="assignJob('${j.id}')">Assign</button>
-                    <button class="btn btn-approve" onclick="approveJob('${j.id}')">Approve</button>
-                    <button class="btn btn-reject" onclick="rejectJob('${j.id}')">Reject</button>
-                </td>
-            </tr>
-        `;
-    });
-
-    tbody.innerHTML = rows || '<tr><td colspan="7">No jobs found.</td></tr>';
-}
-
-function viewJob(id) {
-    window.location.href = "admin-job-detail.html?id=" + encodeURIComponent(id);
-}
-
-function assignJob(id) {
-    window.location.href = "admin-job-detail.html?id=" + encodeURIComponent(id) + "&assign=true";
-}
-
-function approveJob(id) {
-    db.collection("jobs").doc(id).update({ status: "approved" });
-}
-
-function rejectJob(id) {
-    db.collection("jobs").doc(id).update({ status: "cancelled" });
-}
-
-function logout() {
-    auth.signOut().then(() => {
-        window.location.href = "../hub/login.html";
-    });
-}
+let allJobs=[];
+const $=id=>document.getElementById(id);
+function escapeHtml(value){return String(value??"").replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));}
+function jobName(j){return j.customer?.name||j.coupleName||j.coupleNames||"Unnamed booking";}
+function jobEmail(j){return j.customer?.email||j.email||"";}
+function jobPhone(j){return j.customer?.phone||j.phone||"";}
+function jobLocation(j){return j.customer?.location||j.location||"—";}
+function jobDate(j){return j.date||j.customer?.date||"";}
+function jobTime(j){return j.time||j.customer?.time||"";}
+function witnessCount(j){return Number(j.witnessCount||j.witnessesRequired||j.requiredWitnesses||0);}
+function totalPrice(j){return Number(j.totalPrice||j.price||0);}
+function localDate(dateStr,timeStr="00:00"){if(!dateStr)return null;const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(dateStr);if(!m)return new Date(dateStr);const [hh,mm]=(timeStr||"00:00").split(":").map(Number);return new Date(Number(m[1]),Number(m[2])-1,Number(m[3]),hh||0,mm||0,0,0);}
+function formatDate(dateStr){const d=localDate(dateStr);return d&&!isNaN(d)?d.toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"}):"—";}
+function createdMillis(j){const c=j.createdAt;if(!c)return 0;if(c.toDate)return c.toDate().getTime();const d=new Date(c);return isNaN(d)?0:d.getTime();}
+function statusLabel(s){return ({pending:"Pending",approved:"Approved",assigned:"Assigned",completed:"Completed",cancelled:"Cancelled"})[s]||s||"Pending";}
+function statusBadge(s){const safe=["pending","approved","assigned","completed","cancelled"].includes(s)?s:"other";return `<span class="status-badge status-${safe}">${escapeHtml(statusLabel(s))}</span>`;}
+function paymentStatus(j){return j.paymentStatus||((Number(j.amountPaid||0)>=totalPrice(j)&&totalPrice(j)>0)?"full":(Number(j.amountPaid||0)>0?"deposit":"unpaid"));}
+function paymentBadge(j){const p=paymentStatus(j);const safe=["unpaid","deposit","full"].includes(p)?p:"other";const label=({unpaid:"Unpaid",deposit:"Deposit",full:"Paid in full","late-cancel":"Late cancel"})[p]||p;return `<span class="pay-badge pay-${safe}">${escapeHtml(label)}</span>`;}
+function witnessNames(j){const ids=j.assignedWitnesses||[];if(!ids.length)return "—";return ids.map(x=>`<span class="witness-pill">${escapeHtml(x)}</span>`).join("");}
+function serviceLabel(j){const n=witnessCount(j);return n?`${n} witness${n===1?"":"es"}`:"—";}
+function jobHaystack(j){return [jobName(j),jobEmail(j),jobPhone(j),jobLocation(j),(j.assignedWitnesses||[]).join(" "),j.status,paymentStatus(j)].join(" ").toLowerCase();}
+function counts(){const c={all:allJobs.length,pending:0,approved:0,assigned:0,completed:0};allJobs.forEach(j=>{if(c[j.status]!==undefined)c[j.status]++;});$("countAll").textContent=c.all;$("countPending").textContent=c.pending;$("countApproved").textContent=c.approved;$("countAssigned").textContent=c.assigned;$("countCompleted").textContent=c.completed;}
+function filteredJobs(){const q=$("searchInput").value.trim().toLowerCase();const status=$("statusFilter").value;const pay=$("paymentFilter").value;const sort=$("sortFilter").value;let list=allJobs.filter(j=>(status==="all"||j.status===status)&&(pay==="all"||paymentStatus(j)===pay)&&(!q||jobHaystack(j).includes(q)));
+ list.sort((a,b)=>{if(sort==="newest")return createdMillis(b)-createdMillis(a);if(sort==="price-desc")return totalPrice(b)-totalPrice(a);const da=localDate(jobDate(a),jobTime(a))?.getTime()||0,db=localDate(jobDate(b),jobTime(b))?.getTime()||0;return sort==="date-desc"?db-da:da-db;});return list;}
+function actionButtons(j){let extra="";if(j.status==="pending")extra=`<button class="btn btn-gold" onclick="setStatus('${j.id}','approved')">Approve</button><button class="btn btn-danger" onclick="setStatus('${j.id}','cancelled')">Cancel</button>`;else if(j.status==="approved"||j.status==="assigned")extra=`<button class="btn" onclick="assignJob('${j.id}')">Assign</button>`;return `<div class="actions"><button class="btn" onclick="viewJob('${j.id}')">View</button>${extra}</div>`;}
+function renderFiltered(){const list=filteredJobs();$("resultsNote").textContent=`Showing ${list.length} of ${allJobs.length} job${allJobs.length===1?"":"s"}.`;
+ if(!list.length){$("jobsTableBody").innerHTML='<tr><td colspan="9" class="empty">No jobs match these filters.</td></tr>';$("mobileJobList").innerHTML='<div class="empty">No jobs match these filters.</div>';return;}
+ $("jobsTableBody").innerHTML=list.map(j=>`<tr>
+ <td><div class="job-name">${escapeHtml(jobName(j))}</div><div class="job-sub">${escapeHtml(jobEmail(j))}${jobPhone(j)?`<br>${escapeHtml(jobPhone(j))}`:""}</div></td>
+ <td class="nowrap"><b>${escapeHtml(formatDate(jobDate(j)))}</b><div class="job-sub">${escapeHtml(jobTime(j)||"—")}</div></td>
+ <td>${escapeHtml(jobLocation(j))}</td><td class="nowrap">${escapeHtml(serviceLabel(j))}</td><td>${paymentBadge(j)}<div class="job-sub">£${Number(j.amountPaid||0)} paid · £${Number(j.amountDue||0)} due</div></td>
+ <td>${statusBadge(j.status||"pending")}</td><td>${witnessNames(j)}</td><td class="money nowrap">£${totalPrice(j)}</td><td>${actionButtons(j)}</td></tr>`).join("");
+ $("mobileJobList").innerHTML=list.map(j=>`<div class="mobile-card"><div class="mobile-top"><div><div class="job-name">${escapeHtml(jobName(j))}</div><div class="job-sub">${escapeHtml(formatDate(jobDate(j)))} · ${escapeHtml(jobTime(j)||"—")}</div></div><div class="money">£${totalPrice(j)}</div></div><div class="mobile-meta">${escapeHtml(jobLocation(j))}<br>${escapeHtml(serviceLabel(j))} · ${statusBadge(j.status||"pending")} ${paymentBadge(j)}</div>${actionButtons(j)}</div>`).join("");}
+function setStatus(id,status){const verb=status==="approved"?"approve":"cancel";if(!confirm(`Are you sure you want to ${verb} this job?`))return;db.collection("jobs").doc(id).update({status}).catch(err=>alert("Could not update job: "+err.message));}
+function viewJob(id){location.href="admin-job-detail.html?id="+encodeURIComponent(id);}function assignJob(id){location.href="admin-job-detail.html?id="+encodeURIComponent(id)+"&assign=true";}
+function logout(){auth.signOut().then(()=>location.href="../hub/login.html");}
+function wireFilters(){["searchInput","statusFilter","paymentFilter","sortFilter"].forEach(id=>$(id).addEventListener(id==="searchInput"?"input":"change",renderFiltered));document.querySelectorAll(".stat").forEach(el=>el.addEventListener("click",()=>{document.querySelectorAll(".stat").forEach(x=>x.classList.remove("active"));el.classList.add("active");$("statusFilter").value=el.dataset.status;renderFiltered();}));$("statusFilter").addEventListener("change",()=>{document.querySelectorAll(".stat").forEach(x=>x.classList.toggle("active",x.dataset.status===$("statusFilter").value));});}
+wireFilters();
+auth.onAuthStateChanged(user=>{if(!user){location.href="../hub/login.html";return;}db.collection("jobs").onSnapshot(s=>{allJobs=s.docs.map(d=>({id:d.id,...d.data()}));counts();renderFiltered();},err=>{$("jobsTableBody").innerHTML=`<tr><td colspan="9" class="empty">Could not load jobs: ${escapeHtml(err.message)}</td></tr>`;});});
 </script>
-
 </body>
 </html>
