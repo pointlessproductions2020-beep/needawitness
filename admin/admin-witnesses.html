@@ -184,6 +184,8 @@
         <a href="admin-witnesses.html" class="active">Witnesses</a>
         <a href="admin-jobs.html">Jobs</a>
         <a href="admin-calendar.html">Calendar</a>
+        <a href="admin-payments.html">Payments</a>
+        <a href="admin-availability.html">Availability</a>
 
         <div class="logout-btn" onclick="logout()">Logout</div>
 
@@ -197,6 +199,12 @@
     <div class="main">
         <div class="header">Witnesses</div>
 
+        <div class="stats" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:18px;">
+            <div class="section" style="padding:15px"><div style="font-size:12px;color:#777">Total Witnesses</div><div id="countAll" style="font-size:26px;font-weight:700;color:#D4AF37">0</div></div>
+            <div class="section" style="padding:15px"><div style="font-size:12px;color:#777">Pending Approval</div><div id="countPending" style="font-size:26px;font-weight:700">0</div></div>
+            <div class="section" style="padding:15px"><div style="font-size:12px;color:#777">Active</div><div id="countActive" style="font-size:26px;font-weight:700">0</div></div>
+            <div class="section" style="padding:15px"><div style="font-size:12px;color:#777">Rejected</div><div id="countRejected" style="font-size:26px;font-weight:700">0</div></div>
+        </div>
         <div class="section">
             <div class="search-row">
                 <input
@@ -279,7 +287,15 @@ function statusBadge(u) {
 }
 
 // Main render with filters
+function esc(v){return String(v ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));}
+function updateCounts(){
+    document.getElementById("countAll").textContent=allWitnesses.length;
+    document.getElementById("countPending").textContent=allWitnesses.filter(u=>(u.status||"pending")==="pending").length;
+    document.getElementById("countActive").textContent=allWitnesses.filter(u=>u.status==="active").length;
+    document.getElementById("countRejected").textContent=allWitnesses.filter(u=>u.status==="rejected").length;
+}
 function renderFiltered() {
+    updateCounts();
     const search = document.getElementById("searchInput").value.toLowerCase();
     const filter = document.getElementById("statusFilter").value;
     const tbody = document.getElementById("witnessTableBody");
@@ -330,10 +346,10 @@ function renderFiltered() {
 
         rows += `
             <tr>
-                <td>${name || "—"}</td>
-                <td>${email}</td>
-                <td>${phone}</td>
-                <td>${location}</td>
+                <td>${esc(name || "—")}</td>
+                <td>${esc(email)}</td>
+                <td>${esc(phone)}</td>
+                <td>${esc(location)}</td>
                 <td>${statusBadge(u)}</td>
                 <td>${rating}</td>
                 <td>${actions}</td>
@@ -346,6 +362,7 @@ function renderFiltered() {
 
 // Approve / reject / undo
 function approveWitness(uid) {
+    if(!confirm("Approve this witness and make their account active?")) return;
     db.collection("users").doc(uid).update({
         approved: true,
         status: "active"
@@ -353,6 +370,7 @@ function approveWitness(uid) {
 }
 
 function rejectWitness(uid) {
+    if(!confirm("Reject this witness? They will no longer be active.")) return;
     db.collection("users").doc(uid).update({
         approved: false,
         status: "rejected"
@@ -360,6 +378,7 @@ function rejectWitness(uid) {
 }
 
 function undoReject(uid) {
+    if(!confirm("Return this witness to pending approval?")) return;
     db.collection("users").doc(uid).update({
         approved: false,
         status: "pending"
