@@ -4,396 +4,165 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Job Details – Witness Hub</title>
-
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-
 <style>
-    body {
-        margin: 0;
-        font-family: Inter, sans-serif;
-        background: #f5f4f2;
-        color: #222;
-        overflow: hidden;
-    }
-
-    /* SIDEBAR */
-    .layout {
-        display: flex;
-        height: 100vh;
-    }
-
-    .sidebar {
-        width: 250px;
-        background: #ffffff;
-        border-right: 1px solid #e6e2da;
-        padding: 28px;
-        display: flex;
-        flex-direction: column;
-        box-shadow: 2px 0 10px rgba(0,0,0,0.04);
-    }
-
-    .sidebar h2 {
-        font-family: "Playfair Display", serif;
-        color: #c8a24a;
-        margin: 0 0 32px 0;
-        font-size: 26px;
-        letter-spacing: 0.5px;
-    }
-
-    .sidebar a {
-        color: #444;
-        text-decoration: none;
-        padding: 12px 0;
-        display: block;
-        font-size: 15px;
-        font-weight: 500;
-        transition: 0.2s;
-    }
-
-    .sidebar a:hover {
-        color: #c8a24a;
-        transform: translateX(3px);
-    }
-
-    .logout-btn {
-        margin-top: auto;
-        padding: 12px;
-        background: #c8a24a;
-        color: white;
-        text-align: center;
-        border-radius: 8px;
-        cursor: pointer;
-        font-weight: 600;
-        font-size: 14px;
-        transition: 0.2s;
-    }
-
-    .logout-btn:hover {
-        opacity: 0.9;
-    }
-
-    .sidebar-footer {
-        margin-top: 20px;
-        padding-top: 14px;
-        border-top: 1px solid #eee;
-        font-size: 12px;
-        color: #777;
-        line-height: 1.4;
-    }
-
-    /* OVERLAY */
-    #overlay {
-        position: fixed;
-        inset: 0;
-        background: rgba(0,0,0,0.45);
-        backdrop-filter: blur(6px);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 999;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.3s ease;
-    }
-
-    #overlay.open {
-        opacity: 1;
-        pointer-events: all;
-    }
-
-    /* CINEMATIC GLASS PANEL */
-    #glassPanel {
-        width: 600px;
-        max-width: 92%;
-        max-height: 90vh;
-        padding: 28px;
-        border-radius: 20px;
-        background: rgba(255,255,255,0.12);
-        backdrop-filter: blur(22px);
-        -webkit-backdrop-filter: blur(22px);
-        border: 1px solid rgba(255,255,255,0.25);
-        box-shadow: 0 18px 40px rgba(0,0,0,0.55);
-        color: #fff;
-        transform: scale(0.85);
-        opacity: 0;
-        transition: transform 0.28s ease, opacity 0.28s ease;
-        overflow-y: auto;
-    }
-
-    #glassPanel.open {
-        transform: scale(1);
-        opacity: 1;
-    }
-
-    .panel-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .panel-header h2 {
-        margin: 0;
-        font-family: "Playfair Display", serif;
-        font-size: 24px;
-        color: #f5f5f5;
-    }
-
-    .close-btn {
-        font-size: 30px;
-        cursor: pointer;
-        color: #c8a24a;
-        font-weight: bold;
-    }
-
-    .section {
-        margin-top: 20px;
-        padding-top: 12px;
-        border-top: 1px solid rgba(255,255,255,0.25);
-    }
-
-    .section h4 {
-        margin: 0 0 8px 0;
-        font-size: 15px;
-        color: #f5f5f5;
-    }
-
-    .section div {
-        font-size: 14px;
-        color: #ddd;
-        margin-bottom: 10px;
-    }
-
-    .status-badge {
-        display: inline-block;
-        padding: 4px 10px;
-        border-radius: 6px;
-        font-size: 12px;
-        font-weight: 600;
-        margin-left: 10px;
-    }
-
-    .pending { background: #fff4d6; color: #8a6d00; }
-    .assigned { background: #d6ffe0; color: #006d2a; }
-    .completed { background: #e6e6e6; color: #555; }
-
-    .btn {
-        margin-top: 20px;
-        padding: 12px;
-        background: #c8a24a;
-        color: #1e1e1e;
-        border: none;
-        border-radius: 999px;
-        font-weight: 600;
-        cursor: pointer;
-        width: 100%;
-        font-size: 14px;
-        transition: 0.2s;
-    }
-
-    .btn:hover {
-        opacity: 0.9;
-    }
-
-    .btn.cancel {
-        background: #555;
-        color: #fff;
-    }
+:root{--gold:#c8a24a;--gold-dark:#9b782c;--bg:#f5f4f2;--card:#fff;--text:#222;--muted:#747474;--line:#e9e5dc;--green:#167647;--amber:#966b00;--blue:#285d94;--red:#963434}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,sans-serif;background:var(--bg);color:var(--text)}
+.layout{display:flex;min-height:100vh}.sidebar{width:250px;background:#fff;border-right:1px solid #e6e2da;padding:28px;display:flex;flex-direction:column;box-shadow:2px 0 10px rgba(0,0,0,.04);position:sticky;top:0;height:100vh}.sidebar h2{font-family:"Playfair Display",serif;color:var(--gold);margin:0 0 32px;font-size:26px}.sidebar a{color:#444;text-decoration:none;padding:12px 0;display:block;font-size:15px;font-weight:500;transition:.2s}.sidebar a:hover,.sidebar a.active{color:var(--gold)}.sidebar a:hover{transform:translateX(3px)}.logout-btn{margin-top:auto;padding:12px;background:var(--gold);color:#fff;text-align:center;border-radius:8px;cursor:pointer;font-weight:600;font-size:14px}.sidebar-footer{margin-top:20px;padding-top:14px;border-top:1px solid #eee;font-size:12px;color:#777;line-height:1.4}
+.main{flex:1;padding:40px 48px;min-width:0}.topbar{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:24px}.back{display:inline-flex;align-items:center;gap:7px;color:#6b6b6b;text-decoration:none;font-size:14px}.back:hover{color:var(--gold-dark)}.state-pill{padding:7px 11px;border-radius:999px;font-size:12px;font-weight:700}.state-assigned{background:#dcf6e6;color:var(--green)}.state-requested{background:#fff1c9;color:var(--amber)}.state-available{background:#e4effc;color:var(--blue)}.state-completed{background:#ededed;color:#555}.state-unavailable{background:#fde3e3;color:var(--red)}
+.hero{background:#fff;border-radius:16px;padding:24px 26px;box-shadow:0 4px 16px rgba(0,0,0,.055);margin-bottom:20px}.hero h1{font-family:"Playfair Display",serif;color:var(--gold);font-size:30px;margin:0 0 8px}.hero .sub{color:var(--muted);font-size:14px;line-height:1.6}.grid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(280px,.75fr);gap:20px}.card{background:#fff;border-radius:14px;padding:22px;box-shadow:0 4px 14px rgba(0,0,0,.05)}.card h3{font-family:"Playfair Display",serif;color:var(--gold);font-size:20px;margin:0 0 14px}.info-row{padding:12px 0;border-bottom:1px solid var(--line)}.info-row:last-child{border-bottom:0}.label{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:#8b8b8b;margin-bottom:5px}.value{font-size:15px;line-height:1.55}.money{font-size:30px;color:var(--gold-dark);font-weight:700}.small{font-size:12px;color:var(--muted);line-height:1.5}.notice{margin-top:16px;border-radius:11px;padding:12px 14px;background:#fff8e6;border:1px solid #ead7a5;color:#684f15;font-size:13px;line-height:1.5}.private{background:#f3f7f3;border:1px solid #d9e9db;color:#315c39}.btn{width:100%;border:0;border-radius:999px;padding:13px 16px;font:inherit;font-weight:700;cursor:pointer;margin-top:12px;background:var(--gold);color:#1e1e1e}.btn:hover{opacity:.92}.btn.cancel{background:#b94a4a;color:#fff}.btn.secondary{background:#ece8de;color:#4d4635}.btn:disabled{opacity:.5;cursor:not-allowed}.contact{display:grid;grid-template-columns:1fr 1fr;gap:10px}.contact-box{background:#f8f7f4;border:1px solid var(--line);border-radius:10px;padding:11px;font-size:13px;overflow-wrap:anywhere}.loading{padding:50px;text-align:center;color:#777}.error{background:#fff;border-radius:14px;padding:28px;text-align:center;box-shadow:0 4px 14px rgba(0,0,0,.05)}
+@media(max-width:850px){.sidebar{width:205px;padding:22px}.main{padding:30px 24px}.grid{grid-template-columns:1fr}}
+@media(max-width:650px){.layout{display:block}.sidebar{position:relative;width:100%;height:auto;padding:18px 20px}.sidebar h2{margin-bottom:12px}.sidebar a{display:inline-block;margin-right:14px;padding:7px 0}.logout-btn{margin-top:12px}.sidebar-footer{display:none}.main{padding:24px 15px}.topbar{align-items:flex-start}.hero{padding:20px}.hero h1{font-size:25px}.contact{grid-template-columns:1fr}}
 </style>
 </head>
-
 <body>
-
 <div class="layout">
+  <aside class="sidebar">
+    <h2>Witness Hub</h2>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="myjobs.html" class="active">My Jobs</a>
+    <a href="availability.html">Availability</a>
+    <a href="profile.html">Profile</a>
+    <div class="logout-btn" onclick="logout()">Logout</div>
+    <div class="sidebar-footer">© Need A Witness UK<br>Witness Hub</div>
+  </aside>
 
-    <!-- SIDEBAR -->
-    <div class="sidebar">
-        <h2>Witness Hub</h2>
-        <a href="dashboard.html">Dashboard</a>
-        <a href="myjobs.html">My Jobs</a>
-        <a href="availability.html">Availability</a>
-        <a href="profile.html">Profile</a>
-
-        <div class="logout-btn" onclick="logout()">Logout</div>
-
-        <div class="sidebar-footer">
-            © Need A Witness UK<br>
-            Witness Hub v1.0
-        </div>
+  <main class="main">
+    <div class="topbar">
+      <a class="back" href="myjobs.html">← Back to My Jobs</a>
+      <span id="statePill" class="state-pill state-unavailable">Loading…</span>
     </div>
-
+    <div id="page"><div class="loading">Loading job details…</div></div>
+  </main>
 </div>
 
-<!-- CINEMATIC OVERLAY -->
-<div id="overlay">
-    <div id="glassPanel">
-        <div class="panel-header">
-            <h2 id="jobTitle">Job Details</h2>
-            <div class="close-btn" onclick="closePanel()">×</div>
-        </div>
-
-        <div id="jobContent">Loading…</div>
-    </div>
-</div>
-
-<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 <script src="firebase.js"></script>
-
 <script>
-let currentUser = null;
-let jobId = new URLSearchParams(window.location.search).get("id");
+let currentUser=null,userData=null,currentJob=null;
+const jobId=new URLSearchParams(location.search).get("id");
+const ACTIVE_JOB_STATUSES=new Set(["approved","assigned"]);
 
-auth.onAuthStateChanged(async user => {
-    if (!user) {
-        window.location.href = "login.html";
-        return;
-    }
+function esc(v){return String(v??"").replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));}
+function jobName(j){return j.customer?.name||j.coupleName||j.coupleNames||"Wedding ceremony";}
+function locationOf(j){return j.customer?.location||j.location||"Location TBC";}
+function notesOf(j){return j.customer?.notes||j.notes||"";}
+function witnessCount(j){return Math.max(Number(j.witnessCount||1),1);}
+function parseLocalDate(s){if(!s)return null;const [y,m,d]=String(s).split("-").map(Number);return y&&m&&d?new Date(y,m-1,d):null;}
+function formatDate(s){const d=parseLocalDate(s);return d?d.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long",year:"numeric"}):(s||"Date TBC");}
+function money(v){return "£"+(Number(v)||0).toFixed(2);}
+function assignedToMe(j){return Array.isArray(j.assignedWitnesses)&&j.assignedWitnesses.includes(currentUser?.uid);}
+function requestedByMe(j){return j.requestBy===currentUser?.uid&&j.requestStatus==="pending";}
+function hasOtherRequest(j){return !!j.requestBy&&j.requestBy!==currentUser?.uid&&j.requestStatus==="pending";}
+function remainingPlaces(j){return Math.max(witnessCount(j)-(Array.isArray(j.assignedWitnesses)?j.assignedWitnesses.length:0),0);}
+function isPast(j){const d=parseLocalDate(j.date);if(!d)return false;const t=String(j.time||"23:59").split(":").map(Number);d.setHours(t[0]||0,t[1]||0,0,0);return d<Date.now();}
+function isAvailable(j){return ACTIVE_JOB_STATUSES.has(j.status)&&!assignedToMe(j)&&!isPast(j)&&remainingPlaces(j)>0&&!hasOtherRequest(j);}
+function getEarnings(j){const total=Number(j.totalPrice||0),adminFee=Number(j.depositAmount??j.deposit??0),pot=Math.max(total-adminFee,0),required=witnessCount(j);if(userData?.type==="couple"&&required>=2)return pot;return pot/required;}
+function setState(text,cls){const el=document.getElementById("statePill");el.textContent=text;el.className="state-pill "+cls;}
 
-    currentUser = user;
-    openPanel();
+function renderJob(j){
+  const assigned=assignedToMe(j),requested=requestedByMe(j),available=isAvailable(j),completed=j.status==="completed";
+  if(assigned)setState(completed?"Completed":"Assigned to you",completed?"state-completed":"state-assigned");
+  else if(requested)setState("Request pending","state-requested");
+  else if(available)setState("Available","state-available");
+  else setState(j.status==="cancelled"?"Cancelled":"Unavailable","state-unavailable");
+
+  const email=j.customer?.email||j.email||"Not provided";
+  const phone=j.customer?.phone||j.phone||"Not provided";
+  const assignedCount=Array.isArray(j.assignedWitnesses)?j.assignedWitnesses.length:0;
+
+  let action="";
+  if(requested){action=`<button class="btn cancel" id="actionBtn" onclick="cancelRequest()">Cancel Request</button>`;}
+  else if(available){action=`<button class="btn" id="actionBtn" onclick="requestJob()">Request This Job</button>`;}
+  else if(assigned){action=`<a class="btn secondary" style="display:block;text-align:center;text-decoration:none" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(locationOf(j))}" target="_blank" rel="noopener">Open Location in Maps</a>`;}
+
+  const privacy=assigned?`
+    <div class="card">
+      <h3>Customer Details</h3>
+      <div class="contact"><div class="contact-box"><div class="label">Email</div>${esc(email)}</div><div class="contact-box"><div class="label">Phone</div>${esc(phone)}</div></div>
+      <div class="info-row"><div class="label">Customer notes</div><div class="value">${esc(notesOf(j)||"No customer notes.")}</div></div>
+      <div class="notice private">These contact details are shown because you are assigned to this booking. Please use them only for the ceremony and handle them confidentially.</div>
+    </div>`:`
+    <div class="card">
+      <h3>Customer Privacy</h3>
+      <div class="notice" style="margin-top:0">Customer contact details and private notes are hidden until Need A Witness UK formally assigns you to this booking.</div>
+    </div>`;
+
+  document.getElementById("page").innerHTML=`
+    <section class="hero">
+      <h1>${esc(assigned?jobName(j):"Witness Booking")}</h1>
+      <div class="sub">${esc(formatDate(j.date))} at ${esc(j.time||"Time TBC")} · ${esc(locationOf(j))}</div>
+    </section>
+    <div class="grid">
+      <div>
+        <div class="card">
+          <h3>Ceremony Details</h3>
+          <div class="info-row"><div class="label">Date</div><div class="value">${esc(formatDate(j.date))}</div></div>
+          <div class="info-row"><div class="label">Time</div><div class="value">${esc(j.time||"Time TBC")}</div></div>
+          <div class="info-row"><div class="label">Location</div><div class="value">${esc(locationOf(j))}</div></div>
+          <div class="info-row"><div class="label">Witnesses required</div><div class="value">${witnessCount(j)} · ${assignedCount} assigned · ${remainingPlaces(j)} place${remainingPlaces(j)===1?"":"s"} remaining</div></div>
+        </div>
+        <div style="height:20px"></div>
+        ${privacy}
+      </div>
+      <div>
+        <div class="card">
+          <h3>Your Job Summary</h3>
+          <div class="label">Estimated witness earnings</div><div class="money">${money(getEarnings(j))}</div>
+          <div class="small" style="margin-top:5px">Calculated using the current witness payout model.</div>
+          <div class="info-row"><div class="label">Booking status</div><div class="value">${esc(j.status||"Unknown")}</div></div>
+          <div class="info-row"><div class="label">Your status</div><div class="value">${assigned?"Assigned":requested?"Request awaiting admin":available?"Available to request":"Not available"}</div></div>
+          ${action}
+          ${!assigned&&hasOtherRequest(j)?'<div class="notice">Another witness currently has a request pending for this booking.</div>':""}
+          ${isPast(j)&&!completed?'<div class="notice">This ceremony time has already passed, so the job cannot be requested.</div>':""}
+        </div>
+      </div>
+    </div>`;
+}
+
+async function loadJob(){
+  if(!jobId){document.getElementById("page").innerHTML='<div class="error">No job was selected.</div>';setState("No job","state-unavailable");return;}
+  try{
+    const doc=await db.collection("jobs").doc(jobId).get();
+    if(!doc.exists){document.getElementById("page").innerHTML='<div class="error">This job could not be found.</div>';setState("Not found","state-unavailable");return;}
+    currentJob={id:doc.id,...doc.data()};renderJob(currentJob);
+  }catch(e){console.error(e);document.getElementById("page").innerHTML='<div class="error">Unable to load this job right now.</div>';setState("Error","state-unavailable");}
+}
+
+async function requestJob(){
+  if(!currentJob||!isAvailable(currentJob))return;
+  if(!confirm(`Request the ${formatDate(currentJob.date)} job at ${locationOf(currentJob)}?`))return;
+  const btn=document.getElementById("actionBtn");if(btn)btn.disabled=true;
+  try{
+    await db.collection("jobs").doc(jobId).update({requestBy:currentUser.uid,requestTeamName:userData.type==="couple"?(userData.teamName||"Couple team"):(userData.name||"Witness"),requestStatus:"pending",requestAt:new Date().toISOString()});
+    await loadJob();
+  }catch(e){console.error(e);alert("We couldn't send that request. Please try again.");if(btn)btn.disabled=false;}
+}
+async function cancelRequest(){
+  if(!currentJob||!requestedByMe(currentJob))return;
+  if(!confirm("Cancel your request for this job?"))return;
+  const btn=document.getElementById("actionBtn");if(btn)btn.disabled=true;
+  try{
+    await db.collection("jobs").doc(jobId).update({requestBy:"",requestTeamName:"",requestStatus:null,requestAt:null});
+    await loadJob();
+  }catch(e){console.error(e);alert("We couldn't cancel that request. Please try again.");if(btn)btn.disabled=false;}
+}
+
+auth.onAuthStateChanged(async user=>{
+  if(!user){location.href="login.html";return;}
+  currentUser=user;
+  try{
+    const snap=await db.collection("users").doc(user.uid).get();
+    if(!snap.exists){logout();return;}
+    userData=snap.data();
+    if(userData.approved!==true||userData.status==="pending"){location.href="pending.html";return;}
+    if(["rejected","suspended"].includes(userData.status)){location.href="pending.html";return;}
     loadJob();
+  }catch(e){console.error(e);logout();}
 });
-
-/* OPEN PANEL */
-function openPanel() {
-    const overlay = document.getElementById("overlay");
-    const panel = document.getElementById("glassPanel");
-
-    overlay.classList.add("open");
-    requestAnimationFrame(() => {
-        panel.classList.add("open");
-    });
-}
-
-/* CLOSE PANEL */
-function closePanel() {
-    const overlay = document.getElementById("overlay");
-    const panel = document.getElementById("glassPanel");
-
-    panel.classList.remove("open");
-    setTimeout(() => {
-        overlay.classList.remove("open");
-        window.location.href = "myjobs.html";
-    }, 280);
-}
-
-/* LOAD JOB DETAILS */
-async function loadJob() {
-    const doc = await db.collection("jobs").doc(jobId).get();
-    if (!doc.exists) {
-        jobContent.innerHTML = "<p>Job not found.</p>";
-        return;
-    }
-
-    const j = doc.data();
-
-    document.getElementById("jobTitle").textContent = j.coupleName;
-
-    const badge = j.status === "pending" ? "pending" :
-                  j.status === "assigned" ? "assigned" :
-                  j.status === "completed" ? "completed" : "pending";
-
-    let assignedList = "None";
-    if (j.assignedWitnesses?.length) {
-        assignedList = j.assignedWitnesses.join(", ");
-    }
-
-    jobContent.innerHTML = `
-        <div class="section">
-            <h4>Date & Time</h4>
-            <div>${j.date}</div>
-            <div>${j.time}</div>
-        </div>
-
-        <div class="section">
-            <h4>Location</h4>
-            <div>${j.location}</div>
-        </div>
-
-        <div class="section">
-            <h4>Notes</h4>
-            <div>${j.notes || "None"}</div>
-        </div>
-
-        <div class="section">
-            <h4>Status</h4>
-            <div>
-                <span class="status-badge ${badge}">${j.status}</span>
-            </div>
-        </div>
-
-        <div class="section">
-            <h4>Assigned Witnesses</h4>
-            <div>${assignedList}</div>
-        </div>
-
-        <a class="btn" href="https://www.google.com/maps/search/${encodeURIComponent(j.location)}" target="_blank">
-            Open in Maps
-        </a>
-
-        ${renderButtons(j)}
-    `;
-}
-
-/* BUTTON LOGIC */
-function renderButtons(j) {
-    const uid = currentUser.uid;
-
-    if (j.assignedWitnesses?.includes(uid)) {
-        return `<button class="btn" onclick="markCompleted()">Mark Completed</button>`;
-    }
-
-    if (j.requestBy === uid && j.requestStatus === "pending") {
-        return `<button class="btn cancel" onclick="cancelRequest()">Cancel Request</button>`;
-    }
-
-    if (j.status === "pending") {
-        return `<button class="btn" onclick="requestJob()">Request Job</button>`;
-    }
-
-    return "";
-}
-
-/* REQUEST JOB */
-function requestJob() {
-    db.collection("jobs").doc(jobId).update({
-        requestBy: currentUser.uid,
-        requestTeamName: "Witness",
-        requestStatus: "pending"
-    });
-
-    loadJob();
-}
-
-/* CANCEL REQUEST */
-function cancelRequest() {
-    db.collection("jobs").doc(jobId).update({
-        requestBy: "",
-        requestTeamName: "",
-        requestStatus: null
-    });
-
-    loadJob();
-}
-
-/* MARK COMPLETED */
-function markCompleted() {
-    db.collection("jobs").doc(jobId).update({
-        status: "completed"
-    });
-
-    loadJob();
-}
-
-/* LOGOUT */
-function logout() {
-    auth.signOut().then(() => {
-        window.location.href = "login.html";
-    });
-}
+function logout(){auth.signOut().then(()=>location.href="login.html");}
 </script>
-
 </body>
 </html>
