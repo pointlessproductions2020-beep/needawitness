@@ -1,11 +1,119 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Witness Hub – Dashboard</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Witness Hub – Payments</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--gold:#c8a24a;--gold-dark:#9b782c;--bg:#f5f4f2;--card:#fff;--text:#222;--muted:#747474;--line:#e9e5dc;--green:#187748;--amber:#956a00;--blue:#2b5f96;--red:#9d3737}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,sans-serif;background:var(--bg);color:var(--text)}
+.layout{display:flex;min-height:100vh}.sidebar{width:250px;background:#fff;border-right:1px solid #e6e2da;padding:28px;display:flex;flex-direction:column;box-shadow:2px 0 10px rgba(0,0,0,.04);position:sticky;top:0;height:100vh}.sidebar h2{font-family:"Playfair Display",serif;color:var(--gold);margin:0 0 32px;font-size:26px}.sidebar a{color:#444;text-decoration:none;padding:12px 0;display:block;font-size:15px;font-weight:500;transition:.2s}.sidebar a:hover,.sidebar a.active{color:var(--gold);transform:translateX(3px)}.sidebar a.active{font-weight:700}.logout-btn{margin-top:auto;padding:12px;background:var(--gold);color:#fff;text-align:center;border-radius:8px;cursor:pointer;font-weight:600}.sidebar-footer{margin-top:20px;padding-top:14px;border-top:1px solid #eee;font-size:12px;color:#777;line-height:1.4}
+.main{flex:1;padding:40px 48px;min-width:0}.header{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;margin-bottom:24px;padding-bottom:13px;border-bottom:2px solid #e8dcc2}.header h1{font-family:"Playfair Display",serif;color:var(--gold);font-size:32px;margin:0 0 5px}.header p{margin:0;color:var(--muted);font-size:14px}.chip{background:#fff6dd;border:1px solid #ead6a3;color:#735514;padding:9px 14px;border-radius:999px;font-size:13px;font-weight:700}
+.notice{background:#fff8e6;border:1px solid #ead7a5;border-radius:12px;padding:12px 14px;margin-bottom:20px;color:#684f15;font-size:13px;line-height:1.5}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:22px}.stat{background:#fff;padding:18px 20px;border-radius:14px;border-left:4px solid var(--gold);box-shadow:0 4px 14px rgba(0,0,0,.05)}.stat span{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.05em}.stat strong{display:block;font-size:25px;margin-top:7px}.stat small{display:block;color:var(--muted);font-size:11px;margin-top:5px}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:17px}.toolbar input,.toolbar select{border:1px solid #ddd4c2;background:#fff;border-radius:10px;padding:11px 12px;font:inherit;color:#333}.toolbar input{flex:1;min-width:230px}.toolbar select{min-width:170px}
+.panel{background:#fff;border-radius:15px;box-shadow:0 5px 16px rgba(0,0,0,.05);overflow:hidden}.panel-head{padding:17px 19px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:12px;align-items:center}.panel-head h2{font-family:"Playfair Display",serif;color:var(--gold);font-size:21px;margin:0}.panel-head small{color:var(--muted)}
+table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:14px 16px;border-bottom:1px solid #eee;font-size:13px;vertical-align:top}th{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#776a49;background:#fbfaf7}.money{font-weight:800;color:var(--gold-dark);white-space:nowrap}.badge{display:inline-block;padding:5px 9px;border-radius:999px;font-size:10px;font-weight:800;text-transform:uppercase}.badge.upcoming{background:#e7f0fb;color:var(--blue)}.badge.completed{background:#dcf4e5;color:var(--green)}.badge.paid{background:#dcf4e5;color:var(--green)}.badge.pending{background:#fff1c9;color:var(--amber)}.badge.cancelled{background:#f8e3e3;color:var(--red)}.small{color:var(--muted);font-size:11px;line-height:1.45;margin-top:4px}.empty{padding:30px;text-align:center;color:#777}
+.mobile-cards{display:none}.pay-card{padding:16px;border-bottom:1px solid #eee}.pay-card:last-child{border-bottom:0}.pay-card-head{display:flex;justify-content:space-between;gap:12px}.pay-card h3{margin:0;font-size:15px}.pay-card .meta{font-size:12px;color:#666;line-height:1.55;margin-top:7px}.pay-card .amount{font-size:18px;font-weight:800;color:var(--gold-dark)}
+@media(max-width:1100px){.stats{grid-template-columns:repeat(2,1fr)}}@media(max-width:850px){.sidebar{width:205px;padding:22px}.main{padding:30px 24px}}@media(max-width:700px){.layout{display:block}.sidebar{position:relative;width:100%;height:auto;padding:18px 20px}.sidebar h2{margin-bottom:12px}.sidebar a{display:inline-block;margin-right:14px;padding:7px 0}.logout-btn{margin-top:12px}.sidebar-footer{display:none}.main{padding:24px 15px}.header{flex-direction:column}.stats{grid-template-columns:1fr 1fr}.toolbar{display:grid;grid-template-columns:1fr}.toolbar input,.toolbar select{width:100%;min-width:0}.desktop-table{display:none}.mobile-cards{display:block}}@media(max-width:470px){.stats{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
-    <h1>Payments</h1>
-    <p>Placeholder content.</p>
+<div class="layout">
+  <aside class="sidebar">
+    <h2>Witness Hub</h2>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="jobs.html">Available Jobs</a>
+    <a href="myjobs.html">My Jobs</a>
+    <a href="payments.html" class="active">Payments</a>
+    <a href="availability.html">Availability</a>
+    <a href="profile.html">Profile</a>
+    <a href="profile-edit.html">Edit Profile</a>
+    <div class="logout-btn" onclick="logout()">Logout</div>
+    <div class="sidebar-footer">© Need A Witness UK<br>Witness Hub</div>
+  </aside>
+
+  <main class="main">
+    <div class="header">
+      <div><h1>Payments & Earnings</h1><p>A clear view of the witness earnings linked to jobs assigned to your account.</p></div>
+      <div class="chip" id="accountName">Witness account</div>
+    </div>
+
+    <div class="notice"><b>Important:</b> these figures are witness earnings estimates based on the current booking value and witness split. A job being fully paid by the customer does not automatically mean the witness payout has been sent. If Need A Witness UK later adds a formal payout-tracking field, this page is ready to display it separately.</div>
+
+    <div class="stats">
+      <div class="stat"><span>Upcoming Earnings</span><strong id="upcomingTotal">£0.00</strong><small>Assigned future ceremonies</small></div>
+      <div class="stat"><span>Completed Earnings</span><strong id="completedTotal">£0.00</strong><small>Completed assigned ceremonies</small></div>
+      <div class="stat"><span>This Month</span><strong id="monthTotal">£0.00</strong><small>Assigned ceremonies this month</small></div>
+      <div class="stat"><span>All-Time Assigned</span><strong id="allTotal">£0.00</strong><small>All non-cancelled assigned work</small></div>
+    </div>
+
+    <div class="toolbar">
+      <input id="searchInput" type="search" placeholder="Search by couple, date or location…" aria-label="Search payments">
+      <select id="statusFilter"><option value="all">All assigned jobs</option><option value="upcoming">Upcoming</option><option value="completed">Completed</option><option value="past">Past, not completed</option></select>
+      <select id="sortSelect"><option value="soonest">Soonest first</option><option value="latest">Latest first</option><option value="highest">Highest earnings</option></select>
+    </div>
+
+    <section class="panel">
+      <div class="panel-head"><h2>Your Assigned Earnings</h2><small id="resultCount">0 jobs</small></div>
+      <div class="desktop-table">
+        <table>
+          <thead><tr><th>Ceremony</th><th>Location</th><th>Job Status</th><th>Customer Payment</th><th>Your Estimated Earnings</th></tr></thead>
+          <tbody id="paymentsBody"><tr><td colspan="5">Loading…</td></tr></tbody>
+        </table>
+      </div>
+      <div id="mobileCards" class="mobile-cards"></div>
+    </section>
+  </main>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<script src="firebase.js"></script>
+<script>
+let currentUser=null,userData=null,allJobs=[];
+function esc(v){return String(v??"").replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));}
+function parseDate(s){if(!s)return null;const [y,m,d]=String(s).split("-").map(Number);return y&&m&&d?new Date(y,m-1,d):null;}
+function prettyDate(s){const d=parseDate(s);return d?d.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short",year:"numeric"}):(s||"Date TBC");}
+function nameOf(j){return j.customer?.name||j.coupleName||j.coupleNames||"Wedding ceremony";}
+function locationOf(j){return j.customer?.location||j.location||"Location TBC";}
+function witnessCount(j){return Math.max(Number(j.witnessCount||1),1);}
+function assignedToMe(j){return Array.isArray(j.assignedWitnesses)&&j.assignedWitnesses.includes(currentUser?.uid);}
+function money(v){return "£"+(Number(v)||0).toFixed(2);}
+function earnings(j){const total=Number(j.totalPrice||0),adminFee=Number(j.depositAmount??j.deposit??0),pot=Math.max(total-adminFee,0),required=witnessCount(j);if(userData?.type==="couple"&&required>=2)return pot;return pot/required;}
+function eventDate(j){const d=parseDate(j.date);if(!d)return null;const [h,m]=(j.time||"00:00").split(":").map(Number);d.setHours(h||0,m||0,0,0);return d;}
+function isPast(j){const d=eventDate(j);return d?d<Date.now():false;}
+function rowState(j){if(j.status==="cancelled")return "cancelled";if(j.status==="completed")return "completed";return isPast(j)?"past":"upcoming";}
+function customerPayment(j){const p=(j.paymentStatus||"unpaid").toLowerCase();if(p==="full")return ["Full paid","paid"];if(p==="deposit")return ["Deposit paid","pending"];if(p==="late-cancel")return ["Late cancel","pending"];return ["Unpaid","pending"];}
+function matches(j){const q=document.getElementById("searchInput").value.trim().toLowerCase(),filter=document.getElementById("statusFilter").value,state=rowState(j);if(filter!=="all"&&state!==filter)return false;if(!q)return true;return [nameOf(j),locationOf(j),j.date,j.time,j.status,j.paymentStatus].join(" ").toLowerCase().includes(q);}
+function sortJobs(arr){const mode=document.getElementById("sortSelect").value;return [...arr].sort((a,b)=>{if(mode==="highest")return earnings(b)-earnings(a);const av=(a.date||"")+" "+(a.time||""),bv=(b.date||"")+" "+(b.time||"");return mode==="latest"?bv.localeCompare(av):av.localeCompare(bv);});}
+function updateStats(){
+  const mine=allJobs.filter(j=>assignedToMe(j)&&j.status!=="cancelled");
+  const now=new Date(),month=now.getMonth(),year=now.getFullYear();
+  const upcoming=mine.filter(j=>rowState(j)==="upcoming").reduce((s,j)=>s+earnings(j),0);
+  const completed=mine.filter(j=>j.status==="completed").reduce((s,j)=>s+earnings(j),0);
+  const monthly=mine.filter(j=>{const d=parseDate(j.date);return d&&d.getMonth()===month&&d.getFullYear()===year;}).reduce((s,j)=>s+earnings(j),0);
+  const all=mine.reduce((s,j)=>s+earnings(j),0);
+  document.getElementById("upcomingTotal").textContent=money(upcoming);
+  document.getElementById("completedTotal").textContent=money(completed);
+  document.getElementById("monthTotal").textContent=money(monthly);
+  document.getElementById("allTotal").textContent=money(all);
+}
+function render(){
+  updateStats();
+  const mine=sortJobs(allJobs.filter(j=>assignedToMe(j)&&j.status!=="cancelled"&&matches(j)));
+  document.getElementById("resultCount").textContent=`${mine.length} job${mine.length===1?"":"s"}`;
+  const tbody=document.getElementById("paymentsBody"),cards=document.getElementById("mobileCards");
+  if(!mine.length){tbody.innerHTML='<tr><td colspan="5" class="empty">No assigned jobs match your filters.</td></tr>';cards.innerHTML='<div class="empty">No assigned jobs match your filters.</div>';return;}
+  tbody.innerHTML=mine.map(j=>{const st=rowState(j),[payLabel,payClass]=customerPayment(j);return `<tr><td><strong>${esc(nameOf(j))}</strong><div class="small">${esc(prettyDate(j.date))} · ${esc(j.time||"Time TBC")}</div></td><td>${esc(locationOf(j))}</td><td><span class="badge ${st==="past"?"pending":st}">${esc(st==="past"?"Past – awaiting completion":st)}</span></td><td><span class="badge ${payClass}">${esc(payLabel)}</span><div class="small">Customer booking payment status</div></td><td class="money">${money(earnings(j))}</td></tr>`;}).join("");
+  cards.innerHTML=mine.map(j=>{const st=rowState(j),[payLabel,payClass]=customerPayment(j);return `<article class="pay-card"><div class="pay-card-head"><div><h3>${esc(nameOf(j))}</h3><div class="meta">${esc(prettyDate(j.date))} · ${esc(j.time||"Time TBC")}<br>${esc(locationOf(j))}</div></div><div class="amount">${money(earnings(j))}</div></div><div style="margin-top:10px"><span class="badge ${st==="past"?"pending":st}">${esc(st==="past"?"Past – awaiting completion":st)}</span> <span class="badge ${payClass}">${esc(payLabel)}</span></div></article>`;}).join("");
+}
+function loadJobs(){db.collection("jobs").onSnapshot(s=>{allJobs=[];s.forEach(d=>allJobs.push({id:d.id,...d.data()}));render();},e=>{console.error(e);document.getElementById("paymentsBody").innerHTML='<tr><td colspan="5">Unable to load earnings.</td></tr>';});}
+auth.onAuthStateChanged(async user=>{if(!user){location.href="login.html";return;}currentUser=user;try{const snap=await db.collection("users").doc(user.uid).get();if(!snap.exists){logout();return;}userData=snap.data()||{};if(userData.approved!==true||userData.status==="pending"||["rejected","suspended"].includes(userData.status)){location.href="pending.html";return;}document.getElementById("accountName").textContent=userData.type==="couple"?(userData.teamName||"Couple team"):(userData.name||"Witness");loadJobs();}catch(e){console.error(e);alert("Unable to load your payment information.");}});
+["searchInput","statusFilter","sortSelect"].forEach(id=>document.getElementById(id).addEventListener(id==="searchInput"?"input":"change",render));
+function logout(){auth.signOut().then(()=>location.href="login.html");}
+</script>
 </body>
 </html>
