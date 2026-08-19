@@ -74,7 +74,6 @@
 </main>
 </div>
 <script>
-const db=firebase.firestore();
 let allJobs=[];
 const fmtMoney=n=>`£${(Number(n)||0).toLocaleString("en-GB",{minimumFractionDigits:0,maximumFractionDigits:2})}`;
 const esc=s=>String(s??"").replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));
