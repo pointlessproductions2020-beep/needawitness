@@ -534,7 +534,7 @@
             <div>
                 <div class="main-header-title">Availability</div>
                 <div class="main-header-subtitle">
-                    Set your weekly template and fine‑tune specific dates.
+                    Set when you personally can work. These settings never change the public booking calendar.
                 </div>
             </div>
         </div>
@@ -544,6 +544,7 @@
             <div class="section-header">
                 <h3>Weekly Template</h3>
             </div>
+            <p style="margin:0 0 14px;color:#777;font-size:13px;line-height:1.5;">Your weekly pattern is used as the default. Use the calendar underneath for one-off days off or different hours.</p>
             <div id="weeklyTemplate"></div>
             <button class="save-weekly-btn" onclick="saveWeeklyTemplate()">Save Weekly Template</button>
         </div>
@@ -559,6 +560,10 @@
                         <button onclick="changeMonth(1)">›</button>
                     </div>
                 </div>
+            </div>
+
+            <div style="display:flex;flex-wrap:wrap;gap:10px;margin:0 0 14px;font-size:12px;color:#666;">
+                <span>🟨 Available</span><span>🟩 Custom</span><span>🟦 Assigned job</span><span>⬛ Day off</span><span>⬜ Unavailable</span>
             </div>
 
             <!-- Desktop grid -->
@@ -607,7 +612,7 @@
         </div>
 
         <div class="drawer-section">
-            <h4>Slots for this day</h4>
+            <h4>Your availability for this day</h4>
             <div class="slot-list" id="slotList">
                 <!-- slots injected -->
             </div>
@@ -615,7 +620,7 @@
 
         <div class="drawer-section">
             <h4>Notes</h4>
-            <textarea id="drawerNotes" class="drawer-notes" placeholder="Optional notes for this date"></textarea>
+            <textarea id="drawerNotes" class="drawer-notes" placeholder="Optional private note for this date"></textarea>
         </div>
 
         <button class="drawer-btn" onclick="saveDateSettings()">Save Changes</button>
@@ -638,12 +643,26 @@ let userData = null;
 const dayNames = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
 let currentMonth = new Date().getMonth();
 let currentYear = new Date().getFullYear();
-
-let weeklyTemplate = {}; // from user doc
-let dateOverrides = {};  // per-date override
-let slotCache = {};      // per-date slots availability
-
+let weeklyTemplate = {};
+let personalOverrides = {};
+let assignedJobsByDate = {};
 let selectedDateStr = null;
+
+function localDateFromISO(dateStr) {
+    const [y,m,d] = String(dateStr || "").split("-").map(Number);
+    return new Date(y, (m || 1) - 1, d || 1, 12, 0, 0, 0);
+}
+
+function isoFromLocalDate(d) {
+    const y = d.getFullYear();
+    const m = String(d.getMonth()+1).padStart(2,"0");
+    const day = String(d.getDate()).padStart(2,"0");
+    return `${y}-${m}-${day}`;
+}
+
+function esc(value) {
+    return String(value ?? "").replace(/[&<>'"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]));
+}
 
 /* AUTH */
 auth.onAuthStateChanged(async (user) => {
@@ -653,17 +672,22 @@ auth.onAuthStateChanged(async (user) => {
     }
     currentUser = user;
 
-    const doc = await db.collection("users").doc(user.uid).get();
-    userData = doc.data() || {};
+    try {
+        const doc = await db.collection("users").doc(user.uid).get();
+        userData = doc.data() || {};
+        weeklyTemplate = userData.availability || {};
+        personalOverrides = userData.availabilityOverrides || {};
 
-    weeklyTemplate = userData.availability || {};
-    renderWeeklyTemplate();
-
-    await preloadMonthData(currentYear, currentMonth);
-    renderCalendar();
+        renderWeeklyTemplate();
+        await loadAssignedJobsForMonth(currentYear, currentMonth);
+        renderCalendar();
+    } catch (err) {
+        console.error("Availability load failed", err);
+        alert("We couldn't load your availability. Please refresh and try again.");
+    }
 });
 
-/* WEEKLY TEMPLATE UI */
+/* WEEKLY TEMPLATE */
 function renderWeeklyTemplate() {
     const container = document.getElementById("weeklyTemplate");
     container.innerHTML = "";
@@ -676,8 +700,8 @@ function renderWeeklyTemplate() {
             <div class="weekly-day">${day}</div>
             <input type="checkbox" id="weekly-${day}-enabled" ${saved.enabled ? "checked" : ""}>
             <span>Available</span>
-            <input type="time" id="weekly-${day}-start" value="${saved.start}">
-            <input type="time" id="weekly-${day}-end" value="${saved.end}">
+            <input type="time" id="weekly-${day}-start" value="${esc(saved.start || '09:00')}">
+            <input type="time" id="weekly-${day}-end" value="${esc(saved.end || '16:00')}">
         `;
         container.appendChild(row);
     });
@@ -687,315 +711,225 @@ async function saveWeeklyTemplate() {
     if (!currentUser) return;
 
     const updated = {};
-    dayNames.forEach(day => {
-        updated[day] = {
-            enabled: document.getElementById(`weekly-${day}-enabled`).checked,
-            start: document.getElementById(`weekly-${day}-start`).value || "09:00",
-            end: document.getElementById(`weekly-${day}-end`).value || "16:00"
-        };
-    });
-
-    await db.collection("users").doc(currentUser.uid).update({
-        availability: updated
-    });
-
-    weeklyTemplate = updated;
-    alert("Weekly template saved.");
-    await preloadMonthData(currentYear, currentMonth);
-    renderCalendar();
-}
-
-/* CALENDAR DATA PRELOAD */
-async function preloadMonthData(year, month) {
-    dateOverrides = {};
-    slotCache = {};
-
-    const first = new Date(year, month, 1);
-    const last = new Date(year, month + 1, 0);
-
-    const promises = [];
-    for (let d = new Date(first); d <= last; d.setDate(d.getDate() + 1)) {
-        const dateStr = d.toISOString().slice(0,10);
-        promises.push(loadDateData(dateStr));
-    }
-    await Promise.all(promises);
-}
-
-async function loadDateData(dateStr) {
-    // override doc
-    const overrideRef = db.collection("availability").doc(dateStr).collection("meta").doc("override");
-    const overrideSnap = await overrideRef.get();
-    if (overrideSnap.exists) {
-        dateOverrides[dateStr] = overrideSnap.data();
-    } else {
-        dateOverrides[dateStr] = null;
+    for (const day of dayNames) {
+        const enabled = document.getElementById(`weekly-${day}-enabled`).checked;
+        const start = document.getElementById(`weekly-${day}-start`).value || "09:00";
+        const end = document.getElementById(`weekly-${day}-end`).value || "16:00";
+        if (enabled && start >= end) {
+            alert(`${day}: the finish time must be after the start time.`);
+            return;
+        }
+        updated[day] = { enabled, start, end };
     }
 
-    // slots availability via existing engine
     try {
-        const results = await window.availability.checkAvailability(db, dateStr);
-        slotCache[dateStr] = results;
-    } catch (e) {
-        slotCache[dateStr] = {};
+        await db.collection("users").doc(currentUser.uid).update({ availability: updated });
+        weeklyTemplate = updated;
+        renderCalendar();
+        alert("Your weekly availability has been saved.");
+    } catch (err) {
+        console.error(err);
+        alert("Your weekly availability could not be saved.");
     }
 }
 
-/* CALENDAR RENDER */
+/* ASSIGNED JOBS */
+async function loadAssignedJobsForMonth(year, month) {
+    assignedJobsByDate = {};
+    if (!currentUser) return;
+
+    const start = `${year}-${String(month+1).padStart(2,'0')}-01`;
+    const lastDay = new Date(year, month+1, 0).getDate();
+    const end = `${year}-${String(month+1).padStart(2,'0')}-${String(lastDay).padStart(2,'0')}`;
+
+    try {
+        const snap = await db.collection("jobs")
+            .where("assignedWitnesses", "array-contains", currentUser.uid)
+            .get();
+        snap.forEach(doc => {
+            const job = { id: doc.id, ...doc.data() };
+            if (!job.date || job.date < start || job.date > end || job.status === "cancelled") return;
+            (assignedJobsByDate[job.date] ||= []).push(job);
+        });
+    } catch (err) {
+        console.warn("Could not load assigned jobs", err);
+    }
+}
+
+/* CALENDAR */
 function renderCalendar() {
-    const monthLabel = document.getElementById("monthLabel");
-    const monthName = new Date(currentYear, currentMonth, 1).toLocaleString("en-GB", { month: "long", year: "numeric" });
-    monthLabel.textContent = monthName;
+    document.getElementById("monthLabel").textContent = new Date(currentYear, currentMonth, 1)
+        .toLocaleString("en-GB", { month: "long", year: "numeric" });
 
     const grid = document.getElementById("calendarGrid");
     const list = document.getElementById("calendarList");
     grid.querySelectorAll(".calendar-cell").forEach(el => el.remove());
     list.innerHTML = "";
 
-    const first = new Date(currentYear, currentMonth, 1);
-    const last = new Date(currentYear, currentMonth + 1, 0);
+    const first = new Date(currentYear, currentMonth, 1, 12);
+    const last = new Date(currentYear, currentMonth + 1, 0, 12);
+    const startOffset = (first.getDay() + 6) % 7;
 
-    let startOffset = (first.getDay() + 6) % 7; // Monday=0
-    for (let i = 0; i < startOffset; i++) {
+    for (let i=0; i<startOffset; i++) {
         const empty = document.createElement("div");
         empty.className = "calendar-cell disabled";
         grid.appendChild(empty);
     }
 
-    for (let d = new Date(first); d <= last; d.setDate(d.getDate() + 1)) {
-        const dateStr = d.toISOString().slice(0,10);
-        const dayNum = d.getDate();
+    for (let d = new Date(first); d <= last; d.setDate(d.getDate()+1)) {
+        const dateStr = isoFromLocalDate(d);
         const dayName = d.toLocaleDateString("en-GB", { weekday: "long" });
+        const state = getPersonalDayState(dateStr, dayName);
 
-        const { bgClass, label } = getDayColourAndLabel(dateStr, dayName);
-
-        // grid cell
         const cell = document.createElement("div");
-        cell.className = `calendar-cell ${bgClass}`;
-        cell.innerHTML = `
-            <div class="calendar-date">${dayNum}</div>
-            <div class="calendar-tag">${label}</div>
-        `;
+        cell.className = `calendar-cell ${state.bgClass}`;
+        cell.innerHTML = `<div class="calendar-date">${d.getDate()}</div><div class="calendar-tag">${esc(state.label)}</div>`;
         cell.onclick = () => openDrawer(dateStr);
         grid.appendChild(cell);
 
-        // list item (mobile)
         const item = document.createElement("div");
-        item.className = `calendar-list-item ${bgClass}`;
-        item.innerHTML = `
-            <div class="calendar-list-date">${dayName} ${dayNum}</div>
-            <div class="calendar-list-label">${label}</div>
-        `;
+        item.className = `calendar-list-item ${state.bgClass}`;
+        item.innerHTML = `<div class="calendar-list-date">${dayName} ${d.getDate()}</div><div class="calendar-list-label">${esc(state.label)}</div>`;
         item.onclick = () => openDrawer(dateStr);
         list.appendChild(item);
     }
 }
 
-function getDayColourAndLabel(dateStr, dayName) {
-    const isBH = window.availability.isBankHoliday(dateStr);
-    const isSun = window.availability.isSunday(dateStr);
+function getPersonalDayState(dateStr, dayName) {
+    const jobs = assignedJobsByDate[dateStr] || [];
+    if (jobs.length) return { bgClass: "bg-blue", label: jobs.length === 1 ? "Assigned job" : `${jobs.length} assigned jobs` };
 
-    const override = dateOverrides[dateStr];
-    const slots = slotCache[dateStr] || {};
+    const override = personalOverrides[dateStr];
+    if (override) {
+        if (override.enabled === false) return { bgClass: "bg-black", label: "Day off" };
+        const slotVals = Object.values(override.slots || {});
+        if (slotVals.length && slotVals.some(v => v === false)) return { bgClass: "bg-green", label: "Custom hours" };
+        return { bgClass: "bg-green", label: "Custom availability" };
+    }
 
     const weekly = weeklyTemplate[dayName] || { enabled: false };
-
-    const slotValues = Object.values(slots);
-    const totalSlots = slotValues.length;
-    const availableSlots = slotValues.filter(v => v === true).length;
-
-    if (override && override.enabled === false) {
-        return { bgClass: "bg-black", label: "Overridden: Off" };
-    }
-
-    if (isBH) {
-        return { bgClass: "bg-red", label: "Bank Holiday" };
-    }
-
-    if (isSun) {
-        return { bgClass: "bg-blue", label: weekly.enabled ? "Sunday (on)" : "Sunday (off)" };
-    }
-
-    if (!weekly.enabled) {
-        if (availableSlots > 0) {
-            return { bgClass: "bg-green", label: "Partially available" };
-        }
-        return { bgClass: "bg-grey", label: "Unavailable" };
-    }
-
-    if (totalSlots === 0) {
-        return { bgClass: "bg-gold", label: "Available" };
-    }
-
-    if (availableSlots === 0) {
-        return { bgClass: "bg-grey", label: "Unavailable" };
-    }
-
-    if (availableSlots === totalSlots) {
-        return { bgClass: "bg-gold", label: "Available" };
-    }
-
-    return { bgClass: "bg-green", label: "Partially available" };
+    if (!weekly.enabled) return { bgClass: "bg-grey", label: "Unavailable" };
+    if (window.availability?.isBankHoliday?.(dateStr)) return { bgClass: "bg-red", label: "Available · Bank holiday" };
+    if (window.availability?.isSunday?.(dateStr)) return { bgClass: "bg-gold", label: "Available · Sunday" };
+    return { bgClass: "bg-gold", label: "Available" };
 }
 
-function changeMonth(delta) {
+async function changeMonth(delta) {
     currentMonth += delta;
-    if (currentMonth < 0) {
-        currentMonth = 11;
-        currentYear--;
-    } else if (currentMonth > 11) {
-        currentMonth = 0;
-        currentYear++;
-    }
-    preloadMonthData(currentYear, currentMonth).then(renderCalendar);
+    if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+    if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+    await loadAssignedJobsForMonth(currentYear, currentMonth);
+    renderCalendar();
 }
 
-/* DRAWER / PANEL */
-async function openDrawer(dateStr) {
+/* DATE DRAWER */
+function openDrawer(dateStr) {
     selectedDateStr = dateStr;
-
-    const d = new Date(dateStr);
+    const d = localDateFromISO(dateStr);
     const dayName = d.toLocaleDateString("en-GB", { weekday: "long" });
     const nice = d.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
-
     document.getElementById("drawerTitle").textContent = `${dayName} ${nice}`;
 
-    const weekly = weeklyTemplate[dayName] || { enabled: false, start: "09:00", end: "16:00" };
-    const override = dateOverrides[dateStr];
+    const weekly = weeklyTemplate[dayName] || { enabled:false, start:"09:00", end:"16:00" };
+    const override = personalOverrides[dateStr];
+    const disabled = override ? override.enabled === false : !weekly.enabled;
 
-    const disableDayCheckbox = document.getElementById("drawerDisableDay");
-    const startInput = document.getElementById("drawerStart");
-    const endInput = document.getElementById("drawerEnd");
-    const notesInput = document.getElementById("drawerNotes");
+    document.getElementById("drawerDisableDay").checked = disabled;
+    document.getElementById("drawerStart").value = override?.start || weekly.start || "09:00";
+    document.getElementById("drawerEnd").value = override?.end || weekly.end || "16:00";
+    document.getElementById("drawerNotes").value = override?.notes || "";
+    renderPersonalSlots(dateStr, weekly, override);
 
-    if (override) {
-        disableDayCheckbox.checked = (override.enabled === false);
-        startInput.value = override.start || weekly.start;
-        endInput.value = override.end || weekly.end;
-        notesInput.value = override.notes || "";
-    } else {
-        disableDayCheckbox.checked = false;
-        startInput.value = weekly.start;
-        endInput.value = weekly.end;
-        notesInput.value = "";
+    const existing = document.getElementById("assignedJobNotice");
+    if (existing) existing.remove();
+    const jobs = assignedJobsByDate[dateStr] || [];
+    if (jobs.length) {
+        const notice = document.createElement("div");
+        notice.id = "assignedJobNotice";
+        notice.className = "drawer-section";
+        notice.innerHTML = `<h4>Assigned work</h4>${jobs.map(j => `
+            <div style="padding:8px 0;border-bottom:1px solid #333">
+                <strong>${esc(j.time || 'Time TBC')}</strong> · ${esc(j.customer?.name || j.coupleName || 'Ceremony')}<br>
+                <span style="font-size:12px;color:#bbb">${esc(j.customer?.location || j.location || '')}</span>
+            </div>`).join('')}`;
+        document.getElementById("slotList").closest(".drawer-section").after(notice);
     }
-
-    await loadDateData(dateStr);
-    renderSlots(dateStr, weekly);
 
     const overlay = document.getElementById("availabilityOverlay");
     const panel = document.getElementById("availabilityPanel");
-
     overlay.classList.add("open");
-    requestAnimationFrame(() => {
-        panel.classList.add("open");
+    requestAnimationFrame(() => panel.classList.add("open"));
+}
+
+function renderPersonalSlots(dateStr, weekly, override) {
+    const slotList = document.getElementById("slotList");
+    slotList.innerHTML = "";
+    const start = override?.start || weekly.start || "09:00";
+    const end = override?.end || weekly.end || "16:00";
+    const dayDisabled = override ? override.enabled === false : !weekly.enabled;
+    const customSlots = override?.slots || {};
+
+    window.availability.generateSlots().forEach(timeStr => {
+        const inHours = timeStr >= start && timeStr < end;
+        const available = !dayDisabled && inHours && customSlots[timeStr] !== false;
+        const item = document.createElement("div");
+        item.className = "slot-item";
+        item.innerHTML = `
+            <div><div class="slot-label">${timeStr}</div><div class="slot-status">${available ? 'Available' : 'Unavailable'}</div></div>
+            <input type="checkbox" class="slot-toggle" data-time="${timeStr}" ${available ? 'checked' : ''}>
+        `;
+        slotList.appendChild(item);
     });
 }
 
 function closeDrawer() {
     const overlay = document.getElementById("availabilityOverlay");
     const panel = document.getElementById("availabilityPanel");
-
     panel.classList.remove("open");
     setTimeout(() => {
         overlay.classList.remove("open");
         selectedDateStr = null;
+        document.getElementById("assignedJobNotice")?.remove();
     }, 260);
 }
 
-function renderSlots(dateStr, weekly) {
-    const slotList = document.getElementById("slotList");
-    slotList.innerHTML = "";
-
-    const slots = window.availability.generateSlots();
-    const slotState = slotCache[dateStr] || {};
-
-    slots.forEach(timeStr => {
-        const baseAvailable = slotState[timeStr] !== false;
-        const label = timeStr;
-
-        const item = document.createElement("div");
-        item.className = "slot-item";
-
-        const statusParts = [];
-        if (!baseAvailable) statusParts.push("Blocked");
-        if (timeStr < weekly.start || timeStr >= weekly.end) statusParts.push("Outside weekly");
-
-        const statusText = statusParts.length ? statusParts.join(" • ") : "Available";
-
-        const checked = baseAvailable && !(timeStr < weekly.start || timeStr >= weekly.end);
-
-        item.innerHTML = `
-            <div>
-                <div class="slot-label">${label}</div>
-                <div class="slot-status">${statusText}</div>
-            </div>
-            <input type="checkbox" class="slot-toggle" data-time="${timeStr}" ${checked ? "checked" : ""}>
-        `;
-
-        slotList.appendChild(item);
-    });
-}
-
-/* SAVE DATE SETTINGS */
 async function saveDateSettings() {
     if (!currentUser || !selectedDateStr) return;
-
     const dateStr = selectedDateStr;
-    const d = new Date(dateStr);
-    const dayName = d.toLocaleDateString("en-GB", { weekday: "long" });
-    const weekly = weeklyTemplate[dayName] || { enabled: false, start: "09:00", end: "16:00" };
+    const d = localDateFromISO(dateStr);
+    const dayName = d.toLocaleDateString("en-GB", { weekday:"long" });
+    const weekly = weeklyTemplate[dayName] || { enabled:false, start:"09:00", end:"16:00" };
 
-    const disableDay = document.getElementById("drawerDisableDay").checked;
-    const start = document.getElementById("drawerStart").value || weekly.start;
-    const end = document.getElementById("drawerEnd").value || weekly.end;
-    const notes = document.getElementById("drawerNotes").value || "";
-
-    const overrideRef = db.collection("availability").doc(dateStr).collection("meta").doc("override");
-
-    if (disableDay) {
-        await overrideRef.set({
-            enabled: false,
-            start,
-            end,
-            notes
-        }, { merge: true });
-
-        const slots = window.availability.generateSlots();
-        const batch = db.batch();
-        slots.forEach(timeStr => {
-            const ref = db.collection("availability").doc(dateStr).collection("slots").doc(timeStr);
-            batch.set(ref, { available: false }, { merge: true });
-        });
-        await batch.commit();
-    } else {
-        await overrideRef.set({
-            enabled: true,
-            start,
-            end,
-            notes
-        }, { merge: true });
-
-        const toggles = document.querySelectorAll(".slot-toggle");
-        const batch = db.batch();
-        toggles.forEach(input => {
-            const timeStr = input.getAttribute("data-time");
-            const ref = db.collection("availability").doc(dateStr).collection("slots").doc(timeStr);
-            const available = input.checked;
-            batch.set(ref, { available }, { merge: true });
-        });
-        await batch.commit();
+    const disabled = document.getElementById("drawerDisableDay").checked;
+    const start = document.getElementById("drawerStart").value || weekly.start || "09:00";
+    const end = document.getElementById("drawerEnd").value || weekly.end || "16:00";
+    const notes = document.getElementById("drawerNotes").value.trim();
+    if (!disabled && start >= end) {
+        alert("The finish time must be after the start time.");
+        return;
     }
 
-    await preloadMonthData(currentYear, currentMonth);
-    renderCalendar();
-    closeDrawer();
+    const slots = {};
+    document.querySelectorAll(".slot-toggle").forEach(input => {
+        slots[input.dataset.time] = input.checked;
+    });
+
+    const nextOverrides = { ...personalOverrides };
+    nextOverrides[dateStr] = { enabled: !disabled, start, end, notes, slots };
+
+    try {
+        await db.collection("users").doc(currentUser.uid).update({ availabilityOverrides: nextOverrides });
+        personalOverrides = nextOverrides;
+        renderCalendar();
+        closeDrawer();
+    } catch (err) {
+        console.error("Could not save personal date availability", err);
+        alert("Your date availability could not be saved.");
+    }
 }
 
-/* LOGOUT */
 function logout() {
-    auth.signOut().then(() => {
-        window.location.href = "login.html";
-    });
+    auth.signOut().then(() => { window.location.href = "login.html"; });
 }
 </script>
 
