@@ -1,1005 +1,167 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Job Detail – Admin – Need A Witness UK</title>
-
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--gold:#c99a17;--gold2:#d4af37;--ink:#1f1f1f;--muted:#757575;--line:#ececec;--paper:#fff;--bg:#f7f7f7;--danger:#a22}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,sans-serif;background:var(--bg);color:var(--ink)}
+.layout{display:flex;min-height:100vh}.sidebar{width:185px;background:#fff;border-right:1px solid #eee;padding:24px 20px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}.sidebar h2{font-family:"Playfair Display",serif;color:var(--gold);margin:0 0 24px;font-size:22px}.sidebar a{color:#262626;text-decoration:none;padding:8px 0;display:block;font-size:13px;font-weight:500}.sidebar a:hover,.sidebar a.active{color:var(--gold);font-weight:600}.logout-btn{margin-top:auto;padding:10px;background:var(--gold2);color:#fff;text-align:center;border-radius:6px;cursor:pointer;font-weight:600;font-size:13px}.sidebar-footer{margin-top:16px;padding-top:14px;border-top:1px solid #eee;font-size:11px;color:#888;line-height:1.5}
+.main{flex:1;padding:26px;overflow:auto}.page-head{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;margin-bottom:18px}.page-head h1{font-family:"Playfair Display",serif;color:var(--gold);font-size:27px;font-weight:400;margin:0}.page-head p{margin:4px 0 0;color:#777;font-size:12px}.head-actions{display:flex;gap:8px;flex-wrap:wrap}.btn{border:1px solid #ddd;background:#fff;color:#333;border-radius:6px;padding:8px 11px;font-size:12px;font-weight:600;cursor:pointer}.btn:hover{border-color:var(--gold2);color:#9a7200}.btn-gold{background:var(--gold2);color:#fff;border-color:var(--gold2)}.btn-danger{border-color:#f0c8c8;color:#a22}.btn-green{background:#e7f7eb;border-color:#bfe6ca;color:#20733a}
+.grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(320px,.85fr);gap:16px}.card{background:#fff;padding:17px;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.055);margin-bottom:16px}.card h2{font-family:"Playfair Display",serif;color:var(--gold);font-size:20px;font-weight:400;margin:0 0 3px}.sub{font-size:11px;color:#777;margin-bottom:12px}.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.row3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}label{font-size:11px;font-weight:600;display:block;margin:9px 0 4px}input,textarea,select{width:100%;padding:9px 10px;border-radius:7px;border:1px solid #d9d9d9;background:#fff;font:inherit;font-size:12px}input:focus,textarea:focus,select:focus{outline:none;border-color:var(--gold2);box-shadow:0 0 0 2px rgba(212,175,55,.12)}textarea{resize:vertical;min-height:74px}.readonly{background:#fafafa;color:#777}.muted{color:#777}
+.badges{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}.badge{display:inline-block;padding:3px 8px;border-radius:999px;font-size:10px;font-weight:600}.status-pending{background:#fff4d6;color:#8a6d00}.status-approved{background:#e8f8d8;color:#5d7600}.status-assigned{background:#dcecff;color:#14588f}.status-completed{background:#e7f7eb;color:#20733a}.status-cancelled{background:#ffe5e5;color:#972323}.status-other{background:#eee;color:#555}.pay-unpaid{background:#ffe5e5;color:#9a2626}.pay-deposit{background:#eee6ff;color:#6342a0}.pay-full{background:#dcf8e4;color:#16733a}.pay-late{background:#ffe5e5;color:#972323}.pay-other{background:#eee;color:#555}
+.action-strip{display:flex;gap:7px;flex-wrap:wrap;margin-top:14px;padding-top:12px;border-top:1px solid #eee}.snapshot-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.snap{border:1px solid #eee;background:#fcfcfc;border-radius:8px;padding:10px}.snap-label{font-size:10px;color:#777}.snap-value{font-size:13px;font-weight:600;margin-top:2px}.money{color:#a97800}.attention{border-left:3px solid var(--gold2);background:#fffdf6;padding:10px 12px;border-radius:7px;font-size:11px;line-height:1.5;margin-top:10px}
+.witness-item{border:1px solid #eee;border-radius:8px;padding:10px;margin:7px 0;display:flex;justify-content:space-between;gap:12px;align-items:center}.witness-name{font-size:12px;font-weight:600}.witness-meta{font-size:10px;color:#777;margin-top:3px}.witness-actions{display:flex;gap:5px;flex-wrap:wrap}.pill{display:inline-block;padding:3px 8px;border-radius:999px;background:#f1f1f1;color:#555;font-size:10px;margin:2px}.timeline-item{padding:8px 0;border-bottom:1px solid #f0f0f0;font-size:11px}.timeline-item:last-child{border-bottom:0}.timeline-label{font-weight:600}.timeline-time{color:#777;margin-top:2px}.danger{border:1px solid #f3d2d2;background:#fffafa}.save-note{font-size:10px;color:#777;margin-left:6px}.loading{padding:30px;text-align:center;color:#888}
+@media(max-width:1000px){.layout{display:block}.sidebar{width:100%;height:auto;position:static;display:block}.sidebar a{display:inline-block;margin-right:12px}.logout-btn{margin-top:12px}.main{padding:16px}.grid{grid-template-columns:1fr}.page-head{align-items:flex-start;flex-direction:column}.row3{grid-template-columns:1fr}.row2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <h2>Admin Panel</h2>
+    <a href="admin-dashboard.html">Dashboard</a>
+    <a href="admin-witnesses.html">Witnesses</a>
+    <a href="admin-jobs.html" class="active">Jobs</a>
+    <a href="admin-create-job.html">Create Job</a>
+    <a href="admin-calendar.html">Calendar</a>
+    <a href="admin-payments.html">Payments</a>
+    <a href="admin-availability.html">Availability</a>
+    <div class="logout-btn" onclick="logout()">Logout</div>
+    <div class="sidebar-footer">Need A Witness UK<br>Admin Panel</div>
+  </aside>
+
+  <main class="main">
+    <div class="page-head">
+      <div><h1 id="jobTitle">Job Detail</h1><p id="jobSubtitle">Loading booking…</p></div>
+      <div class="head-actions"><button class="btn" onclick="location.href='admin-jobs.html'">← Back to Jobs</button><button class="btn" onclick="location.href='admin-dashboard.html'">Dashboard</button></div>
+    </div>
+
+    <div id="loading" class="card loading">Loading job…</div>
+    <div id="jobContent" style="display:none">
+      <div class="grid">
+        <section>
+          <div class="card">
+            <h2>Job & Couple</h2><div class="sub">Customer and ceremony details from the live booking record.</div>
+            <label>Couple Name</label><input id="coupleName">
+            <div class="row2"><div><label>Email</label><input id="coupleEmail" type="email"></div><div><label>Phone</label><input id="couplePhone"></div></div>
+            <div class="row2"><div><label>Date</label><input id="jobDate" type="date"></div><div><label>Time</label><input id="jobTime" type="time"></div></div>
+            <label>Location</label><input id="jobLocation">
+            <div class="row2"><div><label>Ceremony Type</label><select id="ceremonyType"><option value="civil">Civil Ceremony</option><option value="religious">Religious Ceremony</option><option value="elopement">Elopement</option><option value="other">Other</option></select></div><div><label>Witness Count</label><select id="witnessCount"><option value="1">1 witness</option><option value="2">2 witnesses</option></select></div></div>
+            <label>Notes for Witnesses</label><textarea id="jobNotes"></textarea>
+            <label>Internal Admin Notes</label><textarea id="adminNotes" placeholder="Private notes only admins can see."></textarea>
+            <div class="badges"><span id="statusBadge" class="badge status-pending">Pending</span><span id="paymentBadge" class="badge pay-unpaid">Unpaid</span></div>
+            <div class="action-strip"><button class="btn btn-gold" onclick="saveJobDetails()">Save Changes</button><span id="saveNote" class="save-note"></span></div>
+          </div>
+
+          <div class="card">
+            <h2>Booking Status</h2><div class="sub">Move the booking through its real lifecycle without changing payment data accidentally.</div>
+            <label>Status</label><select id="jobStatus"><option value="pending">Pending enquiry</option><option value="approved">Approved</option><option value="assigned">Assigned</option><option value="completed">Completed</option><option value="cancelled">Cancelled</option></select>
+            <div class="action-strip" id="statusActions"></div>
+            <div class="attention" id="statusHelp"></div>
+          </div>
+
+          <div class="card">
+            <h2>Witness Assignment</h2><div class="sub">Assign registered witnesses or review anyone who has requested this job.</div>
+            <div id="requestInfo"></div>
+            <div id="assignedWitnesses"></div>
+            <div class="action-strip"><button class="btn btn-gold" onclick="openAddWitness()">+ Add Witness</button></div>
+            <div id="addWitnessArea" style="display:none;margin-top:10px"><label>Select Witness</label><select id="addWitnessSelect"></select><div class="action-strip"><button class="btn btn-gold" onclick="confirmAddWitness()">Add</button><button class="btn" onclick="closeAddWitness()">Cancel</button></div></div>
+          </div>
+
+          <div class="card">
+            <h2>Timeline</h2><div class="sub">Key events for this booking.</div><div id="timeline"></div>
+          </div>
+        </section>
+
+        <aside>
+          <div class="card">
+            <h2>Payments</h2><div class="sub">Deposit now, remaining balance due 24 hours before the ceremony.</div>
+            <div class="row2"><div><label>Total Price (£)</label><input id="totalPrice" type="number" step="0.01"></div><div><label>Deposit (£)</label><input id="depositAmount" type="number" step="0.01"></div></div>
+            <div class="row2"><div><label>Amount Paid (£)</label><input id="amountPaid" type="number" step="0.01"></div><div><label>Amount Due (£)</label><input id="amountDue" type="number" step="0.01"></div></div>
+            <label>Payment Status</label><select id="paymentStatus"><option value="unpaid">Unpaid</option><option value="deposit">Deposit paid</option><option value="full">Paid in full</option><option value="late-cancel">Late / cancelled</option></select>
+            <label>Payment Deadline (24h before ceremony)</label><input id="paymentDeadline" type="datetime-local">
+            <div class="action-strip"><button class="btn" onclick="setDeadline24h()">Set 24h deadline</button></div>
+            <label>Monzo Payment Link – Deposit</label><input id="paymentLinkDeposit" placeholder="Paste Monzo link for deposit">
+            <label>Monzo Payment Link – Remaining Balance</label><input id="paymentLinkRemaining" placeholder="Paste Monzo link for remaining balance">
+            <div class="action-strip"><button class="btn btn-gold" onclick="markDepositPaid()">Mark deposit paid</button><button class="btn btn-green" onclick="markRemainingPaid()">Mark remaining paid</button><button class="btn btn-danger" onclick="cancelForNonPayment()">Cancel for non-payment</button></div>
+          </div>
+
+          <div class="card">
+            <h2>Snapshot</h2><div class="sub">At-a-glance status for this booking.</div>
+            <div class="snapshot-grid"><div class="snap"><div class="snap-label">Service</div><div class="snap-value" id="serviceText">—</div></div><div class="snap"><div class="snap-label">Total</div><div class="snap-value money" id="totalText">£0</div></div><div class="snap"><div class="snap-label">Assigned</div><div class="snap-value" id="assignedCountText">0</div></div><div class="snap"><div class="snap-label">Payment</div><div class="snap-value" id="paymentSummaryText">—</div></div></div>
+            <div class="attention" id="deadlineText">Deadline: not set</div>
+            <div style="margin-top:12px"><div class="sub" style="margin-bottom:4px">Availability on ceremony weekday (approx.)</div><div id="availabilityPills"></div></div>
+          </div>
+
+          <div class="card danger">
+            <h2>Danger Zone</h2><div class="sub">Permanent actions.</div><button class="btn btn-danger" onclick="deleteJob()">Delete Job Permanently</button>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </main>
+</div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 <script src="../hub/firebase.js"></script>
-
-<style>
-    body {
-        margin: 0;
-        font-family: Inter, sans-serif;
-        background: #fafafa;
-        color: #222;
-    }
-
-    .layout {
-        display: flex;
-        min-height: 100vh;
-    }
-
-    /* SIDEBAR */
-    .sidebar {
-        width: 260px;
-        height: 100vh;
-        background: white;
-        border-right: 1px solid #eee;
-        position: sticky;
-        top: 0;
-        left: 0;
-        padding: 20px;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .logo {
-        font-family: "Playfair Display", serif;
-        font-size: 22px;
-        font-weight: 600;
-        color: #D4AF37;
-        margin-bottom: 30px;
-    }
-
-    .nav-title {
-        font-size: 12px;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        color: #999;
-        margin-bottom: 8px;
-    }
-
-    .nav-item {
-        padding: 10px 12px;
-        margin-bottom: 6px;
-        border-radius: 8px;
-        cursor: pointer;
-        font-weight: 500;
-        font-size: 14px;
-        color: #333;
-    }
-
-    .nav-item:hover {
-        background: #f5f1e6;
-    }
-
-    .nav-item.active {
-        background: #D4AF37;
-        color: white;
-    }
-
-    .sidebar-footer {
-        margin-top: auto;
-        padding-top: 16px;
-        border-top: 1px solid #eee;
-        font-size: 12px;
-        color: #777;
-        line-height: 1.4;
-    }
-
-    .logout-btn {
-        margin-top: 16px;
-        padding: 10px;
-        background: #D4AF37;
-        color: white;
-        text-align: center;
-        border-radius: 6px;
-        cursor: pointer;
-        font-weight: 600;
-        font-size: 14px;
-    }
-
-    /* MAIN */
-    .main {
-        flex: 1;
-        margin-left: 260px;
-        padding: 30px;
-    }
-
-    .main-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 20px;
-    }
-
-    .main-header h1 {
-        font-family: "Playfair Display", serif;
-        color: #D4AF37;
-        margin: 0;
-        font-size: 26px;
-    }
-
-    .main-subtitle {
-        color: #777;
-        font-size: 14px;
-        margin-top: 4px;
-    }
-
-    .btn-gold {
-        background: #D4AF37;
-        color: white;
-        border: none;
-        padding: 10px 16px;
-        border-radius: 8px;
-        cursor: pointer;
-        font-weight: 600;
-        font-size: 14px;
-    }
-
-    .btn-gold:hover {
-        opacity: 0.9;
-    }
-
-    .btn-outline {
-        background: white;
-        color: #555;
-        border: 1px solid #ccc;
-        padding: 8px 12px;
-        border-radius: 8px;
-        cursor: pointer;
-        font-size: 13px;
-        font-weight: 500;
-    }
-
-    .btn-outline:hover {
-        background: #f5f5f5;
-    }
-
-    .btn-small {
-        padding: 6px 10px;
-        font-size: 12px;
-        border-radius: 6px;
-        border: none;
-        cursor: pointer;
-        margin-right: 4px;
-    }
-
-    .btn-small-gold {
-        background: #D4AF37;
-        color: white;
-    }
-
-    .btn-small-outline {
-        background: white;
-        color: #555;
-        border: 1px solid #ccc;
-    }
-
-    .card {
-        background: white;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-        margin-bottom: 20px;
-    }
-
-    .section-title {
-        font-family: "Playfair Display", serif;
-        color: #D4AF37;
-        font-size: 20px;
-        margin-top: 0;
-        margin-bottom: 10px;
-    }
-
-    .section-sub {
-        font-size: 12px;
-        color: #777;
-        margin-bottom: 10px;
-    }
-
-    .grid-main {
-        display: grid;
-        grid-template-columns: 1.2fr 0.9fr;
-        gap: 20px;
-    }
-
-    .grid-bottom {
-        display: grid;
-        grid-template-columns: 1.1fr 0.9fr;
-        gap: 20px;
-    }
-
-    label {
-        font-size: 13px;
-        font-weight: 500;
-        display: block;
-        margin-top: 10px;
-    }
-
-    input, textarea, select {
-        width: 100%;
-        padding: 9px;
-        margin-top: 4px;
-        border-radius: 8px;
-        border: 1px solid #ddd;
-        font-size: 13px;
-        background: #fafafa;
-        box-sizing: border-box;
-    }
-
-    textarea {
-        resize: vertical;
-        min-height: 70px;
-    }
-
-    .row-two {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 10px;
-    }
-
-    .badge {
-        display: inline-block;
-        padding: 3px 8px;
-        border-radius: 999px;
-        font-size: 11px;
-        font-weight: 600;
-        text-transform: capitalize;
-        margin-right: 6px;
-    }
-
-    .status-pending { background: #fff4d6; color: #8a6d00; }
-    .status-assigned { background: #d6ffe0; color: #006d2a; }
-    .status-completed { background: #e6e6e6; color: #555; }
-    .status-cancelled { background: #ffd6d6; color: #8a0000; }
-
-    .pay-unpaid { background: #ffe6e6; color: #8a0000; }
-    .pay-deposit { background: #fff4d6; color: #8a6d00; }
-    .pay-full { background: #d6ffe0; color: #006d2a; }
-    .pay-late { background: #ffd6d6; color: #8a0000; }
-
-    .witness-item {
-        padding: 8px 0;
-        border-bottom: 1px solid #f2f2f2;
-        font-size: 13px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .witness-item:last-child {
-        border-bottom: none;
-    }
-
-    .witness-name {
-        font-weight: 600;
-    }
-
-    .witness-meta {
-        font-size: 12px;
-        color: #777;
-    }
-
-    .timeline-item {
-        font-size: 12px;
-        padding: 6px 0;
-        border-bottom: 1px solid #f2f2f2;
-    }
-
-    .timeline-item:last-child {
-        border-bottom: none;
-    }
-
-    .timeline-label {
-        font-weight: 600;
-    }
-
-    .pill {
-        display: inline-block;
-        padding: 3px 8px;
-        border-radius: 999px;
-        font-size: 11px;
-        background: #f0f0f0;
-        color: #555;
-        margin-right: 4px;
-        margin-bottom: 4px;
-    }
-
-    @media (max-width: 1000px) {
-        .main {
-            margin-left: 0;
-        }
-        .sidebar {
-            position: static;
-            height: auto;
-        }
-        .grid-main, .grid-bottom {
-            grid-template-columns: 1fr;
-        }
-    }
-</style>
-</head>
-
-<body>
-
-<div class="layout">
-
-    <!-- SIDEBAR -->
-    <div class="sidebar">
-        <div class="logo">Need A Witness UK</div>
-
-        <div class="nav-title">Navigation</div>
-        <div class="nav-item" onclick="window.location.href='admin-dashboard.html'">Dashboard</div>
-        <div class="nav-item" onclick="window.location.href='admin-witnesses.html'">Witnesses</div>
-        <div class="nav-item" onclick="window.location.href='admin-create-job.html'">Create Job</div>
-
-        <div class="sidebar-footer">
-            Admin Panel<br>
-            Witness Hub v1.0
-            <div class="logout-btn" onclick="adminLogout()">Logout</div>
-        </div>
-    </div>
-
-    <!-- MAIN -->
-    <div class="main">
-        <div class="main-header">
-            <div>
-                <h1 id="jobTitle">Job Detail</h1>
-                <div class="main-subtitle" id="jobSubtitle">Loading job...</div>
-            </div>
-            <div>
-                <button class="btn-outline" onclick="window.location.href='admin-dashboard.html'">← Back to Dashboard</button>
-            </div>
-        </div>
-
-        <div class="grid-main">
-            <!-- LEFT: JOB + COUPLE -->
-            <div>
-                <!-- JOB INFO -->
-                <div class="card">
-                    <div class="section-title">Job & Couple</div>
-                    <div class="section-sub">Core details about this booking.</div>
-
-                    <label>Couple Name</label>
-                    <input id="coupleName" />
-
-                    <label>Couple Email</label>
-                    <input id="coupleEmail" type="email" />
-
-                    <label>Couple Phone</label>
-                    <input id="couplePhone" />
-
-                    <div class="row-two">
-                        <div>
-                            <label>Date</label>
-                            <input id="jobDate" type="date" />
-                        </div>
-                        <div>
-                            <label>Time</label>
-                            <input id="jobTime" type="time" />
-                        </div>
-                    </div>
-
-                    <label>Location</label>
-                    <input id="jobLocation" />
-
-                    <label>Ceremony Type</label>
-                    <select id="ceremonyType">
-                        <option value="civil">Civil Ceremony</option>
-                        <option value="religious">Religious Ceremony</option>
-                        <option value="elopement">Elopement</option>
-                        <option value="other">Other</option>
-                    </select>
-
-                    <label>Notes for Witnesses</label>
-                    <textarea id="jobNotes"></textarea>
-
-                    <label>Internal Admin Notes</label>
-                    <textarea id="adminNotes" placeholder="Private notes only admins can see."></textarea>
-
-                    <div style="margin-top:12px;">
-                        <span id="statusBadge" class="badge status-pending">status</span>
-                        <span id="paymentBadge" class="badge pay-unpaid">payment</span>
-                    </div>
-
-                    <div style="margin-top:14px;">
-                        <button class="btn-gold" onclick="saveJobDetails()">Save Changes</button>
-                    </div>
-                </div>
-
-                <!-- WITNESS ASSIGNMENT -->
-                <div class="card">
-                    <div class="section-title">Witness Assignment</div>
-                    <div class="section-sub">Manage who is assigned to this job.</div>
-
-                    <div id="assignedWitnesses"></div>
-
-                    <div style="margin-top:10px;">
-                        <button class="btn-small btn-small-gold" onclick="openAddWitness()">+ Add Witness</button>
-                    </div>
-
-                    <div id="addWitnessArea" style="margin-top:10px; display:none;">
-                        <label>Select Witness to Add</label>
-                        <select id="addWitnessSelect"></select>
-                        <button class="btn-small btn-small-gold" style="margin-top:6px;" onclick="confirmAddWitness()">Add</button>
-                        <button class="btn-small btn-small-outline" style="margin-top:6px;" onclick="closeAddWitness()">Cancel</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- RIGHT: PAYMENTS + SNAPSHOT -->
-            <div>
-                <!-- PAYMENTS -->
-                <div class="card">
-                    <div class="section-title">Payments</div>
-                    <div class="section-sub">Track deposit, remaining balance, and Monzo links.</div>
-
-                    <div class="row-two">
-                        <div>
-                            <label>Total Price (£)</label>
-                            <input id="totalPrice" type="number" min="0" />
-                        </div>
-                        <div>
-                            <label>Deposit Amount (£)</label>
-                            <input id="depositAmount" type="number" min="0" />
-                        </div>
-                    </div>
-
-                    <div class="row-two">
-                        <div>
-                            <label>Amount Paid (£)</label>
-                            <input id="amountPaid" type="number" min="0" />
-                        </div>
-                        <div>
-                            <label>Amount Due (£)</label>
-                            <input id="amountDue" type="number" min="0" />
-                        </div>
-                    </div>
-
-                    <label>Payment Status</label>
-                    <select id="paymentStatus">
-                        <option value="unpaid">Unpaid</option>
-                        <option value="deposit">Deposit</option>
-                        <option value="full">Full</option>
-                        <option value="late-cancel">Late / Cancelled</option>
-                    </select>
-
-                    <label>Payment Deadline (48h before ceremony)</label>
-                    <input id="paymentDeadline" type="datetime-local" />
-
-                    <label>Monzo Payment Link – Deposit</label>
-                    <input id="paymentLinkDeposit" placeholder="Paste Monzo link for deposit" />
-
-                    <label>Monzo Payment Link – Remaining</label>
-                    <input id="paymentLinkRemaining" placeholder="Paste Monzo link for remaining balance" />
-
-                    <div style="margin-top:10px;">
-                        <button class="btn-small btn-small-outline" onclick="markDepositPaid()">Mark deposit paid</button>
-                        <button class="btn-small btn-small-outline" onclick="markRemainingPaid()">Mark remaining paid</button>
-                        <button class="btn-small btn-small-outline" onclick="cancelForNonPayment()">Cancel for non‑payment</button>
-                    </div>
-                </div>
-
-                <!-- SNAPSHOT -->
-                <div class="card">
-                    <div class="section-title">Snapshot</div>
-                    <div class="section-sub">Quick overview of this job.</div>
-
-                    <div style="font-size:13px;margin-bottom:8px;">
-                        <b>Witness Type:</b> <span id="witnessTypeText">–</span>
-                    </div>
-
-                    <div style="font-size:13px;margin-bottom:8px;">
-                        <b>Witness Service:</b> <span id="witnessServiceText">–</span>
-                    </div>
-                    <div style="font-size:13px;margin-bottom:8px;">
-                        <b>Assigned Witnesses:</b> <span id="assignedCountText">0</span>
-                    </div>
-                    <div style="font-size:13px;margin-bottom:8px;">
-                        <b>Payment:</b> <span id="paymentSummaryText">–</span>
-                    </div>
-                    <div style="font-size:13px;margin-bottom:8px;">
-                        <b>Deadline:</b> <span id="deadlineText">–</span>
-                    </div>
-
-                    <div style="margin-top:10px;">
-                        <div class="section-sub" style="margin-bottom:4px;">Availability on this date (approx):</div>
-                        <div id="availabilityPills"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- BOTTOM: TIMELINE -->
-        <div class="grid-bottom" style="margin-top:20px;">
-            <div class="card">
-                <div class="section-title">Timeline</div>
-                <div class="section-sub">Key events for this job.</div>
-                <div id="timeline"></div>
-            </div>
-
-            <div class="card">
-                <div class="section-title">Danger Zone</div>
-                <div class="section-sub">Irreversible actions.</div>
-
-                <button class="btn-small btn-small-outline" style="background:#ffe6e6;color:#8a0000;border-color:#ffb3b3;" onclick="deleteJob()">Delete Job</button>
-                <p style="font-size:12px;color:#777;margin-top:10px;">
-                    Deleting a job will permanently remove it from the system. This cannot be undone.
-                </p>
-            </div>
-        </div>
-    </div>
-</div>
-
 <script>
-let jobId = null;
-let jobDocRef = null;
-let jobData = null;
-let allWitnesses = [];
-
-/* --------- UTIL: GET PARAM --------- */
-function getParam(name) {
-    const url = new URL(window.location.href);
-    return url.searchParams.get(name);
-}
-
-/* --------- LOAD JOB --------- */
-async function loadJob() {
-    jobId = getParam("id");
-    if (!jobId) {
-        alert("No job ID provided.");
-        window.location.href = "admin-dashboard.html";
-        return;
-    }
-
-    jobDocRef = db.collection("jobs").doc(jobId);
-    const doc = await jobDocRef.get();
-    if (!doc.exists) {
-        alert("Job not found.");
-        window.location.href = "admin-dashboard.html";
-        return;
-    }
-
-    jobData = doc.data();
-    populateJobFields();
-    loadWitnessesForAdd();
-    loadAvailabilityForDate();
-    buildTimeline();
-}
-
-/* --------- POPULATE FIELDS --------- */
-function populateJobFields() {
-    const j = jobData || {};
-    const customer = j.customer || {};
-    const addOns = j.addOns || {};
-
-    // Title + subtitle
-    document.getElementById("jobTitle").innerText = customer.name || "Job Detail";
-    const subtitleParts = [];
-    if (j.date) subtitleParts.push(j.date);
-    if (j.time) subtitleParts.push("at " + j.time);
-    if (customer.location) subtitleParts.push("• " + customer.location);
-    document.getElementById("jobSubtitle").innerText = subtitleParts.join(" ");
-
-    // Couple / customer fields
-    coupleName.value = customer.name || "";
-    coupleEmail.value = customer.email || "";
-    couplePhone.value = customer.phone || "";
-
-    jobDate.value = j.date || "";
-    jobTime.value = j.time || "";
-    jobLocation.value = customer.location || j.location || "";
-    ceremonyType.value = j.ceremonyType || "civil";
-    jobNotes.value = customer.notes || j.notes || "";
-    adminNotes.value = j.adminNotes || "";
-
-    // Payments
-    totalPrice.value = j.totalPrice || 0;
-    depositAmount.value = j.deposit || 0;
-    amountPaid.value = j.amountPaid || 0;
-    amountDue.value = j.amountDue || 0;
-    paymentStatus.value = j.paymentStatus || "unpaid";
-
-    paymentLinkDeposit.value = j.paymentLinkDeposit || "";
-    paymentLinkRemaining.value = j.paymentLinkRemaining || "";
-
-    if (j.paymentDeadline && j.paymentDeadline.toDate) {
-        const d = j.paymentDeadline.toDate();
-        paymentDeadline.value = toLocalInputDateTime(d);
-    } else if (j.paymentDeadline) {
-        paymentDeadline.value = j.paymentDeadline;
-    } else {
-        paymentDeadline.value = "";
-    }
-
-    // Badges
-    const status = j.status || "pending";
-    const ps = j.paymentStatus || "unpaid";
-
-    const statusBadge = document.getElementById("statusBadge");
-    statusBadge.textContent = status;
-    statusBadge.className = "badge " +
-        (status === "pending" ? "status-pending" :
-         status === "assigned" ? "status-assigned" :
-         status === "completed" ? "status-completed" : "status-cancelled");
-
-    const paymentBadge = document.getElementById("paymentBadge");
-    paymentBadge.textContent =
-        ps === "full" ? "Paid in full" :
-        ps === "deposit" ? "Deposit only" :
-        ps === "late-cancel" ? "Late / Cancelled" : "Unpaid";
-    paymentBadge.className = "badge " +
-        (ps === "full" ? "pay-full" :
-         ps === "deposit" ? "pay-deposit" :
-         ps === "late-cancel" ? "pay-late" : "pay-unpaid");
-
-    // Snapshot: witness type (based on count)
-    const wc = j.witnessCount || 1;
-    document.getElementById("witnessTypeText").innerText =
-        wc === 2 ? "Two Witnesses" : "Single Witness";
-
-    let serviceText = wc === 2 ? "Two Witnesses (£150)" : "One Witness (£100)";
-    document.getElementById("witnessServiceText").innerText = serviceText;
-
-    const assignedCount = (j.assignedWitnesses && j.assignedWitnesses.length) || 0;
-    document.getElementById("assignedCountText").innerText = assignedCount;
-
-    document.getElementById("paymentSummaryText").innerText =
-        `£${j.totalPrice || 0} total • £${j.amountPaid || 0} paid • £${j.amountDue || 0} due`;
-
-    let deadlineText = "Not set";
-    if (j.paymentDeadline && j.paymentDeadline.toDate) {
-        deadlineText = j.paymentDeadline.toDate().toLocaleString();
-    } else if (j.paymentDeadline) {
-        deadlineText = j.paymentDeadline;
-    }
-    document.getElementById("deadlineText").innerText = deadlineText;
-
-    renderAssignedWitnesses();
-}
-
-/* --------- ASSIGNED WITNESSES --------- */
-async function renderAssignedWitnesses() {
-    const container = document.getElementById("assignedWitnesses");
-    container.innerHTML = "";
-
-    const ids = jobData.assignedWitnesses || [];
-    if (!ids.length) {
-        container.innerHTML = "<p style='font-size:13px;color:#777;'>No witnesses assigned yet.</p>";
-        return;
-    }
-
-    const promises = ids.map(id => db.collection("users").doc(id).get());
-    const docs = await Promise.all(promises);
-
-    docs.forEach(doc => {
-        if (!doc.exists) return;
-        const w = doc.data();
-        const id = doc.id;
-
-        const name =
-            w.type === "couple"
-                ? (w.teamName || `${w.partner1Name || ""} & ${w.partner2Name || ""}`)
-                : (w.name || w.fullName || "Unnamed");
-
-        const typeLabel = w.type === "couple" ? "Couple Team" : "Single";
-        const rating = typeof w.rating === "number" ? w.rating.toFixed(1) : (w.rating || "N/A");
-        const location = w.location || "";
-
-        const div = document.createElement("div");
-        div.className = "witness-item";
-        div.innerHTML = `
-            <div>
-                <div class="witness-name">${name}</div>
-                <div class="witness-meta">${typeLabel} • ⭐ ${rating} • ${location}</div>
-            </div>
-            <div>
-                <button class="btn-small btn-small-outline" onclick="goToWitness('${id}')">View</button>
-                <button class="btn-small btn-small-outline" onclick="removeWitness('${id}')">Remove</button>
-            </div>
-        `;
-        container.appendChild(div);
-    });
-}
-
-/* --------- ADD WITNESS FLOW --------- */
-function openAddWitness() {
-    document.getElementById("addWitnessArea").style.display = "block";
-}
-
-function closeAddWitness() {
-    document.getElementById("addWitnessArea").style.display = "none";
-}
-
-function loadWitnessesForAdd() {
-    db.collection("users").get().then(snapshot => {
-        allWitnesses = [];
-        snapshot.forEach(doc => {
-            allWitnesses.push({ id: doc.id, ...doc.data() });
-        });
-
-        const select = document.getElementById("addWitnessSelect");
-        select.innerHTML = "";
-
-        allWitnesses.forEach(w => {
-            const opt = document.createElement("option");
-            const name =
-                w.type === "couple"
-                    ? (w.teamName || `${w.partner1Name || ""} & ${w.partner2Name || ""}`)
-                    : (w.name || w.fullName || "Unnamed");
-            opt.value = w.id;
-            opt.textContent = `${name} (${w.type === "couple" ? "Couple" : "Single"})`;
-            select.appendChild(opt);
-        });
-    });
-}
-
-function confirmAddWitness() {
-    const select = document.getElementById("addWitnessSelect");
-    const wid = select.value;
-    if (!wid) return;
-
-    const current = jobData.assignedWitnesses || [];
-    if (current.includes(wid)) {
-        alert("Witness already assigned.");
-        return;
-    }
-
-    const updated = [...current, wid];
-    jobDocRef.update({
-        assignedWitnesses: updated,
-        status: "assigned"
-    }).then(() => {
-        jobData.assignedWitnesses = updated;
-        jobData.status = "assigned";
-        renderAssignedWitnesses();
-        populateJobFields();
-        closeAddWitness();
-    });
-}
-
-function removeWitness(wid) {
-    if (!confirm("Remove this witness from the job?")) return;
-
-    const current = jobData.assignedWitnesses || [];
-    const updated = current.filter(id => id !== wid);
-
-    jobDocRef.update({
-        assignedWitnesses: updated,
-        status: updated.length ? "assigned" : "pending"
-    }).then(() => {
-        jobData.assignedWitnesses = updated;
-        jobData.status = updated.length ? "assigned" : "pending";
-        renderAssignedWitnesses();
-        populateJobFields();
-    });
-}
-
-/* --------- SAVE JOB DETAILS --------- */
-function saveJobDetails() {
-    const currentCustomer = jobData.customer || {};
-
-    const updatedCustomer = {
-        ...currentCustomer,
-        name: coupleName.value.trim(),
-        email: coupleEmail.value.trim(),
-        phone: couplePhone.value.trim(),
-        location: jobLocation.value.trim(),
-        notes: jobNotes.value.trim()
-    };
-
-    const updates = {
-        customer: updatedCustomer,
-        date: jobDate.value,
-        time: jobTime.value,
-        ceremonyType: ceremonyType.value,
-        adminNotes: adminNotes.value.trim(),
-        totalPrice: Number(totalPrice.value) || 0,
-        deposit: Number(depositAmount.value) || 0,
-        amountPaid: Number(amountPaid.value) || 0,
-        amountDue: Number(amountDue.value) || 0,
-        paymentStatus: paymentStatus.value,
-        paymentLinkDeposit: paymentLinkDeposit.value.trim(),
-        paymentLinkRemaining: paymentLinkRemaining.value.trim()
-    };
-
-    const pd = paymentDeadline.value;
-    if (pd) {
-        updates.paymentDeadline = pd;
-    }
-
-    jobDocRef.update(updates).then(() => {
-        alert("Job updated.");
-        jobData = { ...jobData, ...updates };
-        populateJobFields();
-        buildTimeline();
-    });
-}
-
-/* --------- PAYMENT ACTIONS --------- */
-function markDepositPaid() {
-    if (!confirm("Mark deposit as paid?")) return;
-
-    jobDocRef.get().then(doc => {
-        if (!doc.exists) return;
-        const j = doc.data();
-        const total = j.totalPrice || 0;
-        const deposit = j.deposit || 0;
-        const newPaid = (j.amountPaid || 0) + deposit;
-        const newDue = Math.max(total - newPaid, 0);
-
-        jobDocRef.update({
-            paymentStatus: newDue > 0 ? "deposit" : "full",
-            amountPaid: newPaid,
-            amountDue: newDue,
-            depositPaidAt: firebase.firestore.FieldValue.serverTimestamp()
-        }).then(() => {
-            jobData.paymentStatus = newDue > 0 ? "deposit" : "full";
-            jobData.amountPaid = newPaid;
-            jobData.amountDue = newDue;
-            jobData.depositPaidAt = new Date();
-            populateJobFields();
-            buildTimeline();
-        });
-    });
-}
-
-function markRemainingPaid() {
-    if (!confirm("Mark remaining balance as paid?")) return;
-
-    jobDocRef.get().then(doc => {
-        if (!doc.exists) return;
-        const j = doc.data();
-        const total = j.totalPrice || 0;
-
-        jobDocRef.update({
-            paymentStatus: "full",
-            amountPaid: total,
-            amountDue: 0,
-            remainingPaidAt: firebase.firestore.FieldValue.serverTimestamp()
-        }).then(() => {
-            jobData.paymentStatus = "full";
-            jobData.amountPaid = total;
-            jobData.amountDue = 0;
-            jobData.remainingPaidAt = new Date();
-            populateJobFields();
-            buildTimeline();
-        });
-    });
-}
-
-function cancelForNonPayment() {
-    if (!confirm("Cancel this job for non‑payment? Deposit will be kept and witnesses freed.")) return;
-
-    jobDocRef.update({
-        paymentStatus: "late-cancel",
-        status: "cancelled",
-        assignedWitnesses: []
-    }).then(() => {
-        jobData.paymentStatus = "late-cancel";
-        jobData.status = "cancelled";
-        jobData.assignedWitnesses = [];
-        populateJobFields();
-        renderAssignedWitnesses();
-        buildTimeline();
-    });
-}
-
-/* --------- AVAILABILITY FOR DATE --------- */
-function loadAvailabilityForDate() {
-    const dateStr = jobData.date;
-    if (!dateStr) return;
-
-    const d = new Date(dateStr);
-    const dayIndex = d.getDay();
-    const dayName = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][dayIndex];
-
-    db.collection("users").get().then(snapshot => {
-        const container = document.getElementById("availabilityPills");
-        container.innerHTML = "";
-
-        let available = 0;
-        let unavailable = 0;
-
-        snapshot.forEach(doc => {
-            const w = doc.data();
-            if (!w.availability || !w.availability[dayName]) return;
-            if (w.availability[dayName].enabled) available++;
-            else unavailable++;
-        });
-
-        container.innerHTML =
-            `<span class="pill">Day: ${dayName}</span>` +
-            `<span class="pill" style="background:#d6ffe0;color:#006d2a;">Available: ${available}</span>` +
-            `<span class="pill" style="background:#ffe6e6;color:#8a0000;">Unavailable: ${unavailable}</span>`;
-    });
-}
-
-/* --------- TIMELINE --------- */
-function buildTimeline() {
-    const container = document.getElementById("timeline");
-    container.innerHTML = "";
-
-    const j = jobData || {};
-    const items = [];
-
-    if (j.createdAt) {
-        if (j.createdAt.toDate) {
-            items.push({ label: "Job created", time: j.createdAt.toDate() });
-        } else if (typeof j.createdAt === "string") {
-            items.push({ label: "Job created", time: new Date(j.createdAt) });
-        }
-    }
-
-    if (j.depositPaidAt && j.depositPaidAt.toDate) {
-        items.push({ label: "Deposit paid", time: j.depositPaidAt.toDate() });
-    }
-
-    if (j.remainingPaidAt && j.remainingPaidAt.toDate) {
-        items.push({ label: "Remaining paid", time: j.remainingPaidAt.toDate() });
-    }
-
-    if (j.status === "cancelled") {
-        items.push({ label: "Job cancelled", time: new Date() });
-    }
-
-    if (j.date) {
-        const d = new Date(j.date + "T" + (j.time || "00:00"));
-        items.push({ label: "Ceremony", time: d });
-    }
-
-    items.sort((a,b) => a.time - b.time);
-
-    if (!items.length) {
-        container.innerHTML = "<p style='font-size:12px;color:#777;'>No timeline events yet.</p>";
-        return;
-    }
-
-    items.forEach(it => {
-        const div = document.createElement("div");
-        div.className = "timeline-item";
-        div.innerHTML = `
-            <span class="timeline-label">${it.label}</span>
-            <br>
-            <span>${it.time.toLocaleString()}</span>
-        `;
-        container.appendChild(div);
-    });
-}
-
-/* --------- DELETE JOB --------- */
-function deleteJob() {
-    if (!confirm("Are you sure you want to permanently delete this job?")) return;
-
-    jobDocRef.delete().then(() => {
-        alert("Job deleted.");
-        window.location.href = "admin-dashboard.html";
-    });
-}
-
-/* --------- NAV TO WITNESS --------- */
-function goToWitness(uid) {
-    window.location.href = `admin-witness-detail.html?id=${uid}`;
-}
-
-/* --------- UTIL: DATETIME LOCAL --------- */
-function toLocalInputDateTime(date) {
-    const pad = n => n.toString().padStart(2, "0");
-    const yyyy = date.getFullYear();
-    const mm = pad(date.getMonth() + 1);
-    const dd = pad(date.getDate());
-    const hh = pad(date.getHours());
-    const mi = pad(date.getMinutes());
-    return `${yyyy}-${mm}-${dd}T${hh}:${mi}`;
-}
-
-/* --------- LOGOUT --------- */
-function adminLogout() {
-    firebase.auth().signOut().then(() => {
-        window.location.href = "admin-login.html";
-    });
-}
-
-/* INIT */
-loadJob();
+let jobId=null,jobRef=null,jobData=null,allWitnesses=[];
+const $=id=>document.getElementById(id);
+function esc(v){return String(v??"").replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));}
+function param(name){return new URL(location.href).searchParams.get(name)}
+function customer(j){return j.customer||{}}
+function nameOf(j){return customer(j).name||j.coupleName||j.coupleNames||"Unnamed booking"}
+function emailOf(j){return customer(j).email||j.email||""}
+function phoneOf(j){return customer(j).phone||j.phone||""}
+function locationOf(j){return customer(j).location||j.location||""}
+function notesOf(j){return customer(j).notes||j.notes||""}
+function countOf(j){return Number(j.witnessCount||j.witnessesRequired||j.requiredWitnesses||1)}
+function money(v){return Number(v||0)}
+function localDate(dateStr,timeStr="00:00"){if(!dateStr)return null;const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(dateStr);if(!m){const d=new Date(dateStr);return isNaN(d)?null:d}const [h,mi]=(timeStr||"00:00").split(":").map(Number);return new Date(+m[1],+m[2]-1,+m[3],h||0,mi||0,0,0)}
+function formatDateTime(d){return d&&!isNaN(d)?d.toLocaleString("en-GB",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"}):"—"}
+function toInput(d){const p=n=>String(n).padStart(2,"0");return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`}
+function parseAnyDate(v){if(!v)return null;if(v.toDate)return v.toDate();const d=new Date(v);return isNaN(d)?null:d}
+function inferredPayment(j){if(j.paymentStatus)return j.paymentStatus;const total=money(j.totalPrice),paid=money(j.amountPaid);return total>0&&paid>=total?"full":paid>0?"deposit":"unpaid"}
+function statusBadge(s){const safe=["pending","approved","assigned","completed","cancelled"].includes(s)?s:"other";return `status-${safe}`}
+function payBadge(p){return p==="full"?"pay-full":p==="deposit"?"pay-deposit":p==="late-cancel"?"pay-late":p==="unpaid"?"pay-unpaid":"pay-other"}
+function statusLabel(s){return ({pending:"Pending",approved:"Approved",assigned:"Assigned",completed:"Completed",cancelled:"Cancelled"})[s]||s||"Pending"}
+function paymentLabel(p){return ({unpaid:"Unpaid",deposit:"Deposit paid",full:"Paid in full","late-cancel":"Late / cancelled"})[p]||p||"Unpaid"}
+function serviceLabel(j){const n=countOf(j);return `${n} witness${n===1?"":"es"}`}
+
+async function loadJob(){jobId=param("id");if(!jobId){alert("No job ID provided.");location.href="admin-jobs.html";return}jobRef=db.collection("jobs").doc(jobId);try{const doc=await jobRef.get();if(!doc.exists){alert("Job not found.");location.href="admin-jobs.html";return}jobData={id:doc.id,...doc.data()};populate();await Promise.all([loadWitnesses(),loadAvailability()]);buildTimeline();$("loading").style.display="none";$("jobContent").style.display="block"}catch(e){$("loading").textContent="Could not load job: "+e.message}}
+function populate(){const j=jobData,c=customer(j),p=inferredPayment(j);$("jobTitle").textContent=nameOf(j);const d=localDate(j.date,j.time);$("jobSubtitle").textContent=`${d?formatDateTime(d):"Date not set"}${locationOf(j)?" • "+locationOf(j):""}`;$("coupleName").value=nameOf(j)==="Unnamed booking"?"":nameOf(j);$("coupleEmail").value=emailOf(j);$("couplePhone").value=phoneOf(j);$("jobDate").value=j.date||"";$("jobTime").value=j.time||"";$("jobLocation").value=locationOf(j);$("ceremonyType").value=j.ceremonyType||"civil";$("witnessCount").value=String(countOf(j));$("jobNotes").value=notesOf(j);$("adminNotes").value=j.adminNotes||"";$("jobStatus").value=j.status||"pending";$("totalPrice").value=money(j.totalPrice);$("depositAmount").value=money(j.deposit);$("amountPaid").value=money(j.amountPaid);$("amountDue").value=money(j.amountDue);$("paymentStatus").value=p;$("paymentLinkDeposit").value=j.paymentLinkDeposit||"";$("paymentLinkRemaining").value=j.paymentLinkRemaining||"";const deadline=parseAnyDate(j.paymentDeadline);$("paymentDeadline").value=deadline?toInput(deadline):(typeof j.paymentDeadline==="string"?j.paymentDeadline:"");$("statusBadge").textContent=statusLabel(j.status||"pending");$("statusBadge").className="badge "+statusBadge(j.status||"pending");$("paymentBadge").textContent=paymentLabel(p);$("paymentBadge").className="badge "+payBadge(p);$("serviceText").textContent=serviceLabel(j);$("totalText").textContent=`£${money(j.totalPrice)}`;$("assignedCountText").textContent=(j.assignedWitnesses||[]).length;$("paymentSummaryText").textContent=`£${money(j.amountPaid)} paid · £${money(j.amountDue)} due`;$("deadlineText").textContent=deadline?`Remaining balance deadline: ${formatDateTime(deadline)}`:"Remaining balance deadline: not set";renderStatusActions();renderRequestInfo();renderAssignedWitnesses()}
+function renderStatusActions(){const s=jobData.status||"pending",box=$("statusActions"),help=$("statusHelp");let buttons=[];if(s==="pending")buttons.push(`<button class="btn btn-gold" onclick="approveJob()">Approve Booking</button>`);if(s==="approved")buttons.push(`<button class="btn" onclick="saveStatus('assigned')">Mark Assigned</button>`);if(s==="assigned")buttons.push(`<button class="btn btn-green" onclick="saveStatus('completed')">Mark Completed</button>`);if(s!=="cancelled"&&s!=="completed")buttons.push(`<button class="btn btn-danger" onclick="saveStatus('cancelled')">Cancel Booking</button>`);if(s==="cancelled")buttons.push(`<button class="btn" onclick="saveStatus('approved')">Restore as Approved</button>`);box.innerHTML=buttons.join("");const text={pending:"Customer enquiry only. Approving it activates the booking and makes the deposit due.",approved:"Booking accepted. Assign witnesses when ready.",assigned:"Witnesses are assigned. Mark completed after the ceremony.",completed:"Ceremony completed. This job will count in completed-job reporting.",cancelled:"Cancelled bookings stay in history but should not reserve availability."}[s]||"";help.textContent=text}
+async function approveJob(){if(!confirm("Approve this booking and make the deposit due?"))return;const deposit=money(jobData.deposit)||20;const total=money(jobData.totalPrice);const paid=money(jobData.amountPaid);const updates={status:"approved",approvedAt:firebase.firestore.FieldValue.serverTimestamp(),paymentStatus:paid>=total&&total>0?"full":paid>0?"deposit":"unpaid",amountDue:paid>0?Math.max(total-paid,0):deposit};if(!jobData.paymentDeadline){const d=deadline24hDate();if(d)updates.paymentDeadline=toInput(d)}await updateJob(updates,"Booking approved.")}
+async function saveStatus(status){const prompt=status==="cancelled"?"Cancel this booking?":status==="completed"?"Mark this ceremony as completed?":`Change status to ${status}?`;if(!confirm(prompt))return;const updates={status};if(status==="completed")updates.completedAt=firebase.firestore.FieldValue.serverTimestamp();if(status==="cancelled")updates.cancelledAt=firebase.firestore.FieldValue.serverTimestamp();await updateJob(updates,"Status updated.")}
+function deadline24hDate(){const ceremony=localDate($("jobDate").value,$("jobTime").value||"00:00");if(!ceremony)return null;return new Date(ceremony.getTime()-24*60*60*1000)}
+function setDeadline24h(){const d=deadline24hDate();if(!d){alert("Set the ceremony date and time first.");return}$("paymentDeadline").value=toInput(d)}
+async function saveJobDetails(){const c={...(jobData.customer||{}),name:$("coupleName").value.trim(),email:$("coupleEmail").value.trim(),phone:$("couplePhone").value.trim(),location:$("jobLocation").value.trim(),notes:$("jobNotes").value.trim()};const updates={customer:c,date:$("jobDate").value,time:$("jobTime").value,ceremonyType:$("ceremonyType").value,witnessCount:Number($("witnessCount").value)||1,adminNotes:$("adminNotes").value.trim(),status:$("jobStatus").value,totalPrice:money($("totalPrice").value),deposit:money($("depositAmount").value),amountPaid:money($("amountPaid").value),amountDue:money($("amountDue").value),paymentStatus:$("paymentStatus").value,paymentLinkDeposit:$("paymentLinkDeposit").value.trim(),paymentLinkRemaining:$("paymentLinkRemaining").value.trim()};if($("paymentDeadline").value)updates.paymentDeadline=$("paymentDeadline").value;else updates.paymentDeadline=firebase.firestore.FieldValue.delete();await updateJob(updates,"Saved.")}
+async function updateJob(updates,note){try{await jobRef.update(updates);const fresh=await jobRef.get();jobData={id:fresh.id,...fresh.data()};populate();loadAvailability();buildTimeline();$("saveNote").textContent=note||"Saved.";setTimeout(()=>$("saveNote").textContent="",1800)}catch(e){alert("Could not update job: "+e.message)}}
+
+async function loadWitnesses(){try{const snap=await db.collection("users").get();allWitnesses=snap.docs.map(d=>({id:d.id,...d.data()}));fillWitnessSelect();renderAssignedWitnesses()}catch(e){$("assignedWitnesses").innerHTML=`<div class="muted">Could not load witnesses.</div>`}}
+function witnessName(w){return w.type==="couple"?(w.teamName||`${w.partner1Name||""} & ${w.partner2Name||""}`.trim()):(w.name||w.fullName||w.email||"Unnamed")}
+function fillWitnessSelect(){const assigned=new Set(jobData?.assignedWitnesses||[]);$("addWitnessSelect").innerHTML=allWitnesses.filter(w=>!assigned.has(w.id)).map(w=>`<option value="${esc(w.id)}">${esc(witnessName(w))} (${w.type==="couple"?"Couple":"Single"})</option>`).join("")||'<option value="">No unassigned witnesses available</option>'}
+function renderRequestInfo(){const box=$("requestInfo");const req=jobData.requestBy;if(!req){box.innerHTML="";return}const w=allWitnesses.find(x=>x.id===req);box.innerHTML=`<div class="attention"><b>Witness request:</b> ${esc(w?witnessName(w):req)} has requested this job.</div>`}
+function renderAssignedWitnesses(){const box=$("assignedWitnesses");if(!jobData)return;const ids=jobData.assignedWitnesses||[];if(!ids.length){box.innerHTML='<div class="muted" style="font-size:11px">No witnesses assigned yet.</div>';fillWitnessSelect();return}box.innerHTML=ids.map(id=>{const w=allWitnesses.find(x=>x.id===id);const n=w?witnessName(w):id;const meta=w?`${w.type==="couple"?"Couple team":"Single"}${w.location?" • "+w.location:""}`:"User record unavailable";return `<div class="witness-item"><div><div class="witness-name">${esc(n)}</div><div class="witness-meta">${esc(meta)}</div></div><div class="witness-actions"><button class="btn" onclick="goToWitness('${esc(id)}')">View</button><button class="btn btn-danger" onclick="removeWitness('${esc(id)}')">Remove</button></div></div>`}).join("");fillWitnessSelect()}
+function openAddWitness(){$("addWitnessArea").style.display="block";fillWitnessSelect()}function closeAddWitness(){$("addWitnessArea").style.display="none"}
+async function confirmAddWitness(){const id=$("addWitnessSelect").value;if(!id)return;const cur=jobData.assignedWitnesses||[];if(cur.includes(id))return;const updated=[...cur,id];await updateJob({assignedWitnesses:updated,status:"assigned"},"Witness assigned.");closeAddWitness()}
+async function removeWitness(id){if(!confirm("Remove this witness from the job?"))return;const updated=(jobData.assignedWitnesses||[]).filter(x=>x!==id);await updateJob({assignedWitnesses:updated,status:updated.length?"assigned":"approved"},"Witness removed.")}
+function goToWitness(id){location.href="admin-witness-detail.html?id="+encodeURIComponent(id)}
+
+async function markDepositPaid(){if(!confirm("Mark the deposit as paid?"))return;const total=money(jobData.totalPrice),deposit=money(jobData.deposit),existing=money(jobData.amountPaid);const paid=Math.min(total,Math.max(existing,deposit));const due=Math.max(total-paid,0);const updates={paymentStatus:due>0?"deposit":"full",amountPaid:paid,amountDue:due,depositPaidAt:firebase.firestore.FieldValue.serverTimestamp()};if((jobData.status||"pending")==="pending")updates.status="approved";if(!jobData.paymentDeadline){const d=deadline24hDate();if(d)updates.paymentDeadline=toInput(d)}await updateJob(updates,"Deposit marked paid.")}
+async function markRemainingPaid(){if(!confirm("Mark the remaining balance as paid?"))return;const total=money(jobData.totalPrice);await updateJob({paymentStatus:"full",amountPaid:total,amountDue:0,remainingPaidAt:firebase.firestore.FieldValue.serverTimestamp()},"Balance marked paid.")}
+async function cancelForNonPayment(){if(!confirm("Cancel this job for non-payment? Assigned witnesses will be released."))return;await updateJob({paymentStatus:"late-cancel",status:"cancelled",assignedWitnesses:[],cancelledAt:firebase.firestore.FieldValue.serverTimestamp()},"Booking cancelled.")}
+
+async function loadAvailability(){const dateStr=jobData?.date;if(!dateStr){$("availabilityPills").innerHTML='<span class="pill">No date set</span>';return}const d=localDate(dateStr),day=d?["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][d.getDay()]:"";let available=0,unavailable=0;allWitnesses.forEach(w=>{const a=w.availability?.[day];if(!a)return;a.enabled?available++:unavailable++});$("availabilityPills").innerHTML=`<span class="pill">${esc(day)}</span><span class="pill" style="background:#d6ffe0;color:#006d2a">Available: ${available}</span><span class="pill" style="background:#ffe6e6;color:#8a0000">Unavailable: ${unavailable}</span>`}
+function buildTimeline(){const j=jobData,items=[];const add=(label,v)=>{const d=parseAnyDate(v);if(d)items.push({label,time:d})};add("Enquiry created",j.createdAt);add("Booking approved",j.approvedAt);add("Deposit paid",j.depositPaidAt);add("Remaining balance paid",j.remainingPaidAt);add("Marked completed",j.completedAt);add("Cancelled",j.cancelledAt);const ceremony=localDate(j.date,j.time);if(ceremony)items.push({label:"Ceremony",time:ceremony});items.sort((a,b)=>a.time-b.time);$("timeline").innerHTML=items.length?items.map(i=>`<div class="timeline-item"><div class="timeline-label">${esc(i.label)}</div><div class="timeline-time">${esc(formatDateTime(i.time))}</div></div>`).join(""):'<div class="muted">No timeline events yet.</div>'}
+async function deleteJob(){if(!confirm("Permanently delete this job? This cannot be undone."))return;if(!confirm("Final confirmation: delete this booking permanently?"))return;try{await jobRef.delete();location.href="admin-jobs.html"}catch(e){alert("Could not delete job: "+e.message)}}
+function logout(){auth.signOut().then(()=>location.href="../hub/login.html")}
+
+auth.onAuthStateChanged(user=>{if(!user){location.href="../hub/login.html";return}loadJob()});
 </script>
-
 </body>
 </html>
