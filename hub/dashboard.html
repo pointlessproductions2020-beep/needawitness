@@ -3,155 +3,188 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Witness Hub – My Jobs</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<title>Witness Hub – Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
 <style>
-:root{--gold:#c8a24a;--gold-dark:#9b782c;--bg:#f5f4f2;--card:#fff;--text:#222;--muted:#747474;--line:#e9e5dc;--green:#167647;--amber:#966b00;--blue:#285d94;--red:#963434}
-*{box-sizing:border-box}
-body{margin:0;font-family:Inter,sans-serif;background:var(--bg);color:var(--text)}
-.layout{display:flex;min-height:100vh}.sidebar{width:250px;background:#fff;border-right:1px solid #e6e2da;padding:28px;display:flex;flex-direction:column;box-shadow:2px 0 10px rgba(0,0,0,.04);position:sticky;top:0;height:100vh}.sidebar h2{font-family:"Playfair Display",serif;color:var(--gold);margin:0 0 32px;font-size:26px}.sidebar a{color:#444;text-decoration:none;padding:12px 0;display:block;font-size:15px;font-weight:500;transition:.2s}.sidebar a:hover,.sidebar a.active{color:var(--gold)}.sidebar a:hover{transform:translateX(3px)}.logout-btn{margin-top:auto;padding:12px;background:var(--gold);color:#fff;text-align:center;border-radius:8px;cursor:pointer;font-weight:600;font-size:14px}.sidebar-footer{margin-top:20px;padding-top:14px;border-top:1px solid #eee;font-size:12px;color:#777;line-height:1.4}
-.main{flex:1;padding:40px 48px;min-width:0}.header{display:flex;justify-content:space-between;gap:20px;align-items:end;margin-bottom:24px;padding-bottom:13px;border-bottom:2px solid #e8dcc2}.header h1{font-family:"Playfair Display",serif;color:var(--gold);font-size:32px;margin:0 0 5px}.header p{margin:0;color:var(--muted);font-size:14px}.header-chip{background:#fff6dd;color:#735514;border:1px solid #ead6a3;border-radius:999px;padding:9px 14px;font-size:13px;font-weight:600;white-space:nowrap}
-.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-bottom:24px}.stat{background:#fff;padding:18px 20px;border-radius:14px;border-left:4px solid var(--gold);box-shadow:0 4px 14px rgba(0,0,0,.05)}.stat span{display:block;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.05em}.stat strong{display:block;font-size:27px;margin-top:7px}.stat small{display:block;color:var(--muted);margin-top:4px}
-.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px}.toolbar input,.toolbar select{border:1px solid #ddd4c2;background:#fff;border-radius:10px;padding:11px 12px;font:inherit;color:#333}.toolbar input{flex:1;min-width:230px}.toolbar select{min-width:180px}
-.section{background:#fff;padding:22px;border-radius:14px;margin-bottom:24px;box-shadow:0 4px 14px rgba(0,0,0,.055)}.section-head{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:12px}.section h3{margin:0;font-family:"Playfair Display",serif;color:var(--gold);font-size:21px}.count{font-size:12px;font-weight:700;background:#f4eddd;color:#806421;border-radius:999px;padding:5px 9px}.empty{padding:22px 4px;color:#777;font-size:14px}
-.job-list{display:grid;gap:10px}.job-card{border:1px solid var(--line);border-radius:12px;padding:15px 16px;cursor:pointer;transition:.16s;background:#fff}.job-card:hover{transform:translateY(-1px);border-color:#d7c08a;box-shadow:0 5px 15px rgba(0,0,0,.055)}.job-top{display:flex;gap:12px;justify-content:space-between;align-items:flex-start}.job-title{font-weight:700;font-size:16px}.job-meta{font-size:13px;color:#5f5f5f;margin-top:5px;line-height:1.55}.job-price{font-size:15px;font-weight:700;color:var(--gold-dark);white-space:nowrap}.badge{display:inline-block;padding:4px 9px;border-radius:999px;font-size:11px;font-weight:700;margin-left:7px}.assigned{background:#dcf6e6;color:var(--green)}.pending{background:#fff1c9;color:var(--amber)}.available{background:#e4effc;color:var(--blue)}.completed{background:#ededed;color:#555}.cancelled{background:#fde3e3;color:var(--red)}
-.notice{background:#fff8e6;border:1px solid #ead7a5;border-radius:12px;padding:12px 14px;margin-bottom:20px;color:#684f15;font-size:13px;line-height:1.5}
-#jobOverlay{position:fixed;inset:0;background:rgba(0,0,0,.52);backdrop-filter:blur(7px);display:none;align-items:center;justify-content:center;z-index:9999;padding:18px}#jobOverlay.open{display:flex}#jobDrawer{width:570px;max-width:100%;max-height:90vh;overflow-y:auto;padding:25px;border-radius:20px;background:#242424;color:#f5f5f5;border:1px solid rgba(255,255,255,.15);box-shadow:0 18px 44px rgba(0,0,0,.5);transform:scale(.96);opacity:0;transition:.18s}#jobDrawer.open{transform:scale(1);opacity:1}.drawer-header{display:flex;justify-content:space-between;gap:18px;align-items:start}.drawer-header h2{margin:0;font-family:"Playfair Display",serif;color:#e1bd62;font-size:24px}.drawer-close{font-size:28px;cursor:pointer;color:#e1bd62;line-height:1}.drawer-section{margin-top:18px;padding-top:14px;border-top:1px solid rgba(255,255,255,.15)}.drawer-section h4{margin:0 0 8px;font-size:13px;color:#e1bd62;text-transform:uppercase;letter-spacing:.06em}.drawer-section div{font-size:14px;line-height:1.55;color:#e8e8e8}.drawer-stat{font-size:22px!important;font-weight:700;color:#e1bd62!important}.drawer-hint{font-size:12px!important;color:#bdbdbd!important;margin-top:5px}.drawer-btn{margin-top:20px;padding:12px 16px;border:0;border-radius:999px;background:var(--gold);color:#1e1e1e;font-weight:700;cursor:pointer;width:100%;font-size:14px}.drawer-btn.cancel{background:#b94a4a;color:#fff}.drawer-btn:disabled{opacity:.55;cursor:not-allowed}.private-note{background:#323232;border-radius:10px;padding:10px 12px;color:#bbb!important;font-size:12px!important;margin-top:8px}
-@media(max-width:850px){.sidebar{width:205px;padding:22px}.main{padding:30px 24px}.stats{grid-template-columns:1fr}}
-@media(max-width:650px){.layout{display:block}.sidebar{position:relative;width:100%;height:auto;padding:18px 20px}.sidebar h2{margin-bottom:12px}.sidebar a{display:inline-block;margin-right:14px;padding:7px 0}.logout-btn{margin-top:12px}.main{padding:24px 15px}.header{align-items:flex-start;flex-direction:column}.toolbar{display:grid;grid-template-columns:1fr}.toolbar input,.toolbar select{width:100%;min-width:0}.job-top{display:block}.job-price{margin-top:9px}.sidebar-footer{display:none}}
+:root{--gold:#c8a24a;--gold-dark:#a98532;--bg:#f5f4f2;--card:#fff;--line:#e6e2da;--text:#222;--muted:#777;--green:#287a4a;--amber:#9a6700;--blue:#2f65a7;--red:#a83b3b}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,sans-serif;background:var(--bg);color:var(--text)}
+.layout{display:flex;min-height:100vh}.sidebar{width:250px;background:#fff;border-right:1px solid var(--line);padding:28px;display:flex;flex-direction:column;box-shadow:2px 0 10px rgba(0,0,0,.04)}
+.sidebar h2{font-family:"Playfair Display",serif;color:var(--gold);margin:0 0 32px;font-size:26px}.sidebar a{color:#444;text-decoration:none;padding:12px 0;display:block;font-size:15px;font-weight:500;transition:.2s}.sidebar a:hover,.sidebar a.active{color:var(--gold);transform:translateX(3px)}.sidebar a.active{font-weight:700}.logout-btn{margin-top:auto;padding:12px;background:var(--gold);color:#fff;text-align:center;border-radius:8px;cursor:pointer;font-weight:600}.sidebar-footer{margin-top:20px;padding-top:14px;border-top:1px solid #eee;font-size:12px;color:#777;line-height:1.4}
+.main{flex:1;padding:40px 48px;overflow-y:auto}.main-header{display:flex;justify-content:space-between;align-items:center;gap:18px;margin-bottom:24px;padding-bottom:12px;border-bottom:2px solid #e8dcc2}.main-header-title{font-family:"Playfair Display",serif;font-size:32px;color:var(--gold)}.main-header-subtitle{font-size:14px;color:var(--muted);margin-top:4px}.header-right{display:flex;align-items:center;gap:12px}.header-photo{width:54px;height:54px;border-radius:50%;object-fit:cover;border:2px solid var(--gold)}.pill-btn{padding:10px 16px;border-radius:999px;border:none;background:var(--gold);color:#fff;font-weight:700;font-size:13px;cursor:pointer;text-decoration:none}.pill-btn.secondary{background:#fff;color:var(--gold-dark);border:1px solid #d9c487}
+.cards{display:grid;grid-template-columns:repeat(5,minmax(150px,1fr));gap:16px;margin-bottom:24px}.card{background:#fff;padding:18px;border-radius:14px;box-shadow:0 4px 14px rgba(0,0,0,.055);border-left:4px solid var(--gold)}.card h3{margin:0;color:#6b5b32;font-size:13px;text-transform:uppercase;letter-spacing:.04em}.card p{font-size:27px;margin:9px 0 0;font-weight:700}.card small{display:block;color:var(--muted);margin-top:5px;font-size:11px}
+.grid-two{display:grid;grid-template-columns:1.1fr .9fr;gap:22px}.section{background:#fff;padding:22px;border-radius:14px;margin-bottom:22px;box-shadow:0 4px 14px rgba(0,0,0,.055)}.section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}.section h3{margin:0;font-family:"Playfair Display",serif;color:var(--gold);font-size:20px}.count{min-width:28px;height:28px;border-radius:999px;background:#f5ecd6;color:#80631d;display:grid;place-items:center;font-weight:700;font-size:12px}
+.job-list{display:grid;gap:10px}.job-item{border:1px solid #eee;border-radius:11px;padding:13px 14px;background:#fff}.job-title{font-weight:700;font-size:14px}.job-meta{font-size:12px;color:#666;line-height:1.5;margin-top:4px}.badge{display:inline-block;padding:3px 8px;border-radius:999px;font-size:10px;font-weight:700;margin-left:7px}.assigned{background:#dcf6e6;color:var(--green)}.pending{background:#fff1c9;color:var(--amber)}.available{background:#e4effc;color:var(--blue)}.empty{font-size:13px;color:#777;padding:6px 0}.link-row{display:flex;justify-content:flex-end;margin-top:12px}.text-link{color:var(--gold-dark);font-weight:700;font-size:12px;text-decoration:none}
+#calendar{max-width:100%;margin-top:8px}.fc-toolbar-title{font-family:"Playfair Display",serif;color:var(--gold);font-size:18px!important}.fc .fc-button-primary{background:var(--gold);border-color:var(--gold)}.fc .fc-button-primary:hover{background:var(--gold-dark);border-color:var(--gold-dark)}
+.profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 18px;font-size:13px}.profile-grid strong{display:block;color:#555;font-size:11px;text-transform:uppercase;margin-bottom:2px}.availability-row{padding:8px 0;border-bottom:1px solid #eee;font-size:13px}.availability-row:last-child{border-bottom:0}
+#earningsDrawer{position:fixed;top:0;right:-430px;width:430px;height:100vh;background:#1e1e1e;color:#f5f5f5;box-shadow:-4px 0 12px rgba(0,0,0,.45);transition:right .3s ease;z-index:9999;padding:24px;overflow-y:auto}#earningsDrawer.open{right:0}.drawer-header{display:flex;justify-content:space-between;align-items:center}.drawer-header h2{margin:0;font-family:"Playfair Display",serif;color:var(--gold)}.drawer-close{font-size:28px;cursor:pointer;color:var(--gold)}.drawer-subtitle{font-size:13px;color:#bbb;margin-top:6px}.drawer-section{margin-top:20px;padding-top:14px;border-top:1px solid #333}.drawer-stat{display:flex;justify-content:space-between;margin:8px 0;font-size:14px}.drawer-stat span:first-child{color:#bbb}.drawer-job{padding:10px 0;border-bottom:1px solid #333;font-size:13px;line-height:1.5}
+@media(max-width:1150px){.cards{grid-template-columns:repeat(3,1fr)}.grid-two{grid-template-columns:1fr}}@media(max-width:900px){.layout{flex-direction:column}.sidebar{width:100%;border-right:0;border-bottom:1px solid #eee;flex-direction:row;align-items:center;gap:18px;overflow-x:auto;padding:18px 22px}.sidebar h2{margin:0}.sidebar a{padding:8px 0;white-space:nowrap}.logout-btn,.sidebar-footer{display:none}.main{padding:24px}.cards{grid-template-columns:repeat(2,1fr)}}@media(max-width:600px){.main-header{align-items:flex-start}.header-right{flex-direction:column-reverse;align-items:flex-end}.cards{grid-template-columns:1fr 1fr}.card{min-width:0}.profile-grid{grid-template-columns:1fr}#earningsDrawer{width:100%;right:-100%}}
 </style>
 </head>
 <body>
 <div class="layout">
   <aside class="sidebar">
     <h2>Witness Hub</h2>
-    <a href="dashboard.html">Dashboard</a>
-    <a href="myjobs.html" class="active">My Jobs</a>
+    <a href="dashboard.html" class="active">Dashboard</a>
+    <a href="myjobs.html">My Jobs</a>
     <a href="availability.html">Availability</a>
     <a href="profile.html">Profile</a>
+    <a href="profile-edit.html">Edit Profile</a>
     <div class="logout-btn" onclick="logout()">Logout</div>
-    <div class="sidebar-footer">© Need A Witness UK<br>Witness Hub</div>
+    <div class="sidebar-footer">© Need A Witness UK<br>Witness Hub v1.0</div>
   </aside>
 
   <main class="main">
-    <div class="header">
-      <div><h1>My Jobs</h1><p>See your assigned work, requests and jobs currently open to witnesses.</p></div>
-      <div class="header-chip" id="accountType">Witness account</div>
+    <div class="main-header">
+      <div>
+        <div class="main-header-title">Dashboard</div>
+        <div class="main-header-subtitle">Welcome back, <span id="username">Loading…</span> · <span id="accountStatus">Checking account…</span></div>
+      </div>
+      <div class="header-right">
+        <a href="myjobs.html" class="pill-btn secondary">Browse Jobs</a>
+        <button class="pill-btn" onclick="openEarningsDrawer()">View Earnings</button>
+        <img id="headerPhoto" class="header-photo" src="/hub/default-single.png" alt="Profile photo">
+      </div>
     </div>
 
-    <div class="notice">Only jobs that have been <b>approved by Need A Witness UK</b> are offered here. New customer enquiries never appear as available witness work.</div>
-
-    <div class="stats">
-      <div class="stat"><span>Assigned</span><strong id="assignedCount">0</strong><small>Current & upcoming work</small></div>
-      <div class="stat"><span>Requests</span><strong id="requestCount">0</strong><small>Waiting for admin approval</small></div>
-      <div class="stat"><span>Available</span><strong id="availableCount">0</strong><small>Jobs you can request</small></div>
+    <div class="cards">
+      <div class="card"><h3>Jobs Today</h3><p id="jobsToday">0</p><small>Assigned ceremonies today</small></div>
+      <div class="card"><h3>Upcoming</h3><p id="upcomingCount">0</p><small>Future assigned jobs</small></div>
+      <div class="card"><h3>Requests</h3><p id="requestCount">0</p><small>Pending job requests</small></div>
+      <div class="card"><h3>Available</h3><p id="availableCount">0</p><small>Approved jobs open to request</small></div>
+      <div class="card"><h3>Est. This Month</h3><p id="earningsMonth">£0.00</p><small>Estimated witness earnings</small></div>
     </div>
 
-    <div class="toolbar">
-      <input id="searchInput" type="search" placeholder="Search by date or location…" aria-label="Search jobs">
-      <select id="sortSelect" aria-label="Sort jobs"><option value="soonest">Soonest ceremony</option><option value="latest">Latest ceremony</option><option value="highest">Highest earnings</option></select>
+    <div class="grid-two">
+      <div>
+        <section class="section">
+          <div class="section-head"><h3>Next Assigned Job</h3><span class="count" id="nextJobCount">0</span></div>
+          <div id="nextJob"><div class="empty">Loading…</div></div>
+        </section>
+        <section class="section">
+          <div class="section-head"><h3>Today's Jobs</h3><span class="count" id="todayBadge">0</span></div>
+          <div id="todaysJobs" class="job-list"><div class="empty">Loading…</div></div>
+        </section>
+      </div>
+      <div>
+        <section class="section">
+          <div class="section-head"><h3>Pending Requests</h3><span class="count" id="requestBadge">0</span></div>
+          <div id="pendingRequests" class="job-list"><div class="empty">Loading…</div></div>
+          <div class="link-row"><a class="text-link" href="myjobs.html">Manage requests →</a></div>
+        </section>
+        <section class="section">
+          <div class="section-head"><h3>Available Work</h3><span class="count" id="availableBadge">0</span></div>
+          <div id="availableJobs" class="job-list"><div class="empty">Loading…</div></div>
+          <div class="link-row"><a class="text-link" href="myjobs.html">View all available jobs →</a></div>
+        </section>
+      </div>
     </div>
 
-    <section class="section"><div class="section-head"><h3>Assigned Jobs</h3><span class="count" id="assignedBadge">0</span></div><div id="assignedJobs" class="job-list"><div class="empty">Loading…</div></div></section>
-    <section class="section"><div class="section-head"><h3>Pending Requests</h3><span class="count" id="requestBadge">0</span></div><div id="pendingRequests" class="job-list"><div class="empty">Loading…</div></div></section>
-    <section class="section"><div class="section-head"><h3>Available Jobs</h3><span class="count" id="availableBadge">0</span></div><div id="availableJobs" class="job-list"><div class="empty">Loading…</div></div></section>
+    <section class="section">
+      <div class="section-head"><h3>Your Calendar</h3><span style="font-size:12px;color:#777">Assigned jobs only</span></div>
+      <div id="calendar"></div>
+    </section>
+
+    <div class="grid-two">
+      <section class="section">
+        <div class="section-head"><h3>Your Availability</h3><a class="text-link" href="availability.html">Edit →</a></div>
+        <div id="availabilitySummary"><div class="empty">Loading…</div></div>
+      </section>
+      <section class="section">
+        <div class="section-head"><h3>Your Profile</h3><a class="text-link" href="profile-edit.html">Edit →</a></div>
+        <div class="profile-grid">
+          <div><strong>Name / Team</strong><span id="profileName">Loading…</span></div>
+          <div><strong>Email</strong><span id="profileEmail">Loading…</span></div>
+          <div><strong>Phone</strong><span id="profilePhone">Loading…</span></div>
+          <div><strong>Location</strong><span id="profileLocation">Loading…</span></div>
+        </div>
+        <div style="margin-top:14px;font-size:13px"><strong style="display:block;color:#555;font-size:11px;text-transform:uppercase;margin-bottom:4px">Bio</strong><span id="profileBio">Loading…</span></div>
+      </section>
+    </div>
   </main>
 </div>
 
-<div id="jobOverlay" role="dialog" aria-modal="true" aria-labelledby="drawerTitle">
-  <div id="jobDrawer">
-    <div class="drawer-header"><div><h2 id="drawerTitle">Job Details</h2><div id="drawerStatus" style="margin-top:7px"></div></div><div class="drawer-close" onclick="closeDrawer()">×</div></div>
-    <div class="drawer-section"><h4>Ceremony</h4><div id="drawerDate"></div><div id="drawerTime"></div><div id="drawerLocation"></div></div>
-    <div class="drawer-section"><h4>Witness requirement</h4><div id="drawerWitnesses"></div></div>
-    <div class="drawer-section"><h4>Estimated earnings</h4><div class="drawer-stat" id="drawerJobEarnings">£0.00</div><div class="drawer-hint">Shown using the current witness payout calculation.</div></div>
-    <div class="drawer-section" id="assignedInfo" style="display:none"><h4>Assigned job information</h4><div id="drawerCustomer"></div><div id="drawerNotes"></div><div class="private-note">Customer contact details are only shown after you are assigned to the booking.</div></div>
-    <button id="drawerActionBtn" class="drawer-btn">Request Job</button>
+<div id="earningsDrawer">
+  <div class="drawer-header"><h2>Earnings</h2><div class="drawer-close" onclick="closeEarningsDrawer()">×</div></div>
+  <div class="drawer-subtitle">Estimated witness earnings from jobs assigned to you.</div>
+  <div class="drawer-section">
+    <div class="drawer-stat"><span>This month</span><span id="drawerMonthTotal">£0.00</span></div>
+    <div class="drawer-stat"><span>Upcoming assigned</span><span id="drawerUpcomingTotal">£0.00</span></div>
+    <div class="drawer-stat"><span>Completed / past assigned</span><span id="drawerPastTotal">£0.00</span></div>
+    <div class="drawer-stat"><span>All assigned</span><span id="drawerAllTimeTotal">£0.00</span></div>
   </div>
+  <div class="drawer-section"><h4 id="drawerDayTitle">Selected day</h4><div id="drawerJobsList">Select a date on the calendar.</div></div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 <script src="firebase.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
 <script>
-let currentUser=null,userData=null,allJobs=[],currentDrawerJob=null;
+let currentUser=null,userData=null,allJobs=[],assignedJobs=[],calendar=null,selectedDate=null;
 const ACTIVE_JOB_STATUSES=new Set(["approved","assigned"]);
 
 function esc(v){return String(v??"").replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));}
 function jobName(j){return j.customer?.name||j.coupleName||j.coupleNames||"Wedding ceremony";}
 function locationOf(j){return j.customer?.location||j.location||"Location TBC";}
-function notesOf(j){return j.customer?.notes||j.notes||"";}
 function witnessCount(j){return Math.max(Number(j.witnessCount||1),1);}
 function parseLocalDate(s){if(!s)return null;const [y,m,d]=String(s).split("-").map(Number);return y&&m&&d?new Date(y,m-1,d):null;}
 function formatDate(s){const d=parseLocalDate(s);return d?d.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short",year:"numeric"}):(s||"Date TBC");}
+function todayString(){const n=new Date();return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,"0")}-${String(n.getDate()).padStart(2,"0")}`;}
 function money(v){return "£"+(Number(v)||0).toFixed(2);}
-function isPast(j){const d=parseLocalDate(j.date);if(!d)return false;const t=(j.time||"23:59").split(":").map(Number);d.setHours(t[0]||0,t[1]||0,0,0);return d<Date.now();}
 function assignedToMe(j){return Array.isArray(j.assignedWitnesses)&&j.assignedWitnesses.includes(currentUser?.uid);}
 function requestedByMe(j){return j.requestBy===currentUser?.uid&&j.requestStatus==="pending";}
 function hasOtherRequest(j){return !!j.requestBy&&j.requestBy!==currentUser?.uid&&j.requestStatus==="pending";}
 function remainingPlaces(j){return Math.max(witnessCount(j)-(Array.isArray(j.assignedWitnesses)?j.assignedWitnesses.length:0),0);}
-function accountCanCover(j){const required=witnessCount(j);if(userData?.type==="couple")return required>=1;return required>=1;}
-function isAvailable(j){return ACTIVE_JOB_STATUSES.has(j.status)&&!assignedToMe(j)&&!isPast(j)&&remainingPlaces(j)>0&&!hasOtherRequest(j)&&accountCanCover(j);}
+function jobDateTime(j){const d=parseLocalDate(j.date);if(!d)return null;const [h,m]=(j.time||"23:59").split(":").map(Number);d.setHours(h||0,m||0,0,0);return d;}
+function isPast(j){const d=jobDateTime(j);return d?d.getTime()<Date.now():false;}
+function isAvailable(j){return ACTIVE_JOB_STATUSES.has(j.status)&&!assignedToMe(j)&&!isPast(j)&&remainingPlaces(j)>0&&!hasOtherRequest(j);}
+function getEarnings(j){const total=Number(j.totalPrice||0),adminFee=Number(j.depositAmount??j.deposit??0),pot=Math.max(total-adminFee,0),required=witnessCount(j);if(userData?.type==="couple"&&required>=2)return pot;return pot/required;}
+function badge(label,kind){return `<span class="badge ${kind}">${esc(label)}</span>`;}
+function compactJob(j,kind){return `<div class="job-item"><div class="job-title">${esc(jobName(j))}${kind==="assigned"?badge("Assigned","assigned"):kind==="pending"?badge("Requested","pending"):badge("Available","available")}</div><div class="job-meta">${esc(formatDate(j.date))} · ${esc(j.time||"Time TBC")}<br>${esc(locationOf(j))}<br>${witnessCount(j)} witness${witnessCount(j)===1?"":"es"} · ${money(getEarnings(j))} est.</div></div>`;}
 
-function getEarnings(j){
-  const total=Number(j.totalPrice||0),adminFee=Number(j.depositAmount??j.deposit??0),pot=Math.max(total-adminFee,0),required=witnessCount(j);
-  if(userData?.type==="couple"&&required>=2)return pot;
-  return pot/required;
-}
-function statusBadge(j,kind){const map={assigned:["Assigned","assigned"],request:["Requested","pending"],available:["Available","available"],completed:["Completed","completed"]};const x=map[kind]||[j.status||"Status","available"];return `<span class="badge ${x[1]}">${x[0]}</span>`;}
-function sortJobs(arr){const mode=document.getElementById("sortSelect").value;return [...arr].sort((a,b)=>{if(mode==="highest")return getEarnings(b)-getEarnings(a);const av=(a.date||"")+" "+(a.time||"");const bv=(b.date||"")+" "+(b.time||"");return mode==="latest"?bv.localeCompare(av):av.localeCompare(bv);});}
-function matchesSearch(j){const q=document.getElementById("searchInput").value.trim().toLowerCase();if(!q)return true;return [jobName(j),locationOf(j),j.date,j.time].join(" ").toLowerCase().includes(q);}
-function card(j,kind){return `<div class="job-card" onclick="openDrawer('${esc(j.id)}')"><div class="job-top"><div><div class="job-title">${esc(jobName(j))}${statusBadge(j,kind)}</div><div class="job-meta">${esc(formatDate(j.date))} · ${esc(j.time||"Time TBC")}<br>${esc(locationOf(j))}<br>${witnessCount(j)} witness${witnessCount(j)===1?"":"es"} required</div></div><div class="job-price">${money(getEarnings(j))}</div></div></div>`;}
-function renderList(id,items,kind,empty){const filtered=sortJobs(items.filter(matchesSearch));document.getElementById(id).innerHTML=filtered.length?filtered.map(j=>card(j,kind)).join(""):`<div class="empty">${empty}</div>`;return items.length;}
-function render(){
-  const assigned=allJobs.filter(j=>assignedToMe(j)&&!["cancelled"].includes(j.status)).filter(j=>!isPast(j)||j.status==="completed");
-  const requests=allJobs.filter(requestedByMe);
-  const available=allJobs.filter(isAvailable);
-  const a=renderList("assignedJobs",assigned,"assigned","No assigned jobs right now.");
-  const r=renderList("pendingRequests",requests,"request","You have no pending job requests.");
-  const v=renderList("availableJobs",available,"available","No approved jobs are currently available to request.");
-  [["assignedCount","assignedBadge",a],["requestCount","requestBadge",r],["availableCount","availableBadge",v]].forEach(([x,y,n])=>{document.getElementById(x).textContent=n;document.getElementById(y).textContent=n;});
-}
+function getProfilePhoto(d){return d.photoURL||(d.type==="couple"?"/hub/default-couple.png":"/hub/default-single.png");}
+function openEarningsDrawer(){document.getElementById("earningsDrawer").classList.add("open");updateEarningsSummary();}
+function closeEarningsDrawer(){document.getElementById("earningsDrawer").classList.remove("open");}
 
-async function loadJobs(){db.collection("jobs").onSnapshot(s=>{allJobs=[];s.forEach(d=>allJobs.push({id:d.id,...d.data()}));render();},err=>{console.error(err);["assignedJobs","pendingRequests","availableJobs"].forEach(id=>document.getElementById(id).innerHTML='<div class="empty">Unable to load jobs.</div>');});}
+function updateEarningsSummary(){
+  const now=new Date(),month=now.getMonth(),year=now.getFullYear();let monthTotal=0,upcoming=0,past=0,all=0;
+  assignedJobs.forEach(j=>{const amt=getEarnings(j),d=parseLocalDate(j.date);all+=amt;if(d&&d.getMonth()===month&&d.getFullYear()===year)monthTotal+=amt;if(isPast(j)||j.status==="completed")past+=amt;else upcoming+=amt;});
+  document.getElementById("earningsMonth").textContent=money(monthTotal);document.getElementById("drawerMonthTotal").textContent=money(monthTotal);document.getElementById("drawerUpcomingTotal").textContent=money(upcoming);document.getElementById("drawerPastTotal").textContent=money(past);document.getElementById("drawerAllTimeTotal").textContent=money(all);
+  if(selectedDate)updateDayEarnings(selectedDate);
+}
+function updateDayEarnings(dateStr){selectedDate=dateStr;const jobs=assignedJobs.filter(j=>j.date===dateStr),total=jobs.reduce((s,j)=>s+getEarnings(j),0);document.getElementById("drawerDayTitle").textContent=`Assigned jobs on ${formatDate(dateStr)}`;document.getElementById("drawerJobsList").innerHTML=jobs.length?jobs.map(j=>`<div class="drawer-job"><strong>${esc(jobName(j))}</strong><br>${esc(j.time||"Time TBC")} · ${esc(locationOf(j))}<br><span style="color:#d4af37">${money(getEarnings(j))}</span></div>`).join(""):"<div class='empty' style='color:#bbb'>No assigned jobs on this day.</div>";}
+function jobToEvent(j){return {title:jobName(j),start:`${j.date}T${j.time||"12:00"}`,backgroundColor:"#c8a24a",borderColor:"#c8a24a",extendedProps:{jobId:j.id}};}
+function initCalendar(){calendar=new FullCalendar.Calendar(document.getElementById("calendar"),{initialView:"dayGridMonth",height:"auto",firstDay:1,events:assignedJobs.filter(j=>j.status!=="cancelled").map(jobToEvent),dateClick:info=>{selectedDate=info.dateStr;openEarningsDrawer();updateDayEarnings(info.dateStr);}});calendar.render();}
+function refreshCalendar(){if(!calendar){initCalendar();return;}calendar.removeAllEvents();calendar.addEventSource(assignedJobs.filter(j=>j.status!=="cancelled").map(jobToEvent));}
+
+function renderJobs(){
+  assignedJobs=allJobs.filter(j=>assignedToMe(j)&&j.status!=="cancelled");
+  const today=todayString();const todays=assignedJobs.filter(j=>j.date===today&&j.status!=="completed");
+  const upcoming=assignedJobs.filter(j=>!isPast(j)&&j.status!=="completed").sort((a,b)=>(a.date+" "+(a.time||"")).localeCompare(b.date+" "+(b.time||"")));
+  const requests=allJobs.filter(requestedByMe).sort((a,b)=>(a.date||"").localeCompare(b.date||""));
+  const available=allJobs.filter(isAvailable).sort((a,b)=>(a.date||"").localeCompare(b.date||""));
+
+  document.getElementById("jobsToday").textContent=todays.length;document.getElementById("upcomingCount").textContent=upcoming.length;document.getElementById("requestCount").textContent=requests.length;document.getElementById("availableCount").textContent=available.length;document.getElementById("todayBadge").textContent=todays.length;document.getElementById("requestBadge").textContent=requests.length;document.getElementById("availableBadge").textContent=available.length;document.getElementById("nextJobCount").textContent=upcoming.length?1:0;
+  document.getElementById("todaysJobs").innerHTML=todays.length?todays.map(j=>compactJob(j,"assigned")).join(""):"<div class='empty'>No assigned jobs today.</div>";
+  document.getElementById("pendingRequests").innerHTML=requests.length?requests.slice(0,3).map(j=>compactJob(j,"pending")).join(""):"<div class='empty'>No pending job requests.</div>";
+  document.getElementById("availableJobs").innerHTML=available.length?available.slice(0,3).map(j=>compactJob(j,"available")).join(""):"<div class='empty'>No approved jobs are currently available.</div>";
+  document.getElementById("nextJob").innerHTML=upcoming.length?compactJob(upcoming[0],"assigned"):"<div class='empty'>No upcoming assigned job.</div>";
+  refreshCalendar();updateEarningsSummary();
+}
+function loadJobs(){db.collection("jobs").onSnapshot(s=>{allJobs=[];s.forEach(d=>allJobs.push({id:d.id,...d.data()}));renderJobs();},e=>{console.error(e);["todaysJobs","pendingRequests","availableJobs","nextJob"].forEach(id=>document.getElementById(id).innerHTML="<div class='empty'>Unable to load jobs.</div>");});}
+
+function renderAvailability(data){const days=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];const a=data.availability;if(!a){document.getElementById("availabilitySummary").innerHTML="<div class='empty'>No recurring availability set yet.</div>";return;}const rows=days.map(day=>{const v=a[day];if(!v)return"";return `<div class="availability-row"><strong>${esc(day)}:</strong> ${v.enabled?`${esc(v.start||"")}–${esc(v.end||"")}`:"Not available"}</div>`;}).filter(Boolean).join("");document.getElementById("availabilitySummary").innerHTML=rows||"<div class='empty'>No recurring availability set yet.</div>";}
 
 auth.onAuthStateChanged(async user=>{
   if(!user){location.href="login.html";return;}currentUser=user;
-  const snap=await db.collection("users").doc(user.uid).get();if(!snap.exists){logout();return;}userData=snap.data();
-  if(userData.approved!==true||userData.status==="pending"){location.href="pending.html";return;}
-  if(["rejected","suspended"].includes(userData.status)){location.href="pending.html";return;}
-  document.getElementById("accountType").textContent=userData.type==="couple"?`${userData.teamName||"Couple team"}`:`${userData.name||"Witness"}`;
-  loadJobs();
+  try{const snap=await db.collection("users").doc(user.uid).get();if(!snap.exists){logout();return;}userData=snap.data();if(userData.approved!==true||userData.status==="pending"||["rejected","suspended"].includes(userData.status)){location.href="pending.html";return;}
+    const display=userData.type==="couple"?(userData.teamName||`${userData.partner1Name||""} & ${userData.partner2Name||""}`.trim()||"Couple team"):(userData.name||"Witness");
+    document.getElementById("headerPhoto").src=getProfilePhoto(userData);document.getElementById("username").textContent=display;document.getElementById("accountStatus").textContent="Approved witness account";
+    document.getElementById("profileName").textContent=display;document.getElementById("profileEmail").textContent=userData.email||user.email||"Not set";document.getElementById("profilePhone").textContent=userData.phone||"Not set";document.getElementById("profileLocation").textContent=userData.location||"Not set";document.getElementById("profileBio").textContent=userData.bio||"No bio yet";renderAvailability(userData);loadJobs();
+  }catch(e){console.error(e);alert("We couldn't load your witness dashboard. Please refresh and try again.");}
 });
-
-document.getElementById("searchInput").addEventListener("input",render);document.getElementById("sortSelect").addEventListener("change",render);
-
-function openDrawer(id){
-  const j=allJobs.find(x=>x.id===id);if(!j)return;currentDrawerJob=j;
-  document.getElementById("drawerTitle").textContent=jobName(j);
-  document.getElementById("drawerDate").textContent=formatDate(j.date);document.getElementById("drawerTime").textContent=j.time||"Time TBC";document.getElementById("drawerLocation").textContent=locationOf(j);
-  document.getElementById("drawerWitnesses").textContent=`${witnessCount(j)} witness${witnessCount(j)===1?"":"es"} required · ${remainingPlaces(j)} place${remainingPlaces(j)===1?"":"s"} remaining`;
-  document.getElementById("drawerJobEarnings").textContent=money(getEarnings(j));
-  const assigned=assignedToMe(j),requested=requestedByMe(j),available=isAvailable(j);
-  document.getElementById("drawerStatus").innerHTML=assigned?statusBadge(j,"assigned"):requested?statusBadge(j,"request"):available?statusBadge(j,"available"):statusBadge(j,j.status==="completed"?"completed":"available");
-  const info=document.getElementById("assignedInfo");info.style.display=assigned?"block":"none";
-  if(assigned){const email=j.customer?.email||j.email||"Not provided",phone=j.customer?.phone||j.phone||"Not provided";document.getElementById("drawerCustomer").innerHTML=`<b>Contact:</b> ${esc(email)} · ${esc(phone)}`;document.getElementById("drawerNotes").textContent=notesOf(j)?`Notes: ${notesOf(j)}`:"No customer notes.";}
-  const btn=document.getElementById("drawerActionBtn");btn.disabled=false;
-  if(assigned){btn.style.display="none";}else if(requested){btn.style.display="block";btn.textContent="Cancel Request";btn.className="drawer-btn cancel";btn.onclick=()=>cancelRequest(j.id);}else if(available){btn.style.display="block";btn.textContent="Request This Job";btn.className="drawer-btn";btn.onclick=()=>requestJob(j.id);}else{btn.style.display="none";}
-  document.getElementById("jobOverlay").classList.add("open");requestAnimationFrame(()=>document.getElementById("jobDrawer").classList.add("open"));
-}
-function closeDrawer(){document.getElementById("jobDrawer").classList.remove("open");setTimeout(()=>document.getElementById("jobOverlay").classList.remove("open"),180);currentDrawerJob=null;}
-document.getElementById("jobOverlay").addEventListener("click",e=>{if(e.target.id==="jobOverlay")closeDrawer();});
-
-async function requestJob(id){
-  const j=allJobs.find(x=>x.id===id);if(!j||!isAvailable(j))return;
-  if(!confirm(`Request the ${formatDate(j.date)} job at ${locationOf(j)}?`))return;
-  try{await db.collection("jobs").doc(id).update({requestBy:currentUser.uid,requestTeamName:userData.type==="couple"?(userData.teamName||"Couple team"):(userData.name||"Witness"),requestStatus:"pending",requestAt:new Date().toISOString()});closeDrawer();}catch(e){console.error(e);alert("We couldn't send that request. Please try again.");}
-}
-async function cancelRequest(id){
-  if(!confirm("Cancel your request for this job?"))return;
-  try{await db.collection("jobs").doc(id).update({requestBy:"",requestTeamName:"",requestStatus:null,requestAt:null});closeDrawer();}catch(e){console.error(e);alert("We couldn't cancel that request. Please try again.");}
-}
 function logout(){auth.signOut().then(()=>location.href="login.html");}
 </script>
 </body>
