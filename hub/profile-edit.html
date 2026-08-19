@@ -86,19 +86,40 @@
         overflow-y: auto;
     }
 
+    .page-head {
+        width: 100%;
+        max-width: 900px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 18px;
+        margin-bottom: 24px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid #e8dcc2;
+    }
+
     .header {
         font-size: 32px;
         font-family: "Playfair Display", serif;
         color: #c8a24a;
         margin-bottom: 6px;
-        text-align: center;
     }
 
     .subheader {
         font-size: 14px;
         color: #777;
-        margin-bottom: 28px;
-        text-align: center;
+    }
+
+    .back-btn {
+        text-decoration: none;
+        color: #a98532;
+        border: 1px solid #d9c487;
+        background: #fff;
+        padding: 9px 14px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
     }
 
     .edit-card {
@@ -230,6 +251,26 @@
         opacity: 0.9;
     }
 
+    .helper-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: center;
+        margin-top: 5px;
+        font-size: 11px;
+        color: #888;
+    }
+
+    .security-note {
+        margin-top: 18px;
+        background: #fff8e6;
+        color: #795b15;
+        border-radius: 10px;
+        padding: 12px 14px;
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
     /* TOAST */
     .toast {
         position: fixed;
@@ -309,8 +350,13 @@
 
     <!-- MAIN -->
     <div class="main">
-        <div class="header">Edit Your Profile</div>
-        <div class="subheader">Update your details so couples can get to know you.</div>
+        <div class="page-head">
+            <div>
+                <div class="header">Edit Your Profile</div>
+                <div class="subheader">Update the details shown across your Witness Hub profile.</div>
+            </div>
+            <a class="back-btn" href="profile.html">← Back to Profile</a>
+        </div>
 
         <div class="edit-card">
 
@@ -375,11 +421,13 @@
 
             <div class="form-group">
                 <label for="bio">Bio</label>
-                <textarea id="bio"></textarea>
+                <textarea id="bio" maxlength="600"></textarea>
+                <div class="helper-row"><span>Keep it friendly and useful for couples.</span><span id="bioCount">0 / 600</span></div>
                 <div class="error-text" id="bioError"></div>
             </div>
 
             <button class="save-btn" id="saveBtn">Save Changes</button>
+            <div class="security-note">Your account approval/status is controlled by Need A Witness admins. Editing your profile will not change whether your witness account is approved, suspended or assigned to jobs.</div>
 
         </div>
     </div>
@@ -570,6 +618,14 @@ photoInput.addEventListener("change", () => {
 
 async function handlePhotoFile(file) {
     try {
+        if (!file.type || !file.type.startsWith("image/")) {
+            showToast("Please choose an image file.", true);
+            return;
+        }
+        if (file.size > 8 * 1024 * 1024) {
+            showToast("Please choose an image under 8MB.", true);
+            return;
+        }
         ringLoader.style.display = "block";
 
         const croppedBlob = await cropToSquare(file);
@@ -611,7 +667,17 @@ auth.onAuthStateChanged(async user => {
     const doc = await db.collection("users").doc(user.uid).get();
     const data = doc.data() || {};
 
-    previewPhoto.src = data.photoURL || "/hub/default-single.png";
+    if (!doc.exists) {
+        await auth.signOut();
+        window.location.href = "login.html";
+        return;
+    }
+    if (data.approved !== true || data.status === "pending" || ["rejected","suspended"].includes(data.status)) {
+        window.location.href = "pending.html";
+        return;
+    }
+
+    previewPhoto.src = data.photoURL || (data.type === "couple" ? "/hub/default-couple.png" : "/hub/default-single.png");
 
     document.getElementById("type").value = data.type || "single";
     document.getElementById("name").value = data.name || "";
@@ -621,15 +687,24 @@ auth.onAuthStateChanged(async user => {
     document.getElementById("phone").value = data.phone || "";
     document.getElementById("location").value = data.location || "";
     document.getElementById("bio").value = data.bio || "";
+    updateBioCount();
 
     toggleFields();
     initialLoaded = true;
 });
 
 /* TRACK CHANGES FOR AUTOSAVE */
+function updateBioCount() {
+    const bio = document.getElementById("bio");
+    document.getElementById("bioCount").textContent = `${bio.value.length} / 600`;
+}
+
 ["name","teamName","partner1Name","partner2Name","phone","location","bio"].forEach(id => {
     const el = document.getElementById(id);
-    el.addEventListener("input", scheduleAutosave);
+    el.addEventListener("input", () => {
+        if (id === "bio") updateBioCount();
+        scheduleAutosave();
+    });
 });
 
 /* SAVE BUTTON */
@@ -659,6 +734,7 @@ async function saveProfile(isAutosave) {
         phone: document.getElementById("phone").value.trim(),
         location: document.getElementById("location").value.trim(),
         bio: document.getElementById("bio").value.trim(),
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     };
 
     if (uploadedPhotoURL) {
@@ -669,9 +745,7 @@ async function saveProfile(isAutosave) {
         saveBtn.disabled = true;
         await db.collection("users").doc(user.uid).set(payload, { merge: true });
 
-        if (isAutosave) {
-            showToast("Changes autosaved");
-        } else {
+        if (!isAutosave) {
             showToast("Profile saved");
             setTimeout(() => {
                 window.location.href = "profile.html";
