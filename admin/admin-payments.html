@@ -4,433 +4,106 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Payments – Admin – Need A Witness UK</title>
-
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 <script src="../hub/firebase.js"></script>
-
 <style>
-    body {
-        margin: 0;
-        font-family: Inter, sans-serif;
-        background: #fafafa;
-        color: #222;
-    }
-
-    .layout {
-        display: flex;
-        min-height: 100vh;
-    }
-
-    /* SIDEBAR */
-    .sidebar {
-        width: 260px;
-        background: white;
-        border-right: 1px solid #eee;
-        padding: 24px;
-        display: flex;
-        flex-direction: column;
-        position: sticky;
-        top: 0;
-        height: 100vh;
-    }
-
-    .logo {
-        font-family: "Playfair Display", serif;
-        font-size: 22px;
-        font-weight: 600;
-        color: #D4AF37;
-        margin-bottom: 30px;
-    }
-
-    .nav-title {
-        font-size: 12px;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        color: #999;
-        margin-bottom: 8px;
-    }
-
-    .nav-item {
-        padding: 10px 12px;
-        margin-bottom: 6px;
-        border-radius: 8px;
-        cursor: pointer;
-        font-weight: 500;
-        font-size: 14px;
-        color: #333;
-    }
-
-    .nav-item:hover {
-        background: #f5f1e6;
-    }
-
-    .nav-item.active {
-        background: #D4AF37;
-        color: white;
-    }
-
-    .sidebar-footer {
-        margin-top: auto;
-        padding-top: 16px;
-        border-top: 1px solid #eee;
-        font-size: 12px;
-        color: #777;
-        line-height: 1.4;
-    }
-
-    .logout-btn {
-        margin-top: 16px;
-        padding: 10px;
-        background: #D4AF37;
-        color: white;
-        text-align: center;
-        border-radius: 6px;
-        cursor: pointer;
-        font-weight: 600;
-        font-size: 14px;
-    }
-
-    /* MAIN */
-    .main {
-        flex: 1;
-        padding: 30px 40px;
-    }
-
-    .main-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 20px;
-    }
-
-    .main-header h1 {
-        font-family: "Playfair Display", serif;
-        color: #D4AF37;
-        margin: 0;
-        font-size: 26px;
-    }
-
-    .main-subtitle {
-        color: #777;
-        font-size: 14px;
-        margin-top: 4px;
-    }
-
-    .card {
-        background: white;
-        padding: 20px;
-        border-radius: 12px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        margin-bottom: 24px;
-    }
-
-    .section-title {
-        font-family: "Playfair Display", serif;
-        color: #D4AF37;
-        font-size: 20px;
-        margin-top: 0;
-        margin-bottom: 10px;
-    }
-
-    .filters-row {
-        display: flex;
-        gap: 12px;
-        flex-wrap: wrap;
-        margin-bottom: 16px;
-    }
-
-    .filters-row input,
-    .filters-row select {
-        padding: 8px 10px;
-        border-radius: 8px;
-        border: 1px solid #ddd;
-        background: #fafafa;
-        font-size: 14px;
-    }
-
-    .payment-row {
-        display: grid;
-        grid-template-columns: 1.2fr 1fr 1fr 1fr 1fr 1fr;
-        gap: 12px;
-        padding: 10px 0;
-        border-bottom: 1px solid #f2f2f2;
-        font-size: 13px;
-        align-items: center;
-    }
-
-    .payment-row:last-child {
-        border-bottom: none;
-    }
-
-    .badge {
-        display: inline-block;
-        padding: 3px 8px;
-        border-radius: 999px;
-        font-size: 11px;
-        font-weight: 600;
-        text-transform: capitalize;
-    }
-
-    .pay-unpaid { background: #ffe6e6; color: #8a0000; }
-    .pay-deposit { background: #fff4d6; color: #8a6d00; }
-    .pay-full { background: #d6ffe0; color: #006d2a; }
-    .pay-late { background: #ffd6d6; color: #8a0000; }
-
-    .btn-small {
-        padding: 6px 10px;
-        font-size: 12px;
-        border-radius: 6px;
-        border: none;
-        cursor: pointer;
-        margin-right: 4px;
-    }
-
-    .btn-small-outline {
-        background: white;
-        color: #555;
-        border: 1px solid #ccc;
-    }
-
-    .btn-small-gold {
-        background: #D4AF37;
-        color: white;
-    }
-
-    .totals-box {
-        font-size: 14px;
-        margin-top: 10px;
-        padding: 12px;
-        background: #faf7ef;
-        border: 1px solid #e8dfc7;
-        border-radius: 8px;
-    }
-
+:root{--gold:#C19A2B;--gold-soft:#f8f1dc;--ink:#252525;--muted:#777;--line:#ececec;--bg:#f5f5f5;--white:#fff;--red:#9a2626;--green:#16733a;--purple:#6342a0;--blue:#14588f}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,sans-serif;background:var(--bg);color:var(--ink)}.layout{display:flex;min-height:100vh}.sidebar{width:240px;background:#fff;border-right:1px solid #eee;padding:25px;display:flex;flex-direction:column;flex-shrink:0}.sidebar h2{font-family:"Playfair Display",serif;color:var(--gold);margin:0 0 30px;font-size:24px}.sidebar a{color:#333;text-decoration:none;padding:10px 0;display:block;font-size:15px;font-weight:500}.sidebar a:hover,.sidebar a.active{color:var(--gold);font-weight:600}.logout-btn{margin-top:auto;padding:12px;background:var(--gold);color:#fff;text-align:center;border-radius:6px;cursor:pointer;font-weight:600}.sidebar-footer{margin-top:20px;padding-top:15px;border-top:1px solid #eee;font-size:12px;color:#777;line-height:1.4}.main{flex:1;padding:30px;overflow-y:auto;min-width:0}.header-row{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:24px}.header{font-size:30px;font-family:"Playfair Display",serif;color:var(--gold)}.header-subtitle{margin-top:4px;color:var(--muted);font-size:13px}.section{background:#fff;padding:22px;border-radius:14px;margin-bottom:24px;box-shadow:0 4px 14px rgba(0,0,0,.06)}.section h3{margin:0 0 6px;font-family:"Playfair Display",serif;color:var(--gold)}.section-note{color:var(--muted);font-size:12px;margin-bottom:14px}.mini-card-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;margin-bottom:24px}.mini-card{background:#fff;border:1px solid #eee;border-radius:12px;padding:18px 20px;text-align:center;box-shadow:0 3px 10px rgba(0,0,0,.05)}.mini-card .label{font-size:13px;color:#666;margin-bottom:6px}.mini-card .value{font-size:26px;font-weight:600;color:var(--gold)}.filters-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.filters-row input,.filters-row select{padding:9px 11px;border:1px solid #ddd;border-radius:8px;background:#fafafa;font:inherit;font-size:13px}.filters-row input[type="search"]{min-width:230px;flex:1}.table-head,.payment-row{display:grid;grid-template-columns:minmax(180px,1.6fr) .65fr .65fr .65fr .8fr 1fr 1.15fr;gap:12px;align-items:center}.table-head{padding:0 0 9px;color:#888;font-size:11px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--line)}.payment-row{padding:13px 0;border-bottom:1px solid #f2f2f2;font-size:13px}.payment-row:last-child{border-bottom:none}.name{font-weight:600}.sub{font-size:11px;color:#777;margin-top:3px;line-height:1.35}.money{font-variant-numeric:tabular-nums}.badge{display:inline-block;padding:4px 8px;border-radius:999px;font-size:10px;font-weight:600;white-space:nowrap}.pay-unpaid{background:#ffe5e5;color:#9a2626}.pay-deposit{background:#eee6ff;color:#6342a0}.pay-full{background:#dcf8e4;color:#16733a}.pay-late{background:#ffe5e5;color:#972323}.pay-pending{background:#fff4d6;color:#8a6d00}.attention{background:#ffe8e8;color:#9a2626}.due-soon{background:#fff4d6;color:#8a6d00}.btn{padding:7px 10px;border-radius:7px;border:1px solid #d8d8d8;background:#fff;cursor:pointer;font:inherit;font-size:11px;margin:2px 3px 2px 0}.btn:hover{border-color:var(--gold);color:var(--gold)}.btn-gold{background:var(--gold);color:#fff;border-color:var(--gold)}.btn-green{background:#258247;color:#fff;border-color:#258247}.empty{padding:20px 0;color:#888;text-align:center}.mobile-cards{display:none}.mobile-card{border:1px solid #eee;border-radius:10px;padding:14px;margin-bottom:10px}.mobile-card-top{display:flex;justify-content:space-between;gap:12px}.mobile-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0;font-size:12px}.mobile-grid span{color:#777;display:block;font-size:10px;margin-bottom:2px}.notice{padding:11px 13px;border-radius:9px;background:var(--gold-soft);font-size:12px;color:#6d581b;margin-bottom:16px}.error{background:#ffeaea;color:#8a2222}.spinner{padding:25px;text-align:center;color:#888}
+@media(max-width:1050px){.table-head,.payment-row{grid-template-columns:minmax(170px,1.7fr) .6fr .6fr .6fr .9fr 1fr}.table-head>div:nth-child(6),.payment-row>div:nth-child(6){display:none}.mini-card-row{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:780px){.layout{display:block}.sidebar{width:100%;height:auto;position:static;padding:16px 20px}.sidebar h2{margin-bottom:10px}.sidebar a{display:inline-block;margin-right:12px;padding:5px 0}.logout-btn{margin-top:12px}.sidebar-footer{display:none}.main{padding:18px}.header-row{align-items:flex-start}.desktop-table{display:none}.mobile-cards{display:block}.mini-card-row{grid-template-columns:repeat(2,1fr)}.filters-row>*{width:100%!important;min-width:0!important}}
 </style>
 </head>
-
 <body>
-
 <div class="layout">
+<aside class="sidebar">
+  <h2>Need A Witness</h2>
+  <a href="admin-dashboard.html">Dashboard</a>
+  <a href="admin-calendar.html">Calendar</a>
+  <a href="admin-jobs.html">Jobs</a>
+  <a href="admin-witnesses.html">Witnesses</a>
+  <a href="admin-create-job.html">Create Job</a>
+  <a class="active" href="admin-payments.html">Payments</a>
+  <a href="admin-availability.html">Availability</a>
+  <div class="logout-btn" onclick="adminLogout()">Logout</div>
+  <div class="sidebar-footer">Admin Panel<br>Need A Witness UK</div>
+</aside>
+<main class="main">
+  <div class="header-row"><div><div class="header">Payments</div><div class="header-subtitle">Track money actually received, balances still due, and payment deadlines.</div></div></div>
 
-    <!-- SIDEBAR -->
-    <div class="sidebar">
-        <div class="logo">Need A Witness UK</div>
+  <div class="mini-card-row">
+    <div class="mini-card"><div class="label">Received</div><div class="value" id="sumReceived">£0</div></div>
+    <div class="mini-card"><div class="label">Outstanding</div><div class="value" id="sumOutstanding">£0</div></div>
+    <div class="mini-card"><div class="label">Deposit Paid Jobs</div><div class="value" id="sumDepositJobs">0</div></div>
+    <div class="mini-card"><div class="label">Fully Paid Jobs</div><div class="value" id="sumFullJobs">0</div></div>
+  </div>
 
-        <div class="nav-title">Navigation</div>
-        <div class="nav-item" onclick="window.location.href='admin-dashboard.html'">Dashboard</div>
-        <div class="nav-item" onclick="window.location.href='admin-witnesses.html'">Witnesses</div>
-        <div class="nav-item" onclick="window.location.href='admin-create-job.html'">Create Job</div>
-        <div class="nav-item active">Payments</div>
-
-        <div class="sidebar-footer">
-            Admin Panel<br>
-            Witness Hub v1.0
-            <div class="logout-btn" onclick="adminLogout()">Logout</div>
-        </div>
+  <section class="section">
+    <h3>Filters</h3>
+    <div class="section-note">Pending customer enquiries are kept separate from active payment obligations.</div>
+    <div class="filters-row">
+      <input id="searchBox" type="search" placeholder="Search couple, email or location…" oninput="renderPayments()">
+      <select id="filterStatus" onchange="renderPayments()">
+        <option value="all">All payment states</option>
+        <option value="pending">Pending enquiries</option>
+        <option value="unpaid">Unpaid active bookings</option>
+        <option value="deposit">Deposit paid</option>
+        <option value="full">Paid in full</option>
+        <option value="late-cancel">Late / cancelled</option>
+        <option value="attention">Needs attention</option>
+      </select>
+      <select id="filterType" onchange="renderPayments()"><option value="all">All witness counts</option><option value="1">1 witness</option><option value="2">2 witnesses</option></select>
+      <input type="date" id="filterFrom" onchange="renderPayments()">
+      <input type="date" id="filterTo" onchange="renderPayments()">
+      <select id="sortBy" onchange="renderPayments()"><option value="date-asc">Ceremony date</option><option value="deadline">Payment deadline</option><option value="value-desc">Highest value</option><option value="created-desc">Newest enquiry</option></select>
     </div>
+  </section>
 
-    <!-- MAIN -->
-    <div class="main">
-        <div class="main-header">
-            <div>
-                <h1>Payments</h1>
-                <div class="main-subtitle">Track deposits, full payments, and overdue balances.</div>
-            </div>
-        </div>
-
-        <!-- FILTERS -->
-        <div class="card">
-            <div class="section-title">Filters</div>
-
-            <div class="filters-row">
-                <select id="filterStatus" onchange="renderPayments()">
-                    <option value="all">All Statuses</option>
-                    <option value="unpaid">Unpaid</option>
-                    <option value="deposit">Deposit Only</option>
-                    <option value="full">Fully Paid</option>
-                    <option value="late-cancel">Late / Cancelled</option>
-                </select>
-
-                <input type="date" id="filterFrom" onchange="renderPayments()">
-                <input type="date" id="filterTo" onchange="renderPayments()">
-
-                <select id="filterType" onchange="renderPayments()">
-                    <option value="all">All Witness Types</option>
-                    <option value="single">Single</option>
-                    <option value="couple">Couple</option>
-                </select>
-            </div>
-        </div>
-
-        <!-- PAYMENTS TABLE -->
-        <div class="card">
-            <div class="section-title">Payment Records</div>
-            <div id="paymentsContainer"></div>
-
-            <div class="totals-box" id="totalsBox"></div>
-        </div>
+  <section class="section">
+    <h3>Payment Records</h3>
+    <div class="section-note" id="recordSummary">Loading payments…</div>
+    <div id="messageBox"></div>
+    <div class="desktop-table">
+      <div class="table-head"><div>Booking</div><div>Total</div><div>Paid</div><div>Due</div><div>Payment</div><div>Deadline</div><div>Actions</div></div>
+      <div id="paymentsContainer"><div class="spinner">Loading…</div></div>
     </div>
+    <div class="mobile-cards" id="mobilePayments"></div>
+  </section>
+</main>
 </div>
-
 <script>
-const db = firebase.firestore();
-let allJobs = [];
-
-/* LOAD ALL JOBS */
-function loadPayments() {
-    db.collection("jobs")
-      .orderBy("createdAt", "desc")
-      .onSnapshot(snapshot => {
-        allJobs = [];
-        snapshot.forEach(doc => {
-            allJobs.push({ id: doc.id, ...doc.data() });
-        });
-        renderPayments();
-      });
-}
-
-/* RENDER PAYMENTS */
-function renderPayments() {
-    const container = document.getElementById("paymentsContainer");
-    container.innerHTML = "";
-
-    const statusFilter = document.getElementById("filterStatus").value;
-    const typeFilter = document.getElementById("filterType").value;
-    const from = document.getElementById("filterFrom").value;
-    const to = document.getElementById("filterTo").value;
-
-    const fromDate = from ? new Date(from) : null;
-    const toDate = to ? new Date(to) : null;
-
-    let totalRevenue = 0;
-    let totalDeposits = 0;
-    let totalRemaining = 0;
-    let totalLost = 0;
-
-    allJobs
-        .filter(j => {
-            // Status filter
-            if (statusFilter !== "all" && j.paymentStatus !== statusFilter) return false;
-
-            // Witness type filter
-            if (typeFilter !== "all" && j.witnessType !== typeFilter) return false;
-
-            // Date filter (ceremony date)
-            if (j.date) {
-                const d = new Date(j.date);
-                if (fromDate && d < fromDate) return false;
-                if (toDate && d > toDate) return false;
-            }
-
-            return true;
-        })
-        .forEach(j => {
-            const ps = j.paymentStatus || "unpaid";
-            const payClass =
-                ps === "full" ? "pay-full" :
-                ps === "deposit" ? "pay-deposit" :
-                ps === "late-cancel" ? "pay-late" : "pay-unpaid";
-
-            const payLabel =
-                ps === "full" ? "Paid in full" :
-                ps === "deposit" ? "Deposit only" :
-                ps === "late-cancel" ? "Late / Cancelled" : "Unpaid";
-
-            // Totals
-            if (ps === "full") totalRevenue += j.totalPrice || 0;
-            if (ps === "deposit") totalDeposits += j.depositAmount || 20;
-            if (ps === "unpaid") totalRemaining += j.totalPrice || 0;
-            if (ps === "late-cancel") totalLost += j.depositAmount || 20;
-
-            const row = document.createElement("div");
-            row.className = "payment-row";
-            row.innerHTML = `
-                <div>
-                    <b>${j.coupleName || "Unnamed Couple"}</b><br>
-                    <span style="font-size:12px;color:#777;">${j.date || ""} ${j.time || ""}</span>
-                </div>
-
-                <div>£${j.totalPrice || 0}</div>
-                <div>£${j.amountPaid || 0}</div>
-                <div>£${j.amountDue || 0}</div>
-
-                <div>
-                    <span class="badge ${payClass}">${payLabel}</span>
-                </div>
-
-                <div>
-                    <button class="btn-small btn-small-outline" onclick="openJob('${j.id}')">Open</button>
-                    <button class="btn-small btn-small-outline" onclick="markDepositPaid('${j.id}')">Deposit</button>
-                    <button class="btn-small btn-small-outline" onclick="markRemainingPaid('${j.id}')">Full</button>
-                </div>
-            `;
-            container.appendChild(row);
-        });
-
-    document.getElementById("totalsBox").innerHTML = `
-        <b>Totals:</b><br>
-        Revenue (Full Payments): £${totalRevenue}<br>
-        Deposits Only: £${totalDeposits}<br>
-        Unpaid Value: £${totalRemaining}<br>
-        Lost to Late Cancellations: £${totalLost}
-    `;
-}
-
-/* ACTIONS */
-function openJob(id) {
-    window.location.href = `admin-job-detail.html?id=${id}`;
-}
-
-function markDepositPaid(id) {
-    if (!confirm("Mark deposit paid?")) return;
-
-    const ref = db.collection("jobs").doc(id);
-    ref.get().then(doc => {
-        const j = doc.data();
-        const deposit = j.depositAmount || 20;
-        const newPaid = (j.amountPaid || 0) + deposit;
-        const newDue = Math.max((j.totalPrice || 0) - newPaid, 0);
-
-        ref.update({
-            paymentStatus: newDue > 0 ? "deposit" : "full",
-            amountPaid: newPaid,
-            amountDue: newDue,
-            depositPaidAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-    });
-}
-
-function markRemainingPaid(id) {
-    if (!confirm("Mark remaining paid?")) return;
-
-    const ref = db.collection("jobs").doc(id);
-    ref.get().then(doc => {
-        const j = doc.data();
-        const total = j.totalPrice || 0;
-
-        ref.update({
-            paymentStatus: "full",
-            amountPaid: total,
-            amountDue: 0,
-            remainingPaidAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-    });
-}
-
-/* LOGOUT */
-function adminLogout() {
-    firebase.auth().signOut().then(() => {
-        window.location.href = "admin-login.html";
-    });
-}
-
-/* INIT */
+const db=firebase.firestore();
+let allJobs=[];
+const fmtMoney=n=>`£${(Number(n)||0).toLocaleString("en-GB",{minimumFractionDigits:0,maximumFractionDigits:2})}`;
+const esc=s=>String(s??"").replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));
+const money=n=>Number(n)||0;
+function customer(j){return j.customer||{}}
+function nameOf(j){return customer(j).name||j.coupleName||j.coupleNames||"Unnamed booking"}
+function emailOf(j){return customer(j).email||j.email||""}
+function locationOf(j){return customer(j).location||j.location||""}
+function countOf(j){return Number(j.witnessCount)||(j.witnessType==="single"?1:j.witnessType==="couple"?2:0)}
+function localDate(date,time="00:00"){if(!date)return null;const m=String(date).match(/^(\d{4})-(\d{2})-(\d{2})$/);if(!m)return new Date(date);const t=String(time||"00:00").match(/^(\d{1,2}):(\d{2})/);return new Date(+m[1],+m[2]-1,+m[3],t?+t[1]:0,t?+t[2]:0,0,0)}
+function parseAnyDate(v){if(!v)return null;if(v.toDate)return v.toDate();if(typeof v==="string"){const pure=v.match(/^\d{4}-\d{2}-\d{2}$/);return pure?localDate(v):new Date(v)}if(v instanceof Date)return v;return null}
+function formatDate(d){return d&& !isNaN(d)?d.toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"}):"—"}
+function formatDateTime(d){return d&&!isNaN(d)?d.toLocaleString("en-GB",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"}):"—"}
+function paymentState(j){if((j.status||"pending")==="pending")return "pending";if(j.paymentStatus)return j.paymentStatus;const total=money(j.totalPrice),paid=money(j.amountPaid);return total>0&&paid>=total?"full":paid>0?"deposit":"unpaid"}
+function paidOf(j){return Math.min(Math.max(money(j.amountPaid),0),Math.max(money(j.totalPrice),money(j.amountPaid)))}
+function dueOf(j){if((j.status||"pending")==="pending")return 0;if(j.amountDue!==undefined&&j.amountDue!==null)return Math.max(money(j.amountDue),0);return Math.max(money(j.totalPrice)-paidOf(j),0)}
+function badgeFor(ps){return ps==="full"?["pay-full","Paid in full"]:ps==="deposit"?["pay-deposit","Deposit paid"]:ps==="late-cancel"?["pay-late","Late / cancelled"]:ps==="pending"?["pay-pending","Pending enquiry"]:["pay-unpaid","Unpaid"]}
+function attentionState(j){if(["pending","cancelled","completed"].includes(j.status||"pending")||dueOf(j)<=0)return null;const d=parseAnyDate(j.paymentDeadline);if(!d)return null;const now=new Date();const diff=d-now;if(diff<0)return {label:"Overdue",cls:"attention"};if(diff<=72*3600000)return {label:"Due soon",cls:"due-soon"};return null}
+function createdDate(j){return parseAnyDate(j.createdAt)||new Date(0)}
+function loadPayments(){db.collection("jobs").onSnapshot(snapshot=>{allJobs=snapshot.docs.map(doc=>({id:doc.id,...doc.data()}));renderPayments()},err=>{console.error(err);document.getElementById("paymentsContainer").innerHTML='<div class="empty">Could not load payments.</div>';document.getElementById("messageBox").innerHTML='<div class="notice error">Firestore error while loading payment records.</div>'})}
+function filteredJobs(){const status=document.getElementById("filterStatus").value,type=document.getElementById("filterType").value,q=document.getElementById("searchBox").value.trim().toLowerCase(),from=document.getElementById("filterFrom").value,to=document.getElementById("filterTo").value,sort=document.getElementById("sortBy").value;const fd=from?localDate(from):null,td=to?localDate(to,"23:59"):null;let jobs=allJobs.filter(j=>{const ps=paymentState(j);if(status==="attention"){if(!attentionState(j))return false}else if(status!=="all"&&ps!==status)return false;if(type!=="all"&&String(countOf(j))!==type)return false;const d=localDate(j.date,j.time);if(fd&&d&&d<fd)return false;if(td&&d&&d>td)return false;if(q&&!`${nameOf(j)} ${emailOf(j)} ${locationOf(j)}`.toLowerCase().includes(q))return false;return true});jobs.sort((a,b)=>{if(sort==="value-desc")return money(b.totalPrice)-money(a.totalPrice);if(sort==="created-desc")return createdDate(b)-createdDate(a);if(sort==="deadline"){const ad=parseAnyDate(a.paymentDeadline),bd=parseAnyDate(b.paymentDeadline);return (ad?ad.getTime():Infinity)-(bd?bd.getTime():Infinity)}return (localDate(a.date,a.time)?.getTime()||Infinity)-(localDate(b.date,b.time)?.getTime()||Infinity)});return jobs}
+function renderPayments(){const jobs=filteredJobs();let received=0,outstanding=0,depositJobs=0,fullJobs=0;allJobs.forEach(j=>{const ps=paymentState(j);received+=paidOf(j);if(!["pending","cancelled"].includes(j.status||"pending"))outstanding+=dueOf(j);if(ps==="deposit")depositJobs++;if(ps==="full")fullJobs++});document.getElementById("sumReceived").textContent=fmtMoney(received);document.getElementById("sumOutstanding").textContent=fmtMoney(outstanding);document.getElementById("sumDepositJobs").textContent=depositJobs;document.getElementById("sumFullJobs").textContent=fullJobs;document.getElementById("recordSummary").textContent=`Showing ${jobs.length} of ${allJobs.length} jobs. Figures above are operational payment totals, not the final revenue analytics report.`;const desktop=document.getElementById("paymentsContainer"),mobile=document.getElementById("mobilePayments");if(!jobs.length){desktop.innerHTML='<div class="empty">No payment records match these filters.</div>';mobile.innerHTML='<div class="empty">No payment records match these filters.</div>';return}desktop.innerHTML=jobs.map(rowHtml).join("");mobile.innerHTML=jobs.map(mobileHtml).join("")}
+function rowHtml(j){const ps=paymentState(j),[cls,label]=badgeFor(ps),att=attentionState(j),deadline=parseAnyDate(j.paymentDeadline),ceremony=localDate(j.date,j.time);return `<div class="payment-row"><div><div class="name">${esc(nameOf(j))}</div><div class="sub">${esc(formatDate(ceremony))}${j.time?` · ${esc(j.time)}`:""}${locationOf(j)?`<br>${esc(locationOf(j))}`:""}</div></div><div class="money">${fmtMoney(j.totalPrice)}</div><div class="money">${fmtMoney(paidOf(j))}</div><div class="money">${fmtMoney(dueOf(j))}</div><div><span class="badge ${cls}">${label}</span>${att?`<div style="margin-top:5px"><span class="badge ${att.cls}">${att.label}</span></div>`:""}</div><div>${deadline?esc(formatDateTime(deadline)):'<span class="sub">Not set</span>'}</div><div><button class="btn" onclick="openJob('${j.id}')">Open</button>${ps==="unpaid"&&j.status!=="pending"?`<button class="btn btn-gold" onclick="markDepositPaid('${j.id}')">Deposit paid</button>`:""}${ps==="deposit"?`<button class="btn btn-green" onclick="markRemainingPaid('${j.id}')">Balance paid</button>`:""}</div></div>`}
+function mobileHtml(j){const ps=paymentState(j),[cls,label]=badgeFor(ps),att=attentionState(j),deadline=parseAnyDate(j.paymentDeadline),ceremony=localDate(j.date,j.time);return `<div class="mobile-card"><div class="mobile-card-top"><div><div class="name">${esc(nameOf(j))}</div><div class="sub">${esc(formatDate(ceremony))}${j.time?` · ${esc(j.time)}`:""}</div></div><span class="badge ${cls}">${label}</span></div>${att?`<div style="margin-top:8px"><span class="badge ${att.cls}">${att.label}</span></div>`:""}<div class="mobile-grid"><div><span>Total</span>${fmtMoney(j.totalPrice)}</div><div><span>Paid</span>${fmtMoney(paidOf(j))}</div><div><span>Due</span>${fmtMoney(dueOf(j))}</div><div><span>Deadline</span>${deadline?esc(formatDateTime(deadline)):"Not set"}</div></div><div class="sub">${esc(locationOf(j))}</div><div style="margin-top:10px"><button class="btn" onclick="openJob('${j.id}')">Open</button>${ps==="unpaid"&&j.status!=="pending"?`<button class="btn btn-gold" onclick="markDepositPaid('${j.id}')">Deposit paid</button>`:""}${ps==="deposit"?`<button class="btn btn-green" onclick="markRemainingPaid('${j.id}')">Balance paid</button>`:""}</div></div>`}
+function openJob(id){location.href=`admin-job-detail.html?id=${encodeURIComponent(id)}`}
+async function markDepositPaid(id){if(!confirm("Mark this booking's deposit as paid?"))return;const ref=db.collection("jobs").doc(id),doc=await ref.get();if(!doc.exists)return;const j=doc.data(),total=money(j.totalPrice),deposit=money(j.deposit)||20,existing=paidOf(j),paid=Math.min(total,Math.max(existing,deposit)),due=Math.max(total-paid,0),updates={paymentStatus:due>0?"deposit":"full",amountPaid:paid,amountDue:due,depositPaidAt:firebase.firestore.FieldValue.serverTimestamp()};if((j.status||"pending")==="pending")updates.status="approved";await ref.update(updates)}
+async function markRemainingPaid(id){if(!confirm("Mark the remaining balance as paid?"))return;const ref=db.collection("jobs").doc(id),doc=await ref.get();if(!doc.exists)return;const total=money(doc.data().totalPrice);await ref.update({paymentStatus:"full",amountPaid:total,amountDue:0,remainingPaidAt:firebase.firestore.FieldValue.serverTimestamp()})}
+function adminLogout(){firebase.auth().signOut().then(()=>location.href="admin-login.html")}
 loadPayments();
 </script>
-
 </body>
 </html>
