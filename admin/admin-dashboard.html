@@ -8,20 +8,30 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
 <style>
-/* GLOBAL */
+:root {
+    --gold: #C19A2B;
+    --gold-soft: #f8f1dc;
+    --ink: #252525;
+    --muted: #777;
+    --line: #ececec;
+    --bg: #f5f5f5;
+    --white: #fff;
+}
+
+* { box-sizing: border-box; }
+
 body {
     margin: 0;
     font-family: Inter, sans-serif;
-    background: #f5f5f5;
+    background: var(--bg);
+    color: var(--ink);
 }
 
-/* LAYOUT */
 .layout {
     display: flex;
     min-height: 100vh;
 }
 
-/* SIDEBAR */
 .sidebar {
     width: 240px;
     background: white;
@@ -29,11 +39,12 @@ body {
     padding: 25px;
     display: flex;
     flex-direction: column;
+    flex-shrink: 0;
 }
 
 .sidebar h2 {
     font-family: "Playfair Display", serif;
-    color: #C19A2B;
+    color: var(--gold);
     margin-top: 0;
     margin-bottom: 30px;
     font-size: 24px;
@@ -42,22 +53,22 @@ body {
 .sidebar a {
     color: #333;
     text-decoration: none;
-    padding: 12px 0;
+    padding: 10px 0;
     display: block;
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 500;
 }
 
 .sidebar a:hover,
 .sidebar a.active {
-    color: #C19A2B;
+    color: var(--gold);
     font-weight: 600;
 }
 
 .logout-btn {
     margin-top: auto;
     padding: 12px;
-    background: #C19A2B;
+    background: var(--gold);
     color: white;
     text-align: center;
     border-radius: 6px;
@@ -74,41 +85,65 @@ body {
     line-height: 1.4;
 }
 
-/* MAIN CONTENT */
 .main {
     flex: 1;
     padding: 30px;
     overflow-y: auto;
+    min-width: 0;
+}
+
+.header-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 24px;
 }
 
 .header {
     font-size: 30px;
-    margin-bottom: 25px;
     font-family: "Playfair Display", serif;
-    color: #C19A2B;
+    color: var(--gold);
 }
 
-/* SECTION CARD */
+.header-subtitle {
+    margin-top: 4px;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.quick-link {
+    color: var(--gold);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 13px;
+}
+
 .section {
     background: white;
     padding: 22px;
     border-radius: 14px;
-    margin-bottom: 28px;
+    margin-bottom: 24px;
     box-shadow: 0 4px 14px rgba(0,0,0,0.06);
 }
 
 .section h3 {
-    margin-top: 0;
+    margin: 0 0 6px;
     font-family: "Playfair Display", serif;
-    color: #C19A2B;
+    color: var(--gold);
 }
 
-/* MINI CARDS */
+.section-note {
+    color: var(--muted);
+    font-size: 12px;
+    margin-bottom: 14px;
+}
+
 .mini-card-row {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 18px;
-    margin-bottom: 25px;
+    margin-bottom: 24px;
 }
 
 .mini-card {
@@ -121,7 +156,7 @@ body {
 }
 
 .mini-card .label {
-    font-size: 14px;
+    font-size: 13px;
     color: #666;
     margin-bottom: 6px;
 }
@@ -129,12 +164,21 @@ body {
 .mini-card .value {
     font-size: 26px;
     font-weight: 600;
-    color: #C19A2B;
+    color: var(--gold);
 }
 
-/* FILTER BAR */
+.operations-grid {
+    display: grid;
+    grid-template-columns: 1.25fr 1fr;
+    gap: 20px;
+    align-items: start;
+}
+
+.stack { display: grid; gap: 20px; }
+
 .filter-bar {
     display: flex;
+    flex-wrap: wrap;
     gap: 10px;
     margin-bottom: 15px;
 }
@@ -150,12 +194,11 @@ body {
 }
 
 .filter-btn.active {
-    background: #C19A2B;
+    background: var(--gold);
     color: white;
-    border-color: #C19A2B;
+    border-color: var(--gold);
 }
 
-/* CHART CONTAINER */
 .chart-container {
     width: 100%;
     height: 300px;
@@ -166,25 +209,172 @@ canvas {
     height: 300px;
 }
 
-/* STATUS BADGES */
+.job-item,
+.witness-item {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 13px 14px;
+    margin-top: 10px;
+    cursor: pointer;
+    transition: border-color .15s ease, background .15s ease;
+}
+
+.job-item:hover,
+.witness-item:hover {
+    border-color: #dccb91;
+    background: #fffdf7;
+}
+
+.job-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+    align-items: flex-start;
+}
+
+.job-name {
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.job-meta {
+    color: #666;
+    font-size: 12px;
+    line-height: 1.55;
+}
+
+.job-price {
+    color: var(--gold);
+    font-weight: 700;
+    white-space: nowrap;
+}
+
 .status-badge {
     display: inline-block;
     padding: 4px 8px;
     border-radius: 999px;
     font-size: 11px;
     font-weight: 600;
-    margin-left: 6px;
+    margin-left: 5px;
+    vertical-align: middle;
 }
 
-.pending { background: #fff4d6; color: #8a6d00; }
-.rejected { background: #ffe6e6; color: #8a0000; }
-.active { background: #d6ffe0; color: #006d2a; }
+.badge-pending { background: #fff4d6; color: #8a6d00; }
+.badge-assigned { background: #e5f4ff; color: #0b5e8a; }
+.badge-completed { background: #d6ffe0; color: #006d2a; }
+.badge-cancelled { background: #ffe6e6; color: #8a0000; }
+.badge-deposit { background: #eee8ff; color: #5e3aa8; }
+.badge-full { background: #d6ffe0; color: #006d2a; }
+.badge-unpaid { background: #ffe6e6; color: #8a0000; }
 
-/* RESPONSIVE */
+.empty-state {
+    color: #777;
+    font-size: 13px;
+    padding: 8px 0 2px;
+}
+
+.pending-dropdown {
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    overflow: hidden;
+    background: #fff;
+}
+
+.pending-dropdown summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 600;
+    user-select: none;
+}
+
+.pending-dropdown summary::-webkit-details-marker { display: none; }
+
+.pending-dropdown summary::after {
+    content: "▾";
+    color: var(--gold);
+    font-size: 16px;
+    transition: transform .15s ease;
+}
+
+.pending-dropdown[open] summary::after { transform: rotate(180deg); }
+
+.pending-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 25px;
+    height: 25px;
+    margin-left: 7px;
+    padding: 0 8px;
+    border-radius: 999px;
+    background: var(--gold-soft);
+    color: #866912;
+    font-size: 12px;
+}
+
+.pending-body {
+    border-top: 1px solid var(--line);
+    padding: 4px 12px 12px;
+    max-height: 480px;
+    overflow-y: auto;
+}
+
+.day-heading {
+    margin: 14px 0 4px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #444;
+}
+
+.attention-item {
+    border-left: 3px solid var(--gold);
+    background: #fffdf7;
+    border-radius: 8px;
+    padding: 11px 12px;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.attention-overdue { border-left-color: #b42318; background: #fff5f4; }
+
+.item {
+    padding: 10px 0;
+    border-bottom: 1px solid #f0f0f0;
+    cursor: pointer;
+}
+.item:last-child { border-bottom: 0; }
+
+@media (max-width: 1050px) {
+    .operations-grid { grid-template-columns: 1fr; }
+}
+
 @media (max-width: 900px) {
-    .mini-card-row {
-        grid-template-columns: repeat(2, 1fr);
+    .mini-card-row { grid-template-columns: repeat(2, 1fr); }
+    .sidebar { width: 205px; padding: 20px; }
+    .main { padding: 22px; }
+}
+
+@media (max-width: 700px) {
+    .layout { display: block; }
+    .sidebar {
+        width: 100%;
+        border-right: 0;
+        border-bottom: 1px solid #eee;
+        padding: 16px 18px;
     }
+    .sidebar h2 { margin-bottom: 10px; }
+    .sidebar a { display: inline-block; margin-right: 14px; padding: 6px 0; }
+    .logout-btn { margin-top: 12px; }
+    .sidebar-footer { display: none; }
+    .main { padding: 18px; }
+    .mini-card-row { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .mini-card { padding: 14px 10px; }
+    .mini-card .value { font-size: 22px; }
+    .header-row { align-items: flex-start; flex-direction: column; }
 }
 </style>
 </head>
@@ -192,104 +382,110 @@ canvas {
 
 <div class="layout">
 
-<!-- SIDEBAR -->
 <div class="sidebar">
     <h2>Admin Panel</h2>
-
     <a href="admin-dashboard.html" class="active">Dashboard</a>
     <a href="admin-witnesses.html">Witnesses</a>
     <a href="admin-jobs.html">Jobs</a>
     <a href="admin-create-job.html">Create Job</a>
     <a href="admin-calendar.html">Calendar</a>
+    <a href="admin-payments.html">Payments</a>
+    <a href="admin-availability.html">Availability</a>
 
     <div class="logout-btn" onclick="logout()">Logout</div>
 
     <div class="sidebar-footer">
         © Need A Witness UK<br>
-        Admin Panel v2.0
+        Admin Panel v2.1
     </div>
 </div>
 
-<!-- MAIN CONTENT -->
 <div class="main">
+    <div class="header-row">
+        <div>
+            <div class="header">Admin Dashboard</div>
+            <div class="header-subtitle">Jobs that need attention first, analytics second.</div>
+        </div>
+        <a class="quick-link" href="admin-jobs.html">View all jobs →</a>
+    </div>
 
-    <div class="header">Admin Dashboard</div>
-
-    <!-- MINI CARDS -->
     <div class="mini-card-row">
         <div class="mini-card">
             <div class="label">Total Jobs</div>
             <div class="value" id="statTotalJobs">0</div>
         </div>
-
         <div class="mini-card">
             <div class="label">Completed Jobs</div>
             <div class="value" id="statCompletedJobs">0</div>
         </div>
-
         <div class="mini-card">
             <div class="label">Pending Payments</div>
             <div class="value" id="statPendingPayments">£0</div>
         </div>
-
         <div class="mini-card">
             <div class="label">Revenue This Month</div>
             <div class="value" id="statRevenueMonth">£0</div>
         </div>
     </div>
 
-    <!-- REVENUE OVERVIEW -->
+    <div class="operations-grid">
+        <div class="stack">
+            <div class="section">
+                <h3>Pending Jobs</h3>
+                <div class="section-note">Every pending enquiry in one dropdown — no more single-job view.</div>
+                <details class="pending-dropdown" id="pendingDropdown" open>
+                    <summary><span>Pending enquiries <span class="pending-count" id="pendingCount">0</span></span></summary>
+                    <div class="pending-body" id="pendingJobs">Loading...</div>
+                </details>
+            </div>
+
+            <div class="section">
+                <h3>Today & This Week</h3>
+                <div class="section-note">Confirmed work only. This Week uses the current Monday–Sunday week.</div>
+                <div class="day-heading">Today</div>
+                <div id="todayJobs">Loading...</div>
+                <div class="day-heading">This Week</div>
+                <div id="weekJobs">Loading...</div>
+            </div>
+        </div>
+
+        <div class="stack">
+            <div class="section">
+                <h3>Next Upcoming Job</h3>
+                <div id="nextJob">Loading...</div>
+            </div>
+
+            <div class="section">
+                <h3>Payments Requiring Attention</h3>
+                <div class="section-note">Outstanding balances that are due soon or already overdue.</div>
+                <div id="paymentAttention">Loading...</div>
+            </div>
+        </div>
+    </div>
+
     <div class="section">
         <h3>Revenue Overview</h3>
-
         <div class="filter-bar">
-            <div class="filter-btn active" onclick="setRevenueFilter('week', this)">Week</div>
-            <div class="filter-btn" onclick="setRevenueFilter('month', this)">Month</div>
-            <div class="filter-btn" onclick="setRevenueFilter('year', this)">Year</div>
-            <div class="filter-btn" onclick="setRevenueFilter('12months', this)">12 Months</div>
-            <div class="filter-btn" onclick="setRevenueFilter('all', this)">All Time</div>
+            <button class="filter-btn active" onclick="setRevenueFilter('week', this)">Week</button>
+            <button class="filter-btn" onclick="setRevenueFilter('month', this)">Month</button>
+            <button class="filter-btn" onclick="setRevenueFilter('year', this)">Year</button>
+            <button class="filter-btn" onclick="setRevenueFilter('12months', this)">12 Months</button>
+            <button class="filter-btn" onclick="setRevenueFilter('all', this)">All Time</button>
         </div>
-
-        <div class="chart-container">
-            <canvas id="revenueChart"></canvas>
-        </div>
+        <div class="chart-container"><canvas id="revenueChart"></canvas></div>
     </div>
 
-    <!-- PENDING JOBS -->
-    <div class="section">
-        <h3>Pending Jobs</h3>
-        <div id="pendingJobs">Loading...</div>
-    </div>
-
-    <!-- NEXT UPCOMING JOB -->
-    <div class="section">
-        <h3>Next Upcoming Job</h3>
-        <div id="nextJob">Loading...</div>
-    </div>
-
-    <!-- TODAY & THIS WEEK -->
-    <div class="section">
-        <h3>Today & This Week</h3>
-        <div id="todayJobs">Loading...</div>
-        <hr>
-        <div id="weekJobs">Loading...</div>
-    </div>
-
-    <!-- MONTHLY REVENUE -->
     <div class="section">
         <h3>Monthly Revenue</h3>
-        <div class="chart-container">
-            <canvas id="monthlyRevenueChart"></canvas>
-        </div>
+        <div class="chart-container"><canvas id="monthlyRevenueChart"></canvas></div>
     </div>
 
-    <!-- WITNESS LEADERBOARD -->
     <div class="section">
         <h3>Top Witnesses</h3>
+        <div class="section-note">Completed-job leaderboard based on assigned witness IDs.</div>
         <div id="witnessLeaderboard">Loading...</div>
     </div>
 
-    <!-- WITNESS LISTS -->
     <div class="section">
         <h3>Pending Witnesses</h3>
         <div id="pendingList">Loading...</div>
@@ -304,148 +500,523 @@ canvas {
         <h3>Rejected Witnesses</h3>
         <div id="rejectedList">Loading...</div>
     </div>
+</div>
+</div>
 
-</div> <!-- end .main -->
-</div> <!-- end .layout -->
-
-<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 <script src="../hub/firebase.js"></script>
-
-<!-- CHART.JS -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<!-- ANALYTICS MODULE -->
-<script src="admin-analytics.js"></script>
-
 <script>
-auth.onAuthStateChanged(async (user) => {
-    if (!user) {
-        window.location.href = "../hub/login.html";
+let revenueFilter = "month";
+let revenueChartInstance = null;
+let monthlyRevenueChartInstance = null;
+let allJobs = [];
+let allUsers = [];
+let jobsUnsubscribe = null;
+let usersUnsubscribe = null;
+
+const ACTIVE_STATUSES = new Set(["assigned"]);
+
+function escapeHTML(value) {
+    return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+function getJobName(j) {
+    return j?.customer?.name || j?.coupleName || j?.coupleNames || "Unknown";
+}
+
+function getJobLocation(j) {
+    return j?.customer?.location || j?.location || "Location not set";
+}
+
+function parseJobDate(j) {
+    if (!j?.date) return null;
+    const [y, m, d] = j.date.split("-").map(Number);
+    if (!y || !m || !d) return null;
+    return new Date(y, m - 1, d);
+}
+
+function parseJobDateTime(j) {
+    if (!j?.date) return null;
+    const [y, m, d] = j.date.split("-").map(Number);
+    const [hh, mm] = String(j.time || "00:00").split(":").map(Number);
+    if (!y || !m || !d) return null;
+    return new Date(y, m - 1, d, hh || 0, mm || 0, 0, 0);
+}
+
+function startOfDay(d) {
+    const x = new Date(d);
+    x.setHours(0, 0, 0, 0);
+    return x;
+}
+
+function endOfDay(d) {
+    const x = new Date(d);
+    x.setHours(23, 59, 59, 999);
+    return x;
+}
+
+function startOfWeekMonday(d) {
+    const x = startOfDay(d);
+    const day = x.getDay();
+    const diff = day === 0 ? -6 : 1 - day;
+    x.setDate(x.getDate() + diff);
+    return x;
+}
+
+function endOfWeekSunday(d) {
+    const x = startOfWeekMonday(d);
+    x.setDate(x.getDate() + 6);
+    return endOfDay(x);
+}
+
+function formatDateUK(dateStr) {
+    if (!dateStr) return "Date not set";
+    const d = parseJobDate({ date: dateStr });
+    return d ? d.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }) : dateStr;
+}
+
+function formatMoney(value) {
+    return "£" + (Number(value) || 0).toLocaleString("en-GB", { maximumFractionDigits: 2 });
+}
+
+function normalisedPaymentStatus(j) {
+    return j?.paymentStatus || ((Number(j?.amountPaid) || 0) >= (Number(j?.totalPrice) || 0) && Number(j?.totalPrice) > 0 ? "full" : "unpaid");
+}
+
+function isConfirmedJob(j) {
+    const status = String(j?.status || "pending").toLowerCase();
+    const payment = normalisedPaymentStatus(j);
+    return ACTIVE_STATUSES.has(status) || payment === "deposit" || payment === "full";
+}
+
+function isOperationalJob(j) {
+    const status = String(j?.status || "pending").toLowerCase();
+    return status !== "cancelled" && status !== "completed" && isConfirmedJob(j);
+}
+
+function badgeClass(status) {
+    const s = String(status || "pending").toLowerCase();
+    if (s === "assigned") return "badge-assigned";
+    if (s === "completed") return "badge-completed";
+    if (s === "cancelled") return "badge-cancelled";
+    return "badge-pending";
+}
+
+function paymentBadgeClass(status) {
+    if (status === "full") return "badge-full";
+    if (status === "deposit") return "badge-deposit";
+    return "badge-unpaid";
+}
+
+function makeJobCard(job, options = {}) {
+    const price = Number(job.totalPrice) || 0;
+    const status = String(job.status || "pending").toLowerCase();
+    const payment = normalisedPaymentStatus(job);
+    const label = options.label || "";
+    const assigned = Array.isArray(job.assignedWitnesses) ? job.assignedWitnesses.length : 0;
+
+    return `
+        <div class="job-item" onclick="viewJob('${escapeHTML(job.id)}')">
+            <div class="job-row">
+                <div>
+                    <div class="job-name">
+                        ${escapeHTML(getJobName(job))}
+                        <span class="status-badge ${badgeClass(status)}">${escapeHTML(label || status)}</span>
+                        ${payment !== "unpaid" ? `<span class="status-badge ${paymentBadgeClass(payment)}">${escapeHTML(payment)}</span>` : ""}
+                    </div>
+                    <div class="job-meta">
+                        ${escapeHTML(formatDateUK(job.date))} at ${escapeHTML(job.time || "Time not set")}<br>
+                        ${escapeHTML(getJobLocation(job))}<br>
+                        ${Number(job.witnessCount) === 2 ? "2 witnesses" : "1 witness"}${status === "assigned" ? ` • ${assigned} assigned` : ""}
+                    </div>
+                </div>
+                <div class="job-price">${formatMoney(price)}</div>
+            </div>
+        </div>`;
+}
+
+function loadDashboardData() {
+    if (jobsUnsubscribe) jobsUnsubscribe();
+
+    jobsUnsubscribe = db.collection("jobs").onSnapshot(snapshot => {
+        allJobs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        renderOperationalDashboard();
+        updateMiniCards(allJobs);
+        buildRevenueChart(applyRevenueFilter(allJobs, revenueFilter));
+        buildMonthlyRevenue(allJobs);
+        renderWitnessLeaderboard();
+    }, err => {
+        console.error("Jobs listener failed:", err);
+        pendingJobs.innerHTML = '<div class="empty-state">Could not load jobs.</div>';
+        todayJobs.innerHTML = '<div class="empty-state">Could not load jobs.</div>';
+        weekJobs.innerHTML = '<div class="empty-state">Could not load jobs.</div>';
+        nextJob.innerHTML = '<div class="empty-state">Could not load jobs.</div>';
+        paymentAttention.innerHTML = '<div class="empty-state">Could not load jobs.</div>';
+    });
+}
+
+function renderOperationalDashboard() {
+    renderPendingJobs();
+    renderTodayAndWeekJobs();
+    renderNextJob();
+    renderPaymentAttention();
+}
+
+function renderPendingJobs() {
+    const pending = allJobs
+        .filter(j => String(j.status || "pending").toLowerCase() === "pending")
+        .sort((a, b) => {
+            const ac = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+            const bc = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+            return bc - ac;
+        });
+
+    pendingCount.textContent = pending.length;
+
+    if (!pending.length) {
+        pendingJobs.innerHTML = '<div class="empty-state">No pending jobs.</div>';
         return;
     }
 
-    loadWitnesses();
-    loadPendingJobs();
-    loadNextJob();
+    pendingJobs.innerHTML = pending.map(j => {
+        const payment = normalisedPaymentStatus(j);
+        const label = payment === "deposit" || payment === "full" ? "Awaiting assignment" : "New enquiry";
+        return makeJobCard(j, { label });
+    }).join("");
+}
 
-    loadRevenueData();
-    loadMonthlyRevenue();
-    loadTodayAndWeekJobs();
-    loadWitnessLeaderboard();
-});
+function renderTodayAndWeekJobs() {
+    const now = new Date();
+    const todayStart = startOfDay(now);
+    const todayEnd = endOfDay(now);
+    const weekStart = startOfWeekMonday(now);
+    const weekEnd = endOfWeekSunday(now);
 
-/* ------------------------------ LOAD WITNESSES ------------------------------ */
+    const confirmed = allJobs
+        .filter(isOperationalJob)
+        .map(j => ({ ...j, dt: parseJobDateTime(j) }))
+        .filter(j => j.dt)
+        .sort((a, b) => a.dt - b.dt);
+
+    const todays = confirmed.filter(j => j.dt >= todayStart && j.dt <= todayEnd);
+    const week = confirmed.filter(j => j.dt >= weekStart && j.dt <= weekEnd);
+
+    todayJobs.innerHTML = todays.length
+        ? todays.map(j => makeJobCard(j)).join("")
+        : '<div class="empty-state">No confirmed jobs today.</div>';
+
+    weekJobs.innerHTML = week.length
+        ? week.map(j => makeJobCard(j)).join("")
+        : '<div class="empty-state">No confirmed jobs this week.</div>';
+}
+
+function renderNextJob() {
+    const now = new Date();
+    const upcoming = allJobs
+        .filter(isOperationalJob)
+        .map(j => ({ ...j, dt: parseJobDateTime(j) }))
+        .filter(j => j.dt && j.dt >= now)
+        .sort((a, b) => a.dt - b.dt);
+
+    nextJob.innerHTML = upcoming.length
+        ? makeJobCard(upcoming[0])
+        : '<div class="empty-state">No confirmed upcoming jobs.</div>';
+}
+
+function deadlineToDate(value) {
+    if (!value) return null;
+    if (value.toDate) return value.toDate();
+    const d = new Date(value);
+    return Number.isNaN(d.getTime()) ? null : d;
+}
+
+function renderPaymentAttention() {
+    const now = new Date();
+    const sevenDays = new Date(now);
+    sevenDays.setDate(sevenDays.getDate() + 7);
+
+    const items = allJobs
+        .filter(j => isOperationalJob(j))
+        .map(j => {
+            const total = Number(j.totalPrice) || 0;
+            const paid = Number(j.amountPaid) || 0;
+            const due = Number.isFinite(Number(j.amountDue)) && Number(j.amountDue) > 0
+                ? Number(j.amountDue)
+                : Math.max(total - paid, 0);
+            const deadline = deadlineToDate(j.paymentDeadline);
+            return { ...j, calculatedDue: due, deadline };
+        })
+        .filter(j => j.calculatedDue > 0 && j.deadline && j.deadline <= sevenDays)
+        .sort((a, b) => a.deadline - b.deadline);
+
+    if (!items.length) {
+        paymentAttention.innerHTML = '<div class="empty-state">No balances need attention right now.</div>';
+        return;
+    }
+
+    paymentAttention.innerHTML = items.map(j => {
+        const overdue = j.deadline < now;
+        const deadlineText = j.deadline.toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" });
+        return `
+            <div class="attention-item ${overdue ? "attention-overdue" : ""}" onclick="viewJob('${escapeHTML(j.id)}')">
+                <strong>${escapeHTML(getJobName(j))}</strong>
+                <span class="status-badge ${overdue ? "badge-cancelled" : "badge-pending"}">${overdue ? "Overdue" : "Due soon"}</span><br>
+                <span class="job-meta">${formatMoney(j.calculatedDue)} outstanding • deadline ${escapeHTML(deadlineText)}</span>
+            </div>`;
+    }).join("");
+}
+
 function loadWitnesses() {
-    db.collection("users").onSnapshot(snapshot => {
+    if (usersUnsubscribe) usersUnsubscribe();
+
+    usersUnsubscribe = db.collection("users").onSnapshot(snapshot => {
+        allUsers = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
         let pendingHTML = "";
         let activeHTML = "";
         let rejectedHTML = "";
 
-        snapshot.forEach(doc => {
-            const u = doc.data();
-            const id = doc.id;
-
+        allUsers.forEach(u => {
             const name = u.type === "couple"
-                ? `${u.partner1Name} & ${u.partner2Name} (${u.teamName})`
-                : u.name;
+                ? (u.teamName || `${u.partner1Name || ""} & ${u.partner2Name || ""}`.trim())
+                : (u.name || u.fullName || "Unnamed");
 
-            const clickable = `
-                <div class="item" onclick="viewWitness('${id}')">
-                    <strong>${name}</strong>
-            `;
+            const item = (badge, badgeCls) => `
+                <div class="item" onclick="viewWitness('${escapeHTML(u.id)}')">
+                    <strong>${escapeHTML(name)}</strong>
+                    <span class="status-badge ${badgeCls}">${badge}</span>
+                </div>`;
 
-            if (u.status === "pending") {
-                pendingHTML += `${clickable}<span class="status-badge pending">Pending</span></div>`;
-            }
-
-            if (u.status === "active") {
-                activeHTML += `${clickable}<span class="status-badge active">Active</span></div>`;
-            }
-
-            if (u.status === "rejected") {
-                rejectedHTML += `${clickable}<span class="status-badge rejected">Rejected</span></div>`;
-            }
+            if (u.status === "pending") pendingHTML += item("Pending", "badge-pending");
+            if (u.status === "active") activeHTML += item("Active", "badge-completed");
+            if (u.status === "rejected") rejectedHTML += item("Rejected", "badge-cancelled");
         });
 
-        pendingList.innerHTML = pendingHTML || "<p>No pending witnesses.</p>";
-        activeList.innerHTML = activeHTML || "<p>No active witnesses yet.</p>";
-        rejectedList.innerHTML = rejectedHTML || "<p>No rejected witnesses.</p>";
+        pendingList.innerHTML = pendingHTML || '<div class="empty-state">No pending witnesses.</div>';
+        activeList.innerHTML = activeHTML || '<div class="empty-state">No active witnesses yet.</div>';
+        rejectedList.innerHTML = rejectedHTML || '<div class="empty-state">No rejected witnesses.</div>';
+        renderWitnessLeaderboard();
+    }, err => console.error("Users listener failed:", err));
+}
+
+function renderWitnessLeaderboard() {
+    if (!document.getElementById("witnessLeaderboard")) return;
+    if (!allUsers.length) {
+        witnessLeaderboard.innerHTML = '<div class="empty-state">No witness data yet.</div>';
+        return;
+    }
+
+    const counts = {};
+    allJobs.filter(j => j.status === "completed").forEach(j => {
+        (j.assignedWitnesses || []).forEach(uid => {
+            counts[uid] = (counts[uid] || 0) + 1;
+        });
+    });
+
+    const ranked = Object.entries(counts)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 5);
+
+    if (!ranked.length) {
+        witnessLeaderboard.innerHTML = '<div class="empty-state">No completed witness jobs to rank yet.</div>';
+        return;
+    }
+
+    witnessLeaderboard.innerHTML = ranked.map(([uid, count], index) => {
+        const u = allUsers.find(x => x.id === uid) || {};
+        const name = u.type === "couple"
+            ? (u.teamName || `${u.partner1Name || ""} & ${u.partner2Name || ""}`.trim())
+            : (u.name || u.fullName || "Witness");
+        return `
+            <div class="witness-item" onclick="viewWitness('${escapeHTML(uid)}')">
+                <strong>#${index + 1} ${escapeHTML(name)}</strong>
+                <span style="float:right;color:var(--gold);font-weight:700;">${count} completed</span>
+            </div>`;
+    }).join("");
+}
+
+function setRevenueFilter(type, el) {
+    revenueFilter = type;
+    document.querySelectorAll(".filter-btn").forEach(btn => btn.classList.remove("active"));
+    el.classList.add("active");
+    buildRevenueChart(applyRevenueFilter(allJobs, revenueFilter));
+}
+
+function applyRevenueFilter(jobs, filter) {
+    const now = new Date();
+    const result = {};
+
+    jobs.forEach(j => {
+        const jobDate = parseJobDate(j);
+        if (!jobDate) return;
+        const key = j.date;
+        let include = false;
+
+        switch (filter) {
+            case "week": {
+                const weekAgo = new Date(now);
+                weekAgo.setDate(now.getDate() - 7);
+                include = jobDate >= startOfDay(weekAgo) && jobDate <= endOfDay(now);
+                break;
+            }
+            case "month":
+                include = jobDate.getMonth() === now.getMonth() && jobDate.getFullYear() === now.getFullYear();
+                break;
+            case "year":
+                include = jobDate.getFullYear() === now.getFullYear();
+                break;
+            case "12months": {
+                const yearAgo = new Date(now);
+                yearAgo.setFullYear(now.getFullYear() - 1);
+                include = jobDate >= yearAgo;
+                break;
+            }
+            case "all":
+                include = true;
+                break;
+        }
+
+        if (!include) return;
+        if (!result[key]) result[key] = 0;
+        result[key] += Number(j.amountPaid) || 0;
+    });
+
+    return result;
+}
+
+function buildRevenueChart(data) {
+    const canvas = document.getElementById("revenueChart");
+    if (!canvas || typeof Chart === "undefined") return;
+
+    const labels = Object.keys(data).sort();
+    const values = labels.map(k => data[k]);
+    const ctx = canvas.getContext("2d");
+
+    if (revenueChartInstance) revenueChartInstance.destroy();
+
+    const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+    gradient.addColorStop(0, "#C19A2B");
+    gradient.addColorStop(0.5, "#E8D7A8");
+    gradient.addColorStop(1, "rgba(255,255,255,0)");
+
+    revenueChartInstance = new Chart(ctx, {
+        type: "line",
+        data: {
+            labels,
+            datasets: [{
+                label: "Revenue",
+                data: values,
+                borderColor: "#C19A2B",
+                backgroundColor: gradient,
+                borderWidth: 3,
+                tension: 0.35,
+                fill: true,
+                pointRadius: 3,
+                pointBackgroundColor: "#C19A2B"
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            devicePixelRatio: 2,
+            scales: { y: { beginAtZero: true } },
+            plugins: { legend: { display: false } }
+        }
     });
 }
 
-/* ------------------------------ LOAD PENDING JOBS ------------------------------ */
-function loadPendingJobs() {
-    db.collection("jobs")
-        .where("status", "==", "pending")
-        .onSnapshot(snapshot => {
-            let html = "";
+function updateMiniCards(jobs) {
+    let completedJobs = 0;
+    let pendingPayments = 0;
+    let revenueThisMonth = 0;
+    const now = new Date();
 
-            snapshot.forEach(doc => {
-                const j = doc.data();
-                const id = doc.id;
+    jobs.forEach(j => {
+        if (j.status === "completed") completedJobs++;
 
-                html += `
-                    <div class="item" onclick="viewJob('${id}')">
-                        <strong>${j.customer?.name || "Unknown"}</strong>
-                        <span class="status-badge pending">Pending</span><br>
-                        ${j.date} at ${j.time}
-                    </div>
-                `;
-            });
+        if (isConfirmedJob(j) && j.status !== "cancelled") {
+            const total = Number(j.totalPrice) || 0;
+            const paid = Number(j.amountPaid) || 0;
+            const due = Number(j.amountDue) > 0 ? Number(j.amountDue) : Math.max(total - paid, 0);
+            pendingPayments += due;
+        }
 
-            pendingJobs.innerHTML = html || "<p>No pending jobs.</p>";
-        });
+        const d = parseJobDate(j);
+        if (d && d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()) {
+            revenueThisMonth += Number(j.amountPaid) || 0;
+        }
+    });
+
+    statTotalJobs.textContent = jobs.length;
+    statCompletedJobs.textContent = completedJobs;
+    statPendingPayments.textContent = formatMoney(pendingPayments);
+    statRevenueMonth.textContent = formatMoney(revenueThisMonth);
 }
 
-/* ------------------------------ LOAD NEXT UPCOMING JOB ------------------------------ */
-function loadNextJob() {
-    const today = new Date().toISOString().split("T")[0];
+function buildMonthlyRevenue(jobs) {
+    const canvas = document.getElementById("monthlyRevenueChart");
+    if (!canvas || typeof Chart === "undefined") return;
 
-    db.collection("jobs")
-        .where("status", "==", "approved")
-        .where("date", ">", today)
-        .orderBy("date")
-        .orderBy("time")
-        .limit(1)
-        .onSnapshot(snapshot => {
-            if (snapshot.empty) {
-                nextJob.innerHTML = "<p>No upcoming jobs.</p>";
-                return;
-            }
+    const buckets = {};
+    jobs.forEach(j => {
+        if (!j.date) return;
+        const monthKey = j.date.slice(0, 7);
+        buckets[monthKey] = (buckets[monthKey] || 0) + (Number(j.amountPaid) || 0);
+    });
 
-            const doc = snapshot.docs[0];
-            const j = doc.data();
-            const id = doc.id;
+    const labels = Object.keys(buckets).sort();
+    const values = labels.map(k => buckets[k]);
+    const ctx = canvas.getContext("2d");
 
-            nextJob.innerHTML = `
-                <div class="item" onclick="viewJob('${id}')">
-                    <strong>${j.customer?.name || "Unknown"}</strong><br>
-                    ${j.date} at ${j.time}<br>
-                    <span class="status-badge ${j.status}">${j.status}</span>
-                </div>
-            `;
-        });
+    if (monthlyRevenueChartInstance) monthlyRevenueChartInstance.destroy();
+
+    monthlyRevenueChartInstance = new Chart(ctx, {
+        type: "bar",
+        data: {
+            labels,
+            datasets: [{ label: "Monthly Revenue", data: values, backgroundColor: "#C19A2B" }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            devicePixelRatio: 2,
+            scales: { y: { beginAtZero: true } },
+            plugins: { legend: { display: false } }
+        }
+    });
 }
 
-/* ------------------------------ NAVIGATION ------------------------------ */
+auth.onAuthStateChanged(user => {
+    if (!user) {
+        window.location.href = "../hub/login.html";
+        return;
+    }
+    loadWitnesses();
+    loadDashboardData();
+});
+
 function viewWitness(uid) {
-    window.location.href = "admin-witness-detail.html?id=" + uid;
+    window.location.href = "admin-witness-detail.html?id=" + encodeURIComponent(uid);
 }
 
 function viewJob(jid) {
-    window.location.href = "admin-job-detail.html?id=" + jid;
+    window.location.href = "admin-job-detail.html?id=" + encodeURIComponent(jid);
 }
 
-/* ------------------------------ LOGOUT ------------------------------ */
 function logout() {
     auth.signOut().then(() => {
         window.location.href = "../hub/login.html";
     });
 }
 </script>
-
 </body>
 </html>
