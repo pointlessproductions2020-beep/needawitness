@@ -267,6 +267,28 @@
     .btn-gold { background:#D4AF37; color:black; }
     .btn-red { background:#b71c1c; color:white; }
 
+    .fc .fc-button-primary {
+        background: #D4AF37;
+        border-color: #D4AF37;
+        color: #fff;
+    }
+
+    .fc .fc-button-primary:hover,
+    .fc .fc-button-primary:not(:disabled).fc-button-active {
+        background: #b99525;
+        border-color: #b99525;
+    }
+
+    .fc-event.pending-enquiry {
+        border-style: dashed !important;
+        border-width: 2px !important;
+    }
+
+    .fc-event.cancelled-job {
+        opacity: 0.72;
+        text-decoration: line-through;
+    }
+
     @media (max-width: 700px) {
         #availabilityPanel {
             width: 100%;
@@ -294,9 +316,11 @@
         <div class="nav-title">Navigation</div>
         <div class="nav-item" onclick="window.location.href='admin-dashboard.html'">Dashboard</div>
         <div class="nav-item" onclick="window.location.href='admin-witnesses.html'">Witnesses</div>
+        <div class="nav-item" onclick="window.location.href='admin-jobs.html'">Jobs</div>
         <div class="nav-item" onclick="window.location.href='admin-create-job.html'">Create Job</div>
-        <div class="nav-item" onclick="window.location.href='admin-payments.html'">Payments</div>
         <div class="nav-item active">Calendar</div>
+        <div class="nav-item" onclick="window.location.href='admin-payments.html'">Payments</div>
+        <div class="nav-item" onclick="window.location.href='admin-availability.html'">Availability</div>
 
         <div class="sidebar-footer">
             Admin Panel<br>
@@ -311,7 +335,7 @@
             <div>
                 <h1>Calendar</h1>
                 <div class="main-subtitle">
-                    All ceremonies, colour‑coded by payment status. Click an event to open the job.
+                    All bookings in one place. Colour shows payment status; pending enquiries are clearly marked. Click any job to open it.
                 </div>
             </div>
         </div>
@@ -320,7 +344,7 @@
 
             <!-- AVAILABILITY BUTTON -->
             <button 
-                onclick="openAvailabilityPanel(new Date().toISOString().split('T')[0])"
+                onclick="openAvailabilityPanel(getLocalToday())"
                 style="
                     padding: 10px 16px;
                     background: #D4AF37;
@@ -338,6 +362,7 @@
             <!-- FILTER BUTTONS -->
             <div style="margin-bottom: 15px; display:flex; gap:10px; flex-wrap:wrap;">
                 <button class="filter-btn" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="pending">Pending Enquiries</button>
                 <button class="filter-btn" data-filter="full">Paid in Full</button>
                 <button class="filter-btn" data-filter="deposit">Deposit Only</button>
                 <button class="filter-btn" data-filter="unpaid">Unpaid</button>
@@ -384,28 +409,139 @@
 let calendar = null;
 let currentFilter = "all";
 let selectedDate = null;
+let allCalendarEvents = [];
 
 const WORKING_HOURS = [
     "09:00","10:00","11:00","12:00",
     "13:00","14:00","15:00","16:00","17:00"
 ];
 
-/* MAP PAYMENT STATUS TO COLOUR */
+const ACTIVE_JOB_STATUSES = new Set(["approved", "assigned", "confirmed", "completed"]);
+const CANCELLED_STATUSES = new Set(["cancelled", "canceled", "late-cancel", "late-cancelled"]);
+
+function getJobName(job) {
+    return (
+        job?.customer?.name ||
+        job?.coupleName ||
+        job?.coupleNames ||
+        job?.name ||
+        "Ceremony"
+    ).toString().trim() || "Ceremony";
+}
+
+function getJobLocation(job) {
+    return (
+        job?.customer?.location ||
+        job?.location ||
+        "Location not set"
+    ).toString();
+}
+
+function getWitnessCount(job) {
+    const count = Number(job?.witnessCount ?? job?.numberOfWitnesses ?? 0);
+    return Number.isFinite(count) && count > 0 ? count : null;
+}
+
+function normaliseStatus(value) {
+    return (value || "").toString().trim().toLowerCase();
+}
+
+function normalisePaymentStatus(job) {
+    const explicit = normaliseStatus(job?.paymentStatus);
+    if (explicit) return explicit;
+
+    const paid = Number(job?.amountPaid || 0);
+    const total = Number(job?.totalPrice || 0);
+    const deposit = Number(job?.deposit || 0);
+
+    if (total > 0 && paid >= total) return "full";
+    if (paid > 0 || job?.depositPaid === true) return "deposit";
+    if (deposit > 0 && job?.status === "pending") return "unpaid";
+    return "unpaid";
+}
+
+function isCancelled(job) {
+    return CANCELLED_STATUSES.has(normaliseStatus(job?.status)) ||
+           CANCELLED_STATUSES.has(normaliseStatus(job?.paymentStatus));
+}
+
 function getEventColor(job) {
-    const ps = job.paymentStatus || "unpaid";
+    if (isCancelled(job)) return "#9e9e9e";
+    const ps = normalisePaymentStatus(job);
     if (ps === "full") return "#4caf50";
     if (ps === "deposit") return "#D4AF37";
-    if (ps === "late-cancel") return "#9e9e9e";
     return "#e53935";
 }
 
-/* INIT CALENDAR */
+function parseLocalDateTime(dateStr, timeStr = "12:00") {
+    if (!dateStr) return null;
+    const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateStr);
+    if (!match) return null;
+
+    const [hours, minutes] = (timeStr || "12:00").split(":").map(Number);
+    return new Date(
+        Number(match[1]),
+        Number(match[2]) - 1,
+        Number(match[3]),
+        Number.isFinite(hours) ? hours : 12,
+        Number.isFinite(minutes) ? minutes : 0,
+        0,
+        0
+    );
+}
+
+function formatDateUK(dateStr) {
+    const date = parseLocalDateTime(dateStr, "12:00");
+    if (!date) return dateStr || "Date not set";
+    return new Intl.DateTimeFormat("en-GB", {
+        weekday: "short",
+        day: "numeric",
+        month: "short",
+        year: "numeric"
+    }).format(date);
+}
+
+function getLocalToday() {
+    const now = new Date();
+    const y = now.getFullYear();
+    const m = String(now.getMonth() + 1).padStart(2, "0");
+    const d = String(now.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
+}
+
+function buildEventTitle(job) {
+    const name = getJobName(job);
+    const count = getWitnessCount(job);
+    const status = normaliseStatus(job?.status);
+    const parts = [];
+
+    if (status === "pending") parts.push("PENDING");
+    parts.push(name);
+    if (count) parts.push(`${count}W`);
+
+    return parts.join(" · ");
+}
+
 function initCalendar(initialEvents) {
     const calendarEl = document.getElementById("calendar");
 
     calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: "dayGridMonth",
         height: "auto",
+        firstDay: 1,
+        nowIndicator: true,
+        displayEventTime: true,
+        eventTimeFormat: { hour: "2-digit", minute: "2-digit", hour12: false },
+        headerToolbar: {
+            left: "prev,next today",
+            center: "title",
+            right: "dayGridMonth,listWeek"
+        },
+        buttonText: {
+            today: "Today",
+            month: "Month",
+            list: "List"
+        },
         events: initialEvents,
 
         dateClick: function(info) {
@@ -413,10 +549,29 @@ function initCalendar(initialEvents) {
         },
 
         eventClick: function(info) {
-            const jobId = info.event.extendedProps.jobId || info.event.id;
+            const jobId = info.event.id || info.event.extendedProps.jobId;
             if (jobId) {
-                window.location.href = `admin-job-detail.html?id=${jobId}`;
+                window.location.href = `admin-job-detail.html?id=${encodeURIComponent(jobId)}`;
             }
+        },
+
+        eventDidMount: function(info) {
+            const job = info.event.extendedProps.jobData || {};
+            const status = normaliseStatus(job.status);
+            if (status === "pending") info.el.classList.add("pending-enquiry");
+            if (isCancelled(job)) info.el.classList.add("cancelled-job");
+
+            const payment = normalisePaymentStatus(job);
+            const total = Number(job.totalPrice || 0);
+            const location = getJobLocation(job);
+            info.el.title = [
+                getJobName(job),
+                `${formatDateUK(job.date)} at ${job.time || "Time not set"}`,
+                location,
+                `Status: ${status || "not set"}`,
+                `Payment: ${payment}`,
+                total ? `Total: £${total}` : ""
+            ].filter(Boolean).join("\n");
         }
     });
 
@@ -424,32 +579,41 @@ function initCalendar(initialEvents) {
     applyFilters();
 }
 
-/* LOAD JOBS FROM FIRESTORE */
 async function loadJobsForCalendar() {
     try {
         const snapshot = await db.collection("jobs").get();
         const events = [];
 
         snapshot.forEach(doc => {
-            const job = doc.data();
+            const job = doc.data() || {};
+            if (!job.date) return;
 
-            const dateStr = job.date;
             const timeStr = job.time || "12:00";
+            const start = parseLocalDateTime(job.date, timeStr);
+            if (!start || Number.isNaN(start.getTime())) return;
 
-            const start = new Date(`${dateStr}T${timeStr}`);
-            const end = new Date(start.getTime() + 60 * 60 * 1000);
+            const durationMinutes = Number(job.durationMinutes || 60);
+            const safeDuration = Number.isFinite(durationMinutes) && durationMinutes > 0 ? durationMinutes : 60;
+            const end = new Date(start.getTime() + safeDuration * 60 * 1000);
+            const color = getEventColor(job);
 
             events.push({
-                title: job.coupleNames || "Ceremony",
-                start: start.toISOString(),
-                end: end.toISOString(),
-                backgroundColor: getEventColor(job),
-                borderColor: getEventColor(job),
-                jobId: doc.id,
-                jobData: job,
-                extendedProps: { jobData: job }
+                id: doc.id,
+                title: buildEventTitle(job),
+                start,
+                end,
+                backgroundColor: color,
+                borderColor: color,
+                textColor: "#ffffff",
+                extendedProps: {
+                    jobId: doc.id,
+                    jobData: job
+                }
             });
         });
+
+        events.sort((a, b) => a.start - b.start);
+        allCalendarEvents = events;
 
         if (!calendar) {
             initCalendar(events);
@@ -463,25 +627,30 @@ async function loadJobsForCalendar() {
     }
 }
 
-/* APPLY FILTERS */
+function eventMatchesFilter(job) {
+    if (currentFilter === "all") return true;
+
+    const status = normaliseStatus(job.status);
+    const payment = normalisePaymentStatus(job);
+
+    if (currentFilter === "pending") return status === "pending";
+    if (currentFilter === "late-cancel") return isCancelled(job);
+    if (currentFilter === "full") return payment === "full" && !isCancelled(job);
+    if (currentFilter === "deposit") return payment === "deposit" && !isCancelled(job);
+    if (currentFilter === "unpaid") return payment === "unpaid" && !isCancelled(job);
+
+    return true;
+}
+
 function applyFilters() {
     if (!calendar) return;
 
-    const events = calendar.getEvents();
-
-    events.forEach(ev => {
+    calendar.getEvents().forEach(ev => {
         const job = ev.extendedProps.jobData || {};
-        const ps = (job.paymentStatus || "unpaid").toString();
-
-        if (currentFilter === "all" || currentFilter === ps) {
-            ev.setProp("display", "auto");
-        } else {
-            ev.setProp("display", "none");
-        }
+        ev.setProp("display", eventMatchesFilter(job) ? "auto" : "none");
     });
 }
 
-/* FILTER BUTTON HANDLER */
 document.addEventListener("click", (e) => {
     if (!e.target.classList.contains("filter-btn")) return;
 
@@ -492,17 +661,15 @@ document.addEventListener("click", (e) => {
     applyFilters();
 });
 
-/* LOGOUT */
 function adminLogout() {
     firebase.auth().signOut().then(() => {
         window.location.href = "admin-login.html";
     });
 }
 
-/* AVAILABILITY PANEL LOGIC */
 function openAvailabilityPanel(dateStr) {
     selectedDate = dateStr;
-    document.getElementById("availabilityDateTitle").textContent = `Availability – ${dateStr}`;
+    document.getElementById("availabilityDateTitle").textContent = `Availability – ${formatDateUK(dateStr)}`;
     document.getElementById("availabilityPanel").classList.add("open");
     loadSlots(dateStr);
 }
@@ -515,47 +682,56 @@ async function loadSlots(dateStr) {
     const grid = document.getElementById("slotsGrid");
     grid.innerHTML = "";
 
-    const locked = await getLockedSlots(dateStr);
-    const states = await getSlotStates(dateStr);
+    try {
+        const locked = await getLockedSlots(dateStr);
+        const states = await getSlotStates(dateStr);
 
-    WORKING_HOURS.forEach(time => {
-        const btn = document.createElement("button");
-        btn.classList.add("slot-btn");
+        WORKING_HOURS.forEach(time => {
+            const btn = document.createElement("button");
+            btn.classList.add("slot-btn");
 
-        if (locked.has(time)) {
-            btn.classList.add("slot-locked");
-            btn.textContent = `${time} • JOB`;
-        } else if (states[time]) {
-            btn.classList.add("slot-unavailable");
-            btn.textContent = `${time} • UNAVAILABLE`;
-            btn.onclick = () => toggleSlot(dateStr, time, false);
-        } else {
-            btn.classList.add("slot-available");
-            btn.textContent = `${time} • AVAILABLE`;
-            btn.onclick = () => toggleSlot(dateStr, time, true);
-        }
+            if (locked.has(time)) {
+                btn.classList.add("slot-locked");
+                btn.textContent = `${time} • JOB`;
+            } else if (states[time]) {
+                btn.classList.add("slot-unavailable");
+                btn.textContent = `${time} • UNAVAILABLE`;
+                btn.onclick = () => toggleSlot(dateStr, time, false);
+            } else {
+                btn.classList.add("slot-available");
+                btn.textContent = `${time} • AVAILABLE`;
+                btn.onclick = () => toggleSlot(dateStr, time, true);
+            }
 
-        grid.appendChild(btn);
-    });
+            grid.appendChild(btn);
+        });
+    } catch (err) {
+        console.error("Error loading availability:", err);
+        grid.innerHTML = '<div style="color:#ccc;font-size:13px;">Could not load availability.</div>';
+    }
 }
 
 async function getLockedSlots(dateStr) {
     const locked = new Set();
     const snap = await db.collection("jobs").where("date", "==", dateStr).get();
+
     snap.forEach(doc => {
-        const job = doc.data();
-        locked.add(job.time || "12:00");
+        const job = doc.data() || {};
+        if (!isCancelled(job)) locked.add(job.time || "12:00");
     });
+
     return locked;
 }
 
 async function getSlotStates(dateStr) {
     const states = {};
     const snap = await db.collection("availability").doc(dateStr).collection("slots").get();
+
     snap.forEach(doc => {
-        const data = doc.data();
-        if (data.booked) states[doc.id] = true;
+        const data = doc.data() || {};
+        if (data.booked === true) states[doc.id] = true;
     });
+
     return states;
 }
 
@@ -564,9 +740,9 @@ async function toggleSlot(dateStr, time, booked) {
         .doc(dateStr)
         .collection("slots")
         .doc(time)
-        .set({ booked: booked }, { merge: true });
+        .set({ booked }, { merge: true });
 
-    loadSlots(dateStr);
+    await loadSlots(dateStr);
 }
 
 async function setWholeDay(booked) {
@@ -578,20 +754,23 @@ async function setWholeDay(booked) {
     const ref = db.collection("availability").doc(dateStr);
 
     WORKING_HOURS.forEach(time => {
-    if (!locked.has(time)) {
-        batch.set(
-            ref.collection("slots").doc(time),
-            { booked: booked },
-            { merge: true }
-        );
-    }
-});
+        if (!locked.has(time)) {
+            batch.set(
+                ref.collection("slots").doc(time),
+                { booked },
+                { merge: true }
+            );
+        }
+    });
 
-await batch.commit();
-loadSlots(dateStr);
+    await batch.commit();
+    await loadSlots(dateStr);
 }
 
-/* INIT ON LOAD */
+document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeAvailabilityPanel();
+});
+
 document.addEventListener("DOMContentLoaded", () => {
     const allBtn = document.querySelector('.filter-btn[data-filter="all"]');
     if (allBtn) allBtn.classList.add("active");
