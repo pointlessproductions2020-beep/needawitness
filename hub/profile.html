@@ -4,502 +4,122 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>My Profile – Witness Hub</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-    body {
-        margin: 0;
-        font-family: Inter, sans-serif;
-        background: #f5f4f2;
-        color: #333;
-    }
-
-    .layout {
-        display: flex;
-        min-height: 100vh;
-    }
-
-    /* SIDEBAR */
-    .sidebar {
-        width: 250px;
-        background: #ffffff;
-        border-right: 1px solid #e6e2da;
-        padding: 28px;
-        display: flex;
-        flex-direction: column;
-        box-shadow: 2px 0 10px rgba(0,0,0,0.04);
-    }
-
-    .sidebar h2 {
-        font-family: "Playfair Display", serif;
-        color: #c8a24a;
-        margin: 0 0 32px 0;
-        font-size: 26px;
-        letter-spacing: 0.5px;
-    }
-
-    .sidebar a {
-        color: #444;
-        text-decoration: none;
-        padding: 12px 0;
-        display: block;
-        font-size: 15px;
-        font-weight: 500;
-        transition: 0.2s;
-    }
-
-    .sidebar a:hover {
-        color: #c8a24a;
-        transform: translateX(3px);
-    }
-
-    .sidebar a.active {
-        color: #c8a24a;
-        font-weight: 600;
-    }
-
-    .logout-btn {
-        margin-top: auto;
-        padding: 12px;
-        background: #c8a24a;
-        color: white;
-        text-align: center;
-        border-radius: 8px;
-        cursor: pointer;
-        font-weight: 600;
-        font-size: 14px;
-        transition: 0.2s;
-    }
-
-    .logout-btn:hover {
-        opacity: 0.9;
-    }
-
-    .sidebar-footer {
-        margin-top: 20px;
-        padding-top: 14px;
-        border-top: 1px solid #eee;
-        font-size: 12px;
-        color: #777;
-        line-height: 1.4;
-    }
-
-    /* MAIN */
-    .main {
-        flex: 1;
-        padding: 40px 48px;
-        overflow-y: auto;
-    }
-
-    .header {
-        font-size: 32px;
-        font-family: "Playfair Display", serif;
-        color: #c8a24a;
-        margin-bottom: 10px;
-    }
-
-    .subheader {
-        font-size: 14px;
-        color: #777;
-        margin-bottom: 24px;
-    }
-
-    /* PROFILE LAYOUT */
-    .profile-layout {
-        display: grid;
-        grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
-        gap: 24px;
-        max-width: 960px;
-    }
-
-    .card {
-        background: white;
-        border-radius: 16px;
-        box-shadow: 0 6px 18px rgba(0,0,0,0.06);
-        padding: 24px 24px 22px;
-    }
-
-    .card-header {
-        font-family: "Playfair Display", serif;
-        font-size: 20px;
-        color: #c8a24a;
-        margin-bottom: 14px;
-    }
-
-    .card-subheader {
-        font-size: 13px;
-        color: #888;
-        margin-bottom: 18px;
-    }
-
-    /* LEFT CARD – PROFILE SUMMARY */
-    .profile-summary {
-        text-align: center;
-        padding-top: 26px;
-        padding-bottom: 26px;
-    }
-
-    .profile-photo-wrapper {
-        width: 150px;
-        height: 150px;
-        border-radius: 50%;
-        border: 3px solid #c8a24a;
-        overflow: hidden;
-        margin: 0 auto 16px auto;
-        background: #faf7ec;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    }
-
-    #profilePhoto {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
-    .profile-name {
-        font-family: "Playfair Display", serif;
-        font-size: 22px;
-        margin-bottom: 4px;
-        color: #333;
-    }
-
-    .profile-type {
-        font-size: 13px;
-        color: #999;
-        margin-bottom: 10px;
-    }
-
-    .profile-email {
-        font-size: 13px;
-        color: #666;
-        margin-bottom: 18px;
-    }
-
-    .tag-pill {
-        display: inline-block;
-        padding: 5px 10px;
-        border-radius: 999px;
-        background: #faf4e2;
-        color: #a8842f;
-        font-size: 11px;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.04em;
-        margin-bottom: 4px;
-    }
-
-    .edit-btn {
-        display: inline-block;
-        margin-top: 10px;
-        padding: 10px 18px;
-        background: #c8a24a;
-        color: white;
-        border-radius: 999px;
-        text-decoration: none;
-        font-weight: 600;
-        font-size: 14px;
-        transition: 0.2s;
-    }
-
-    .edit-btn:hover {
-        opacity: 0.9;
-    }
-
-    /* RIGHT CARD – DETAILS */
-    .profile-row {
-        margin-bottom: 10px;
-        font-size: 14px;
-        color: #444;
-        display: flex;
-        align-items: flex-start;
-    }
-
-    .profile-row strong {
-        display: inline-block;
-        width: 130px;
-        color: #222;
-        font-weight: 600;
-        flex-shrink: 0;
-    }
-
-    .profile-row span {
-        flex: 1;
-    }
-
-    .profile-section-title {
-        font-size: 13px;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        color: #b19a6a;
-        margin: 18px 0 8px;
-        font-weight: 600;
-    }
-
-    .profile-bio {
-        font-size: 14px;
-        color: #555;
-        line-height: 1.6;
-        background: #faf8f3;
-        border-radius: 10px;
-        padding: 12px 14px;
-        margin-top: 4px;
-    }
-
-    .muted {
-        color: #999;
-        font-style: italic;
-    }
-
-    @media (max-width: 960px) {
-        .profile-layout {
-            grid-template-columns: 1fr;
-        }
-    }
-
-    @media (max-width: 900px) {
-        .layout {
-            flex-direction: column;
-        }
-        .sidebar {
-            width: 100%;
-            border-right: none;
-            border-bottom: 1px solid #eee;
-            flex-direction: row;
-            align-items: center;
-            gap: 18px;
-            overflow-x: auto;
-        }
-        .sidebar h2 {
-            margin-bottom: 0;
-        }
-        .sidebar a {
-            padding: 8px 0;
-            white-space: nowrap;
-        }
-        .logout-btn, .sidebar-footer {
-            display: none;
-        }
-        .main {
-            padding: 24px;
-        }
-    }
+:root{--gold:#c8a24a;--gold-dark:#a98532;--bg:#f5f4f2;--card:#fff;--line:#e6e2da;--text:#222;--muted:#777;--green:#287a4a;--amber:#9a6700;--blue:#2f65a7;--red:#a83b3b}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,sans-serif;background:var(--bg);color:var(--text)}
+.layout{display:flex;min-height:100vh}.sidebar{width:250px;background:#fff;border-right:1px solid var(--line);padding:28px;display:flex;flex-direction:column;box-shadow:2px 0 10px rgba(0,0,0,.04)}
+.sidebar h2{font-family:"Playfair Display",serif;color:var(--gold);margin:0 0 32px;font-size:26px}.sidebar a{color:#444;text-decoration:none;padding:12px 0;display:block;font-size:15px;font-weight:500;transition:.2s}.sidebar a:hover,.sidebar a.active{color:var(--gold);transform:translateX(3px)}.sidebar a.active{font-weight:700}.logout-btn{margin-top:auto;padding:12px;background:var(--gold);color:#fff;text-align:center;border-radius:8px;cursor:pointer;font-weight:600}.sidebar-footer{margin-top:20px;padding-top:14px;border-top:1px solid #eee;font-size:12px;color:#777;line-height:1.4}
+.main{flex:1;padding:40px 48px;overflow-y:auto}.main-header{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;margin-bottom:24px;padding-bottom:12px;border-bottom:2px solid #e8dcc2}.main-header-title{font-family:"Playfair Display",serif;font-size:32px;color:var(--gold)}.main-header-subtitle{font-size:14px;color:var(--muted);margin-top:4px}.pill-btn{padding:10px 16px;border-radius:999px;border:none;background:var(--gold);color:#fff;font-weight:700;font-size:13px;cursor:pointer;text-decoration:none;display:inline-block}.pill-btn.secondary{background:#fff;color:var(--gold-dark);border:1px solid #d9c487}
+.cards{display:grid;grid-template-columns:repeat(4,minmax(150px,1fr));gap:16px;margin-bottom:24px}.stat{background:#fff;padding:18px;border-radius:14px;box-shadow:0 4px 14px rgba(0,0,0,.055);border-left:4px solid var(--gold)}.stat h3{margin:0;color:#6b5b32;font-size:12px;text-transform:uppercase;letter-spacing:.04em}.stat p{font-size:25px;margin:9px 0 0;font-weight:700}.stat small{display:block;color:var(--muted);margin-top:5px;font-size:11px}
+.profile-layout{display:grid;grid-template-columns:minmax(270px,.85fr) minmax(0,1.65fr);gap:22px;max-width:1100px}.card{background:#fff;border-radius:16px;box-shadow:0 6px 18px rgba(0,0,0,.06);padding:24px}.card-header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}.card-title{font-family:"Playfair Display",serif;font-size:20px;color:var(--gold)}
+.profile-summary{text-align:center}.profile-photo-wrapper{width:150px;height:150px;border-radius:50%;border:3px solid var(--gold);overflow:hidden;margin:2px auto 16px;background:#faf7ec;box-shadow:0 4px 12px rgba(0,0,0,.08)}#profilePhoto{width:100%;height:100%;object-fit:cover}.profile-name{font-family:"Playfair Display",serif;font-size:23px;margin-bottom:4px}.profile-type{font-size:13px;color:#888;margin-bottom:8px}.profile-email{font-size:13px;color:#666;word-break:break-word;margin-bottom:14px}
+.status-row{display:flex;justify-content:center;gap:7px;flex-wrap:wrap;margin-bottom:14px}.badge{display:inline-block;padding:5px 9px;border-radius:999px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em}.badge.approved{background:#dcf6e6;color:var(--green)}.badge.pending{background:#fff1c9;color:var(--amber)}.badge.suspended,.badge.rejected{background:#fde1e1;color:var(--red)}.badge.type{background:#f8eed7;color:#83651e}
+.completeness{margin:18px 0;text-align:left}.complete-head{display:flex;justify-content:space-between;font-size:12px;color:#666;margin-bottom:7px}.bar{height:9px;border-radius:999px;background:#eee;overflow:hidden}.bar>span{display:block;height:100%;background:var(--gold);width:0;transition:width .25s}.hint{font-size:11px;color:#888;line-height:1.45;margin-top:8px;text-align:left}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 22px}.detail{padding:12px 0;border-bottom:1px solid #eee}.detail strong{display:block;color:#7a6a41;font-size:11px;text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px}.detail span{font-size:14px;line-height:1.5;word-break:break-word}.full{grid-column:1/-1}.bio{background:#faf8f3;border-radius:11px;padding:14px;line-height:1.6;font-size:14px;color:#555}.muted{color:#999;font-style:italic}
+.availability-list{display:grid;grid-template-columns:1fr 1fr;gap:7px 18px}.availability-row{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid #eee;font-size:12px}.availability-row strong{color:#555}.availability-row span{color:#777;text-align:right}.empty{font-size:13px;color:#777;padding:6px 0}
+.note{margin-top:14px;padding:12px 14px;border-radius:10px;background:#fff8e6;color:#795b15;font-size:12px;line-height:1.5}
+@media(max-width:1050px){.cards{grid-template-columns:repeat(2,1fr)}.profile-layout{grid-template-columns:1fr}}@media(max-width:900px){.layout{flex-direction:column}.sidebar{width:100%;border-right:0;border-bottom:1px solid #eee;flex-direction:row;align-items:center;gap:18px;overflow-x:auto;padding:18px 22px}.sidebar h2{margin:0}.sidebar a{padding:8px 0;white-space:nowrap}.logout-btn,.sidebar-footer{display:none}.main{padding:24px}}@media(max-width:600px){.cards,.detail-grid,.availability-list{grid-template-columns:1fr}.main-header{align-items:flex-start;flex-direction:column}.full{grid-column:auto}}
 </style>
 </head>
-
 <body>
-
 <div class="layout">
+  <aside class="sidebar">
+    <h2>Witness Hub</h2>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="myjobs.html">My Jobs</a>
+    <a href="availability.html">Availability</a>
+    <a href="profile.html" class="active">Profile</a>
+    <a href="profile-edit.html">Edit Profile</a>
+    <div class="logout-btn" onclick="logout()">Logout</div>
+    <div class="sidebar-footer">© Need A Witness UK<br>Witness Hub v1.0</div>
+  </aside>
 
-    <!-- SIDEBAR -->
-    <div class="sidebar">
-        <h2>Witness Hub</h2>
-        <a href="dashboard.html">Dashboard</a>
-        <a href="myjobs.html">My Jobs</a>
-        <a href="availability.html">Availability</a>
-        <a href="profile.html" class="active">Profile</a>
-        <a href="profile-edit.html">Edit Profile</a>
-
-        <div class="logout-btn" onclick="logout()">Logout</div>
-
-        <div class="sidebar-footer">
-            © Need A Witness UK<br>
-            Witness Hub v1.0
-        </div>
+  <main class="main">
+    <div class="main-header">
+      <div>
+        <div class="main-header-title">Your Profile</div>
+        <div class="main-header-subtitle">Review how your witness profile looks and keep your details complete and current.</div>
+      </div>
+      <a class="pill-btn" href="profile-edit.html">Edit Profile</a>
     </div>
 
-    <!-- MAIN -->
-    <div class="main">
-        <div class="header">Your Profile</div>
-        <div class="subheader">
-            This is what couples will see when they view your witness profile.
-        </div>
-
-        <div class="profile-layout">
-
-            <!-- LEFT: SUMMARY CARD -->
-            <div class="card profile-summary">
-                <div class="profile-photo-wrapper">
-                    <img id="profilePhoto" src="/hub/default-single.png" alt="Profile photo">
-                </div>
-
-                <div class="tag-pill" id="profileTypeTag">Witness</div>
-
-                <div class="profile-name" id="displayName">Your Name</div>
-                <div class="profile-type" id="profileTypeText">Single Witness</div>
-                <div class="profile-email" id="email">email@example.com</div>
-
-                <a class="edit-btn" href="profile-edit.html">Edit Profile</a>
-            </div>
-
-            <!-- RIGHT: DETAILS CARD -->
-            <div class="card">
-                <div class="card-header">Profile Details</div>
-                <div class="card-subheader">Key information couples will use to decide if you’re the right fit.</div>
-
-                <!-- SINGLE NAME -->
-                <div id="singleNameRow" class="profile-row">
-                    <strong>Name</strong>
-                    <span id="name">Not set</span>
-                </div>
-
-                <!-- COUPLE FIELDS -->
-                <div class="profile-section-title" id="coupleSectionTitle" style="display:none;">
-                    Couple Witness Details
-                </div>
-
-                <div id="teamNameRow" class="profile-row" style="display:none;">
-                    <strong>Team Name</strong>
-                    <span id="teamName">—</span>
-                </div>
-
-                <div id="partner1Row" class="profile-row" style="display:none;">
-                    <strong>Partner 1</strong>
-                    <span id="partner1">—</span>
-                </div>
-
-                <div id="partner2Row" class="profile-row" style="display:none;">
-                    <strong>Partner 2</strong>
-                    <span id="partner2">—</span>
-                </div>
-
-                <div class="profile-section-title">Contact & Location</div>
-
-                <div class="profile-row">
-                    <strong>Phone</strong>
-                    <span id="phone" class="muted">Not set</span>
-                </div>
-
-                <div class="profile-row">
-                    <strong>Location</strong>
-                    <span id="location" class="muted">Not set</span>
-                </div>
-
-                <div class="profile-section-title">Bio</div>
-                <div class="profile-bio" id="bio">
-                    <span class="muted">No bio yet. Add one from the Edit Profile page to help couples get to know you.</span>
-                </div>
-            </div>
-        </div>
+    <div class="cards">
+      <div class="stat"><h3>Profile Complete</h3><p id="profileComplete">0%</p><small>Based on the useful profile fields</small></div>
+      <div class="stat"><h3>Assigned Jobs</h3><p id="assignedJobs">0</p><small>Current and future assignments</small></div>
+      <div class="stat"><h3>Completed Jobs</h3><p id="completedJobs">0</p><small>Finished assigned ceremonies</small></div>
+      <div class="stat"><h3>Pending Requests</h3><p id="pendingRequests">0</p><small>Jobs you've requested</small></div>
     </div>
+
+    <div class="profile-layout">
+      <section class="card profile-summary">
+        <div class="profile-photo-wrapper"><img id="profilePhoto" src="/hub/default-single.png" alt="Profile photo"></div>
+        <div class="status-row"><span class="badge type" id="profileTypeTag">Witness</span><span class="badge pending" id="accountStatus">Checking</span></div>
+        <div class="profile-name" id="displayName">Your Name</div>
+        <div class="profile-type" id="profileTypeText">Single Witness Profile</div>
+        <div class="profile-email" id="email">email@example.com</div>
+
+        <div class="completeness">
+          <div class="complete-head"><span>Profile completeness</span><strong id="completeLabel">0%</strong></div>
+          <div class="bar"><span id="completeBar"></span></div>
+          <div class="hint" id="completeHint">Loading your profile…</div>
+        </div>
+        <a class="pill-btn secondary" href="availability.html">Manage Availability</a>
+      </section>
+
+      <div>
+        <section class="card" style="margin-bottom:22px">
+          <div class="card-header"><div class="card-title">Profile Details</div><a href="profile-edit.html" style="color:var(--gold-dark);font-weight:700;font-size:12px;text-decoration:none">Edit →</a></div>
+          <div class="detail-grid">
+            <div class="detail" id="singleNameRow"><strong>Name</strong><span id="name">Not set</span></div>
+            <div class="detail" id="teamNameRow" style="display:none"><strong>Team Name</strong><span id="teamName">Not set</span></div>
+            <div class="detail" id="partner1Row" style="display:none"><strong>Partner 1</strong><span id="partner1">Not set</span></div>
+            <div class="detail" id="partner2Row" style="display:none"><strong>Partner 2</strong><span id="partner2">Not set</span></div>
+            <div class="detail"><strong>Phone</strong><span id="phone">Not set</span></div>
+            <div class="detail"><strong>Location</strong><span id="location">Not set</span></div>
+            <div class="detail full"><strong>Bio</strong><div class="bio" id="bio"><span class="muted">No bio yet.</span></div></div>
+          </div>
+          <div class="note">Customer contact details for available jobs stay hidden until you are actually assigned. Keep your own profile information accurate so admins and couples know who they are working with.</div>
+        </section>
+
+        <section class="card">
+          <div class="card-header"><div class="card-title">Recurring Availability</div><a href="availability.html" style="color:var(--gold-dark);font-weight:700;font-size:12px;text-decoration:none">Edit →</a></div>
+          <div id="availabilitySummary"><div class="empty">Loading…</div></div>
+        </section>
+      </div>
+    </div>
+  </main>
 </div>
 
-<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 <script src="firebase.js"></script>
-
 <script>
-function getProfilePhoto(data) {
-    return data.photoURL ||
-        (data.type === "couple"
-            ? "/hub/default-couple.png"
-            : "/hub/default-single.png");
-}
+let currentUser=null,userData=null;
+function getProfilePhoto(data){return data.photoURL||(data.type==="couple"?"/hub/default-couple.png":"/hub/default-single.png");}
+function displayName(data){if(data.type==="couple")return data.teamName||`${data.partner1Name||""} & ${data.partner2Name||""}`.trim()||"Couple team";return data.name||"Witness";}
+function statusOf(data){if(data.status==="suspended")return ["Suspended","suspended"];if(data.status==="rejected")return ["Rejected","rejected"];if(data.approved===true)return ["Approved","approved"];return ["Pending","pending"];}
+function setText(id,value){const el=document.getElementById(id);if(!el)return;el.textContent=value||"Not set";el.classList.toggle("muted",!value);}
+function renderAvailability(data){const root=document.getElementById("availabilitySummary"),days=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],a=data.availability;if(!a){root.innerHTML="<div class='empty'>No recurring availability set yet.</div>";return;}const rows=days.map(day=>{const v=a[day];if(!v)return"";return `<div class="availability-row"><strong>${day}</strong><span>${v.enabled?`${v.start||""}–${v.end||""}`:"Not available"}</span></div>`;}).filter(Boolean).join("");root.innerHTML=`<div class="availability-list">${rows}</div>`||"<div class='empty'>No recurring availability set yet.</div>";}
+function completeness(data){const couple=data.type==="couple";const checks=[!!data.photoURL,!!data.phone,!!data.location,!!data.bio,couple?!!data.teamName:!!data.name,couple?!!data.partner1Name:true,couple?!!data.partner2Name:true,!!data.availability];const done=checks.filter(Boolean).length,pct=Math.round(done/checks.length*100);const missing=[];if(!data.photoURL)missing.push("profile photo");if(!data.phone)missing.push("phone");if(!data.location)missing.push("location");if(!data.bio)missing.push("bio");if(couple){if(!data.teamName)missing.push("team name");if(!data.partner1Name||!data.partner2Name)missing.push("partner names");}else if(!data.name)missing.push("name");if(!data.availability)missing.push("availability");return {pct,missing};}
+function assignedToMe(job){return Array.isArray(job.assignedWitnesses)&&job.assignedWitnesses.includes(currentUser.uid);}
+async function loadStats(){try{const snap=await db.collection("jobs").get();let assigned=0,completed=0,requests=0;snap.forEach(doc=>{const j=doc.data();if(assignedToMe(j)){if(j.status==="completed")completed++;else if(j.status!=="cancelled")assigned++;}if(j.requestBy===currentUser.uid&&j.requestStatus==="pending")requests++;});document.getElementById("assignedJobs").textContent=assigned;document.getElementById("completedJobs").textContent=completed;document.getElementById("pendingRequests").textContent=requests;}catch(e){console.error("Profile job stats:",e);}}
 
-auth.onAuthStateChanged(async user => {
-    if (!user) {
-        window.location.href = "login.html";
-        return;
-    }
-
-    const doc = await db.collection("users").doc(user.uid).get();
-    const data = doc.data() || {};
-
-    // Photo
-    document.getElementById("profilePhoto").src = getProfilePhoto(data);
-
-    // Email
-    document.getElementById("email").textContent = user.email || "";
-
-    // Type tag + text
-    const type = data.type || "single";
-    const typeTag = document.getElementById("profileTypeTag");
-    const typeText = document.getElementById("profileTypeText");
-
-    if (type === "couple") {
-        typeTag.textContent = "Couple Witnesses";
-        typeText.textContent = "Couple Witness Profile";
-    } else {
-        typeTag.textContent = "Witness";
-        typeText.textContent = "Single Witness Profile";
-    }
-
-    // Shared fields
-    const phoneEl = document.getElementById("phone");
-    const locationEl = document.getElementById("location");
-    const bioEl = document.getElementById("bio");
-
-    if (data.phone) {
-        phoneEl.textContent = data.phone;
-        phoneEl.classList.remove("muted");
-    } else {
-        phoneEl.textContent = "Not set";
-        phoneEl.classList.add("muted");
-    }
-
-    if (data.location) {
-        locationEl.textContent = data.location;
-        locationEl.classList.remove("muted");
-    } else {
-        locationEl.textContent = "Not set";
-        locationEl.classList.add("muted");
-    }
-
-    if (data.bio) {
-        bioEl.textContent = data.bio;
-        bioEl.classList.remove("muted");
-    } else {
-        bioEl.innerHTML = '<span class="muted">No bio yet. Add one from the Edit Profile page to help couples get to know you.</span>';
-    }
-
-    // Single vs Couple
-    const singleNameRow = document.getElementById("singleNameRow");
-    const teamNameRow = document.getElementById("teamNameRow");
-    const partner1Row = document.getElementById("partner1Row");
-    const partner2Row = document.getElementById("partner2Row");
-    const coupleSectionTitle = document.getElementById("coupleSectionTitle");
-
-    const displayNameEl = document.getElementById("displayName");
-
-    if (type === "couple") {
-        // Show couple fields
-        singleNameRow.style.display = "none";
-        coupleSectionTitle.style.display = "block";
-        teamNameRow.style.display = "flex";
-        partner1Row.style.display = "flex";
-        partner2Row.style.display = "flex";
-
-        const teamName = data.teamName || "—";
-        const partner1 = data.partner1Name || "—";
-        const partner2 = data.partner2Name || "—";
-
-        document.getElementById("teamName").textContent = teamName;
-        document.getElementById("partner1").textContent = partner1;
-        document.getElementById("partner2").textContent = partner2;
-
-        displayNameEl.textContent = teamName !== "—" ? teamName : "Your Team Name";
-    } else {
-        // Show single fields
-        singleNameRow.style.display = "flex";
-        coupleSectionTitle.style.display = "none";
-        teamNameRow.style.display = "none";
-        partner1Row.style.display = "none";
-        partner2Row.style.display = "none";
-
-        const name = data.name || "Not set";
-        document.getElementById("name").textContent = name;
-        displayNameEl.textContent = name !== "Not set" ? name : "Your Name";
-    }
+auth.onAuthStateChanged(async user=>{
+  if(!user){location.href="login.html";return;}currentUser=user;
+  try{
+    const snap=await db.collection("users").doc(user.uid).get();if(!snap.exists){logout();return;}userData=snap.data()||{};
+    if(userData.approved!==true||userData.status==="pending"||["rejected","suspended"].includes(userData.status)){location.href="pending.html";return;}
+    document.getElementById("profilePhoto").src=getProfilePhoto(userData);document.getElementById("email").textContent=userData.email||user.email||"";
+    const type=userData.type||"single",name=displayName(userData),[statusLabel,statusClass]=statusOf(userData);document.getElementById("displayName").textContent=name;document.getElementById("profileTypeTag").textContent=type==="couple"?"Couple Witnesses":"Witness";document.getElementById("profileTypeText").textContent=type==="couple"?"Couple Witness Profile":"Single Witness Profile";const status=document.getElementById("accountStatus");status.textContent=statusLabel;status.className=`badge ${statusClass}`;
+    const single=document.getElementById("singleNameRow"),team=document.getElementById("teamNameRow"),p1=document.getElementById("partner1Row"),p2=document.getElementById("partner2Row");if(type==="couple"){single.style.display="none";team.style.display="block";p1.style.display="block";p2.style.display="block";setText("teamName",userData.teamName);setText("partner1",userData.partner1Name);setText("partner2",userData.partner2Name);}else{single.style.display="block";team.style.display="none";p1.style.display="none";p2.style.display="none";setText("name",userData.name);}
+    setText("phone",userData.phone);setText("location",userData.location);const bio=document.getElementById("bio");bio.textContent=userData.bio||"No bio yet. Add one from Edit Profile to help couples get to know you.";bio.classList.toggle("muted",!userData.bio);
+    const c=completeness(userData);document.getElementById("profileComplete").textContent=c.pct+"%";document.getElementById("completeLabel").textContent=c.pct+"%";document.getElementById("completeBar").style.width=c.pct+"%";document.getElementById("completeHint").textContent=c.missing.length?`Still worth adding: ${c.missing.join(", ")}.`:"Your profile is looking complete.";
+    renderAvailability(userData);loadStats();
+  }catch(e){console.error(e);alert("We couldn't load your profile. Please refresh and try again.");}
 });
-
-function logout() {
-    auth.signOut().then(() => {
-        window.location.href = "login.html";
-    });
-}
+function logout(){auth.signOut().then(()=>location.href="login.html");}
 </script>
-
 </body>
 </html>
