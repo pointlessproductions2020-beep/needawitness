@@ -8,20 +8,22 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
 <style>
+    * { box-sizing: border-box; }
     body {
         margin: 0;
-        padding: 0;
-        background: #f7f7f7;
+        padding: 24px;
+        background: linear-gradient(145deg,#f7f5ef,#f4f4f4);
         font-family: Inter, sans-serif;
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 100vh;
+        min-height: 100vh;
     }
 
     .login-card {
         background: white;
-        width: 380px;
+        width: 410px;
+        max-width: 100%;
         padding: 35px;
         border-radius: 14px;
         box-shadow: 0 4px 18px rgba(0,0,0,0.08);
@@ -50,7 +52,7 @@
         width: 100%;
         padding: 14px;
         background: #D4AF37;
-        color: white;
+        color: #1f1f1f;
         border: none;
         border-radius: 8px;
         font-size: 17px;
@@ -76,27 +78,44 @@
     }
 
     .error {
-        color: red;
-        font-size: 14px;
+        color: #a83b3b;
+        font-size: 13px;
         min-height: 20px;
         margin-top: 10px;
+        line-height: 1.45;
     }
+    .brand { font-size:12px; text-transform:uppercase; letter-spacing:.12em; color:#777; margin-bottom:6px; }
+    .sub { color:#777; font-size:13px; line-height:1.5; margin:-15px 0 17px; }
+    .password-wrap { position:relative; }
+    .password-wrap input { padding-right:65px; }
+    .show-pass { position:absolute; right:11px; top:22px; border:0; background:none; color:#8b6c25; width:auto; padding:0; margin:0; font-size:12px; }
+    .forgot { border:0; background:none; color:#8b6c25; padding:0; margin:4px 0 2px; width:auto; font-size:12px; font-weight:600; }
+    button:disabled { opacity:.55; cursor:not-allowed; }
+    .home-link { margin-top:20px; padding-top:16px; border-top:1px solid #eee; }
+    input:focus { outline:none; border-color:#c8a24a; box-shadow:0 0 0 3px rgba(200,162,74,.12); background:#fff; }
 </style>
 </head>
 
 <body>
 
 <div class="login-card">
+    <div class="brand">Need A Witness UK</div>
     <h2>Witness Hub Login</h2>
+    <div class="sub">Sign in to view available work, assigned ceremonies, availability and earnings.</div>
 
-    <input id="email" type="email" placeholder="Email">
-    <input id="password" type="password" placeholder="Password">
+    <input id="email" type="email" autocomplete="email" placeholder="Email address">
+    <div class="password-wrap">
+        <input id="password" type="password" autocomplete="current-password" placeholder="Password">
+        <button class="show-pass" type="button" onclick="togglePassword()">Show</button>
+    </div>
 
-    <button onclick="login()">Login</button>
+    <button id="loginBtn" onclick="login()">Login</button>
+    <button class="forgot" type="button" onclick="resetPassword()">Forgot your password?</button>
 
     <div class="error" id="error"></div>
 
-    <a class="link" href="register.html">Need an account? Register</a>
+    <a class="link" href="register.html">Want to become a witness? Register</a>
+    <a class="link home-link" href="../index.html">← Back to Need A Witness UK</a>
 </div>
 
 <!-- Firebase SDKs -->
@@ -108,33 +127,87 @@
 <script src="firebase.js?v=10"></script>
 
 <script>
-// Redirect if already logged in
-firebase.auth().onAuthStateChanged(user => {
-    if (user) {
-        window.location.href = "dashboard.html";
-    }
-});
+const auth = firebase.auth();
+const db = firebase.firestore();
+let redirecting = false;
 
-function login() {
-    const email = document.getElementById("email").value.trim();
-    const pass = document.getElementById("password").value.trim();
-    const errorBox = document.getElementById("error");
-
-    errorBox.textContent = "";
-
-    if (!email || !pass) {
-        errorBox.textContent = "Please enter both email and password.";
-        return;
-    }
-
-    firebase.auth().signInWithEmailAndPassword(email, pass)
-        .then(() => {
-            window.location.href = "dashboard.html";
-        })
-        .catch((error) => {
-            errorBox.textContent = error.message;
-        });
+function friendlyError(code) {
+    const messages = {
+        "auth/invalid-email": "Please enter a valid email address.",
+        "auth/user-disabled": "This login has been disabled. Please contact Need A Witness UK.",
+        "auth/user-not-found": "We couldn't sign in with those details.",
+        "auth/wrong-password": "We couldn't sign in with those details.",
+        "auth/invalid-login-credentials": "We couldn't sign in with those details.",
+        "auth/too-many-requests": "Too many login attempts. Please wait a little while and try again.",
+        "auth/network-request-failed": "Network problem — please check your connection and try again."
+    };
+    return messages[code] || "We couldn't sign you in. Please check your details and try again.";
 }
+
+async function routeUser(user) {
+    if (!user || redirecting) return;
+    redirecting = true;
+    try {
+        const snap = await db.collection("users").doc(user.uid).get();
+        if (!snap.exists) {
+            document.getElementById("error").textContent = "Your login exists, but your Witness Hub profile could not be found. Please contact Need A Witness UK.";
+            redirecting = false;
+            return;
+        }
+        const data = snap.data() || {};
+        if (data.approved === true && !["pending","rejected","suspended"].includes(data.status)) {
+            window.location.replace("dashboard.html");
+        } else {
+            window.location.replace("pending.html");
+        }
+    } catch (e) {
+        console.error(e);
+        document.getElementById("error").textContent = "We couldn't check your witness account status. Please try again.";
+        redirecting = false;
+    }
+}
+
+auth.onAuthStateChanged(user => { if (user) routeUser(user); });
+
+async function login() {
+    const email = document.getElementById("email").value.trim();
+    const pass = document.getElementById("password").value;
+    const errorBox = document.getElementById("error");
+    const btn = document.getElementById("loginBtn");
+    errorBox.textContent = "";
+    if (!email || !pass) { errorBox.textContent = "Please enter both email and password."; return; }
+    btn.disabled = true; btn.textContent = "Signing in…";
+    try {
+        const result = await auth.signInWithEmailAndPassword(email, pass);
+        await routeUser(result.user);
+    } catch (e) {
+        console.error(e);
+        errorBox.textContent = friendlyError(e.code);
+        btn.disabled = false; btn.textContent = "Login";
+    }
+}
+
+async function resetPassword() {
+    const email = document.getElementById("email").value.trim();
+    const errorBox = document.getElementById("error");
+    if (!email) { errorBox.textContent = "Enter your email address first, then press Forgot your password."; return; }
+    try {
+        await auth.sendPasswordResetEmail(email);
+        errorBox.style.color = "#287a4a";
+        errorBox.textContent = "Password reset email sent. Check your inbox.";
+        setTimeout(()=>errorBox.style.color="",3500);
+    } catch(e) {
+        errorBox.textContent = friendlyError(e.code);
+    }
+}
+
+function togglePassword() {
+    const input = document.getElementById("password");
+    const btn = document.querySelector(".show-pass");
+    input.type = input.type === "password" ? "text" : "password";
+    btn.textContent = input.type === "password" ? "Show" : "Hide";
+}
+document.getElementById("password").addEventListener("keydown", e => { if (e.key === "Enter") login(); });
 </script>
 
 </body>
