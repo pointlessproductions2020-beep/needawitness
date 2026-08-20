@@ -4,192 +4,225 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Register – Need A Witness UK</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-    body {
-        margin: 0;
-        background: #f7f7f7;
-        font-family: Inter, sans-serif;
-    }
-
-    .container {
-        max-width: 420px;
-        margin: 60px auto;
-        background: white;
-        padding: 30px;
-        border-radius: 14px;
-        box-shadow: 0 6px 18px rgba(0,0,0,0.08);
-        border-top: 4px solid #D4AF37;
-    }
-
-    h1 {
-        font-family: "Playfair Display", serif;
-        color: #D4AF37;
-        text-align: center;
-        margin-bottom: 20px;
-    }
-
-    label {
-        font-size: 14px;
-        font-weight: 600;
-        display: block;
-        margin-top: 12px;
-    }
-
-    input, select {
-        width: 100%;
-        padding: 12px;
-        margin-top: 6px;
-        border-radius: 8px;
-        border: 1px solid #ccc;
-        font-size: 15px;
-    }
-
-    .btn {
-        width: 100%;
-        padding: 14px;
-        background: #D4AF37;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        font-size: 16px;
-        font-weight: 600;
-        cursor: pointer;
-        margin-top: 20px;
-    }
-
-    .btn:hover {
-        background: #c19c2f;
-    }
-
-    .link {
-        text-align: center;
-        margin-top: 14px;
-        font-size: 14px;
-    }
-
-    .link a {
-        color: #D4AF37;
-        text-decoration: none;
-        font-weight: 600;
-    }
+:root{--gold:#c8a24a;--gold-dark:#9a782c;--bg:#f6f4ef;--text:#242424;--muted:#777;--line:#ddd5c5;--green:#287a4a;--red:#a83b3b}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:linear-gradient(145deg,#f7f5ef,#f4f4f4);font-family:Inter,sans-serif;color:var(--text);padding:32px 16px}
+.container{max-width:620px;margin:0 auto;background:#fff;padding:30px;border-radius:17px;box-shadow:0 8px 24px rgba(0,0,0,.08);border-top:4px solid var(--gold)}
+.brand{text-align:center;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#777;margin-bottom:6px}
+h1{font-family:"Playfair Display",serif;color:var(--gold);text-align:center;margin:0 0 7px;font-size:31px}
+.intro{text-align:center;color:#777;font-size:13px;line-height:1.55;margin:0 auto 22px;max-width:500px}
+.notice{background:#fff8e6;color:#715716;padding:12px 14px;border-radius:10px;font-size:12px;line-height:1.5;margin-bottom:18px}
+.section-title{font-family:"Playfair Display",serif;color:var(--gold-dark);font-size:18px;margin:22px 0 7px;padding-top:18px;border-top:1px solid #eee}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.full{grid-column:1/-1}
+label{font-size:12px;font-weight:700;display:block;margin-bottom:6px;color:#5e533b}
+input,select,textarea{width:100%;padding:12px;border-radius:9px;border:1px solid var(--line);font:inherit;background:#fafafa;color:#222}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--gold);background:#fff;box-shadow:0 0 0 3px rgba(200,162,74,.12)}
+textarea{min-height:100px;resize:vertical}
+.helper{font-size:10px;color:#888;margin-top:5px;line-height:1.4}
+.password-wrap{position:relative}.password-wrap input{padding-right:62px}.show-pass{position:absolute;right:10px;top:10px;border:0;background:none;color:var(--gold-dark);font-weight:700;font-size:11px;cursor:pointer}
+.strength{height:6px;background:#eee;border-radius:999px;overflow:hidden;margin-top:7px}.strength span{display:block;height:100%;width:0;background:var(--red);transition:.2s}
+.checkline{display:flex;gap:10px;align-items:flex-start;margin-top:18px}.checkline input{width:auto;margin-top:3px}.checkline label{font-weight:400;color:#666;line-height:1.5;margin:0}
+.btn{width:100%;padding:14px;background:var(--gold);color:#1e1e1e;border:none;border-radius:9px;font-size:15px;font-weight:800;cursor:pointer;margin-top:20px}
+.btn:hover:not(:disabled){background:#bd963b}.btn:disabled{opacity:.55;cursor:not-allowed}
+.error{color:var(--red);font-size:12px;line-height:1.45;min-height:18px;margin-top:10px;text-align:center}
+.link{text-align:center;margin-top:16px;font-size:13px;color:#777}.link a{color:var(--gold-dark);text-decoration:none;font-weight:700}
+.home{border-top:1px solid #eee;padding-top:15px;margin-top:18px}
+.hidden{display:none}
+@media(max-width:600px){.container{padding:24px 18px}.grid{grid-template-columns:1fr}.full{grid-column:auto}}
 </style>
 </head>
-
 <body>
-
 <div class="container">
-    <h1>Become a Witness</h1>
+  <div class="brand">Need A Witness UK</div>
+  <h1>Become a Witness</h1>
+  <p class="intro">Create a Witness Hub account to apply to join our future witness network. Registration does not automatically approve the account.</p>
 
-    <label>Full Name</label>
-    <input type="text" id="name" placeholder="Your full name">
+  <div class="notice"><b>How it works:</b> submit your profile → Need A Witness UK reviews it → once approved, you can see suitable available jobs and request work through the Witness Hub.</div>
 
-    <label>Email</label>
-    <input type="email" id="email" placeholder="you@example.com">
+  <div class="section-title">Account details</div>
+  <div class="grid">
+    <div class="full">
+      <label for="email">Email address *</label>
+      <input id="email" type="email" autocomplete="email" placeholder="you@example.com">
+    </div>
+    <div class="full">
+      <label for="password">Password *</label>
+      <div class="password-wrap">
+        <input id="password" type="password" autocomplete="new-password" placeholder="At least 8 characters">
+        <button class="show-pass" type="button" onclick="togglePassword()">Show</button>
+      </div>
+      <div class="strength"><span id="strengthBar"></span></div>
+      <div class="helper" id="strengthText">Use at least 8 characters; a mix of letters, numbers and symbols is better.</div>
+    </div>
+  </div>
 
-    <label>Password</label>
-    <input type="password" id="password" placeholder="Choose a password">
-
-    <label>Phone Number</label>
-    <input type="text" id="phone" placeholder="07...">
-
-    <label>Location</label>
-    <input type="text" id="location" placeholder="City or town">
-
-    <label>Witness Type</label>
-    <select id="type">
+  <div class="section-title">Witness profile</div>
+  <div class="grid">
+    <div>
+      <label for="type">Witness type *</label>
+      <select id="type">
         <option value="single">Single Witness</option>
         <option value="couple">Couple Team</option>
-    </select>
-
-    <div id="coupleFields" style="display:none;">
-        <label>Partner 1 Name</label>
-        <input type="text" id="partner1Name">
-
-        <label>Partner 2 Name</label>
-        <input type="text" id="partner2Name">
-
-        <label>Team Name (optional)</label>
-        <input type="text" id="teamName" placeholder="e.g., The Smiths">
+      </select>
+    </div>
+    <div>
+      <label for="name" id="nameLabel">Full name *</label>
+      <input id="name" type="text" autocomplete="name" placeholder="Your full name">
+      <div class="helper" id="nameHelp">This is the name shown to Need A Witness UK admins.</div>
+    </div>
+    <div>
+      <label for="phone">Phone number *</label>
+      <input id="phone" type="tel" autocomplete="tel" placeholder="07...">
+    </div>
+    <div>
+      <label for="location">Town / city *</label>
+      <input id="location" type="text" autocomplete="address-level2" placeholder="e.g. Maidstone">
+      <div class="helper">Used to help judge practical travel for future jobs.</div>
     </div>
 
-    <button class="btn" onclick="register()">Create Account</button>
-
-    <div class="link">
-        Already registered? <a href="login.html">Login</a>
+    <div id="coupleFields" class="full hidden">
+      <div class="grid">
+        <div>
+          <label for="partner1Name">Partner 1 name *</label>
+          <input id="partner1Name" type="text">
+        </div>
+        <div>
+          <label for="partner2Name">Partner 2 name *</label>
+          <input id="partner2Name" type="text">
+        </div>
+        <div class="full">
+          <label for="teamName">Team name</label>
+          <input id="teamName" type="text" placeholder="e.g. T & Lucy">
+          <div class="helper">Optional public/display name for your witness team.</div>
+        </div>
+      </div>
     </div>
+
+    <div class="full">
+      <label for="bio">Short bio</label>
+      <textarea id="bio" maxlength="600" placeholder="Tell us a little about yourself, your reliability, availability or why you'd like to join the witness network."></textarea>
+      <div class="helper"><span id="bioCount">0</span> / 600 characters</div>
+    </div>
+  </div>
+
+  <div class="checkline">
+    <input id="confirmAccuracy" type="checkbox">
+    <label for="confirmAccuracy">I confirm the information I’ve provided is accurate and understand that my account must be reviewed and approved before I can access witness jobs.</label>
+  </div>
+
+  <button class="btn" id="registerBtn" type="button" onclick="register()">Create Witness Account</button>
+  <div class="error" id="error"></div>
+
+  <div class="link">Already registered? <a href="login.html">Login</a></div>
+  <div class="link home"><a href="../index.html">← Back to Need A Witness UK</a></div>
 </div>
 
-<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 <script src="firebase.js"></script>
-
 <script>
-document.getElementById("type").addEventListener("change", function() {
-    document.getElementById("coupleFields").style.display =
-        this.value === "couple" ? "block" : "none";
-});
+const typeEl=document.getElementById("type");
+const passEl=document.getElementById("password");
+const errorEl=document.getElementById("error");
+let creating=false;
 
-async function register() {
-    const name = document.getElementById("name").value.trim();
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value.trim();
-    const phone = document.getElementById("phone").value.trim();
-    const location = document.getElementById("location").value.trim();
-    const type = document.getElementById("type").value;
-
-    if (!name || !email || !password || !phone) {
-        alert("Please fill in all required fields.");
-        return;
-    }
-
-    try {
-        const userCred = await auth.createUserWithEmailAndPassword(email, password);
-        const uid = userCred.user.uid;
-
-        const userData = {
-            name,
-            email,
-            phone,
-            location,
-            type,
-
-            // Couple fields
-            partner1Name: type === "couple" ? document.getElementById("partner1Name").value.trim() : null,
-            partner2Name: type === "couple" ? document.getElementById("partner2Name").value.trim() : null,
-            teamName: type === "couple" ? document.getElementById("teamName").value.trim() : null,
-
-            // NEW APPROVAL SYSTEM FIELDS
-            approved: false,
-            status: "pending",
-            rating: 0,
-            suspended: false,
-            photoURL: null,
-            adminNotes: "",
-            idPhotoURL: null,
-            selfiePhotoURL: null,
-
-            // Availability placeholder
-            availability: {},
-
-            createdAt: new Date().toISOString()
-        };
-
-        await db.collection("users").doc(uid).set(userData);
-
-        alert("Account created! Please wait for approval.");
-        window.location.href = "pending.html";
-
-    } catch (error) {
-        console.error(error);
-        alert(error.message);
-    }
+function friendlyError(code){
+  const m={
+    "auth/email-already-in-use":"That email address already has an account. Try logging in instead.",
+    "auth/invalid-email":"Please enter a valid email address.",
+    "auth/weak-password":"Please choose a stronger password.",
+    "auth/network-request-failed":"Network problem — please check your connection and try again."
+  };
+  return m[code]||"We couldn't create the account. Please try again.";
 }
-</script>
 
+function updateType(){
+  const couple=typeEl.value==="couple";
+  document.getElementById("coupleFields").classList.toggle("hidden",!couple);
+  document.getElementById("nameLabel").textContent=couple?"Main contact name *":"Full name *";
+  document.getElementById("nameHelp").textContent=couple?"The main contact for this couple witness account.":"This is the name shown to Need A Witness UK admins.";
+}
+typeEl.addEventListener("change",updateType);
+
+function passwordScore(p){
+  let score=0;
+  if(p.length>=8)score++;
+  if(/[a-z]/.test(p)&&/[A-Z]/.test(p))score++;
+  if(/\d/.test(p))score++;
+  if(/[^A-Za-z0-9]/.test(p))score++;
+  return score;
+}
+function updateStrength(){
+  const s=passwordScore(passEl.value),bar=document.getElementById("strengthBar"),txt=document.getElementById("strengthText");
+  const widths=["0%","25%","50%","75%","100%"],colors=["#a83b3b","#a83b3b","#b87820","#9c8a23","#287a4a"],labels=["Use at least 8 characters; a mix of letters, numbers and symbols is better.","Weak","Fair","Good","Strong"];
+  bar.style.width=widths[s];bar.style.background=colors[s];txt.textContent=s?labels[s]:"Use at least 8 characters; a mix of letters, numbers and symbols is better.";
+}
+passEl.addEventListener("input",updateStrength);
+
+document.getElementById("bio").addEventListener("input",e=>document.getElementById("bioCount").textContent=e.target.value.length);
+
+function togglePassword(){
+  passEl.type=passEl.type==="password"?"text":"password";
+  document.querySelector(".show-pass").textContent=passEl.type==="password"?"Show":"Hide";
+}
+
+async function register(){
+  if(creating)return;
+  errorEl.textContent="";
+  const name=document.getElementById("name").value.trim();
+  const email=document.getElementById("email").value.trim().toLowerCase();
+  const password=passEl.value;
+  const phone=document.getElementById("phone").value.trim();
+  const location=document.getElementById("location").value.trim();
+  const type=typeEl.value;
+  const p1=document.getElementById("partner1Name").value.trim();
+  const p2=document.getElementById("partner2Name").value.trim();
+  const team=document.getElementById("teamName").value.trim();
+  const bio=document.getElementById("bio").value.trim();
+
+  if(!name||!email||!password||!phone||!location){errorEl.textContent="Please complete all required fields.";return;}
+  if(type==="couple"&&(!p1||!p2)){errorEl.textContent="Please enter both partner names for a couple witness account.";return;}
+  if(password.length<8){errorEl.textContent="Please use a password of at least 8 characters.";return;}
+  if(!document.getElementById("confirmAccuracy").checked){errorEl.textContent="Please confirm the application information before registering.";return;}
+
+  const btn=document.getElementById("registerBtn");
+  creating=true;btn.disabled=true;btn.textContent="Creating account…";
+
+  try{
+    const cred=await auth.createUserWithEmailAndPassword(email,password);
+    const uid=cred.user.uid;
+    const userData={
+      name,email,phone,location,type,bio,
+      partner1Name:type==="couple"?p1:null,
+      partner2Name:type==="couple"?p2:null,
+      teamName:type==="couple"?(team||`${p1} & ${p2}`):null,
+      approved:false,
+      status:"pending",
+      rating:0,
+      suspended:false,
+      photoURL:null,
+      adminNotes:"",
+      idPhotoURL:null,
+      selfiePhotoURL:null,
+      availability:{},
+      availabilityOverrides:{},
+      hubPreferences:{jobAlerts:true,paymentAlerts:true,availabilityAlerts:true},
+      createdAt:firebase.firestore.FieldValue.serverTimestamp(),
+      updatedAt:firebase.firestore.FieldValue.serverTimestamp()
+    };
+    await db.collection("users").doc(uid).set(userData);
+    window.location.replace("pending.html");
+  }catch(e){
+    console.error(e);
+    errorEl.textContent=friendlyError(e.code);
+    creating=false;btn.disabled=false;btn.textContent="Create Witness Account";
+  }
+}
+updateType();updateStrength();
+</script>
 </body>
 </html>
