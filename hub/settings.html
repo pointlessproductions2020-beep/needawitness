@@ -1,11 +1,42 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Witness Hub – Dashboard</title>
-</head>
-<body>
-    <h1>Settings</h1>
-    <p>Placeholder content.</p>
-</body>
-</html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Witness Hub – Settings</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f5f4f2;color:#222;font-family:Inter,sans-serif}.layout{display:flex;min-height:100vh}
+.sidebar{width:250px;background:#fff;border-right:1px solid #e7e1d5;padding:28px;display:flex;flex-direction:column}.sidebar h2{font:600 26px "Playfair Display";color:#c8a24a;margin:0 0 28px}.sidebar a{color:#444;text-decoration:none;padding:11px 0}.sidebar a.active,.sidebar a:hover{color:#c8a24a;font-weight:700}.logout{margin-top:auto;background:#c8a24a;padding:12px;border-radius:8px;text-align:center;font-weight:700;cursor:pointer}
+.main{flex:1;padding:40px 48px}.head,.stack{max-width:900px;margin:auto}.head{border-bottom:2px solid #e8dcc2;padding-bottom:13px;margin-bottom:22px}.head h1{font:600 32px "Playfair Display";color:#c8a24a;margin:0 0 5px}.head p,.card>p{color:#777;font-size:13px}.stack{display:grid;gap:18px}.card{background:#fff;border-radius:15px;padding:22px 24px;box-shadow:0 5px 16px #0000000d}.card h2{font:600 20px "Playfair Display";color:#c8a24a;margin:0 0 5px}.row{display:flex;justify-content:space-between;gap:20px;align-items:center;padding:14px 0;border-top:1px solid #eee}.row strong{font-size:14px}.row small{display:block;color:#888;font-size:11px;margin-top:4px}.value{font-size:13px;color:#555;text-align:right}.btn{border:0;border-radius:999px;background:#f5f0e4;color:#755b1f;padding:10px 15px;font-weight:800;cursor:pointer;text-decoration:none;font-size:12px}.btn.danger{background:#f7e3e3;color:#a53d3d}
+.toggle{position:relative;width:48px;height:27px}.toggle input{opacity:0}.slider{position:absolute;inset:0;background:#ccc;border-radius:30px;cursor:pointer}.slider:before{content:"";position:absolute;width:21px;height:21px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}.toggle input:checked+.slider{background:#c8a24a}.toggle input:checked+.slider:before{transform:translateX(21px)}.notice{background:#fff8e6;color:#735716;border-radius:10px;padding:12px 14px;font-size:12px;line-height:1.5}.toast{position:fixed;right:22px;bottom:22px;background:#242424;color:white;padding:11px 15px;border-radius:10px;opacity:0;transition:.2s}.toast.show{opacity:1}
+@media(max-width:700px){.layout{display:block}.sidebar{width:100%;padding:18px}.sidebar h2{margin-bottom:10px}.sidebar a{display:inline-block;margin-right:13px;padding:7px 0}.logout{margin-top:10px}.main{padding:24px 15px}.row{align-items:flex-start}}
+</style></head><body>
+<div class="layout"><aside class="sidebar"><h2>Witness Hub</h2>
+<a href="dashboard.html">Dashboard</a><a href="jobs.html">Available Jobs</a><a href="myjobs.html">My Jobs</a><a href="payments.html">Payments</a><a href="availability.html">Availability</a><a href="profile.html">Profile</a><a href="profile-edit.html">Edit Profile</a><a class="active" href="settings.html">Settings</a><div class="logout" onclick="logout()">Logout</div></aside>
+<main class="main"><div class="head"><h1>Settings</h1><p>Account preferences and Witness Hub controls.</p></div><div class="stack">
+<section class="card"><h2>Account</h2><p>Your sign-in details and witness account status.</p>
+<div class="row"><div><strong>Signed in as</strong><small>Your Firebase account email</small></div><div class="value" id="email">Loading…</div></div>
+<div class="row"><div><strong>Witness profile</strong><small>Profile type and display name</small></div><div class="value" id="profileName">Loading…</div></div>
+<div class="row"><div><strong>Account status</strong><small>Controlled by Need A Witness UK admins</small></div><div class="value" id="status">Loading…</div></div>
+<div class="row"><div><strong>Edit your details</strong><small>Name, phone, location, photo and bio</small></div><a class="btn" href="profile-edit.html">Edit Profile</a></div></section>
+
+<section class="card"><h2>Hub Preferences</h2><p>Stored on your own witness profile; these do not alter public booking availability.</p>
+<div class="row"><div><strong>Job opportunity notifications</strong><small>Preference for future job-alert features.</small></div><label class="toggle"><input id="jobAlerts" type="checkbox"><span class="slider"></span></label></div>
+<div class="row"><div><strong>Payment / earnings notifications</strong><small>Preference for future payout and earnings alerts.</small></div><label class="toggle"><input id="paymentAlerts" type="checkbox"><span class="slider"></span></label></div>
+<div class="row"><div><strong>Availability reminders</strong><small>Preference for future availability reminders.</small></div><label class="toggle"><input id="availabilityAlerts" type="checkbox"><span class="slider"></span></label></div>
+<div class="notice">These switches save preferences only. They do not pretend email/push notification infrastructure already exists; we can connect that later.</div></section>
+
+<section class="card"><h2>Availability</h2><p>Manage your own working days and one-off exceptions.</p><div class="row"><div><strong>Witness availability</strong><small>Recurring hours, days off and date overrides.</small></div><a class="btn" href="availability.html">Manage</a></div></section>
+
+<section class="card"><h2>Session & Security</h2><p>Basic account security actions.</p>
+<div class="row"><div><strong>Reset password</strong><small>Email a Firebase password-reset link to your signed-in address.</small></div><button class="btn" id="resetPassword">Send Reset Email</button></div>
+<div class="row"><div><strong>Sign out</strong><small>End this Witness Hub session.</small></div><button class="btn danger" onclick="logout()">Logout</button></div></section>
+</div></main></div><div class="toast" id="toast"></div>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script><script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script><script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script><script src="firebase.js"></script>
+<script>
+let currentUser=null,userData=null,timer=null;const ids=["jobAlerts","paymentAlerts","availabilityAlerts"];
+function toast(m){const t=document.getElementById("toast");t.textContent=m;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2000)}
+function nameOf(d){return d.type==="couple"?(d.teamName||`${d.partner1Name||""} & ${d.partner2Name||""}`.trim()||"Couple team"):(d.name||"Witness")}
+async function save(){if(!currentUser)return;const hubPreferences={jobAlerts:jobAlerts.checked,paymentAlerts:paymentAlerts.checked,availabilityAlerts:availabilityAlerts.checked};try{await db.collection("users").doc(currentUser.uid).update({hubPreferences,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});toast("Settings saved")}catch(e){console.error(e);toast("Could not save settings")}}
+auth.onAuthStateChanged(async u=>{if(!u){location.href="login.html";return}currentUser=u;try{const s=await db.collection("users").doc(u.uid).get();if(!s.exists){logout();return}userData=s.data()||{};if(userData.approved!==true||userData.status==="pending"||["rejected","suspended"].includes(userData.status)){location.href="pending.html";return}email.textContent=userData.email||u.email||"Not set";profileName.textContent=`${nameOf(userData)} · ${userData.type==="couple"?"Couple witnesses":"Single witness"}`;status.textContent="Approved";const p=userData.hubPreferences||{};jobAlerts.checked=p.jobAlerts!==false;paymentAlerts.checked=p.paymentAlerts!==false;availabilityAlerts.checked=p.availabilityAlerts!==false;ids.forEach(id=>document.getElementById(id).addEventListener("change",()=>{clearTimeout(timer);timer=setTimeout(save,350)}))}catch(e){console.error(e);alert("Unable to load your settings.")}});
+resetPassword.onclick=async()=>{if(!currentUser?.email)return;if(!confirm(`Send a password reset email to ${currentUser.email}?`))return;try{await auth.sendPasswordResetEmail(currentUser.email);toast("Password reset email sent")}catch(e){console.error(e);toast("Could not send reset email")}};
+function logout(){auth.signOut().then(()=>location.href="login.html")}
+</script></body></html>
