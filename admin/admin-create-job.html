@@ -4,8 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Create Job – Admin – Need A Witness UK</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
@@ -13,601 +12,354 @@
 <script src="../hub/firebase.js"></script>
 
 <style>
-    body {
-        margin: 0;
-        font-family: Inter, sans-serif;
-        background: #f4f4f6;
-        color: #222;
-    }
-
-    .layout {
-        display: flex;
-        min-height: 100vh;
-    }
-
-    .sidebar {
-        width: 260px;
-        background: #ffffff;
-        border-right: 1px solid #eee;
-        padding: 24px;
-        display: flex;
-        flex-direction: column;
-        position: sticky;
-        top: 0;
-        height: 100vh;
-    }
-
-    .logo {
-        font-family: "Playfair Display", serif;
-        font-size: 22px;
-        font-weight: 600;
-        color: #D4AF37;
-        margin-bottom: 30px;
-    }
-
-    .nav-title {
-        font-size: 12px;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        color: #999;
-        margin-bottom: 8px;
-    }
-
-    .nav-item {
-        padding: 10px 12px;
-        margin-bottom: 6px;
-        border-radius: 8px;
-        cursor: pointer;
-        font-weight: 500;
-        font-size: 14px;
-        color: #333;
-    }
-
-    .nav-item:hover {
-        background: #f5f1e6;
-    }
-
-    .nav-item.active {
-        background: #D4AF37;
-        color: white;
-    }
-
-    .sidebar-footer {
-        margin-top: auto;
-        padding-top: 16px;
-        border-top: 1px solid #eee;
-        font-size: 12px;
-        color: #777;
-        line-height: 1.4;
-    }
-
-    .logout-btn {
-        margin-top: 16px;
-        padding: 10px;
-        background: #D4AF37;
-        color: white;
-        text-align: center;
-        border-radius: 6px;
-        cursor: pointer;
-        font-weight: 600;
-        font-size: 14px;
-    }
-
-    .main {
-        flex: 1;
-        padding: 30px 40px;
-    }
-
-    .main-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 20px;
-    }
-
-    .main-header h1 {
-        font-family: "Playfair Display", serif;
-        color: #D4AF37;
-        margin: 0;
-        font-size: 26px;
-    }
-
-    .main-subtitle {
-        color: #777;
-        font-size: 14px;
-        margin-top: 4px;
-    }
-
-    .wizard {
-        max-width: 800px;
-        margin: 0 auto;
-    }
-
-    .steps {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 20px;
-    }
-
-    .step {
-        flex: 1;
-        text-align: center;
-        font-size: 13px;
-        position: relative;
-    }
-
-    .step-circle {
-        width: 26px;
-        height: 26px;
-        border-radius: 50%;
-        border: 2px solid #D4AF37;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 13px;
-        background: white;
-        color: #D4AF37;
-        margin-bottom: 4px;
-    }
-
-    .step.active .step-circle {
-        background: #D4AF37;
-        color: white;
-    }
-
-    .step-line {
-        position: absolute;
-        top: 13px;
-        left: 50%;
-        right: -50%;
-        height: 2px;
-        background: #e0d4b0;
-        z-index: -1;
-    }
-
-    .step:last-child .step-line {
-        display: none;
-    }
-
-    .card {
-        background: white;
-        padding: 20px;
-        border-radius: 12px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        margin-bottom: 20px;
-    }
-
-    label {
-        font-size: 14px;
-        font-weight: 500;
-        display: block;
-        margin-top: 10px;
-    }
-
-    input, select, textarea {
-        width: 100%;
-        padding: 10px;
-        margin-top: 6px;
-        border-radius: 8px;
-        border: 1px solid #ddd;
-        font-size: 14px;
-        background: #fafafa;
-    }
-
-    textarea {
-        resize: vertical;
-        min-height: 80px;
-    }
-
-    .buttons-row {
-        display: flex;
-        justify-content: space-between;
-        margin-top: 16px;
-    }
-
-    .btn {
-        padding: 10px 16px;
-        border-radius: 8px;
-        border: none;
-        cursor: pointer;
-        font-size: 14px;
-        font-weight: 600;
-    }
-
-    .btn-gold {
-        background: #D4AF37;
-        color: white;
-    }
-
-    .btn-outline {
-        background: white;
-        color: #555;
-        border: 1px solid #ccc;
-    }
-
-    .witness-list {
-        max-height: 260px;
-        overflow-y: auto;
-        border: 1px solid #eee;
-        border-radius: 8px;
-        padding: 8px;
-        margin-top: 8px;
-    }
-
-    .witness-item {
-        padding: 6px 4px;
-        border-bottom: 1px solid #f0f0f0;
-        font-size: 13px;
-    }
-
-    .witness-item:last-child {
-        border-bottom: none;
-    }
-
-    .summary-row {
-        font-size: 14px;
-        margin-bottom: 6px;
-    }
-
-    .summary-label {
-        font-weight: 600;
-    }
+:root{
+  --gold:#c8a24a;--gold-dark:#9a782c;--bg:#f4f4f6;--card:#fff;--text:#222;
+  --muted:#777;--line:#e6e1d7;--green:#287a4a;--red:#a83b3b;--amber:#916600;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,sans-serif;background:var(--bg);color:var(--text)}
+.layout{display:flex;min-height:100vh}
+.sidebar{width:260px;background:#fff;border-right:1px solid #eee;padding:24px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+.logo{font-family:"Playfair Display",serif;font-size:22px;font-weight:600;color:var(--gold);margin-bottom:30px}
+.nav-title{font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#999;margin-bottom:8px}
+.nav-item{padding:10px 12px;margin-bottom:6px;border-radius:8px;cursor:pointer;font-weight:500;font-size:14px;color:#333}
+.nav-item:hover{background:#f5f1e6}.nav-item.active{background:var(--gold);color:#1d1d1d}
+.sidebar-footer{margin-top:auto;padding-top:16px;border-top:1px solid #eee;font-size:12px;color:#777;line-height:1.4}
+.logout-btn{margin-top:16px;padding:10px;background:var(--gold);color:#1d1d1d;text-align:center;border-radius:6px;cursor:pointer;font-weight:700;font-size:14px}
+.main{flex:1;padding:30px 40px;min-width:0}
+.main-header{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;margin-bottom:22px;padding-bottom:14px;border-bottom:2px solid #e8dcc2}
+.main-header h1{font-family:"Playfair Display",serif;color:var(--gold);margin:0;font-size:28px}
+.main-subtitle{color:#777;font-size:14px;margin-top:4px}
+.back-link{background:#fff;border:1px solid #dbc78f;color:#7c6021;border-radius:999px;padding:9px 14px;text-decoration:none;font-size:12px;font-weight:700}
+.wizard{max-width:900px;margin:0 auto}
+.steps{display:flex;justify-content:space-between;margin-bottom:20px}
+.step{flex:1;text-align:center;font-size:12px;position:relative;color:#777}
+.step-circle{width:28px;height:28px;border-radius:50%;border:2px solid var(--gold);display:inline-flex;align-items:center;justify-content:center;background:#fff;color:var(--gold);font-weight:700;margin-bottom:4px}
+.step.active{color:#5f4b1d;font-weight:700}.step.active .step-circle,.step.done .step-circle{background:var(--gold);color:#1d1d1d}
+.step-line{position:absolute;top:13px;left:50%;right:-50%;height:2px;background:#e0d4b0;z-index:-1}.step:last-child .step-line{display:none}
+.card{background:#fff;padding:24px;border-radius:14px;box-shadow:0 4px 15px rgba(0,0,0,.055);margin-bottom:20px}
+.card h2{font-family:"Playfair Display",serif;color:var(--gold);margin:0 0 16px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 18px}.full{grid-column:1/-1}
+label{font-size:12px;font-weight:700;display:block;color:#635a45;margin-bottom:6px}
+input,select,textarea{width:100%;padding:11px 12px;border-radius:9px;border:1px solid #ddd;background:#fafafa;font:inherit;color:#222}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--gold);background:#fff;box-shadow:0 0 0 3px rgba(200,162,74,.12)}
+textarea{resize:vertical;min-height:88px}
+.helper{font-size:10px;color:#888;margin-top:5px;line-height:1.4}
+.buttons-row{display:flex;justify-content:space-between;gap:10px;margin-top:20px}
+.btn{padding:11px 16px;border-radius:9px;border:none;cursor:pointer;font-size:13px;font-weight:800}.btn-gold{background:var(--gold);color:#1d1d1d}.btn-outline{background:#fff;color:#555;border:1px solid #ccc}.btn:disabled{opacity:.55;cursor:not-allowed}
+.witness-list{max-height:300px;overflow-y:auto;border:1px solid #eee;border-radius:10px;padding:8px;margin-top:8px}
+.witness-item{padding:10px 8px;border-bottom:1px solid #f0f0f0;font-size:13px}.witness-item:last-child{border-bottom:none}
+.witness-item label{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin:0;cursor:pointer}.witness-item input{width:auto;margin-right:7px}
+.witness-meta{color:#777;font-size:11px}
+.badge{display:inline-block;padding:4px 8px;border-radius:999px;font-size:10px;font-weight:800;text-transform:uppercase}.badge.approved{background:#dcf6e6;color:var(--green)}
+.summary{display:grid;gap:9px}.summary-row{font-size:13px;line-height:1.55;padding-bottom:9px;border-bottom:1px solid #eee}.summary-label{font-weight:700;color:#6d5b2b;display:inline-block;min-width:150px}
+.money-box{background:#faf7ee;border:1px solid #eadbb4;border-radius:12px;padding:16px;margin-top:14px}
+.money-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.money-item span{display:block;color:#777;font-size:10px;text-transform:uppercase}.money-item strong{font-size:18px;color:#75591e;margin-top:5px;display:block}
+.notice{background:#fff8e6;color:#735716;border-radius:10px;padding:12px 14px;font-size:12px;line-height:1.5;margin-bottom:16px}
+.error{color:var(--red);font-size:12px;min-height:18px;margin-top:10px}
+@media(max-width:850px){.sidebar{width:210px}.main{padding:24px}.grid,.money-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:650px){.layout{display:block}.sidebar{position:relative;width:100%;height:auto}.sidebar-footer{display:none}.main{padding:20px 14px}.main-header{flex-direction:column}.grid,.money-grid{grid-template-columns:1fr}.full{grid-column:auto}.steps{gap:4px}.step{font-size:10px}.summary-label{display:block;min-width:0}}
 </style>
 </head>
-
 <body>
-
 <div class="layout">
+  <aside class="sidebar">
+    <div class="logo">Need A Witness UK</div>
+    <div class="nav-title">Navigation</div>
+    <div class="nav-item" onclick="location.href='admin-dashboard.html'">Dashboard</div>
+    <div class="nav-item" onclick="location.href='admin-jobs.html'">Jobs</div>
+    <div class="nav-item" onclick="location.href='admin-calendar.html'">Calendar</div>
+    <div class="nav-item" onclick="location.href='admin-payments.html'">Payments</div>
+    <div class="nav-item" onclick="location.href='admin-witnesses.html'">Witnesses</div>
+    <div class="nav-item active">Create Job</div>
+    <div class="sidebar-footer">Admin Panel<br>Need A Witness UK<div class="logout-btn" onclick="adminLogout()">Logout</div></div>
+  </aside>
 
-    <!-- SIDEBAR -->
-    <div class="sidebar">
-        <div class="logo">Need A Witness UK</div>
-
-        <div class="nav-title">Navigation</div>
-        <div class="nav-item" onclick="window.location.href='admin-dashboard.html'">Dashboard</div>
-        <div class="nav-item" onclick="window.location.href='admin-witnesses.html'">Witnesses</div>
-        <div class="nav-item active">Create Job</div>
-
-        <div class="sidebar-footer">
-            Admin Panel<br>
-            Witness Hub v1.0
-            <div class="logout-btn" onclick="adminLogout()">Logout</div>
-        </div>
+  <main class="main">
+    <div class="main-header">
+      <div><h1>Create Job</h1><div class="main-subtitle">Create a confirmed booking manually using the same job structure as the public booking form.</div></div>
+      <a class="back-link" href="admin-jobs.html">← Back to Jobs</a>
     </div>
 
-    <!-- MAIN -->
-    <div class="main">
+    <div class="wizard">
+      <div class="notice"><b>Admin-created jobs are treated as accepted bookings.</b> If no witness is assigned immediately, the job will be saved as <b>Approved</b> so it can appear in the Witness Hub. If witnesses are pre-assigned, it will be saved as <b>Assigned</b>.</div>
 
-        <div class="main-header">
-            <div>
-                <h1>Create Job</h1>
-                <div class="main-subtitle">Step-by-step job builder for couples and witnesses.</div>
-            </div>
+      <div class="steps">
+        <div class="step active" id="stepIndicator1"><div class="step-circle">1</div><div>Customer</div><div class="step-line"></div></div>
+        <div class="step" id="stepIndicator2"><div class="step-circle">2</div><div>Ceremony</div><div class="step-line"></div></div>
+        <div class="step" id="stepIndicator3"><div class="step-circle">3</div><div>Witnesses & Price</div><div class="step-line"></div></div>
+        <div class="step" id="stepIndicator4"><div class="step-circle">4</div><div>Review</div></div>
+      </div>
+
+      <section class="card" id="step1">
+        <h2>Customer Details</h2>
+        <div class="grid">
+          <div class="full"><label for="customerName">Customer / Couple Name *</label><input id="customerName" placeholder="e.g. Alex & Jamie"></div>
+          <div><label for="customerEmail">Email *</label><input id="customerEmail" type="email" placeholder="couple@example.com"></div>
+          <div><label for="customerPhone">Phone</label><input id="customerPhone" type="tel" placeholder="Optional"></div>
+          <div class="full"><label for="customerNotes">Customer / Internal Notes</label><textarea id="customerNotes" placeholder="Anything useful about the couple or booking."></textarea></div>
+        </div>
+        <div class="error" id="step1Error"></div>
+        <div class="buttons-row"><span></span><button class="btn btn-gold" onclick="goToStep(2)">Next: Ceremony →</button></div>
+      </section>
+
+      <section class="card" id="step2" style="display:none">
+        <h2>Ceremony Details</h2>
+        <div class="grid">
+          <div><label for="jobDate">Date *</label><input id="jobDate" type="date"></div>
+          <div><label for="jobTime">Time *</label><input id="jobTime" type="time"></div>
+          <div class="full"><label for="jobLocation">Location *</label><input id="jobLocation" placeholder="Venue / registry office / full address"></div>
+          <div><label for="ceremonyType">Ceremony Type</label><select id="ceremonyType"><option value="civil">Civil Ceremony</option><option value="religious">Religious Ceremony</option><option value="elopement">Elopement</option><option value="other">Other</option></select></div>
+          <div><label for="travelPostcode">Travel Postcode</label><input id="travelPostcode" placeholder="e.g. ME16 8AE"></div>
+          <div class="full"><label for="jobNotes">Notes for Witnesses</label><textarea id="jobNotes" placeholder="Parking, arrival instructions, dress code, access notes, etc."></textarea></div>
+        </div>
+        <div class="error" id="step2Error"></div>
+        <div class="buttons-row"><button class="btn btn-outline" onclick="goToStep(1)">← Back</button><button class="btn btn-gold" onclick="goToStep(3)">Next: Witnesses & Price →</button></div>
+      </section>
+
+      <section class="card" id="step3" style="display:none">
+        <h2>Witnesses & Pricing</h2>
+        <div class="grid">
+          <div>
+            <label for="witnessCount">Witnesses Required *</label>
+            <select id="witnessCount"><option value="1">1 Witness</option><option value="2" selected>2 Witnesses</option></select>
+          </div>
+          <div>
+            <label for="basePrice">Base Service Price (£) *</label>
+            <input id="basePrice" type="number" min="0" step="1" value="150">
+            <div class="helper">Defaults to £150 for two witnesses. Change manually where needed.</div>
+          </div>
+          <div><label for="travelCost">Travel Cost (£)</label><input id="travelCost" type="number" min="0" step="1" value="0"></div>
+          <div><label for="deposit">Deposit (£)</label><input id="deposit" type="number" min="0" step="1" value="20"></div>
+          <div><label for="sundayFee">Sunday Fee (£)</label><input id="sundayFee" type="number" min="0" step="1" value="0"></div>
+          <div><label for="bankHolidayMultiplier">Bank Holiday Multiplier</label><input id="bankHolidayMultiplier" type="number" min="1" step="0.1" value="1"></div>
+          <div class="full">
+            <label>Pre-assign Approved Witnesses (optional)</label>
+            <div class="witness-list" id="witnessList"><div class="helper">Loading approved witnesses…</div></div>
+            <div class="helper">Leave empty to save the booking as Approved and allow witnesses to request it later.</div>
+          </div>
         </div>
 
-        <div class="wizard">
-
-            <!-- STEPS -->
-            <div class="steps">
-                <div class="step" id="stepIndicator1">
-                    <div class="step-circle">1</div>
-                    <div>Couple</div>
-                    <div class="step-line"></div>
-                </div>
-                <div class="step" id="stepIndicator2">
-                    <div class="step-circle">2</div>
-                    <div>Ceremony</div>
-                    <div class="step-line"></div>
-                </div>
-                <div class="step" id="stepIndicator3">
-                    <div class="step-circle">3</div>
-                    <div>Witnesses</div>
-                    <div class="step-line"></div>
-                </div>
-                <div class="step" id="stepIndicator4">
-                    <div class="step-circle">4</div>
-                    <div>Review</div>
-                </div>
-            </div>
-
-            <!-- STEP 1 -->
-            <div class="card" id="step1">
-                <h2 style="font-family:'Playfair Display',serif;color:#D4AF37;margin-top:0;">Couple Details</h2>
-
-                <label>Couple Name</label>
-                <input id="coupleName" placeholder="e.g., Alex & Jamie">
-
-                <label>Couple Email</label>
-                <input id="coupleEmail" type="email" placeholder="e.g., couple@example.com">
-
-                <label>Contact Phone</label>
-                <input id="couplePhone" placeholder="Optional">
-
-                <label>Internal Notes (about couple)</label>
-                <textarea id="coupleNotes" placeholder="Any context, preferences, or special instructions for this couple."></textarea>
-
-                <div class="buttons-row">
-                    <span></span>
-                    <button class="btn btn-gold" onclick="goToStep(2)">Next: Ceremony →</button>
-                </div>
-            </div>
-
-            <!-- STEP 2 -->
-            <div class="card" id="step2" style="display:none;">
-                <h2 style="font-family:'Playfair Display',serif;color:#D4AF37;margin-top:0;">Ceremony Details</h2>
-
-                <label>Date</label>
-                <input id="jobDate" type="date">
-
-                <label>Time</label>
-                <input id="jobTime" type="time">
-
-                <label>Location</label>
-                <input id="jobLocation" placeholder="Venue / registry office / address">
-
-                <label>Ceremony Type</label>
-                <select id="ceremonyType">
-                    <option value="civil">Civil Ceremony</option>
-                    <option value="religious">Religious Ceremony</option>
-                    <option value="elopement">Elopement</option>
-                    <option value="other">Other</option>
-                </select>
-
-                <label>Notes for Witnesses</label>
-                <textarea id="jobNotes" placeholder="What should witnesses know? Parking, timing, dress code, etc."></textarea>
-
-                <div class="buttons-row">
-                    <button class="btn btn-outline" onclick="goToStep(1)">← Back</button>
-                    <button class="btn btn-gold" onclick="goToStep(3)">Next: Witnesses →</button>
-                </div>
-            </div>
-
-            <!-- STEP 3 -->
-            <div class="card" id="step3" style="display:none;">
-                <h2 style="font-family:'Playfair Display',serif;color:#D4AF37;margin-top:0;">Witness Requirements</h2>
-
-                <label>Witness Type Needed</label>
-                <select id="witnessType">
-                    <option value="single">Single Witness</option>
-                    <option value="couple">Couple Team</option>
-                    <option value="either">Either</option>
-                </select>
-
-                <label>Preferred Witnesses (optional)</label>
-                <div class="witness-list" id="witnessList"></div>
-
-                <small style="display:block;margin-top:6px;color:#777;">
-                    You can select one or more witnesses to pre‑assign. Leave empty to assign later.
-                </small>
-
-                <div class="buttons-row">
-                    <button class="btn btn-outline" onclick="goToStep(2)">← Back</button>
-                    <button class="btn btn-gold" onclick="goToStep(4)">Next: Review →</button>
-                </div>
-            </div>
-
-            <!-- STEP 4 -->
-            <div class="card" id="step4" style="display:none;">
-                <h2 style="font-family:'Playfair Display',serif;color:#D4AF37;margin-top:0;">Review & Create Job</h2>
-
-                <div id="reviewContent"></div>
-
-                <div class="buttons-row">
-                    <button class="btn btn-outline" onclick="goToStep(3)">← Back</button>
-                    <button class="btn btn-gold" onclick="createJob()">Create Job</button>
-                </div>
-            </div>
-
+        <div class="money-box">
+          <div class="money-grid">
+            <div class="money-item"><span>Base</span><strong id="calcBase">£150.00</strong></div>
+            <div class="money-item"><span>Travel</span><strong id="calcTravel">£0.00</strong></div>
+            <div class="money-item"><span>Extras</span><strong id="calcExtras">£0.00</strong></div>
+            <div class="money-item"><span>Total Price</span><strong id="calcTotal">£150.00</strong></div>
+          </div>
         </div>
+
+        <div class="buttons-row"><button class="btn btn-outline" onclick="goToStep(2)">← Back</button><button class="btn btn-gold" onclick="goToStep(4)">Next: Review →</button></div>
+      </section>
+
+      <section class="card" id="step4" style="display:none">
+        <h2>Review & Create Job</h2>
+        <div id="reviewContent" class="summary"></div>
+        <div class="error" id="createError"></div>
+        <div class="buttons-row"><button class="btn btn-outline" onclick="goToStep(3)">← Back</button><button class="btn btn-gold" id="createBtn" onclick="createJob()">Create Confirmed Job</button></div>
+      </section>
     </div>
+  </main>
 </div>
 
 <script>
-/* FIRESTORE */
-let allWitnesses = [];
+let allWitnesses=[];
+let currentAdmin=null;
 
-/* STEP INDICATOR */
-function setStepIndicator(step) {
-    for (let i = 1; i <= 4; i++) {
-        const el = document.getElementById("stepIndicator" + i);
-        if (!el) continue;
-        if (i === step) el.classList.add("active");
-        else el.classList.remove("active");
+function money(v){return "£"+(Number(v)||0).toFixed(2);}
+function esc(v){return String(v??"").replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));}
+function val(id){return document.getElementById(id).value.trim();}
+function num(id){return Math.max(Number(document.getElementById(id).value)||0,0);}
+
+function setStepIndicator(step){
+  for(let i=1;i<=4;i++){
+    const el=document.getElementById("stepIndicator"+i);
+    el.classList.toggle("active",i===step);
+    el.classList.toggle("done",i<step);
+  }
+}
+function showStep(step){
+  for(let i=1;i<=4;i++)document.getElementById("step"+i).style.display=i===step?"block":"none";
+  setStepIndicator(step);
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function goToStep(step){
+  document.querySelectorAll(".error").forEach(x=>x.textContent="");
+  if(step===2){
+    if(!val("customerName")||!val("customerEmail")){
+      document.getElementById("step1Error").textContent="Please enter the customer/couple name and email address.";
+      return;
     }
+  }
+  if(step===3){
+    if(!val("jobDate")||!val("jobTime")||!val("jobLocation")){
+      document.getElementById("step2Error").textContent="Please enter the ceremony date, time and location.";
+      return;
+    }
+  }
+  if(step===4)buildReview();
+  showStep(step);
 }
 
-/* STEP NAVIGATION */
-function goToStep(step) {
-    if (step === 2 && !coupleName.value.trim()) {
-        alert("Please enter the couple name.");
-        return;
-    }
-
-    if (step === 3) {
-        if (!jobDate.value || !jobTime.value || !jobLocation.value.trim()) {
-            alert("Please enter date, time, and location.");
-            return;
-        }
-    }
-
-    if (step === 4) {
-        buildReview();
-    }
-
-    for (let i = 1; i <= 4; i++) {
-        document.getElementById("step" + i).style.display = (i === step) ? "block" : "none";
-    }
-
-    setStepIndicator(step);
+function witnessDisplayName(w){
+  return w.type==="couple"
+    ? (w.teamName||`${w.partner1Name||""} & ${w.partner2Name||""}`.trim()||"Couple team")
+    : (w.name||w.fullName||"Unnamed witness");
 }
-
-/* LOAD WITNESSES */
-function loadWitnesses() {
-    db.collection("users").onSnapshot(snapshot => {
-        allWitnesses = [];
-        snapshot.forEach(doc => {
-            allWitnesses.push({ id: doc.id, ...doc.data() });
-        });
-        renderWitnessList();
+function loadWitnesses(){
+  db.collection("users").onSnapshot(snapshot=>{
+    allWitnesses=[];
+    snapshot.forEach(doc=>{
+      const w={id:doc.id,...doc.data()};
+      if(w.approved===true && w.status!=="suspended" && w.status!=="rejected")allWitnesses.push(w);
     });
+    allWitnesses.sort((a,b)=>witnessDisplayName(a).localeCompare(witnessDisplayName(b)));
+    renderWitnessList();
+  },err=>{
+    console.error(err);
+    document.getElementById("witnessList").innerHTML="<div class='helper'>Unable to load witnesses.</div>";
+  });
+}
+function renderWitnessList(){
+  const root=document.getElementById("witnessList");
+  if(!allWitnesses.length){root.innerHTML="<div class='helper'>No approved witnesses are available yet.</div>";return;}
+  root.innerHTML="";
+  allWitnesses.forEach(w=>{
+    const div=document.createElement("div");
+    div.className="witness-item";
+    const checked="";
+    div.innerHTML=`<label><span><input type="checkbox" value="${esc(w.id)}"> <strong>${esc(witnessDisplayName(w))}</strong> <span class="badge approved">Approved</span><div class="witness-meta">${esc(w.type==="couple"?"Couple Team":"Single Witness")}${w.location?" · "+esc(w.location):""}</div></span><span class="witness-meta">${typeof w.rating==="number"&&w.rating>0?"★ "+w.rating.toFixed(1):"No rating yet"}</span></label>`;
+    root.appendChild(div);
+  });
+}
+function getSelectedWitnessIds(){
+  return [...document.querySelectorAll("#witnessList input[type=checkbox]:checked")].map(x=>x.value);
+}
+function calculatedPrice(){
+  const base=num("basePrice"),travel=num("travelCost"),sunday=num("sundayFee"),mult=Math.max(Number(document.getElementById("bankHolidayMultiplier").value)||1,1);
+  const subtotal=base+travel+sunday;
+  const total=subtotal*mult;
+  return {base,travel,sunday,mult,total};
+}
+function refreshPrice(){
+  const p=calculatedPrice();
+  document.getElementById("calcBase").textContent=money(p.base);
+  document.getElementById("calcTravel").textContent=money(p.travel);
+  document.getElementById("calcExtras").textContent=money((p.base+p.travel+p.sunday)*(p.mult-1)+p.sunday);
+  document.getElementById("calcTotal").textContent=money(p.total);
+}
+["basePrice","travelCost","sundayFee","bankHolidayMultiplier"].forEach(id=>document.getElementById(id).addEventListener("input",refreshPrice));
+document.getElementById("witnessCount").addEventListener("change",e=>{
+  if(e.target.value==="1" && num("basePrice")===150)document.getElementById("basePrice").value=100;
+  if(e.target.value==="2" && num("basePrice")===100)document.getElementById("basePrice").value=150;
+  refreshPrice();
+});
+
+function buildReview(){
+  const ids=getSelectedWitnessIds(),selected=allWitnesses.filter(w=>ids.includes(w.id)),p=calculatedPrice();
+  const names=selected.length?selected.map(witnessDisplayName).join(", "):"None – job will be available for approved witnesses to request";
+  const status=ids.length?"Assigned":"Approved";
+  document.getElementById("reviewContent").innerHTML=`
+    <div class="summary-row"><span class="summary-label">Customer:</span>${esc(val("customerName"))} · ${esc(val("customerEmail"))}${val("customerPhone")?" · "+esc(val("customerPhone")):""}</div>
+    <div class="summary-row"><span class="summary-label">Ceremony:</span>${esc(document.getElementById("ceremonyType").selectedOptions[0].text)} · ${esc(val("jobDate"))} at ${esc(val("jobTime"))}</div>
+    <div class="summary-row"><span class="summary-label">Location:</span>${esc(val("jobLocation"))}</div>
+    <div class="summary-row"><span class="summary-label">Witnesses Required:</span>${esc(document.getElementById("witnessCount").value)}</div>
+    <div class="summary-row"><span class="summary-label">Pre-assigned:</span>${esc(names)}</div>
+    <div class="summary-row"><span class="summary-label">Initial Status:</span><b>${status}</b></div>
+    <div class="summary-row"><span class="summary-label">Pricing:</span>Base ${money(p.base)} + Travel ${money(p.travel)} + Sunday ${money(p.sunday)}${p.mult>1?` × ${p.mult} bank-holiday multiplier`:""} = <b>${money(p.total)}</b></div>
+    <div class="summary-row"><span class="summary-label">Deposit:</span>${money(num("deposit"))}</div>
+    <div class="summary-row"><span class="summary-label">Notes:</span>${esc(val("customerNotes")||"None")}</div>
+    <div class="summary-row"><span class="summary-label">Witness Notes:</span>${esc(val("jobNotes")||"None")}</div>`;
 }
 
-function renderWitnessList() {
-    const container = document.getElementById("witnessList");
-    container.innerHTML = "";
+async function createJob(){
+  const error=document.getElementById("createError"),btn=document.getElementById("createBtn");
+  error.textContent="";
+  const p=calculatedPrice(),ids=getSelectedWitnessIds(),count=Number(document.getElementById("witnessCount").value);
+  if(!val("customerName")||!val("customerEmail")||!val("jobDate")||!val("jobTime")||!val("jobLocation")){
+    error.textContent="Required fields are missing. Please go back and check the booking.";
+    return;
+  }
+  if(ids.length>count){
+    error.textContent=`You selected ${ids.length} witnesses but the booking only requires ${count}.`;
+    return;
+  }
 
-    if (!allWitnesses.length) {
-        container.innerHTML = "<p style='font-size:13px;color:#777;'>No witnesses found.</p>";
-        return;
+  const job={
+    customer:{
+      name:val("customerName"),
+      email:val("customerEmail"),
+      phone:val("customerPhone"),
+      location:val("jobLocation"),
+      notes:val("customerNotes")
+    },
+    date:val("jobDate"),
+    time:val("jobTime"),
+    ceremonyType:document.getElementById("ceremonyType").value,
+    notes:val("jobNotes"),
+
+    witnessCount:count,
+    assignedWitnesses:ids,
+    status:ids.length?"assigned":"approved",
+
+    basePrice:p.base,
+    travelCost:p.travel,
+    travelPostcode:val("travelPostcode"),
+    sundayFee:p.sunday,
+    bankHolidayMultiplier:p.mult,
+    totalPrice:p.total,
+    deposit:num("deposit"),
+
+    addOns:{confetti:false,lastMinute:false,photoVideo:false},
+
+    paymentStatus:"unpaid",
+    amountPaid:0,
+    amountDue:num("deposit"),
+
+    requestBy:"",
+    requestTeamName:"",
+    requestStatus:null,
+    requestAt:null,
+
+    source:"admin",
+    createdBy:currentAdmin?.uid||null,
+    createdAt:firebase.firestore.FieldValue.serverTimestamp(),
+    updatedAt:firebase.firestore.FieldValue.serverTimestamp()
+  };
+
+  btn.disabled=true;btn.textContent="Creating…";
+  try{
+    const ref=await db.collection("jobs").add(job);
+    alert("Confirmed job created successfully.");
+    location.href=`admin-job-detail.html?id=${encodeURIComponent(ref.id)}`;
+  }catch(e){
+    console.error(e);
+    error.textContent="The job could not be created. Please try again.";
+    btn.disabled=false;btn.textContent="Create Confirmed Job";
+  }
+}
+
+function adminLogout(){firebase.auth().signOut().then(()=>location.href="admin-login.html");}
+
+firebase.auth().onAuthStateChanged(async user=>{
+  if(!user){location.replace("admin-login.html");return;}
+  try{
+    const token=await user.getIdTokenResult(true);
+    if(token.claims.admin!==true){
+      await firebase.auth().signOut();
+      location.replace("admin-login.html");
+      return;
     }
+    currentAdmin=user;
+    loadWitnesses();
+  }catch(e){
+    console.error(e);
+    location.replace("admin-login.html");
+  }
+});
 
-    allWitnesses.forEach(w => {
-        const displayName =
-            w.type === "couple"
-                ? (w.teamName || `${w.partner1Name || ""} & ${w.partner2Name || ""}`)
-                : (w.name || w.fullName || "Unnamed");
-
-        const typeLabel = w.type === "couple" ? "Couple Team" : "Single";
-        const location = w.location || "";
-        const rating = typeof w.rating === "number" ? w.rating.toFixed(1) : (w.rating || "N/A");
-
-        const div = document.createElement("div");
-        div.className = "witness-item";
-        div.innerHTML = `
-            <label>
-                <span>
-                    <input type="checkbox" value="${w.id}">
-                    <span class="witness-name">${displayName}</span>
-                    <span class="witness-meta">(${typeLabel})</span>
-                </span>
-                <span class="witness-meta">
-                    ${location ? location + " • " : ""}⭐ ${rating}
-                </span>
-            </label>
-        `;
-        container.appendChild(div);
-    });
-}
-
-/* REVIEW PAGE */
-function buildReview() {
-    const review = document.getElementById("reviewContent");
-    const selectedWitnessIds = getSelectedWitnessIds();
-    const selectedWitnesses = allWitnesses.filter(w => selectedWitnessIds.includes(w.id));
-
-    let witnessSummary = "None selected (you can assign later)";
-    if (selectedWitnesses.length) {
-        witnessSummary = selectedWitnesses.map(w => {
-            return w.type === "couple"
-                ? (w.teamName || `${w.partner1Name || ""} & ${w.partner2Name || ""}`)
-                : (w.name || w.fullName || "Unnamed");
-        }).join(", ");
-    }
-
-    review.innerHTML = `
-        <div class="summary-row">
-            <span class="summary-label">Couple:</span>
-            ${coupleName.value || "-"} (${coupleEmail.value || "no email"}) ${couplePhone.value ? "• " + couplePhone.value : ""}
-        </div>
-        <div class="summary-row">
-            <span class="summary-label">Couple Notes:</span>
-            ${coupleNotes.value || "None"}
-        </div>
-        <hr style="margin:10px 0;border:none;border-top:1px solid #eee;">
-        <div class="summary-row">
-            <span class="summary-label">Ceremony:</span>
-            ${ceremonyType.options[ceremonyType.selectedIndex].text}
-        </div>
-        <div class="summary-row">
-            <span class="summary-label">Date & Time:</span>
-            ${jobDate.value || "-"} at ${jobTime.value || "-"}
-        </div>
-        <div class="summary-row">
-            <span class="summary-label">Location:</span>
-            ${jobLocation.value || "-"}
-        </div>
-        <div class="summary-row">
-            <span class="summary-label">Witness Notes:</span>
-            ${jobNotes.value || "None"}
-        </div>
-        <hr style="margin:10px 0;border:none;border-top:1px solid #eee;">
-        <div class="summary-row">
-            <span class="summary-label">Witness Type Needed:</span>
-            ${witnessType.options[witnessType.selectedIndex].text}
-        </div>       
-        <div class="summary-row">
-            <span class="summary-label">Pre‑assigned Witnesses:</span>
-            ${witnessSummary}
-        </div>
-    `;
-}
-
-/* GET SELECTED WITNESS IDS */
-function getSelectedWitnessIds() {
-    const checkboxes = document.querySelectorAll("#witnessList input[type='checkbox']");
-    const selected = [];
-    checkboxes.forEach(cb => {
-        if (cb.checked) selected.push(cb.value);
-    });
-    return selected;
-}
-
-/* CREATE JOB IN FIRESTORE */
-function createJob() {
-    const job = {
-        coupleName: coupleName.value.trim(),
-        coupleEmail: coupleEmail.value.trim(),
-        couplePhone: couplePhone.value.trim(),
-        coupleNotes: coupleNotes.value.trim(),
-
-        date: jobDate.value,
-        time: jobTime.value,
-        location: jobLocation.value.trim(),
-        ceremonyType: ceremonyType.value,
-        notes: jobNotes.value.trim(),
-
-        witnessType: witnessType.value,
-        assignedWitnesses: getSelectedWitnessIds(),
-
-        requestBy: "",
-        requestTeamName: "",
-        requestStatus: null,
-
-        // STATUS FIELD (dashboard expects this)
-        status: getSelectedWitnessIds().length ? "assigned" : "pending",
-
-        // PAYMENT FIELDS (dashboard expects these)
-        paymentStatus: "unpaid",
-        totalPrice: 0,
-        amountPaid: 0,
-        amountDue: 0,
-
-        // TIMESTAMP
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    };
-
-    if (!job.coupleName || !job.date || !job.time || !job.location) {
-        alert("Missing required fields. Please go back and check.");
-        return;
-    }
-
-    db.collection("jobs").add(job).then(() => {
-        alert("Job created successfully.");
-        window.location.href = "admin-dashboard.html";
-    });
-}
-
-/* ADMIN LOGOUT */
-function adminLogout() {
-    firebase.auth().signOut().then(() => {
-        window.location.href = "admin-login.html";
-    });
-}
-
-/* INIT */
 setStepIndicator(1);
-loadWitnesses();
+refreshPrice();
 </script>
-
 </body>
 </html>
