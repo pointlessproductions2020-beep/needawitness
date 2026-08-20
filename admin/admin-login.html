@@ -43,7 +43,11 @@ button{width:100%;padding:13px;border:0;border-radius:9px;background:var(--gold)
   <button class="forgot" type="button" id="forgotBtn">Forgot password?</button>
   <div class="error" id="error"></div>
 
-  <div class="security">Admin access is verified using the Firebase <b>admin custom claim</b>. Signing in with a normal Witness Hub account will not grant access to the admin area.</div>
+  <div class="security">
+  Admin access is verified securely through Firebase using either an
+  <b>admin custom claim</b> or an authorised Need A Witness admin record.
+  Normal Witness Hub accounts cannot access this area.
+</div>
   <a class="back" href="../index.html">← Back to Need A Witness UK</a>
 </div>
 
@@ -74,10 +78,29 @@ function friendlyError(code){
 
 async function verifyAdmin(user){
   if(!user)return false;
-  const token=await user.getIdTokenResult(true);
-  return token.claims.admin===true;
-}
 
+  // First support proper Firebase admin custom claims.
+  const token = await user.getIdTokenResult(true);
+
+  if(token.claims.admin === true){
+    return true;
+  }
+
+  // Backwards compatibility with the existing
+  // /admins/{email} Firestore admin records.
+  try{
+    const adminDoc = await db
+      .collection("admins")
+      .doc((user.email || "").toLowerCase())
+      .get();
+
+    return adminDoc.exists &&
+           adminDoc.data()?.role === "admin";
+  }catch(error){
+    console.error("Admin Firestore check failed:", error);
+    return false;
+  }
+}
 async function routeIfAdmin(user){
   if(!user||routing)return;
   routing=true;
