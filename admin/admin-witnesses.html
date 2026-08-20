@@ -261,20 +261,42 @@ auth.onAuthStateChanged(async (user) => {
     }
 
     // Load all witnesses (single + couple)
-    db.collection("users")
-        .where("type", "in", ["single", "couple"])
-        .onSnapshot(snapshot => {
-            allWitnesses = [];
-            snapshot.forEach(doc => {
+db.collection("users").onSnapshot(
+    snapshot => {
+        allWitnesses = [];
+
+        snapshot.forEach(doc => {
+            const data = doc.data() || {};
+
+            // Ignore anything that clearly isn't a witness profile.
+            // Also keeps compatibility with older witness accounts.
+            if (
+                data.type === "single" ||
+                data.type === "couple" ||
+                data.approved !== undefined ||
+                data.status
+            ) {
                 allWitnesses.push({
                     id: doc.id,
-                    ...doc.data()
+                    ...data
                 });
-            });
-            renderFiltered();
+            }
         });
-});
 
+        renderFiltered();
+    },
+    error => {
+        console.error("Unable to load witnesses:", error);
+
+        document.querySelector("tbody").innerHTML = `
+            <tr>
+                <td colspan="7" style="color:#d66;">
+                    Could not load witnesses — check browser console.
+                </td>
+            </tr>
+        `;
+    }
+);
 // Status badge renderer
 function statusBadge(u) {
     if (u.status === "rejected") {
