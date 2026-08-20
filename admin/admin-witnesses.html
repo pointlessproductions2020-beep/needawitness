@@ -268,17 +268,22 @@ db.collection("users").onSnapshot(
         snapshot.forEach(doc => {
             const data = doc.data() || {};
 
-            // Ignore anything that clearly isn't a witness profile.
-            // Also keeps compatibility with older witness accounts.
+            // Treat legacy and newer witness accounts as witnesses.
             if (
                 data.type === "single" ||
                 data.type === "couple" ||
-                data.approved !== undefined ||
-                data.status
+                typeof data.approved === "boolean" ||
+                data.status === "active" ||
+                data.status === "pending" ||
+                data.status === "rejected" ||
+                data.status === "suspended"
             ) {
                 allWitnesses.push({
                     id: doc.id,
-                    ...data
+                    ...data,
+
+                    // Older witness accounts didn't have a type field.
+                    type: data.type || "single"
                 });
             }
         });
