@@ -108,9 +108,10 @@ textarea{resize:vertical;min-height:88px}
         <div class="grid">
           <div><label for="jobDate">Date *</label><input id="jobDate" type="date"></div>
           <div><label for="jobTime">Time *</label><input id="jobTime" type="time"></div>
-          <div class="full"><label for="jobLocation">Location *</label><input id="jobLocation" placeholder="Venue / registry office / full address"></div>
+          <div class="full"><label for="jobLocation">Location *</label><input id="jobLocation" placeholder="Registered / approved ceremony venue and full address"></div>
           <div><label for="ceremonyType">Ceremony Type</label><select id="ceremonyType"><option value="civil">Civil Ceremony</option><option value="religious">Religious Ceremony</option><option value="elopement">Elopement</option><option value="other">Other</option></select></div>
-          <div><label for="travelPostcode">Travel Postcode</label><input id="travelPostcode" placeholder="e.g. ME16 8AE"></div>
+          <div><label for="travelPostcode">Travel Postcode</label><input id="travelPostcode" placeholder="e.g. ME16 8AE"><div class="helper">Travel is £1 per mile for the full return journey from CT14 7QE.</div></div>
+          <div><label for="dressCode">Dress Code</label><select id="dressCode"><option value="No preference" selected>No preference</option><option value="Smart">Smart</option><option value="Smart casual">Smart casual</option><option value="Casual">Casual</option><option value="Other / see notes">Other / specific request — see notes</option></select></div>
           <div class="full"><label for="jobNotes">Notes for Witnesses</label><textarea id="jobNotes" placeholder="Parking, arrival instructions, dress code, access notes, etc."></textarea></div>
         </div>
         <div class="error" id="step2Error"></div>
@@ -126,8 +127,8 @@ textarea{resize:vertical;min-height:88px}
           </div>
           <div>
             <label for="basePrice">Base Service Price (£) *</label>
-            <input id="basePrice" type="number" min="0" step="1" value="150">
-            <div class="helper">Defaults to £150 for two witnesses. Change manually where needed.</div>
+            <input id="basePrice" type="number" min="0" step="1" value="200">
+            <div class="helper">Defaults to £200 for two witnesses or £150 for one witness. Change manually only where needed.</div>
           </div>
           <div><label for="travelCost">Travel Cost (£)</label><input id="travelCost" type="number" min="0" step="1" value="0"></div>
           <div><label for="deposit">Deposit (£)</label><input id="deposit" type="number" min="0" step="1" value="20"></div>
@@ -142,10 +143,10 @@ textarea{resize:vertical;min-height:88px}
 
         <div class="money-box">
           <div class="money-grid">
-            <div class="money-item"><span>Base</span><strong id="calcBase">£150.00</strong></div>
+            <div class="money-item"><span>Base</span><strong id="calcBase">£200.00</strong></div>
             <div class="money-item"><span>Travel</span><strong id="calcTravel">£0.00</strong></div>
             <div class="money-item"><span>Extras</span><strong id="calcExtras">£0.00</strong></div>
-            <div class="money-item"><span>Total Price</span><strong id="calcTotal">£150.00</strong></div>
+            <div class="money-item"><span>Total Price</span><strong id="calcTotal">£200.00</strong></div>
           </div>
         </div>
 
@@ -237,21 +238,21 @@ function getSelectedWitnessIds(){
 }
 function calculatedPrice(){
   const base=num("basePrice"),travel=num("travelCost"),sunday=num("sundayFee"),mult=Math.max(Number(document.getElementById("bankHolidayMultiplier").value)||1,1);
-  const subtotal=base+travel+sunday;
-  const total=subtotal*mult;
+  const serviceSubtotal=base+sunday;
+  const total=(serviceSubtotal*mult)+travel;
   return {base,travel,sunday,mult,total};
 }
 function refreshPrice(){
   const p=calculatedPrice();
   document.getElementById("calcBase").textContent=money(p.base);
   document.getElementById("calcTravel").textContent=money(p.travel);
-  document.getElementById("calcExtras").textContent=money((p.base+p.travel+p.sunday)*(p.mult-1)+p.sunday);
+  document.getElementById("calcExtras").textContent=money(((p.base+p.sunday)*(p.mult-1))+p.sunday);
   document.getElementById("calcTotal").textContent=money(p.total);
 }
 ["basePrice","travelCost","sundayFee","bankHolidayMultiplier"].forEach(id=>document.getElementById(id).addEventListener("input",refreshPrice));
 document.getElementById("witnessCount").addEventListener("change",e=>{
-  if(e.target.value==="1" && num("basePrice")===150)document.getElementById("basePrice").value=100;
-  if(e.target.value==="2" && num("basePrice")===100)document.getElementById("basePrice").value=150;
+  if(e.target.value==="1")document.getElementById("basePrice").value=150;
+  if(e.target.value==="2")document.getElementById("basePrice").value=200;
   refreshPrice();
 });
 
@@ -263,6 +264,7 @@ function buildReview(){
     <div class="summary-row"><span class="summary-label">Customer:</span>${esc(val("customerName"))} · ${esc(val("customerEmail"))}${val("customerPhone")?" · "+esc(val("customerPhone")):""}</div>
     <div class="summary-row"><span class="summary-label">Ceremony:</span>${esc(document.getElementById("ceremonyType").selectedOptions[0].text)} · ${esc(val("jobDate"))} at ${esc(val("jobTime"))}</div>
     <div class="summary-row"><span class="summary-label">Location:</span>${esc(val("jobLocation"))}</div>
+    <div class="summary-row"><span class="summary-label">Dress Code:</span>${esc(document.getElementById("dressCode").value)}</div>
     <div class="summary-row"><span class="summary-label">Witnesses Required:</span>${esc(document.getElementById("witnessCount").value)}</div>
     <div class="summary-row"><span class="summary-label">Pre-assigned:</span>${esc(names)}</div>
     <div class="summary-row"><span class="summary-label">Initial Status:</span><b>${status}</b></div>
@@ -291,6 +293,7 @@ async function createJob(){
       email:val("customerEmail"),
       phone:val("customerPhone"),
       location:val("jobLocation"),
+      dressCode:document.getElementById("dressCode").value,
       notes:val("customerNotes")
     },
     date:val("jobDate"),
@@ -310,7 +313,13 @@ async function createJob(){
     totalPrice:p.total,
     deposit:num("deposit"),
 
-    addOns:{confetti:false,lastMinute:false,photoVideo:false},
+    addOns:{
+      confetti:false,
+      lastMinute:false,
+      photoVideo:false,
+      travelPostcode:val("travelPostcode"),
+      travelCost:p.travel
+    },
 
     paymentStatus:"unpaid",
     amountPaid:0,
