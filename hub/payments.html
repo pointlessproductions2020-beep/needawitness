@@ -40,7 +40,7 @@ table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:14px 16p
       <div class="chip" id="accountName">Witness account</div>
     </div>
 
-    <div class="notice"><b>Important:</b> these figures are witness earnings estimates based on the current booking value and witness split. A job being fully paid by the customer does not automatically mean the witness payout has been sent. If Need A Witness UK later adds a formal payout-tracking field, this page is ready to display it separately.</div>
+    <div class="notice"><b>Important:</b> these figures are witness earnings based on the witness payout for each assigned place. Customer travel charges and deposits are separate and do not increase witness earnings. A job being fully paid by the customer does not automatically mean the witness payout has been sent. If Need A Witness UK later adds a formal payout-tracking field, this page is ready to display it separately.</div>
 
     <div class="stats">
       <div class="stat"><span>Upcoming Earnings</span><strong id="upcomingTotal">£0.00</strong><small>Assigned future ceremonies</small></div>
@@ -82,7 +82,7 @@ function locationOf(j){return j.customer?.location||j.location||"Location TBC";}
 function witnessCount(j){return Math.max(Number(j.witnessCount||1),1);}
 function assignedToMe(j){return Array.isArray(j.assignedWitnesses)&&j.assignedWitnesses.includes(currentUser?.uid);}
 function money(v){return "£"+(Number(v)||0).toFixed(2);}
-function earnings(j){const total=Number(j.totalPrice||0),adminFee=Number(j.depositAmount??j.deposit??0),pot=Math.max(total-adminFee,0),required=witnessCount(j);if(userData?.type==="couple"&&required>=2)return pot;return pot/required;}
+function earnings(j){const required=witnessCount(j),places=(userData?.type==="couple"&&required>=2)?2:1;const perPlaceOverride=Number(j.witnessPayoutPerPlace);if(Number.isFinite(perPlaceOverride)&&perPlaceOverride>=0)return perPlaceOverride*places;const totalOverride=Number(j.witnessPayoutTotal);if(Number.isFinite(totalOverride)&&totalOverride>=0)return required>0?(totalOverride/required)*places:0;return 75*places;}
 function eventDate(j){const d=parseDate(j.date);if(!d)return null;const [h,m]=(j.time||"00:00").split(":").map(Number);d.setHours(h||0,m||0,0,0);return d;}
 function isPast(j){const d=eventDate(j);return d?d<Date.now():false;}
 function rowState(j){if(j.status==="cancelled")return "cancelled";if(j.status==="completed")return "completed";return isPast(j)?"past":"upcoming";}
