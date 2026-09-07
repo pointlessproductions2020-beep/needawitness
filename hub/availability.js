@@ -85,9 +85,9 @@ function calculatePrice(witnessType, dateStr) {
     const bank = isBankHoliday(dateStr);
 
     const base = {
-        single: 100,
-        couple: 150,
-        twosingles: 200
+        single: 150,
+        couple: 200,
+        twosingles: 300
     };
 
     let price = base[witnessType];
