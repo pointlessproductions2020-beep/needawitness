@@ -8,13 +8,8 @@
 <meta name="description" content="Complete your Need A Witness UK booking securely online.">
 
 <!-- ⭐ EMAILJS MUST LOAD FIRST ⭐ -->
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-<script>
-    emailjs.init("l7EiT6u2dOg8bSFB3");
-</script>
-
 <!-- ⭐ LOAD AVAILABILITY.JS (MATCH VERSION WITH INDEX.HTML) ⭐ -->
-<script src="/hub/availability.js?v=12"></script>
+<script src="/hub/availability.js?v=13"></script>
 
 <style>
     :root {
@@ -840,7 +835,7 @@
                                 <strong>One professional witness</strong>
                                 <small>A friendly, reliable witness attending your ceremony.</small>
                             </span>
-                            <span class="choice-price">£100</span>
+                            <span class="choice-price">£150</span>
                         </label>
 
                         <label class="choice-card">
@@ -849,7 +844,7 @@
                                 <strong>Two professional witnesses</strong>
                                 <small>Choose this when you need both required witnesses supplied.</small>
                             </span>
-                            <span class="choice-price">£150</span>
+                            <span class="choice-price">£200</span>
                         </label>
                     </div>
                 </div>
@@ -857,38 +852,26 @@
 
             <section class="card">
                 <div class="card-header">
-                    <span class="section-kicker">Optional</span>
-                    <h2>Personalise Your Booking</h2>
-                    <p>Add anything extra you would like us to provide on the day.</p>
+                    <span class="section-kicker">Presentation</span>
+                    <h2>Dress Code</h2>
+                    <p>Tell us how you would like your witness or witnesses presented on the day.</p>
                 </div>
                 <div class="card-body">
-                    <div class="choice-list">
-                        <label class="choice-card">
-                            <input type="checkbox" id="confetti">
-                            <span class="choice-copy">
-                                <strong>Confetti moment</strong>
-                                <small>A simple celebratory confetti moment after your ceremony.</small>
-                            </span>
-                            <span class="choice-price">+£20</span>
-                        </label>
-
-                        <label class="choice-card">
-                            <input type="checkbox" id="photoVideo">
-                            <span class="choice-copy">
-                                <strong>Photo and video add-on</strong>
-                                <small>A few informal photos and short video clips captured for you.</small>
-                            </span>
-                            <span class="choice-price">+£30</span>
-                        </label>
+                    <div class="field-group">
+                        <label class="field-label" for="dressCode">Preferred dress code</label>
+                        <select id="dressCode">
+                            <option value="No preference" selected>No preference</option>
+                            <option value="Smart">Smart</option>
+                            <option value="Smart casual">Smart casual</option>
+                            <option value="Casual">Casual</option>
+                            <option value="Other / see notes">Other / specific request — see notes</option>
+                        </select>
+                        <small class="field-help">If you have a specific colour or presentation request, add it in the notes below.</small>
                     </div>
-
                     <label class="auto-card">
                         <input type="checkbox" id="lastMinute" disabled>
                         <span class="icon">24h</span>
-                        <span>
-                            <strong>Short-notice booking</strong>
-                            <small>A £50 fee is applied automatically only when the ceremony is within 24 hours.</small>
-                        </span>
+                        <span><strong>Short-notice booking</strong><small>A £50 fee is applied automatically only when the ceremony is within 24 hours.</small></span>
                     </label>
                 </div>
             </section>
@@ -897,17 +880,17 @@
                 <div class="card-header">
                     <span class="section-kicker">Travel</span>
                     <h2>Ceremony Postcode</h2>
-                    <p>Travel anywhere within Kent is included. A mileage charge applies only when the ceremony is outside Kent.</p>
+                    <p>Travel is charged for every booking at £1 per mile for the full return journey from CT14 7QE.</p>
                 </div>
                 <div class="card-body">
                     <div class="field-group">
                         <label class="field-label" for="travelPostcode">Ceremony postcode <span class="required">*</span></label>
                         <input type="text" id="travelPostcode" placeholder="e.g. CT1 2DB" autocomplete="off" required>
-                        <small class="field-help">Kent and Medway venues: free travel. Outside Kent: £1 per mile for the return journey from CT14 7QE.</small>
+                        <small class="field-help">£1 per mile for the return journey from CT14 7QE. This applies to all venues, including Kent and Medway.</small>
                         <div id="postcodeStatus" class="status-message" role="status" aria-live="polite"></div>
                     </div>
                     <div class="travel-result">
-                        <span id="travelLabel">Travel within Kent</span>
+                        <span id="travelLabel">Return travel</span>
                         <strong>£<span id="travelCost">0</span></strong>
                     </div>
                 </div>
@@ -1006,7 +989,7 @@
 
                     <ul class="trust-list">
                         <li>Personal review of every request</li>
-                        <li>Confirmation sent by email</li>
+                        <li>We contact you directly after personal review</li>
                         <li>Your details are used only for your booking</li>
                     </ul>
                 </div>
@@ -1032,9 +1015,10 @@ const params = new URLSearchParams(window.location.search);
 const date = params.get("date") || params.get("selectedDate");
 const time = params.get("time") || params.get("selectedTime");
 const requestedPrice = Number(params.get("price"));
-const requestedDeposit = Number(params.get("deposit"));
-const deposit = Number.isFinite(requestedDeposit) && requestedDeposit > 0 ? requestedDeposit : 20;
 const hasSelectedSlot = Boolean(date && time);
+const deposit = hasSelectedSlot
+    ? window.availability.calculateDeposit(date)
+    : 20;
 
 function formatCeremonyDate(value) {
     if (!value) return "Not selected";
@@ -1081,30 +1065,11 @@ if (hasSelectedSlot) {
 
 /* ---------------- TRAVEL CALCULATION ---------------- */
 let postcodeIsValid = false;
-let postcodeIsInKent = false;
 
 function setPostcodeStatus(message, type = "") {
     const box = document.getElementById("postcodeStatus");
     box.textContent = message;
     box.className = "status-message" + (message ? ` show ${type}` : "");
-}
-
-function isKentPostcodeResult(result) {
-    const values = [
-        result.admin_county,
-        result.admin_district,
-        result.region,
-        result.parliamentary_constituency,
-        result.european_electoral_region
-    ].filter(Boolean).map(value => String(value).toLowerCase());
-
-    // Medway is a unitary authority but forms part of ceremonial Kent.
-    return values.some(value =>
-        value === "kent" ||
-        value.includes("kent") ||
-        value === "medway" ||
-        value.includes("medway")
-    );
 }
 
 async function calculateTravel() {
@@ -1114,7 +1079,6 @@ async function calculateTravel() {
     const travelLabelEl = document.getElementById("travelLabel");
 
     postcodeIsValid = false;
-    postcodeIsInKent = false;
     travelCostEl.textContent = 0;
     travelLabelEl.textContent = "Travel cost";
 
@@ -1141,16 +1105,6 @@ async function calculateTravel() {
 
         postcodeIsValid = true;
         postcodeInput.value = destCoords.result.postcode || postcode.toUpperCase();
-        postcodeIsInKent = isKentPostcodeResult(destCoords.result);
-
-        if (postcodeIsInKent) {
-            travelCostEl.textContent = 0;
-            travelLabelEl.textContent = "Travel within Kent";
-            setPostcodeStatus("Great news — travel to this Kent venue is included at no extra cost.", "success");
-            updateTotal();
-            return;
-        }
-
         const origin = `${originCoords.result.longitude},${originCoords.result.latitude}`;
         const dest = `${destCoords.result.longitude},${destCoords.result.latitude}`;
         const orsKey = "eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6IjBiYjMxNzAwMGRlNDQ5M2NhNTYwYjljYTIwY2NlZDk0IiwiaCI6Im11cm11cjY0In0=";
@@ -1169,10 +1123,10 @@ async function calculateTravel() {
         const travelCost = Math.round(returnMiles);
 
         travelCostEl.textContent = travelCost;
-        travelLabelEl.textContent = "Outside-Kent travel";
+        travelLabelEl.textContent = "Return travel";
         setPostcodeStatus(
-            `This venue is outside Kent. The calculated return journey is approximately ${Math.round(returnMiles)} miles.`,
-            "warning"
+            `The calculated return journey from CT14 7QE is approximately ${Math.round(returnMiles)} miles at £1 per mile.`,
+            "success"
         );
     } catch (err) {
         console.error(err);
@@ -1212,7 +1166,7 @@ venueInput.addEventListener("blur", checkVenueAddress);
 /* ---------------- TOTAL PRICE ---------------- */
 function updateTotal() {
     const witnessCount = document.querySelector('input[name="witnessCount"]:checked').value;
-    const witnessFee = (witnessCount === "2") ? 150 : 100;
+    const witnessFee = (witnessCount === "2") ? 200 : 150;
     document.getElementById("sum-price").textContent = witnessFee;
 
     let total = witnessFee;
@@ -1220,8 +1174,6 @@ function updateTotal() {
     total += sundayFee;
     total *= bankHolidayMultiplier;
 
-    if (document.getElementById("confetti").checked) total += 20;
-    if (document.getElementById("photoVideo").checked) total += 30;
     if (document.getElementById("lastMinute").checked) total += 50;
 
     total += Number(document.getElementById("travelCost").textContent);
@@ -1297,7 +1249,7 @@ async function submitBooking() {
     loading.style.display = "block";
 
     const witnessCount = Number(document.querySelector('input[name="witnessCount"]:checked').value);
-    const basePrice = witnessCount === 2 ? 150 : 100;
+    const basePrice = witnessCount === 2 ? 200 : 150;
 
     const job = {
         date,
@@ -1308,8 +1260,8 @@ async function submitBooking() {
         sundayFee,
         bankHolidayMultiplier,
         addOns: {
-            confetti: document.getElementById("confetti").checked,
-            photoVideo: document.getElementById("photoVideo").checked,
+            confetti: false,
+            photoVideo: false,
             lastMinute: document.getElementById("lastMinute").checked,
             travelPostcode: document.getElementById("travelPostcode").value.trim(),
             travelCost: Number(document.getElementById("travelCost").textContent)
@@ -1320,6 +1272,7 @@ async function submitBooking() {
             email: document.getElementById("cust-email").value.trim(),
             phone: document.getElementById("cust-phone").value.trim(),
             location: document.getElementById("cust-location").value.trim(),
+            dressCode: document.getElementById("dressCode").value,
             notes: document.getElementById("cust-notes").value.trim()
         },
         status: "pending",
@@ -1337,21 +1290,6 @@ async function submitBooking() {
             .doc(time)
             .set({ booked: true }, { merge: true });
 
-        // ⭐ SEND ADMIN EMAIL WITH FULL DETAILS
-        emailjs.send("service_r8gqd2d", "template_50xe6ck", {
-        name: job.customer.name,
-        email: job.customer.email,
-        phone: job.customer.phone,
-        date: job.date,
-        time: job.time,
-        location: job.customer.location,
-        witnessCount: job.witnessCount,
-        totalPrice: job.totalPrice,
-        deposit: job.deposit,
-        travelPostcode: job.addOns.travelPostcode,
-        travelCost: job.addOns.travelCost,
-        notes: job.customer.notes
-        }).catch(err => console.error("EmailJS error:", err));
 
         // Redirect
         window.location.href = "booking-confirmed.html";
