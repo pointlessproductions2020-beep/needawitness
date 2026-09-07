@@ -140,7 +140,7 @@ function remainingPlaces(j){return Math.max(witnessCount(j)-(Array.isArray(j.ass
 function jobDateTime(j){const d=parseLocalDate(j.date);if(!d)return null;const [h,m]=(j.time||"23:59").split(":").map(Number);d.setHours(h||0,m||0,0,0);return d;}
 function isPast(j){const d=jobDateTime(j);return d?d.getTime()<Date.now():false;}
 function isAvailable(j){return ACTIVE_JOB_STATUSES.has(j.status)&&!assignedToMe(j)&&!isPast(j)&&remainingPlaces(j)>0&&!hasOtherRequest(j);}
-function getEarnings(j){const total=Number(j.totalPrice||0),adminFee=Number(j.depositAmount??j.deposit??0),pot=Math.max(total-adminFee,0),required=witnessCount(j);if(userData?.type==="couple"&&required>=2)return pot;return pot/required;}
+function getEarnings(j){const required=witnessCount(j),places=(userData?.type==="couple"&&required>=2)?2:1;const perPlaceOverride=Number(j.witnessPayoutPerPlace);if(Number.isFinite(perPlaceOverride)&&perPlaceOverride>=0)return perPlaceOverride*places;const totalOverride=Number(j.witnessPayoutTotal);if(Number.isFinite(totalOverride)&&totalOverride>=0)return required>0?(totalOverride/required)*places:0;return 75*places;}
 function badge(label,kind){return `<span class="badge ${kind}">${esc(label)}</span>`;}
 function compactJob(j,kind){return `<div class="job-item"><div class="job-title">${esc(jobName(j))}${kind==="assigned"?badge("Assigned","assigned"):kind==="pending"?badge("Requested","pending"):badge("Available","available")}</div><div class="job-meta">${esc(formatDate(j.date))} · ${esc(j.time||"Time TBC")}<br>${esc(locationOf(j))}<br>${witnessCount(j)} witness${witnessCount(j)===1?"":"es"} · ${money(getEarnings(j))} est.</div></div>`;}
 
