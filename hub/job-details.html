@@ -59,7 +59,7 @@ function hasOtherRequest(j){return !!j.requestBy&&j.requestBy!==currentUser?.uid
 function remainingPlaces(j){return Math.max(witnessCount(j)-(Array.isArray(j.assignedWitnesses)?j.assignedWitnesses.length:0),0);}
 function isPast(j){const d=parseLocalDate(j.date);if(!d)return false;const t=String(j.time||"23:59").split(":").map(Number);d.setHours(t[0]||0,t[1]||0,0,0);return d<Date.now();}
 function isAvailable(j){return ACTIVE_JOB_STATUSES.has(j.status)&&!assignedToMe(j)&&!isPast(j)&&remainingPlaces(j)>0&&!hasOtherRequest(j);}
-function getEarnings(j){const total=Number(j.totalPrice||0),adminFee=Number(j.depositAmount??j.deposit??0),pot=Math.max(total-adminFee,0),required=witnessCount(j);if(userData?.type==="couple"&&required>=2)return pot;return pot/required;}
+function getEarnings(j){const required=witnessCount(j),places=(userData?.type==="couple"&&required>=2)?2:1;const perPlaceOverride=Number(j.witnessPayoutPerPlace);if(Number.isFinite(perPlaceOverride)&&perPlaceOverride>=0)return perPlaceOverride*places;const totalOverride=Number(j.witnessPayoutTotal);if(Number.isFinite(totalOverride)&&totalOverride>=0)return required>0?(totalOverride/required)*places:0;return 75*places;}
 function setState(text,cls){const el=document.getElementById("statePill");el.textContent=text;el.className="state-pill "+cls;}
 
 function renderJob(j){
