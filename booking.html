@@ -8,6 +8,11 @@
 <meta name="description" content="Complete your Need A Witness UK booking securely online.">
 
 <!-- ⭐ EMAILJS MUST LOAD FIRST ⭐ -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<script>
+    emailjs.init("l7EiT6u2dOg8bSFB3");
+</script>
+
 <!-- ⭐ LOAD AVAILABILITY.JS (MATCH VERSION WITH INDEX.HTML) ⭐ -->
 <script src="/hub/availability.js?v=13"></script>
 
@@ -1046,10 +1051,11 @@ if (!hasSelectedSlot) {
 }
 
 /* ---------------- SURCHARGES ---------------- */
-let sundayFee = hasSelectedSlot && window.availability.isSunday(date) ? 50 : 0;
+const isBankHolidayBooking = hasSelectedSlot && window.availability.isBankHoliday(date);
+let sundayFee = hasSelectedSlot && !isBankHolidayBooking && window.availability.isSunday(date) ? 50 : 0;
 document.getElementById("sum-sunday").textContent = sundayFee;
 
-let bankHolidayMultiplier = hasSelectedSlot && window.availability.isBankHoliday(date) ? 2 : 1;
+let bankHolidayMultiplier = isBankHolidayBooking ? 2 : 1;
 document.getElementById("sum-bankholiday").textContent =
     bankHolidayMultiplier === 2 ? "Double Price" : "None";
 
@@ -1231,7 +1237,7 @@ async function submitBooking() {
     if (!postcodeIsValid) {
         await calculateTravel();
         if (!postcodeIsValid) {
-            formError.textContent = "Please enter a valid ceremony postcode so we can confirm whether travel is included.";
+            formError.textContent = "Please enter a valid ceremony postcode so we can calculate the return travel charge.";
             formError.classList.add("show");
             document.getElementById("travelPostcode").focus();
             return;
@@ -1290,6 +1296,26 @@ async function submitBooking() {
             .doc(time)
             .set({ booked: true }, { merge: true });
 
+        // Send admin booking notification. A notification failure must never cancel a saved booking.
+        try {
+            await emailjs.send("service_r8gqd2d", "template_50xe6ck", {
+                name: job.customer.name,
+                email: job.customer.email,
+                phone: job.customer.phone,
+                date: job.date,
+                time: job.time,
+                location: job.customer.location,
+                witnessCount: job.witnessCount,
+                totalPrice: job.totalPrice,
+                deposit: job.deposit,
+                travelPostcode: job.addOns.travelPostcode,
+                travelCost: job.addOns.travelCost,
+                dressCode: job.customer.dressCode,
+                notes: job.customer.notes
+            });
+        } catch (emailErr) {
+            console.error("Email notification failed:", emailErr);
+        }
 
         // Redirect
         window.location.href = "booking-confirmed.html";
