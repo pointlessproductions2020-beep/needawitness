@@ -48,7 +48,7 @@ const ACTIVE_JOB_STATUSES=new Set(["approved","assigned"]);
 function esc(v){return String(v??"").replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));}
 function jobName(j){return j.customer?.name||j.coupleName||j.coupleNames||"Wedding ceremony";}
 function locationOf(j){return j.customer?.location||j.location||"Location TBC";}
-function notesOf(j){return j.customer?.notes||j.notes||"";}
+function notesOf(j){return j.customer?.notes||j.notes||"";}\nfunction dressCodeOf(j){return j.customer?.dressCode||j.dressCode||"";}
 function witnessCount(j){return Math.max(Number(j.witnessCount||1),1);}
 function parseLocalDate(s){if(!s)return null;const [y,m,d]=String(s).split("-").map(Number);return y&&m&&d?new Date(y,m-1,d):null;}
 function formatDate(s){const d=parseLocalDate(s);return d?d.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long",year:"numeric"}):(s||"Date TBC");}
@@ -82,8 +82,9 @@ function renderJob(j){
     <div class="card">
       <h3>Customer Details</h3>
       <div class="contact"><div class="contact-box"><div class="label">Email</div>${esc(email)}</div><div class="contact-box"><div class="label">Phone</div>${esc(phone)}</div></div>
+      <div class="info-row"><div class="label">Dress-code preference</div><div class="value">${esc(dressCodeOf(j)||"No dress-code preference provided.")}</div></div>
       <div class="info-row"><div class="label">Customer notes</div><div class="value">${esc(notesOf(j)||"No customer notes.")}</div></div>
-      <div class="notice private">These contact details are shown because you are assigned to this booking. Please use them only for the ceremony and handle them confidentially.</div>
+      <div class="notice private">These contact details, preferences and notes are shown because you are assigned to this booking. Please use them only for the ceremony and handle them confidentially.</div>
     </div>`:`
     <div class="card">
       <h3>Customer Privacy</h3>
