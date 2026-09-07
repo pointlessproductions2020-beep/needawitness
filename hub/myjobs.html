@@ -64,7 +64,7 @@ body{margin:0;font-family:Inter,sans-serif;background:var(--bg);color:var(--text
     <div class="drawer-section"><h4>Ceremony</h4><div id="drawerDate"></div><div id="drawerTime"></div><div id="drawerLocation"></div></div>
     <div class="drawer-section"><h4>Witness requirement</h4><div id="drawerWitnesses"></div></div>
     <div class="drawer-section"><h4>Estimated earnings</h4><div class="drawer-stat" id="drawerJobEarnings">£0.00</div><div class="drawer-hint">Shown using the current witness payout calculation.</div></div>
-    <div class="drawer-section" id="assignedInfo" style="display:none"><h4>Assigned job information</h4><div id="drawerCustomer"></div><div id="drawerNotes"></div><div class="private-note">Customer contact details are only shown after you are assigned to the booking.</div></div>
+    <div class="drawer-section" id="assignedInfo" style="display:none"><h4>Assigned job information</h4><div id="drawerCustomer"></div><div id="drawerDressCode"></div><div id="drawerNotes"></div><div class="private-note">Customer contact details, preferences and private notes are only shown after you are assigned to the booking.</div></div>
     <button id="drawerActionBtn" class="drawer-btn">Request Job</button>
   </div>
 </div>
@@ -80,7 +80,7 @@ const ACTIVE_JOB_STATUSES=new Set(["approved","assigned"]);
 function esc(v){return String(v??"").replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));}
 function jobName(j){return j.customer?.name||j.coupleName||j.coupleNames||"Wedding ceremony";}
 function locationOf(j){return j.customer?.location||j.location||"Location TBC";}
-function notesOf(j){return j.customer?.notes||j.notes||"";}
+function notesOf(j){return j.customer?.notes||j.notes||"";}\nfunction dressCodeOf(j){return j.customer?.dressCode||j.dressCode||"";}
 function witnessCount(j){return Math.max(Number(j.witnessCount||1),1);}
 function parseLocalDate(s){if(!s)return null;const [y,m,d]=String(s).split("-").map(Number);return y&&m&&d?new Date(y,m-1,d):null;}
 function formatDate(s){const d=parseLocalDate(s);return d?d.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short",year:"numeric"}):(s||"Date TBC");}
@@ -135,7 +135,7 @@ function openDrawer(id){
   const assigned=assignedToMe(j),requested=requestedByMe(j),available=isAvailable(j);
   document.getElementById("drawerStatus").innerHTML=assigned?statusBadge(j,"assigned"):requested?statusBadge(j,"request"):available?statusBadge(j,"available"):statusBadge(j,j.status==="completed"?"completed":"available");
   const info=document.getElementById("assignedInfo");info.style.display=assigned?"block":"none";
-  if(assigned){const email=j.customer?.email||j.email||"Not provided",phone=j.customer?.phone||j.phone||"Not provided";document.getElementById("drawerCustomer").innerHTML=`<b>Contact:</b> ${esc(email)} · ${esc(phone)}`;document.getElementById("drawerNotes").textContent=notesOf(j)?`Notes: ${notesOf(j)}`:"No customer notes.";}
+  if(assigned){const email=j.customer?.email||j.email||"Not provided",phone=j.customer?.phone||j.phone||"Not provided";document.getElementById("drawerCustomer").innerHTML=`<b>Contact:</b> ${esc(email)} · ${esc(phone)}`;document.getElementById("drawerDressCode").innerHTML=`<b>Dress-code preference:</b> ${esc(dressCodeOf(j)||"No dress-code preference provided.")}`;document.getElementById("drawerNotes").textContent=notesOf(j)?`Notes: ${notesOf(j)}`:"No customer notes.";}
   const btn=document.getElementById("drawerActionBtn");btn.disabled=false;
   if(assigned){btn.style.display="none";}else if(requested){btn.style.display="block";btn.textContent="Cancel Request";btn.className="drawer-btn cancel";btn.onclick=()=>cancelRequest(j.id);}else if(available){btn.style.display="block";btn.textContent="Request This Job";btn.className="drawer-btn";btn.onclick=()=>requestJob(j.id);}else{btn.style.display="none";}
   document.getElementById("jobOverlay").classList.add("open");requestAnimationFrame(()=>document.getElementById("jobDrawer").classList.add("open"));
