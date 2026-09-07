@@ -144,7 +144,78 @@ async function approveJob(){if(!confirm("Approve this booking and make the depos
 async function saveStatus(status){const prompt=status==="cancelled"?"Cancel this booking?":status==="completed"?"Mark this ceremony as completed?":`Change status to ${status}?`;if(!confirm(prompt))return;const updates={status};if(status==="completed")updates.completedAt=firebase.firestore.FieldValue.serverTimestamp();if(status==="cancelled")updates.cancelledAt=firebase.firestore.FieldValue.serverTimestamp();await updateJob(updates,"Status updated.")}
 function deadline24hDate(){const ceremony=localDate($("jobDate").value,$("jobTime").value||"00:00");if(!ceremony)return null;return new Date(ceremony.getTime()-24*60*60*1000)}
 function setDeadline24h(){const d=deadline24hDate();if(!d){alert("Set the ceremony date and time first.");return}$("paymentDeadline").value=toInput(d)}
-async function saveJobDetails(){const c={...(jobData.customer||{}),name:$("coupleName").value.trim(),email:$("coupleEmail").value.trim(),phone:$("couplePhone").value.trim(),location:$("jobLocation").value.trim(),dressCode:$("dressCode").value.trim(),notes:$("jobNotes").value.trim()};const travelPostcode=$("travelPostcode").value.trim(),travelCost=money($("travelCost").value);const addOns={...(jobData.addOns||{}),travelPostcode,travelCost};const updates={customer:c,date:$("jobDate").value,time:$("jobTime").value,ceremonyType:$("ceremonyType").value,witnessCount:Number($("witnessCount").value)||1,adminNotes:$("adminNotes").value.trim(),status:$("jobStatus").value,totalPrice:money($("totalPrice").value),deposit:money($("depositAmount").value),amountPaid:money($("amountPaid").value),amountDue:money($("amountDue").value),paymentStatus:$("paymentStatus").value,paymentLinkDeposit:$("paymentLinkDeposit").value.trim(),paymentLinkRemaining:$("paymentLinkRemaining").value.trim(),travelPostcode,travelCost,addOns};if($("paymentDeadline").value)updates.paymentDeadline=$("paymentDeadline").value;else updates.paymentDeadline=firebase.firestore.FieldValue.delete();await updateJob(updates,"Saved.")}
+async function saveJobDetails(){
+    const c={
+        ...(jobData.customer||{}),
+        name:$("coupleName").value.trim(),
+        email:$("coupleEmail").value.trim(),
+        phone:$("couplePhone").value.trim(),
+        location:$("jobLocation").value.trim(),
+        dressCode:$("dressCode").value.trim(),
+        notes:$("jobNotes").value.trim()
+    };
+
+    const travelPostcode=$("travelPostcode").value.trim();
+    const travelCost=Math.max(0,money($("travelCost").value));
+    const oldTravel=travelCostOf(jobData);
+    const oldTotal=money(jobData.totalPrice);
+    const enteredTotal=Math.max(0,money($("totalPrice").value));
+
+    // If the admin only changes the travel charge, automatically move the
+    // customer total by the same difference. If Total Price was deliberately
+    // edited as well, keep the admin-entered total instead.
+    const totalManuallyChanged=Math.abs(enteredTotal-oldTotal)>0.005;
+    const totalPrice=totalManuallyChanged
+        ? enteredTotal
+        : Math.max(0,oldTotal-oldTravel+travelCost);
+
+    const deposit=Math.max(0,money($("depositAmount").value));
+    const amountPaid=Math.max(0,money($("amountPaid").value));
+    let paymentStatus=$("paymentStatus").value;
+    const status=$("jobStatus").value;
+    let amountDue=money($("amountDue").value);
+
+    // Keep the existing payment lifecycle, but make the money figures agree
+    // with the newly calculated total after a travel override.
+    if(paymentStatus==="full" || (totalPrice>0 && amountPaid>=totalPrice)){
+        paymentStatus="full";
+        amountDue=0;
+    }else if(amountPaid>0){
+        paymentStatus="deposit";
+        amountDue=Math.max(totalPrice-amountPaid,0);
+    }else if(status==="pending"){
+        amountDue=0;
+    }else{
+        paymentStatus="unpaid";
+        amountDue=Math.min(deposit,totalPrice);
+    }
+
+    const addOns={...(jobData.addOns||{}),travelPostcode,travelCost};
+    const updates={
+        customer:c,
+        date:$("jobDate").value,
+        time:$("jobTime").value,
+        ceremonyType:$("ceremonyType").value,
+        witnessCount:Number($("witnessCount").value)||1,
+        adminNotes:$("adminNotes").value.trim(),
+        status,
+        totalPrice,
+        deposit,
+        amountPaid,
+        amountDue,
+        paymentStatus,
+        paymentLinkDeposit:$("paymentLinkDeposit").value.trim(),
+        paymentLinkRemaining:$("paymentLinkRemaining").value.trim(),
+        travelPostcode,
+        travelCost,
+        addOns
+    };
+
+    if($("paymentDeadline").value)updates.paymentDeadline=$("paymentDeadline").value;
+    else updates.paymentDeadline=firebase.firestore.FieldValue.delete();
+
+    await updateJob(updates,"Saved.");
+}
 async function updateJob(updates,note){try{await jobRef.update(updates);const fresh=await jobRef.get();jobData={id:fresh.id,...fresh.data()};populate();loadAvailability();buildTimeline();$("saveNote").textContent=note||"Saved.";setTimeout(()=>$("saveNote").textContent="",1800)}catch(e){alert("Could not update job: "+e.message)}}
 
 async function loadWitnesses(){try{const snap=await db.collection("users").get();allWitnesses=snap.docs.map(d=>({id:d.id,...d.data()}));fillWitnessSelect();renderAssignedWitnesses()}catch(e){$("assignedWitnesses").innerHTML=`<div class="muted">Could not load witnesses.</div>`}}
