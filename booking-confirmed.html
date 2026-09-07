@@ -377,7 +377,7 @@ footer {
                 <div class="timeline-step">
                     <div class="step-number">2</div>
                     <h3>Deposit link sent</h3>
-                    <p>You’ll receive a secure payment link for your <strong id="depositText">£20</strong> deposit.</p>
+                    <p>Once your request has been reviewed, we’ll contact you directly with the secure payment details for your deposit.</p>
                 </div>
                 <div class="timeline-step">
                     <div class="step-number">3</div>
@@ -387,7 +387,7 @@ footer {
                 <div class="timeline-step">
                     <div class="step-number">4</div>
                     <h3>Final balance</h3>
-                    <p>The remaining balance is due no later than 48 hours before the ceremony.</p>
+                    <p>The remaining balance is due no later than 24 hours before the ceremony.</p>
                 </div>
             </div>
         </section>
@@ -399,7 +399,7 @@ footer {
             </div>
             <div class="info-card">
                 <h3>Remaining balance</h3>
-                <p>You may pay the remaining balance early or in instalments, but it must be fully paid at least 48 hours before your ceremony.</p>
+                <p>You may pay the remaining balance early or in instalments, but it must be fully paid at least 24 hours before your ceremony.</p>
             </div>
         </section>
 
@@ -413,13 +413,13 @@ footer {
         </section>
 
         <div class="reassurance">
-            <strong>Didn’t receive an email?</strong><br>
-            Please check your Junk or Spam folder. If nothing arrives within a few hours, send us a WhatsApp message and we’ll be happy to help.
+            <strong>Your request has been received.</strong><br>
+            We personally review every booking request and will contact you directly using the details you provided. If you need us sooner, you can message us on WhatsApp.
         </div>
     </article>
 </main>
 
-<footer>© Need A Witness UK — Professional Wedding Witnesses Across Kent</footer>
+<footer>© Need A Witness UK — Professional Wedding Witnesses</footer>
 
 <script>
 const params = new URLSearchParams(window.location.search);
@@ -484,9 +484,6 @@ if (visibleSummaryRows === 0) {
     document.getElementById("summarySection").classList.add("hidden");
 }
 
-if (Number.isFinite(deposit) && deposit > 0) {
-    document.getElementById("depositText").textContent = `£${deposit}`;
-}
 </script>
 </body>
 </html>
