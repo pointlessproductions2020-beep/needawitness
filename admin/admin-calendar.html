@@ -690,17 +690,38 @@ async function loadSlots(dateStr) {
             const btn = document.createElement("button");
             btn.classList.add("slot-btn");
 
-            if (locked.has(time)) {
+            const state = states[time] || { available: true, booked: false };
+            const liveJob = locked.get(time);
+
+            // A live non-cancelled job always owns the slot.
+            if (liveJob) {
                 btn.classList.add("slot-locked");
+                const owner = getJobName(liveJob);
                 btn.textContent = `${time} • JOB`;
-            } else if (states[time]) {
+                btn.title = `Booked for ${owner}`;
+                btn.disabled = true;
+
+            // New booking.html stores ownership on the slot itself. If the slot
+            // says booked but the jobs query cannot currently find the job, keep
+            // it protected rather than accidentally turning it into availability.
+            } else if (state.booked === true) {
+                btn.classList.add("slot-locked");
+                btn.textContent = `${time} • BOOKED`;
+                const detail = state.customerName || state.jobId || "booking record";
+                btn.title = `Protected by ${detail}`;
+                btn.disabled = true;
+
+            // Manual admin blocks use available:false. They are deliberately
+            // separate from booking locks so they never create fake jobs.
+            } else if (state.available === false) {
                 btn.classList.add("slot-unavailable");
                 btn.textContent = `${time} • UNAVAILABLE`;
-                btn.onclick = () => toggleSlot(dateStr, time, false);
+                btn.onclick = () => toggleSlot(dateStr, time, true);
+
             } else {
                 btn.classList.add("slot-available");
                 btn.textContent = `${time} • AVAILABLE`;
-                btn.onclick = () => toggleSlot(dateStr, time, true);
+                btn.onclick = () => toggleSlot(dateStr, time, false);
             }
 
             grid.appendChild(btn);
@@ -712,12 +733,12 @@ async function loadSlots(dateStr) {
 }
 
 async function getLockedSlots(dateStr) {
-    const locked = new Set();
+    const locked = new Map();
     const snap = await db.collection("jobs").where("date", "==", dateStr).get();
 
     snap.forEach(doc => {
-        const job = doc.data() || {};
-        if (!isCancelled(job)) locked.add(job.time || "12:00");
+        const job = { id: doc.id, ...(doc.data() || {}) };
+        if (!isCancelled(job)) locked.set(job.time || "12:00", job);
     });
 
     return locked;
@@ -729,35 +750,56 @@ async function getSlotStates(dateStr) {
 
     snap.forEach(doc => {
         const data = doc.data() || {};
-        if (data.booked === true) states[doc.id] = true;
+        states[doc.id] = {
+            available: data.available !== false,
+            booked: data.booked === true,
+            jobId: data.jobId || "",
+            customerName: data.customerName || "",
+            bookingStatus: data.bookingStatus || "",
+            raw: data
+        };
     });
 
     return states;
 }
 
-async function toggleSlot(dateStr, time, booked) {
-    await db.collection("availability")
+async function toggleSlot(dateStr, time, makeAvailable) {
+    const slotRef = db.collection("availability")
         .doc(dateStr)
         .collection("slots")
-        .doc(time)
-        .set({ booked }, { merge: true });
+        .doc(time);
 
+    const snap = await slotRef.get();
+    const data = snap.exists ? (snap.data() || {}) : {};
+
+    // Never overwrite a real booking lock from the calendar availability editor.
+    if (data.booked === true) {
+        alert("This slot belongs to a booking. Release it through the job record instead.");
+        await loadSlots(dateStr);
+        return;
+    }
+
+    await slotRef.set({ available: makeAvailable }, { merge: true });
     await loadSlots(dateStr);
 }
 
-async function setWholeDay(booked) {
+async function setWholeDay(makeUnavailable) {
     const dateStr = selectedDate;
     if (!dateStr) return;
 
     const locked = await getLockedSlots(dateStr);
+    const states = await getSlotStates(dateStr);
     const batch = db.batch();
     const ref = db.collection("availability").doc(dateStr);
 
     WORKING_HOURS.forEach(time => {
-        if (!locked.has(time)) {
+        const state = states[time] || { booked: false };
+
+        // Do not touch a slot owned by a live job or by a booking record.
+        if (!locked.has(time) && state.booked !== true) {
             batch.set(
                 ref.collection("slots").doc(time),
-                { booked },
+                { available: !makeUnavailable },
                 { merge: true }
             );
         }
