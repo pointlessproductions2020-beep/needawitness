@@ -1286,15 +1286,25 @@ async function submitBooking() {
     };
 
     try {
-        // Save job
-        await db.collection("jobs").add(job);
-
-        // Mark slot as booked
-        await db.collection("availability")
+        // Create the job reference first so the availability lock can record
+        // exactly which booking owns this ceremony slot.
+        const jobRef = db.collection("jobs").doc();
+        const slotRef = db.collection("availability")
             .doc(date)
             .collection("slots")
-            .doc(time)
-            .set({ booked: true }, { merge: true });
+            .doc(time);
+
+        // Save the job and claim its slot together. The ownership metadata makes
+        // future cancellation/deletion cleanup safe and traceable.
+        const batch = db.batch();
+        batch.set(jobRef, job);
+        batch.set(slotRef, {
+            booked: true,
+            jobId: jobRef.id,
+            customerName: job.customer.name,
+            bookingStatus: job.status
+        }, { merge: true });
+        await batch.commit();
 
         // Send admin booking notification. A notification failure must never cancel a saved booking.
         try {
