@@ -137,11 +137,100 @@ function statusLabel(s){return ({pending:"Pending",approved:"Approved",assigned:
 function paymentLabel(p){return ({unpaid:"Unpaid",deposit:"Deposit paid",full:"Paid in full","late-cancel":"Late / cancelled"})[p]||p||"Unpaid"}
 function serviceLabel(j){const n=countOf(j);return `${n} witness${n===1?"":"es"}`}
 
+// -----------------------------------------------------------------------------
+// Booking-slot helpers
+// -----------------------------------------------------------------------------
+// A job owns its ceremony slot while it is anything other than cancelled.
+// We never force `available:true` when releasing a booking, because the admin may
+// have manually blocked that slot. Releasing only clears the booking lock.
+function statusReservesSlot(status){return (status||"pending")!=="cancelled"}
+function availabilitySlotRef(dateStr,timeStr){
+    if(!dateStr||!timeStr)return null;
+    return db.collection("availability").doc(dateStr).collection("slots").doc(timeStr);
+}
+async function otherJobsAtSlot(dateStr,timeStr,excludeId=jobId){
+    if(!dateStr||!timeStr)return [];
+    const snap=await db.collection("jobs").where("date","==",dateStr).get();
+    return snap.docs
+        .filter(d=>d.id!==excludeId)
+        .map(d=>({id:d.id,...d.data()}))
+        .filter(j=>(j.time||"")===timeStr && statusReservesSlot(j.status));
+}
+async function refreshJobAfterSave(note){
+    const fresh=await jobRef.get();
+    if(!fresh.exists)return;
+    jobData={id:fresh.id,...fresh.data()};
+    populate();
+    loadAvailability();
+    buildTimeline();
+    $("saveNote").textContent=note||"Saved.";
+    setTimeout(()=>$("saveNote").textContent="",1800);
+}
+async function saveJobWithAvailability(updates,note){
+    const oldDate=jobData?.date||"";
+    const oldTime=jobData?.time||"";
+    const oldStatus=jobData?.status||"pending";
+    const newDate=(updates.date!==undefined?updates.date:oldDate)||"";
+    const newTime=(updates.time!==undefined?updates.time:oldTime)||"";
+    const newStatus=(updates.status!==undefined?updates.status:oldStatus)||"pending";
+
+    const oldReserves=statusReservesSlot(oldStatus);
+    const newReserves=statusReservesSlot(newStatus);
+    const moved=oldDate!==newDate || oldTime!==newTime;
+
+    try{
+        // Before restoring or moving an active booking, make sure another live
+        // job has not taken the destination slot.
+        if(newReserves && newDate && newTime && (moved || !oldReserves)){
+            const conflicts=await otherJobsAtSlot(newDate,newTime,jobId);
+            if(conflicts.length){
+                alert(`Cannot use ${newDate} at ${newTime}. That slot is already held by ${nameOf(conflicts[0])}.`);
+                return false;
+            }
+        }
+
+        const batch=db.batch();
+        batch.update(jobRef,updates);
+
+        // Release the old slot when a job is cancelled or moved. Only clear
+        // the booking lock if no other live job is using the same slot.
+        if(oldReserves && oldDate && oldTime && (moved || !newReserves)){
+            const others=await otherJobsAtSlot(oldDate,oldTime,jobId);
+            if(!others.length){
+                const oldRef=availabilitySlotRef(oldDate,oldTime);
+                if(oldRef)batch.set(oldRef,{booked:false},{merge:true});
+            }
+        }
+
+        // Claim/repair the destination slot for every live job. This also
+        // repairs an old orphaned availability record when a job is restored.
+        if(newReserves && newDate && newTime){
+            const newRef=availabilitySlotRef(newDate,newTime);
+            if(newRef)batch.set(newRef,{booked:true},{merge:true});
+        }
+
+        await batch.commit();
+        await refreshJobAfterSave(note);
+        return true;
+    }catch(e){
+        alert("Could not update job: "+e.message);
+        return false;
+    }
+}
+
 async function loadJob(){jobId=param("id");if(!jobId){alert("No job ID provided.");location.href="admin-jobs.html";return}jobRef=db.collection("jobs").doc(jobId);try{const doc=await jobRef.get();if(!doc.exists){alert("Job not found.");location.href="admin-jobs.html";return}jobData={id:doc.id,...doc.data()};populate();await Promise.all([loadWitnesses(),loadAvailability()]);buildTimeline();$("loading").style.display="none";$("jobContent").style.display="block"}catch(e){$("loading").textContent="Could not load job: "+e.message}}
 function populate(){const j=jobData,c=customer(j),p=inferredPayment(j);$("jobTitle").textContent=nameOf(j);const d=localDate(j.date,j.time);$("jobSubtitle").textContent=`${d?formatDateTime(d):"Date not set"}${locationOf(j)?" • "+locationOf(j):""}`;$("coupleName").value=nameOf(j)==="Unnamed booking"?"":nameOf(j);$("coupleEmail").value=emailOf(j);$("couplePhone").value=phoneOf(j);$("jobDate").value=j.date||"";$("jobTime").value=j.time||"";$("jobLocation").value=locationOf(j);$("dressCode").value=dressCodeOf(j);$("travelPostcode").value=travelPostcodeOf(j);$("travelCost").value=travelCostOf(j);$("ceremonyType").value=j.ceremonyType||"civil";$("witnessCount").value=String(countOf(j));$("jobNotes").value=notesOf(j);$("adminNotes").value=j.adminNotes||"";$("jobStatus").value=j.status||"pending";$("totalPrice").value=money(j.totalPrice);$("depositAmount").value=money(j.deposit);$("amountPaid").value=money(j.amountPaid);$("amountDue").value=money(j.amountDue);$("paymentStatus").value=p;$("paymentLinkDeposit").value=j.paymentLinkDeposit||"";$("paymentLinkRemaining").value=j.paymentLinkRemaining||"";const deadline=parseAnyDate(j.paymentDeadline);$("paymentDeadline").value=deadline?toInput(deadline):(typeof j.paymentDeadline==="string"?j.paymentDeadline:"");$("statusBadge").textContent=statusLabel(j.status||"pending");$("statusBadge").className="badge "+statusBadge(j.status||"pending");$("paymentBadge").textContent=paymentLabel(p);$("paymentBadge").className="badge "+payBadge(p);$("serviceText").textContent=serviceLabel(j);$("totalText").textContent=`£${money(j.totalPrice)}`;$("assignedCountText").textContent=(j.assignedWitnesses||[]).length;$("paymentSummaryText").textContent=`£${money(j.amountPaid)} paid · £${money(j.amountDue)} due`;$("deadlineText").textContent=deadline?`Remaining balance deadline: ${formatDateTime(deadline)}`:"Remaining balance deadline: not set";renderStatusActions();renderRequestInfo();renderAssignedWitnesses()}
 function renderStatusActions(){const s=jobData.status||"pending",box=$("statusActions"),help=$("statusHelp");let buttons=[];if(s==="pending")buttons.push(`<button class="btn btn-gold" onclick="approveJob()">Approve Booking</button>`);if(s==="approved")buttons.push(`<button class="btn" onclick="saveStatus('assigned')">Mark Assigned</button>`);if(s==="approved"||s==="assigned")buttons.push(`<button class="btn btn-green" onclick="saveStatus('completed')">✓ Mark Job Completed</button>`);if(s!=="cancelled"&&s!=="completed")buttons.push(`<button class="btn btn-danger" onclick="saveStatus('cancelled')">Cancel Booking</button>`);if(s==="cancelled")buttons.push(`<button class="btn" onclick="saveStatus('approved')">Restore as Approved</button>`);box.innerHTML=buttons.join("");const text={pending:"Customer enquiry only. Approving it activates the booking and makes the deposit due.",approved:"Booking accepted. Assign witnesses when ready.",assigned:"Witnesses are assigned. Mark completed after the ceremony.",completed:"Ceremony completed. This job will count in completed-job reporting.",cancelled:"Cancelled bookings stay in history but should not reserve availability."}[s]||"";help.textContent=text}
 async function approveJob(){if(!confirm("Approve this booking and make the deposit due?"))return;const deposit=money(jobData.deposit)||20;const total=money(jobData.totalPrice);const paid=money(jobData.amountPaid);const updates={status:"approved",approvedAt:firebase.firestore.FieldValue.serverTimestamp(),paymentStatus:paid>=total&&total>0?"full":paid>0?"deposit":"unpaid",amountDue:paid>0?Math.max(total-paid,0):deposit};if(!jobData.paymentDeadline){const d=deadline24hDate();if(d)updates.paymentDeadline=toInput(d)}await updateJob(updates,"Booking approved.")}
-async function saveStatus(status){const prompt=status==="cancelled"?"Cancel this booking?":status==="completed"?"Mark this ceremony as completed?":`Change status to ${status}?`;if(!confirm(prompt))return;const updates={status};if(status==="completed")updates.completedAt=firebase.firestore.FieldValue.serverTimestamp();if(status==="cancelled")updates.cancelledAt=firebase.firestore.FieldValue.serverTimestamp();await updateJob(updates,"Status updated.")}
+async function saveStatus(status){
+    const prompt=status==="cancelled"?"Cancel this booking?":status==="completed"?"Mark this ceremony as completed?":`Change status to ${status}?`;
+    if(!confirm(prompt))return;
+    const updates={status};
+    if(status==="completed")updates.completedAt=firebase.firestore.FieldValue.serverTimestamp();
+    if(status==="cancelled")updates.cancelledAt=firebase.firestore.FieldValue.serverTimestamp();
+    if(status!=="cancelled" && (jobData.status||"pending")==="cancelled")updates.cancelledAt=firebase.firestore.FieldValue.delete();
+    await saveJobWithAvailability(updates,"Status updated.");
+}
 function deadline24hDate(){const ceremony=localDate($("jobDate").value,$("jobTime").value||"00:00");if(!ceremony)return null;return new Date(ceremony.getTime()-24*60*60*1000)}
 function setDeadline24h(){const d=deadline24hDate();if(!d){alert("Set the ceremony date and time first.");return}$("paymentDeadline").value=toInput(d)}
 async function saveJobDetails(){
@@ -214,7 +303,7 @@ async function saveJobDetails(){
     if($("paymentDeadline").value)updates.paymentDeadline=$("paymentDeadline").value;
     else updates.paymentDeadline=firebase.firestore.FieldValue.delete();
 
-    await updateJob(updates,"Saved.");
+    await saveJobWithAvailability(updates,"Saved.");
 }
 async function updateJob(updates,note){try{await jobRef.update(updates);const fresh=await jobRef.get();jobData={id:fresh.id,...fresh.data()};populate();loadAvailability();buildTimeline();$("saveNote").textContent=note||"Saved.";setTimeout(()=>$("saveNote").textContent="",1800)}catch(e){alert("Could not update job: "+e.message)}}
 
@@ -230,11 +319,38 @@ function goToWitness(id){location.href="admin-witness-detail.html?id="+encodeURI
 
 async function markDepositPaid(){if(!confirm("Mark the deposit as paid?"))return;const total=money(jobData.totalPrice),deposit=money(jobData.deposit),existing=money(jobData.amountPaid);const paid=Math.min(total,Math.max(existing,deposit));const due=Math.max(total-paid,0);const updates={paymentStatus:due>0?"deposit":"full",amountPaid:paid,amountDue:due,depositPaidAt:firebase.firestore.FieldValue.serverTimestamp()};if((jobData.status||"pending")==="pending")updates.status="approved";if(!jobData.paymentDeadline){const d=deadline24hDate();if(d)updates.paymentDeadline=toInput(d)}await updateJob(updates,"Deposit marked paid.")}
 async function markRemainingPaid(){if(!confirm("Mark the remaining balance as paid?"))return;const total=money(jobData.totalPrice);await updateJob({paymentStatus:"full",amountPaid:total,amountDue:0,remainingPaidAt:firebase.firestore.FieldValue.serverTimestamp()},"Balance marked paid.")}
-async function cancelForNonPayment(){if(!confirm("Cancel this job for non-payment? Assigned witnesses will be released."))return;await updateJob({paymentStatus:"late-cancel",status:"cancelled",assignedWitnesses:[],cancelledAt:firebase.firestore.FieldValue.serverTimestamp()},"Booking cancelled.")}
+async function cancelForNonPayment(){
+    if(!confirm("Cancel this job for non-payment? Assigned witnesses will be released."))return;
+    await saveJobWithAvailability({paymentStatus:"late-cancel",status:"cancelled",assignedWitnesses:[],cancelledAt:firebase.firestore.FieldValue.serverTimestamp()},"Booking cancelled.");
+}
 
 async function loadAvailability(){const dateStr=jobData?.date;if(!dateStr){$("availabilityPills").innerHTML='<span class="pill">No date set</span>';return}const d=localDate(dateStr),day=d?["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][d.getDay()]:"";let available=0,unavailable=0;allWitnesses.forEach(w=>{const a=w.availability?.[day];if(!a)return;a.enabled?available++:unavailable++});$("availabilityPills").innerHTML=`<span class="pill">${esc(day)}</span><span class="pill" style="background:#d6ffe0;color:#006d2a">Available: ${available}</span><span class="pill" style="background:#ffe6e6;color:#8a0000">Unavailable: ${unavailable}</span>`}
 function buildTimeline(){const j=jobData,items=[];const add=(label,v)=>{const d=parseAnyDate(v);if(d)items.push({label,time:d})};add("Enquiry created",j.createdAt);add("Booking approved",j.approvedAt);add("Deposit paid",j.depositPaidAt);add("Remaining balance paid",j.remainingPaidAt);add("Marked completed",j.completedAt);add("Cancelled",j.cancelledAt);const ceremony=localDate(j.date,j.time);if(ceremony)items.push({label:"Ceremony",time:ceremony});items.sort((a,b)=>a.time-b.time);$("timeline").innerHTML=items.length?items.map(i=>`<div class="timeline-item"><div class="timeline-label">${esc(i.label)}</div><div class="timeline-time">${esc(formatDateTime(i.time))}</div></div>`).join(""):'<div class="muted">No timeline events yet.</div>'}
-async function deleteJob(){if(!confirm("Permanently delete this job? This cannot be undone."))return;if(!confirm("Final confirmation: delete this booking permanently?"))return;try{await jobRef.delete();location.href="admin-jobs.html"}catch(e){alert("Could not delete job: "+e.message)}}
+async function deleteJob(){
+    if(!confirm("Permanently delete this job? This cannot be undone."))return;
+    if(!confirm("Final confirmation: delete this booking permanently?"))return;
+    try{
+        const dateStr=jobData?.date||"";
+        const timeStr=jobData?.time||"";
+        const batch=db.batch();
+        batch.delete(jobRef);
+
+        // Deleting a job must also release the booking lock it created. If
+        // another live job shares this slot, leave the slot protected.
+        if(dateStr&&timeStr){
+            const others=await otherJobsAtSlot(dateStr,timeStr,jobId);
+            if(!others.length){
+                const ref=availabilitySlotRef(dateStr,timeStr);
+                if(ref)batch.set(ref,{booked:false},{merge:true});
+            }
+        }
+
+        await batch.commit();
+        location.href="admin-jobs.html";
+    }catch(e){
+        alert("Could not delete job: "+e.message);
+    }
+}
 function logout(){auth.signOut().then(()=>location.href="../hub/login.html")}
 
 auth.onAuthStateChanged(user=>{if(!user){location.href="../hub/login.html";return}loadJob()});
