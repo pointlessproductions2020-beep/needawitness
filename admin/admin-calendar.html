@@ -289,6 +289,12 @@
         text-decoration: line-through;
     }
 
+    /* Category marker only: payment/status colours remain unchanged. */
+    .fc-event.document-job {
+        box-shadow: inset 4px 0 0 #1f1f1f;
+        padding-left: 3px;
+    }
+
     @media (max-width: 700px) {
         #availabilityPanel {
             width: 100%;
@@ -335,7 +341,7 @@
             <div>
                 <h1>Calendar</h1>
                 <div class="main-subtitle">
-                    All bookings in one place. Colour shows payment status; pending enquiries are clearly marked. Click any job to open it.
+                    All bookings in one place. Colour shows payment status; document jobs are marked DOC. Click any job to open it.
                 </div>
             </div>
         </div>
@@ -362,6 +368,8 @@
             <!-- FILTER BUTTONS -->
             <div style="margin-bottom: 15px; display:flex; gap:10px; flex-wrap:wrap;">
                 <button class="filter-btn" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="wedding">Weddings</button>
+                <button class="filter-btn" data-filter="document">Documents</button>
                 <button class="filter-btn" data-filter="pending">Pending Enquiries</button>
                 <button class="filter-btn" data-filter="full">Paid in Full</button>
                 <button class="filter-btn" data-filter="deposit">Deposit Only</button>
@@ -509,6 +517,18 @@ function getLocalToday() {
     return `${y}-${m}-${d}`;
 }
 
+function isDocumentJob(job) {
+    return job?.serviceCategory === "document";
+}
+
+function prettyServiceType(value) {
+    return (value || "").toString().replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+}
+
+function getDocumentServiceLabel(job) {
+    return job?.serviceLabel || prettyServiceType(job?.serviceType) || "Document";
+}
+
 function buildEventTitle(job) {
     const name = getJobName(job);
     const count = getWitnessCount(job);
@@ -516,6 +536,10 @@ function buildEventTitle(job) {
     const parts = [];
 
     if (status === "pending") parts.push("PENDING");
+    if (isDocumentJob(job)) {
+        parts.push("DOC");
+        parts.push(getDocumentServiceLabel(job));
+    }
     parts.push(name);
     if (count) parts.push(`${count}W`);
 
@@ -560,12 +584,14 @@ function initCalendar(initialEvents) {
             const status = normaliseStatus(job.status);
             if (status === "pending") info.el.classList.add("pending-enquiry");
             if (isCancelled(job)) info.el.classList.add("cancelled-job");
+            if (isDocumentJob(job)) info.el.classList.add("document-job");
 
             const payment = normalisePaymentStatus(job);
             const total = Number(job.totalPrice || 0);
             const location = getJobLocation(job);
             info.el.title = [
                 getJobName(job),
+                isDocumentJob(job) ? `Document: ${getDocumentServiceLabel(job)}` : "Wedding booking",
                 `${formatDateUK(job.date)} at ${job.time || "Time not set"}`,
                 location,
                 `Status: ${status || "not set"}`,
@@ -633,6 +659,8 @@ function eventMatchesFilter(job) {
     const status = normaliseStatus(job.status);
     const payment = normalisePaymentStatus(job);
 
+    if (currentFilter === "wedding") return !isDocumentJob(job);
+    if (currentFilter === "document") return isDocumentJob(job);
     if (currentFilter === "pending") return status === "pending";
     if (currentFilter === "late-cancel") return isCancelled(job);
     if (currentFilter === "full") return payment === "full" && !isCancelled(job);
