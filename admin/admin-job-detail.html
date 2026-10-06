@@ -43,14 +43,24 @@
       <div class="grid">
         <section>
           <div class="card">
-            <h2>Job & Couple</h2><div class="sub">Customer and ceremony details from the live booking record.</div>
-            <label>Couple Name</label><input id="coupleName">
+            <h2 id="detailsHeading">Job & Couple</h2><div class="sub" id="detailsSub">Customer and ceremony details from the live booking record.</div>
+            <label id="nameLabel">Couple Name</label><input id="coupleName">
             <div class="row2"><div><label>Email</label><input id="coupleEmail" type="email"></div><div><label>Phone</label><input id="couplePhone"></div></div>
             <div class="row2"><div><label>Date</label><input id="jobDate" type="date"></div><div><label>Time</label><input id="jobTime" type="time"></div></div>
             <label>Location</label><input id="jobLocation">
-            <label>Dress-code preference</label><input id="dressCode" placeholder="e.g. smart, formal, casual, specific colours">
-            <div class="row2"><div><label>Travel postcode</label><input id="travelPostcode" placeholder="Ceremony postcode"></div><div><label>Travel charge (£)</label><input id="travelCost" type="number" step="0.01" min="0"></div></div>
-            <div class="row2"><div><label>Ceremony Type</label><select id="ceremonyType"><option value="civil">Civil Ceremony</option><option value="religious">Religious Ceremony</option><option value="elopement">Elopement</option><option value="other">Other</option></select></div><div><label>Witness Count</label><select id="witnessCount"><option value="1">1 witness</option><option value="2">2 witnesses</option></select></div></div>
+            <div id="weddingFields">
+              <label>Dress-code preference</label><input id="dressCode" placeholder="e.g. smart, formal, casual, specific colours">
+              <div class="row2"><div><label>Ceremony Type</label><select id="ceremonyType"><option value="civil">Civil Ceremony</option><option value="religious">Religious Ceremony</option><option value="elopement">Elopement</option><option value="other">Other</option></select></div><div><label>Witness Count</label><select id="witnessCount"><option value="1">1 witness</option><option value="2">2 witnesses</option></select></div></div>
+            </div>
+            <div id="documentFields" style="display:none">
+              <div class="row2"><div><label>Document Service</label><input id="documentService" class="readonly" readonly></div><div><label>Witness Count</label><select id="documentWitnessCount"><option value="1">1 witness</option><option value="2">2 witnesses</option></select></div></div>
+              <label>Signatory Name</label><input id="signatoryName" placeholder="Person signing, if different from customer">
+              <div class="snapshot-grid" style="margin-top:10px">
+                <div class="snap"><div class="snap-label">Requirements confirmed</div><div class="snap-value" id="requirementsConfirmedText">—</div></div>
+                <div class="snap"><div class="snap-label">Document ready</div><div class="snap-value" id="documentReadyText">—</div></div>
+              </div>
+            </div>
+            <div class="row2"><div><label>Travel postcode</label><input id="travelPostcode" placeholder="Appointment postcode"></div><div><label>Travel charge (£)</label><input id="travelCost" type="number" step="0.01" min="0"></div></div>
             <label>Notes for Witnesses</label><textarea id="jobNotes"></textarea>
             <label>Internal Admin Notes</label><textarea id="adminNotes" placeholder="Private notes only admins can see."></textarea>
             <div class="badges"><span id="statusBadge" class="badge status-pending">Pending</span><span id="paymentBadge" class="badge pay-unpaid">Unpaid</span></div>
@@ -79,11 +89,11 @@
 
         <aside>
           <div class="card">
-            <h2>Payments</h2><div class="sub">Deposit now, remaining balance due 24 hours before the ceremony.</div>
+            <h2>Payments</h2><div class="sub">Deposit now, remaining balance due 24 hours before the appointment.</div>
             <div class="row2"><div><label>Total Price (£)</label><input id="totalPrice" type="number" step="0.01"></div><div><label>Deposit (£)</label><input id="depositAmount" type="number" step="0.01"></div></div>
             <div class="row2"><div><label>Amount Paid (£)</label><input id="amountPaid" type="number" step="0.01"></div><div><label>Amount Due (£)</label><input id="amountDue" type="number" step="0.01"></div></div>
             <label>Payment Status</label><select id="paymentStatus"><option value="unpaid">Unpaid</option><option value="deposit">Deposit paid</option><option value="full">Paid in full</option><option value="late-cancel">Late / cancelled</option></select>
-            <label>Payment Deadline (24h before ceremony)</label><input id="paymentDeadline" type="datetime-local">
+            <label>Payment Deadline (24h before appointment)</label><input id="paymentDeadline" type="datetime-local">
             <div class="action-strip"><button class="btn" onclick="setDeadline24h()">Set 24h deadline</button></div>
             <label>Monzo Payment Link – Deposit</label><input id="paymentLinkDeposit" placeholder="Paste Monzo link for deposit">
             <label>Monzo Payment Link – Remaining Balance</label><input id="paymentLinkRemaining" placeholder="Paste Monzo link for remaining balance">
@@ -94,7 +104,7 @@
             <h2>Snapshot</h2><div class="sub">At-a-glance status for this booking.</div>
             <div class="snapshot-grid"><div class="snap"><div class="snap-label">Service</div><div class="snap-value" id="serviceText">—</div></div><div class="snap"><div class="snap-label">Total</div><div class="snap-value money" id="totalText">£0</div></div><div class="snap"><div class="snap-label">Assigned</div><div class="snap-value" id="assignedCountText">0</div></div><div class="snap"><div class="snap-label">Payment</div><div class="snap-value" id="paymentSummaryText">—</div></div></div>
             <div class="attention" id="deadlineText">Deadline: not set</div>
-            <div style="margin-top:12px"><div class="sub" style="margin-bottom:4px">Availability on ceremony weekday (approx.)</div><div id="availabilityPills"></div></div>
+            <div style="margin-top:12px"><div class="sub" style="margin-bottom:4px">Availability on appointment weekday (approx.)</div><div id="availabilityPills"></div></div>
           </div>
 
           <div class="card danger">
@@ -135,7 +145,10 @@ function statusBadge(s){const safe=["pending","approved","assigned","completed",
 function payBadge(p){return p==="full"?"pay-full":p==="deposit"?"pay-deposit":p==="late-cancel"?"pay-late":p==="unpaid"?"pay-unpaid":"pay-other"}
 function statusLabel(s){return ({pending:"Pending",approved:"Approved",assigned:"Assigned",completed:"Completed",cancelled:"Cancelled"})[s]||s||"Pending"}
 function paymentLabel(p){return ({unpaid:"Unpaid",deposit:"Deposit paid",full:"Paid in full","late-cancel":"Late / cancelled"})[p]||p||"Unpaid"}
-function serviceLabel(j){const n=countOf(j);return `${n} witness${n===1?"":"es"}`}
+function isDocumentJob(j){return j?.serviceCategory==="document"}
+function prettyServiceType(value){return String(value||"").replace(/_/g," ").replace(/\b\w/g,c=>c.toUpperCase())}
+function documentServiceLabel(j){return j?.serviceLabel||prettyServiceType(j?.serviceType)||"Document Witnessing"}
+function serviceLabel(j){const n=countOf(j),count=`${n} witness${n===1?"":"es"}`;return isDocumentJob(j)?`DOCUMENT · ${documentServiceLabel(j)} · ${count}`:`WEDDING · ${count}`}
 
 // -----------------------------------------------------------------------------
 // Booking-slot helpers
@@ -219,11 +232,80 @@ async function saveJobWithAvailability(updates,note){
 }
 
 async function loadJob(){jobId=param("id");if(!jobId){alert("No job ID provided.");location.href="admin-jobs.html";return}jobRef=db.collection("jobs").doc(jobId);try{const doc=await jobRef.get();if(!doc.exists){alert("Job not found.");location.href="admin-jobs.html";return}jobData={id:doc.id,...doc.data()};populate();await Promise.all([loadWitnesses(),loadAvailability()]);buildTimeline();$("loading").style.display="none";$("jobContent").style.display="block"}catch(e){$("loading").textContent="Could not load job: "+e.message}}
-function populate(){const j=jobData,c=customer(j),p=inferredPayment(j);$("jobTitle").textContent=nameOf(j);const d=localDate(j.date,j.time);$("jobSubtitle").textContent=`${d?formatDateTime(d):"Date not set"}${locationOf(j)?" • "+locationOf(j):""}`;$("coupleName").value=nameOf(j)==="Unnamed booking"?"":nameOf(j);$("coupleEmail").value=emailOf(j);$("couplePhone").value=phoneOf(j);$("jobDate").value=j.date||"";$("jobTime").value=j.time||"";$("jobLocation").value=locationOf(j);$("dressCode").value=dressCodeOf(j);$("travelPostcode").value=travelPostcodeOf(j);$("travelCost").value=travelCostOf(j);$("ceremonyType").value=j.ceremonyType||"civil";$("witnessCount").value=String(countOf(j));$("jobNotes").value=notesOf(j);$("adminNotes").value=j.adminNotes||"";$("jobStatus").value=j.status||"pending";$("totalPrice").value=money(j.totalPrice);$("depositAmount").value=money(j.deposit);$("amountPaid").value=money(j.amountPaid);$("amountDue").value=money(j.amountDue);$("paymentStatus").value=p;$("paymentLinkDeposit").value=j.paymentLinkDeposit||"";$("paymentLinkRemaining").value=j.paymentLinkRemaining||"";const deadline=parseAnyDate(j.paymentDeadline);$("paymentDeadline").value=deadline?toInput(deadline):(typeof j.paymentDeadline==="string"?j.paymentDeadline:"");$("statusBadge").textContent=statusLabel(j.status||"pending");$("statusBadge").className="badge "+statusBadge(j.status||"pending");$("paymentBadge").textContent=paymentLabel(p);$("paymentBadge").className="badge "+payBadge(p);$("serviceText").textContent=serviceLabel(j);$("totalText").textContent=`£${money(j.totalPrice)}`;$("assignedCountText").textContent=(j.assignedWitnesses||[]).length;$("paymentSummaryText").textContent=`£${money(j.amountPaid)} paid · £${money(j.amountDue)} due`;$("deadlineText").textContent=deadline?`Remaining balance deadline: ${formatDateTime(deadline)}`:"Remaining balance deadline: not set";renderStatusActions();renderRequestInfo();renderAssignedWitnesses()}
-function renderStatusActions(){const s=jobData.status||"pending",box=$("statusActions"),help=$("statusHelp");let buttons=[];if(s==="pending")buttons.push(`<button class="btn btn-gold" onclick="approveJob()">Approve Booking</button>`);if(s==="approved")buttons.push(`<button class="btn" onclick="saveStatus('assigned')">Mark Assigned</button>`);if(s==="approved"||s==="assigned")buttons.push(`<button class="btn btn-green" onclick="saveStatus('completed')">✓ Mark Job Completed</button>`);if(s!=="cancelled"&&s!=="completed")buttons.push(`<button class="btn btn-danger" onclick="saveStatus('cancelled')">Cancel Booking</button>`);if(s==="cancelled")buttons.push(`<button class="btn" onclick="saveStatus('approved')">Restore as Approved</button>`);box.innerHTML=buttons.join("");const text={pending:"Customer enquiry only. Approving it activates the booking and makes the deposit due.",approved:"Booking accepted. Assign witnesses when ready.",assigned:"Witnesses are assigned. Mark completed after the ceremony.",completed:"Ceremony completed. This job will count in completed-job reporting.",cancelled:"Cancelled bookings stay in history but should not reserve availability."}[s]||"";help.textContent=text}
+function populate(){
+    const j=jobData,p=inferredPayment(j),doc=isDocumentJob(j),documentBooking=j.documentBooking||{};
+    $("jobTitle").textContent=nameOf(j);
+    const d=localDate(j.date,j.time);
+    $("jobSubtitle").textContent=`${doc?documentServiceLabel(j)+" • ":""}${d?formatDateTime(d):"Date not set"}${locationOf(j)?" • "+locationOf(j):""}`;
+
+    $("detailsHeading").textContent=doc?"Document Job":"Job & Couple";
+    $("detailsSub").textContent=doc?"Customer, document and appointment details from the live booking record.":"Customer and ceremony details from the live booking record.";
+    $("nameLabel").textContent=doc?"Customer Name":"Couple Name";
+    $("weddingFields").style.display=doc?"none":"block";
+    $("documentFields").style.display=doc?"block":"none";
+
+    $("coupleName").value=nameOf(j)==="Unnamed booking"?"":nameOf(j);
+    $("coupleEmail").value=emailOf(j);
+    $("couplePhone").value=phoneOf(j);
+    $("jobDate").value=j.date||"";
+    $("jobTime").value=j.time||"";
+    $("jobLocation").value=locationOf(j);
+    $("dressCode").value=dressCodeOf(j);
+    $("travelPostcode").value=travelPostcodeOf(j);
+    $("travelCost").value=travelCostOf(j);
+    $("ceremonyType").value=j.ceremonyType||"civil";
+    $("witnessCount").value=String(countOf(j));
+    $("documentWitnessCount").value=String(countOf(j));
+    $("documentService").value=documentServiceLabel(j);
+    $("signatoryName").value=documentBooking.signatoryName||"";
+    $("requirementsConfirmedText").textContent=documentBooking.requirementsConfirmed===true?"Yes":documentBooking.requirementsConfirmed===false?"No":"—";
+    $("documentReadyText").textContent=documentBooking.documentReadyConfirmed===true?"Yes":documentBooking.documentReadyConfirmed===false?"No":"—";
+    $("jobNotes").value=notesOf(j);
+    $("adminNotes").value=j.adminNotes||"";
+    $("jobStatus").value=j.status||"pending";
+    $("totalPrice").value=money(j.totalPrice);
+    $("depositAmount").value=money(j.deposit);
+    $("amountPaid").value=money(j.amountPaid);
+    $("amountDue").value=money(j.amountDue);
+    $("paymentStatus").value=p;
+    $("paymentLinkDeposit").value=j.paymentLinkDeposit||"";
+    $("paymentLinkRemaining").value=j.paymentLinkRemaining||"";
+    const deadline=parseAnyDate(j.paymentDeadline);
+    $("paymentDeadline").value=deadline?toInput(deadline):(typeof j.paymentDeadline==="string"?j.paymentDeadline:"");
+    $("statusBadge").textContent=statusLabel(j.status||"pending");
+    $("statusBadge").className="badge "+statusBadge(j.status||"pending");
+    $("paymentBadge").textContent=paymentLabel(p);
+    $("paymentBadge").className="badge "+payBadge(p);
+    $("serviceText").textContent=serviceLabel(j);
+    $("totalText").textContent=`£${money(j.totalPrice)}`;
+    $("assignedCountText").textContent=(j.assignedWitnesses||[]).length;
+    $("paymentSummaryText").textContent=`£${money(j.amountPaid)} paid · £${money(j.amountDue)} due`;
+    $("deadlineText").textContent=deadline?`Remaining balance deadline: ${formatDateTime(deadline)}`:"Remaining balance deadline: not set";
+    renderStatusActions();
+    renderRequestInfo();
+    renderAssignedWitnesses();
+}
+function renderStatusActions(){
+    const s=jobData.status||"pending",box=$("statusActions"),help=$("statusHelp"),doc=isDocumentJob(jobData);
+    let buttons=[];
+    if(s==="pending")buttons.push(`<button class="btn btn-gold" onclick="approveJob()">Approve Booking</button>`);
+    if(s==="approved")buttons.push(`<button class="btn" onclick="saveStatus('assigned')">Mark Assigned</button>`);
+    if(s==="approved"||s==="assigned")buttons.push(`<button class="btn btn-green" onclick="saveStatus('completed')">✓ Mark Job Completed</button>`);
+    if(s!=="cancelled"&&s!=="completed")buttons.push(`<button class="btn btn-danger" onclick="saveStatus('cancelled')">Cancel Booking</button>`);
+    if(s==="cancelled")buttons.push(`<button class="btn" onclick="saveStatus('approved')">Restore as Approved</button>`);
+    box.innerHTML=buttons.join("");
+    const text={
+      pending:"Customer enquiry only. Approving it activates the booking and makes the deposit due.",
+      approved:"Booking accepted. Assign witnesses when ready.",
+      assigned:doc?"Witnesses are assigned. Mark completed after the appointment.":"Witnesses are assigned. Mark completed after the ceremony.",
+      completed:doc?"Appointment completed. This job will count in completed-job reporting.":"Ceremony completed. This job will count in completed-job reporting.",
+      cancelled:"Cancelled bookings stay in history but should not reserve availability."
+    }[s]||"";
+    help.textContent=text;
+}
 async function approveJob(){if(!confirm("Approve this booking and make the deposit due?"))return;const deposit=money(jobData.deposit)||20;const total=money(jobData.totalPrice);const paid=money(jobData.amountPaid);const updates={status:"approved",approvedAt:firebase.firestore.FieldValue.serverTimestamp(),paymentStatus:paid>=total&&total>0?"full":paid>0?"deposit":"unpaid",amountDue:paid>0?Math.max(total-paid,0):deposit};if(!jobData.paymentDeadline){const d=deadline24hDate();if(d)updates.paymentDeadline=toInput(d)}await updateJob(updates,"Booking approved.")}
 async function saveStatus(status){
-    const prompt=status==="cancelled"?"Cancel this booking?":status==="completed"?"Mark this ceremony as completed?":`Change status to ${status}?`;
+    const prompt=status==="cancelled"?"Cancel this booking?":status==="completed"?`Mark this ${isDocumentJob(jobData)?"appointment":"ceremony"} as completed?`:`Change status to ${status}?`;
     if(!confirm(prompt))return;
     const updates={status};
     if(status==="completed")updates.completedAt=firebase.firestore.FieldValue.serverTimestamp();
@@ -231,8 +313,8 @@ async function saveStatus(status){
     if(status!=="cancelled" && (jobData.status||"pending")==="cancelled")updates.cancelledAt=firebase.firestore.FieldValue.delete();
     await saveJobWithAvailability(updates,"Status updated.");
 }
-function deadline24hDate(){const ceremony=localDate($("jobDate").value,$("jobTime").value||"00:00");if(!ceremony)return null;return new Date(ceremony.getTime()-24*60*60*1000)}
-function setDeadline24h(){const d=deadline24hDate();if(!d){alert("Set the ceremony date and time first.");return}$("paymentDeadline").value=toInput(d)}
+function deadline24hDate(){const appointment=localDate($("jobDate").value,$("jobTime").value||"00:00");if(!appointment)return null;return new Date(appointment.getTime()-24*60*60*1000)}
+function setDeadline24h(){const d=deadline24hDate();if(!d){alert("Set the appointment date and time first.");return}$("paymentDeadline").value=toInput(d)}
 async function saveJobDetails(){
     const c={
         ...(jobData.customer||{}),
@@ -285,7 +367,7 @@ async function saveJobDetails(){
         date:$("jobDate").value,
         time:$("jobTime").value,
         ceremonyType:$("ceremonyType").value,
-        witnessCount:Number($("witnessCount").value)||1,
+        witnessCount:Number(isDocumentJob(jobData)?$("documentWitnessCount").value:$("witnessCount").value)||1,
         adminNotes:$("adminNotes").value.trim(),
         status,
         totalPrice,
@@ -299,6 +381,13 @@ async function saveJobDetails(){
         travelCost,
         addOns
     };
+
+    if(isDocumentJob(jobData)){
+        updates.documentBooking={
+            ...(jobData.documentBooking||{}),
+            signatoryName:$("signatoryName").value.trim()
+        };
+    }
 
     if($("paymentDeadline").value)updates.paymentDeadline=$("paymentDeadline").value;
     else updates.paymentDeadline=firebase.firestore.FieldValue.delete();
@@ -325,7 +414,7 @@ async function cancelForNonPayment(){
 }
 
 async function loadAvailability(){const dateStr=jobData?.date;if(!dateStr){$("availabilityPills").innerHTML='<span class="pill">No date set</span>';return}const d=localDate(dateStr),day=d?["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][d.getDay()]:"";let available=0,unavailable=0;allWitnesses.forEach(w=>{const a=w.availability?.[day];if(!a)return;a.enabled?available++:unavailable++});$("availabilityPills").innerHTML=`<span class="pill">${esc(day)}</span><span class="pill" style="background:#d6ffe0;color:#006d2a">Available: ${available}</span><span class="pill" style="background:#ffe6e6;color:#8a0000">Unavailable: ${unavailable}</span>`}
-function buildTimeline(){const j=jobData,items=[];const add=(label,v)=>{const d=parseAnyDate(v);if(d)items.push({label,time:d})};add("Enquiry created",j.createdAt);add("Booking approved",j.approvedAt);add("Deposit paid",j.depositPaidAt);add("Remaining balance paid",j.remainingPaidAt);add("Marked completed",j.completedAt);add("Cancelled",j.cancelledAt);const ceremony=localDate(j.date,j.time);if(ceremony)items.push({label:"Ceremony",time:ceremony});items.sort((a,b)=>a.time-b.time);$("timeline").innerHTML=items.length?items.map(i=>`<div class="timeline-item"><div class="timeline-label">${esc(i.label)}</div><div class="timeline-time">${esc(formatDateTime(i.time))}</div></div>`).join(""):'<div class="muted">No timeline events yet.</div>'}
+function buildTimeline(){const j=jobData,items=[];const add=(label,v)=>{const d=parseAnyDate(v);if(d)items.push({label,time:d})};add("Enquiry created",j.createdAt);add("Booking approved",j.approvedAt);add("Deposit paid",j.depositPaidAt);add("Remaining balance paid",j.remainingPaidAt);add("Marked completed",j.completedAt);add("Cancelled",j.cancelledAt);const appointment=localDate(j.date,j.time);if(appointment)items.push({label:isDocumentJob(j)?"Document appointment":"Ceremony",time:appointment});items.sort((a,b)=>a.time-b.time);$("timeline").innerHTML=items.length?items.map(i=>`<div class="timeline-item"><div class="timeline-label">${esc(i.label)}</div><div class="timeline-time">${esc(formatDateTime(i.time))}</div></div>`).join(""):'<div class="muted">No timeline events yet.</div>'}
 async function deleteJob(){
     if(!confirm("Permanently delete this job? This cannot be undone."))return;
     if(!confirm("Final confirmation: delete this booking permanently?"))return;
