@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Book a Document Witness | Need A Witness UK</title>
+<meta name="description" content="Book an independent witness for a will, deed, deed poll, property document, LPA or other document with Need A Witness UK.">
+<link rel="icon" href="/logo-document.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<script>emailjs.init("l7EiT6u2dOg8bSFB3");</script>
+<script src="/hub/availability.js?v=13"></script>
+
+<style>
+:root{
+  --ink:#2d2924; --muted:#6d655c; --gold:#b9914a; --gold-dark:#8e6b30;
+  --cream:#f7f2e8; --soft:#fbf8f2; --line:#e8dfd1; --white:#fff;
+  --shadow:0 18px 50px rgba(49,40,28,.10); --radius:22px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:Inter,Arial,sans-serif;color:var(--ink);background:#fff;line-height:1.65}
+a{color:inherit}
+.container{width:min(1120px,calc(100% - 36px));margin:auto}
+.topbar{background:#2c2925;color:#f6ead2;text-align:center;padding:9px 16px;font-size:13px;letter-spacing:.03em}
+header{background:rgba(255,255,255,.96);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:30;backdrop-filter:blur(10px)}
+.nav{min-height:86px;display:flex;align-items:center;justify-content:space-between;gap:24px}
+.brand img{display:block;width:190px;max-height:76px;object-fit:contain}
+.navlinks{display:flex;gap:22px;align-items:center;font-size:14px;font-weight:600}
+.navlinks a{text-decoration:none}
+.navlinks .book{background:var(--gold);color:#fff;padding:12px 18px;border-radius:999px}
+.hero{position:relative;isolation:isolate;overflow:hidden;background:#201d19;color:white}
+.hero:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(21,18,15,.91),rgba(21,18,15,.70) 50%,rgba(21,18,15,.32)),url("/legal-hero.png") center/cover no-repeat;z-index:-2}
+.hero:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(20,17,14,.4));z-index:-1}
+.hero-inner{min-height:350px;display:flex;align-items:center;padding:62px 0}
+.hero-copy{max-width:720px}
+.eyebrow{text-transform:uppercase;letter-spacing:.18em;color:#d9b96e;font-weight:700;font-size:12px;margin-bottom:10px}
+h1,h2,h3{font-family:"Cormorant Garamond",Georgia,serif;line-height:1.05;margin:0}
+h1{font-size:clamp(42px,6vw,68px);max-width:760px}
+.hero p{font-size:18px;max-width:680px;color:#f2ede5;margin:18px 0 0}
+.hero .back{display:inline-block;margin-top:24px;color:#f4dca7;text-decoration:none;font-weight:700}
+main{background:linear-gradient(#fff,#fbf8f2)}
+.section{padding:56px 0}
+.intro{text-align:center;max-width:780px;margin:0 auto 34px}
+.intro h2{font-size:clamp(34px,4vw,48px);margin-bottom:12px}
+.intro p{color:var(--muted);margin:0}
+.booking-grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(300px,.7fr);gap:28px;align-items:start}
+.card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:28px;margin-bottom:22px}
+.card-title{display:flex;gap:14px;align-items:flex-start;margin-bottom:22px}
+.step{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:var(--cream);color:var(--gold-dark);font-weight:800;flex:0 0 auto;border:1px solid #e4d3b0}
+.card-title h2{font-size:31px}
+.card-title p{margin:4px 0 0;color:var(--muted);font-size:14px}
+.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.field{margin-bottom:18px}
+.field.full{grid-column:1/-1}
+label,.field-label{display:block;font-size:14px;font-weight:700;margin-bottom:7px}
+.required{color:#a14838}
+input,select,textarea{width:100%;border:1px solid #d8cec0;background:#fff;border-radius:12px;padding:13px 14px;font:inherit;color:var(--ink);outline:none;transition:.2s}
+input:focus,select:focus,textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(185,145,74,.12)}
+textarea{min-height:110px;resize:vertical}
+.help{display:block;color:var(--muted);font-size:12px;margin-top:6px}
+.service-note{background:var(--cream);border:1px solid #eadbbd;border-radius:14px;padding:14px 16px;color:#5d503e;font-size:14px;margin-top:12px}
+.witness-options{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.option{position:relative}
+.option input{position:absolute;opacity:0;pointer-events:none}
+.option label{height:100%;padding:17px;border:1px solid #ddd2c2;border-radius:15px;cursor:pointer;background:#fff;transition:.2s;margin:0}
+.option label strong{display:block;font-size:16px}
+.option label small{display:block;color:var(--muted);font-weight:400;margin-top:3px}
+.option input:checked+label{border-color:var(--gold);background:#fffaf0;box-shadow:0 0 0 2px rgba(185,145,74,.13)}
+.option input:disabled+label{opacity:.45;cursor:not-allowed}
+.slots{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}
+.slot{border:1px solid #d8cec0;background:#fff;border-radius:11px;padding:11px 8px;font-weight:700;cursor:pointer}
+.slot:hover:not(:disabled){border-color:var(--gold)}
+.slot.selected{background:var(--gold);color:white;border-color:var(--gold)}
+.slot:disabled{opacity:.36;cursor:not-allowed;text-decoration:line-through}
+.status{display:none;margin-top:10px;padding:10px 12px;border-radius:10px;font-size:13px}
+.status.show{display:block}
+.status.success{background:#edf7ef;color:#27623a}
+.status.error{background:#fff0ed;color:#923c2f}
+.status.warning{background:#fff8e8;color:#785c20}
+.spinner{display:none;width:25px;height:25px;border:3px solid #eee;border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;margin:18px auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+.checkline{display:flex;align-items:flex-start;gap:10px;margin:13px 0}
+.checkline input{width:auto;margin-top:5px}
+.checkline label{font-weight:500;margin:0;font-size:13px}
+.summary{position:sticky;top:108px}
+.summary h2{font-size:31px;margin-bottom:18px}
+.summary-row{display:flex;justify-content:space-between;gap:16px;padding:10px 0;border-bottom:1px solid #eee7dc;font-size:14px}
+.summary-row strong{text-align:right}
+.total{display:flex;justify-content:space-between;align-items:flex-end;margin-top:18px;padding-top:8px}
+.total span{font-weight:700}
+.total strong{font-family:"Cormorant Garamond";font-size:38px;color:var(--gold-dark)}
+.deposit{background:var(--cream);border-radius:12px;padding:12px 14px;margin-top:14px;font-size:13px;color:#5f5548}
+.scope{border-left:3px solid var(--gold);padding-left:14px;margin-top:18px;color:var(--muted);font-size:12px}
+.primary{width:100%;border:0;border-radius:999px;background:var(--gold);color:#fff;font-weight:800;font-size:16px;padding:15px 22px;cursor:pointer;margin-top:20px}
+.primary:hover{background:var(--gold-dark)}
+.primary:disabled{opacity:.55;cursor:not-allowed}
+.form-error{display:none;background:#fff0ed;color:#8f392e;border:1px solid #f0c9c1;border-radius:12px;padding:12px 14px;margin-top:14px;font-size:13px}
+.form-error.show{display:block}
+.loading{display:none;text-align:center;color:var(--muted);font-size:13px;margin-top:10px}
+.success-panel{display:none;text-align:center;padding:50px 28px}
+.success-panel.show{display:block}
+.success-panel .tick{width:66px;height:66px;border-radius:50%;display:grid;place-items:center;margin:0 auto 18px;background:#edf7ef;color:#27623a;font-size:32px}
+.success-panel h2{font-size:42px}
+.success-panel p{max-width:650px;margin:12px auto;color:var(--muted)}
+footer{background:#282521;color:#e9dfd0;padding:40px 0;margin-top:20px}
+.footer-inner{display:flex;justify-content:space-between;gap:30px;align-items:center}
+.footer-inner img{width:170px;max-height:70px;object-fit:contain}
+.footer-copy{text-align:right;font-size:13px;color:#cfc4b5}
+.footer-copy a{color:#ead29b}
+@media(max-width:850px){
+  .navlinks{display:none}.booking-grid{grid-template-columns:1fr}.summary{position:static}
+  .field-grid{grid-template-columns:1fr}.slots{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:520px){
+  .container{width:min(100% - 24px,1120px)}.brand img{width:150px}.nav{min-height:72px}
+  .hero-inner{min-height:310px;padding:45px 0}.section{padding:38px 0}.card{padding:20px}
+  .witness-options{grid-template-columns:1fr}.footer-inner{display:block;text-align:center}.footer-copy{text-align:center;margin-top:18px}
+}
+</style>
+</head>
+<body>
+<div class="topbar">Independent Document Witnessing • Need A Witness UK</div>
+<header>
+  <div class="container nav">
+    <a class="brand" href="/legal/"><img src="/logo-document.png" alt="Need A Witness UK — Document Witnessing"></a>
+    <nav class="navlinks">
+      <a href="/legal/">Document Witnessing</a>
+      <a href="mailto:bookings@needawitness.uk">Contact</a>
+      <a class="book" href="#booking">Book a witness</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container hero-inner">
+    <div class="hero-copy">
+      <div class="eyebrow">Need A Witness UK</div>
+      <h1 id="heroTitle">Book an Independent Document Witness</h1>
+      <p id="heroText">Choose the document you need witnessed, select an available appointment and tell us where you need us.</p>
+      <a class="back" href="/legal/">← Back to Document Witnessing</a>
+    </div>
+  </div>
+</section>
+
+<main id="booking">
+<section class="section">
+<div class="container">
+  <div class="intro">
+    <div class="eyebrow">Simple, clear booking</div>
+    <h2>Arrange your witnesses</h2>
+    <p>Your request is personally reviewed before final confirmation. We provide independent witnesses only and do not prepare documents or give legal advice.</p>
+  </div>
+
+  <div id="bookingContent" class="booking-grid">
+    <div>
+      <section class="card">
+        <div class="card-title"><div class="step">1</div><div><h2>What do you need witnessed?</h2><p>If you arrived from a service page, this will already be selected for you.</p></div></div>
+        <div class="field">
+          <label for="serviceType">Document type <span class="required">*</span></label>
+          <select id="serviceType">
+            <option value="will">Will witnessing</option>
+            <option value="deed">Deed witnessing</option>
+            <option value="deed-poll">Deed poll witnessing</option>
+            <option value="property">Property document witnessing</option>
+            <option value="lpa">LPA document witnessing</option>
+            <option value="other">Other document witnessing</option>
+          </select>
+          <div id="serviceNote" class="service-note"></div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-title"><div class="step">2</div><div><h2>Choose your appointment</h2><p>Live availability is shared with all Need A Witness bookings.</p></div></div>
+        <div class="field">
+          <label for="datePicker">Appointment date <span class="required">*</span></label>
+          <input type="date" id="datePicker">
+          <small class="help">Online bookings must be more than 24 hours away. Contact us directly for urgent requests.</small>
+        </div>
+        <div id="slotSpinner" class="spinner"></div>
+        <div id="slots" class="slots"></div>
+        <div id="availabilityStatus" class="status"></div>
+      </section>
+
+      <section class="card">
+        <div class="card-title"><div class="step">3</div><div><h2>Witnesses required</h2><p>Choose the number of independent witnesses you need.</p></div></div>
+        <div class="witness-options">
+          <div class="option">
+            <input type="radio" name="witnessCount" id="oneWitness" value="1" checked>
+            <label for="oneWitness"><strong>1 witness — £150</strong><small>One independent witness attending your appointment.</small></label>
+          </div>
+          <div class="option">
+            <input type="radio" name="witnessCount" id="twoWitnesses" value="2">
+            <label for="twoWitnesses"><strong>2 witnesses — £200</strong><small>Two independent witnesses attending together.</small></label>
+          </div>
+        </div>
+        <div id="witnessRule" class="service-note"></div>
+      </section>
+
+      <section class="card">
+        <div class="card-title"><div class="step">4</div><div><h2>Signing location</h2><p>Tell us where the document will be signed. Home, office and other suitable locations are welcome.</p></div></div>
+        <div class="field-grid">
+          <div class="field full">
+            <label for="signingAddress">Signing address <span class="required">*</span></label>
+            <textarea id="signingAddress" placeholder="Full address where the signing will take place"></textarea>
+          </div>
+          <div class="field">
+            <label for="travelPostcode">Signing postcode <span class="required">*</span></label>
+            <input id="travelPostcode" autocomplete="postal-code" placeholder="e.g. CT1 1AA">
+            <small class="help">Travel is £1 per mile for the full return journey from CT14 7QE.</small>
+            <div id="postcodeStatus" class="status"></div>
+          </div>
+          <div class="field">
+            <label>Calculated travel</label>
+            <div class="service-note" style="margin-top:0"><strong id="travelMiles">—</strong><br><span id="travelExplanation">Enter a postcode to calculate travel.</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-title"><div class="step">5</div><div><h2>Your details</h2><p>We'll use these details to review and confirm the booking.</p></div></div>
+        <div class="field-grid">
+          <div class="field"><label for="custName">Full name <span class="required">*</span></label><input id="custName" autocomplete="name"></div>
+          <div class="field"><label for="custEmail">Email <span class="required">*</span></label><input id="custEmail" type="email" autocomplete="email"></div>
+          <div class="field"><label for="custPhone">Phone <span class="required">*</span></label><input id="custPhone" type="tel" autocomplete="tel"></div>
+          <div class="field"><label for="signatoryName">Name of person signing</label><input id="signatoryName" placeholder="If different from the person booking"></div>
+          <div class="field full">
+            <label for="documentDetails">Document details / notes</label>
+            <textarea id="documentDetails" placeholder="Anything useful we should know about the document or appointment. Please do not upload or paste confidential document contents."></textarea>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-title"><div class="step">6</div><div><h2>Before you request the booking</h2><p>A couple of important confirmations keep the service clear and safe.</p></div></div>
+        <div class="checkline">
+          <input id="requirementsConfirmed" type="checkbox">
+          <label for="requirementsConfirmed">I have checked the requirements for my document and understand that Need A Witness UK provides independent witnesses only; it does not decide whether my document is valid or advise me how it should be executed. <span class="required">*</span></label>
+        </div>
+        <div class="checkline">
+          <input id="preparedConfirmed" type="checkbox">
+          <label for="preparedConfirmed">The document will be ready for signing at the appointment. <span class="required">*</span></label>
+        </div>
+      </section>
+    </div>
+
+    <aside class="card summary">
+      <div class="eyebrow">Booking summary</div>
+      <h2>Your appointment</h2>
+      <div class="summary-row"><span>Service</span><strong id="sumService">Will witnessing</strong></div>
+      <div class="summary-row"><span>Date</span><strong id="sumDate">Not selected</strong></div>
+      <div class="summary-row"><span>Time</span><strong id="sumTime">Not selected</strong></div>
+      <div class="summary-row"><span>Witnesses</span><strong id="sumWitnesses">1</strong></div>
+      <div class="summary-row"><span>Witness service</span><strong>£<span id="sumBase">150</span></strong></div>
+      <div class="summary-row"><span>Sunday fee</span><strong>£<span id="sumSunday">0</span></strong></div>
+      <div class="summary-row"><span>Bank Holiday</span><strong id="sumBank">None</strong></div>
+      <div class="summary-row"><span>Travel</span><strong>£<span id="sumTravel">0</span></strong></div>
+      <div class="total"><span>Total</span><strong>£<span id="totalPrice">150</span></strong></div>
+      <div class="deposit">Deposit due after acceptance: <strong>£<span id="sumDeposit">20</span></strong>. Your request is reviewed before final confirmation.</div>
+      <div class="scope">We witness signatures. We do not provide legal advice, notarisation, oath/affidavit services or document drafting.</div>
+      <button id="submitBtn" class="primary" type="button">Request this booking</button>
+      <div id="formError" class="form-error"></div>
+      <div id="loading" class="loading">Securing your appointment…</div>
+    </aside>
+  </div>
+
+  <div id="successPanel" class="card success-panel">
+    <div class="tick">✓</div>
+    <h2>Booking request received</h2>
+    <p>Thank you. Your appointment slot has been secured while we personally review the details. We'll contact you using the details provided.</p>
+    <p><a href="/legal/">Return to Document Witnessing</a></p>
+  </div>
+</div>
+</section>
+</main>
+
+<footer>
+<div class="container footer-inner">
+  <img src="/logo-document.png" alt="Need A Witness UK Document Witnessing">
+  <div class="footer-copy">
+    Independent Document Witnessing by Need A Witness UK<br>
+    <a href="mailto:bookings@needawitness.uk">bookings@needawitness.uk</a><br>
+    © Need A Witness UK — All Rights Reserved
+  </div>
+</div>
+</footer>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="/hub/firebase.js"></script>
+
+<script>
+const SERVICES = {
+  "will": {
+    label:"Will witnessing", db:"will_witness",
+    title:"Book Witnesses for a Will",
+    text:"Arrange independent witnesses to attend while your will is signed.",
+    note:"For a standard will in England and Wales, two witnesses are normally required. We provide the witnesses; we do not prepare or advise on the will.",
+    minWitnesses:2
+  },
+  "deed": {
+    label:"Deed witnessing", db:"deed_witness",
+    title:"Book a Witness for a Deed",
+    text:"Arrange an independent witness for the execution of your deed.",
+    note:"Please check the execution instructions on your deed or with the professional handling it before booking.",
+    minWitnesses:1
+  },
+  "deed-poll": {
+    label:"Deed poll witnessing", db:"deed_poll_witness",
+    title:"Book Witnesses for a Deed Poll",
+    text:"Arrange independent witnesses for your deed poll signing.",
+    note:"The GOV.UK DIY unenrolled deed poll process specifies two witnesses. If you are using another process, check its requirements before booking.",
+    minWitnesses:2
+  },
+  "property": {
+    label:"Property document witnessing", db:"property_document_witness",
+    title:"Book a Property Document Witness",
+    text:"Arrange an independent witness for a property-related document or deed.",
+    note:"Property and Land Registry documents can have specific execution requirements. Please confirm an ordinary independent witness is acceptable for your document.",
+    minWitnesses:1
+  },
+  "lpa": {
+    label:"LPA document witnessing", db:"lpa_witness",
+    title:"Book an LPA Document Witness",
+    text:"Arrange an independent witness for signatures where an ordinary witness is permitted.",
+    note:"Witnessing an LPA signature is not the same as acting as the certificate provider. We offer independent signature witnessing only.",
+    minWitnesses:1
+  },
+  "other": {
+    label:"Other document witnessing", db:"other_document_witness",
+    title:"Book an Independent Document Witness",
+    text:"Tell us what needs witnessing and we'll review the request.",
+    note:"Please check that your document accepts an ordinary independent witness. Some documents require a solicitor, notary, commissioner for oaths or another authorised professional.",
+    minWitnesses:1
+  }
+};
+
+const params = new URLSearchParams(location.search);
+let serviceKey = SERVICES[params.get("service")] ? params.get("service") : "will";
+let selectedDate = "";
+let selectedTime = "";
+let postcodeIsValid = false;
+let travelCost = 0;
+let returnMiles = 0;
+
+const $ = id => document.getElementById(id);
+$("serviceType").value = serviceKey;
+
+function formatDate(value){
+  if(!value) return "Not selected";
+  const d=new Date(value+"T12:00:00");
+  return d.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short",year:"numeric"});
+}
+function within24Hours(dateString){
+  const target=new Date(dateString+"T00:00:00");
+  return (target-new Date())/(1000*60*60)<24;
+}
+function setStatus(id,message,type=""){
+  const el=$(id); el.textContent=message; el.className="status"+(message?` show ${type}`:"");
+}
+function applyService(){
+  serviceKey=$("serviceType").value;
+  const s=SERVICES[serviceKey];
+  $("heroTitle").textContent=s.title;
+  $("heroText").textContent=s.text;
+  $("serviceNote").textContent=s.note;
+  $("sumService").textContent=s.label;
+
+  const one=$("oneWitness"), two=$("twoWitnesses");
+  if(s.minWitnesses===2){
+    one.checked=false; one.disabled=true; two.checked=true;
+    $("witnessRule").textContent="This service is set to two witnesses based on the standard requirements described above.";
+  }else{
+    one.disabled=false;
+    $("witnessRule").textContent="Choose one or two witnesses according to the requirements of your document.";
+  }
+  updateTotal();
+}
+$("serviceType").addEventListener("change",applyService);
+
+async function loadSlots(dateString){
+  selectedDate=dateString; selectedTime="";
+  $("sumDate").textContent=formatDate(dateString); $("sumTime").textContent="Not selected";
+  $("slots").innerHTML=""; setStatus("availabilityStatus","");
+  if(!dateString){ updateTotal(); return; }
+
+  if(within24Hours(dateString)){
+    setStatus("availabilityStatus","Online bookings must be more than 24 hours away. Please choose a later date or contact us directly for an urgent request.","warning");
+    updateTotal(); return;
+  }
+
+  $("slotSpinner").style.display="block";
+  try{
+    const result=await window.availability.checkAvailability(db,dateString);
+    $("slotSpinner").style.display="none";
+    let availableCount=0;
+    Object.keys(result).forEach(time=>{
+      const b=document.createElement("button");
+      b.type="button"; b.className="slot"; b.textContent=time;
+      if(!result[time]) b.disabled=true;
+      else{
+        availableCount++;
+        b.onclick=()=>{
+          selectedTime=time;
+          document.querySelectorAll(".slot").forEach(x=>x.classList.remove("selected"));
+          b.classList.add("selected");
+          $("sumTime").textContent=time;
+          updateTotal();
+        };
+      }
+      $("slots").appendChild(b);
+    });
+    if(!availableCount) setStatus("availabilityStatus","There are no online appointment slots available on this date. Please choose another date or contact us.","warning");
+  }catch(e){
+    console.error(e); $("slotSpinner").style.display="none";
+    setStatus("availabilityStatus","We couldn't load availability. Please try again or email bookings@needawitness.uk.","error");
+  }
+  updateTotal();
+}
+$("datePicker").addEventListener("change",e=>loadSlots(e.target.value));
+
+async function calculateTravel(){
+  const input=$("travelPostcode");
+  const postcode=input.value.trim();
+  postcodeIsValid=false; travelCost=0; returnMiles=0;
+  $("sumTravel").textContent="0"; $("travelMiles").textContent="—";
+  $("travelExplanation").textContent="Enter a postcode to calculate travel.";
+  if(!postcode){ setStatus("postcodeStatus",""); updateTotal(); return; }
+
+  setStatus("postcodeStatus","Checking postcode…","warning");
+  const originPostcode="CT14 7QE";
+  try{
+    const [originCoords,destCoords]=await Promise.all([
+      fetch(`https://api.postcodes.io/postcodes/${originPostcode.replace(/\s+/g,"")}`).then(r=>r.json()),
+      fetch(`https://api.postcodes.io/postcodes/${postcode.replace(/\s+/g,"")}`).then(r=>r.json())
+    ]);
+    if(originCoords.status!==200||destCoords.status!==200||!destCoords.result) throw new Error("Invalid postcode");
+    postcodeIsValid=true;
+    input.value=destCoords.result.postcode||postcode.toUpperCase();
+    const origin=`${originCoords.result.longitude},${originCoords.result.latitude}`;
+    const dest=`${destCoords.result.longitude},${destCoords.result.latitude}`;
+    const orsKey="eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6IjBiYjMxNzAwMGRlNDQ5M2NhNTYwYjljYTIwY2NlZDk0IiwiaCI6Im11cm11cjY0In0=";
+    const routeRes=await fetch(`https://api.openrouteservice.org/v2/directions/driving-car?api_key=${orsKey}&start=${origin}&end=${dest}`);
+    if(!routeRes.ok) throw new Error("Route lookup failed");
+    const routeData=await routeRes.json();
+    const meters=routeData?.features?.[0]?.properties?.summary?.distance;
+    if(!Number.isFinite(meters)) throw new Error("Distance missing");
+    returnMiles=(meters/1609.34)*2;
+    travelCost=Math.round(returnMiles);
+    $("sumTravel").textContent=travelCost;
+    $("travelMiles").textContent=`Approx. ${Math.round(returnMiles)} return miles`;
+    $("travelExplanation").textContent=`£${travelCost} travel charge at £1 per mile.`;
+    setStatus("postcodeStatus","Postcode recognised and travel calculated.","success");
+  }catch(e){
+    console.error(e); postcodeIsValid=false; travelCost=0;
+    setStatus("postcodeStatus","We couldn't calculate travel for that postcode. Please check it and try again.","error");
+  }
+  updateTotal();
+}
+$("travelPostcode").addEventListener("change",calculateTravel);
+$("travelPostcode").addEventListener("blur",calculateTravel);
+
+function updateTotal(){
+  const count=Number(document.querySelector('input[name="witnessCount"]:checked')?.value||1);
+  const base=count===2?200:150;
+  let sunday=0, multiplier=1, deposit=20;
+  if(selectedDate){
+    const bank=window.availability.isBankHoliday(selectedDate);
+    sunday=!bank&&window.availability.isSunday(selectedDate)?50:0;
+    multiplier=bank?2:1;
+    deposit=window.availability.calculateDeposit(selectedDate);
+  }
+  const total=(base+sunday)*multiplier+travelCost;
+  $("sumWitnesses").textContent=count;
+  $("sumBase").textContent=base;
+  $("sumSunday").textContent=sunday;
+  $("sumBank").textContent=multiplier===2?"Double price":"None";
+  $("sumDeposit").textContent=deposit;
+  $("totalPrice").textContent=total;
+}
+document.querySelectorAll('input[name="witnessCount"]').forEach(x=>x.addEventListener("change",updateTotal));
+
+async function submitBooking(){
+  const error=$("formError"); error.classList.remove("show"); error.textContent="";
+  const fail=(msg,el)=>{error.textContent=msg;error.classList.add("show");if(el)el.focus();};
+
+  if(!selectedDate||!selectedTime) return fail("Please choose an available appointment date and time.",$("datePicker"));
+  const required=[["custName","Please enter your full name."],["custEmail","Please enter your email address."],["custPhone","Please enter your phone number."],["signingAddress","Please enter the signing address."],["travelPostcode","Please enter the signing postcode."]];
+  for(const [id,msg] of required) if(!$(id).value.trim()) return fail(msg,$(id));
+  if(!$("custEmail").checkValidity()) return fail("Please enter a valid email address.",$("custEmail"));
+  if(!postcodeIsValid){ await calculateTravel(); if(!postcodeIsValid) return fail("Please enter a valid signing postcode so we can calculate travel.",$("travelPostcode")); }
+  if(!$("requirementsConfirmed").checked) return fail("Please confirm that you have checked the witnessing requirements for your document.",$("requirementsConfirmed"));
+  if(!$("preparedConfirmed").checked) return fail("Please confirm that the document will be ready for signing.",$("preparedConfirmed"));
+
+  const s=SERVICES[serviceKey];
+  const witnessCount=Number(document.querySelector('input[name="witnessCount"]:checked').value);
+  const basePrice=witnessCount===2?200:150;
+  const bank=window.availability.isBankHoliday(selectedDate);
+  const sundayFee=!bank&&window.availability.isSunday(selectedDate)?50:0;
+  const bankHolidayMultiplier=bank?2:1;
+  const deposit=window.availability.calculateDeposit(selectedDate);
+
+  const job={
+    serviceCategory:"document",
+    serviceType:s.db,
+    serviceLabel:s.label,
+    date:selectedDate,
+    time:selectedTime,
+    witnessCount,
+    basePrice,
+    deposit,
+    sundayFee,
+    bankHolidayMultiplier,
+    addOns:{
+      confetti:false,
+      photoVideo:false,
+      lastMinute:false,
+      travelPostcode:$("travelPostcode").value.trim(),
+      travelCost
+    },
+    totalPrice:Number($("totalPrice").textContent),
+    customer:{
+      name:$("custName").value.trim(),
+      email:$("custEmail").value.trim(),
+      phone:$("custPhone").value.trim(),
+      location:$("signingAddress").value.trim(),
+      notes:$("documentDetails").value.trim()
+    },
+    documentBooking:{
+      signatoryName:$("signatoryName").value.trim(),
+      requirementsConfirmed:true,
+      documentReadyConfirmed:true
+    },
+    status:"pending",
+    createdAt:new Date().toISOString()
+  };
+
+  $("submitBtn").disabled=true; $("loading").style.display="block";
+  try{
+    const jobRef=db.collection("jobs").doc();
+    const slotRef=db.collection("availability").doc(selectedDate).collection("slots").doc(selectedTime);
+
+    // Re-check immediately before claiming the slot to reduce stale-page collisions.
+    const slotSnap=await slotRef.get();
+    if(slotSnap.exists && (slotSnap.data().booked===true || slotSnap.data().available===false)){
+      throw new Error("SLOT_TAKEN");
+    }
+
+    const batch=db.batch();
+    batch.set(jobRef,job);
+    batch.set(slotRef,{
+      booked:true,
+      jobId:jobRef.id,
+      customerName:job.customer.name,
+      bookingStatus:job.status,
+      serviceCategory:"document",
+      serviceType:s.db
+    },{merge:true});
+    await batch.commit();
+
+    try{
+      await emailjs.send("service_r8gqd2d","template_50xe6ck",{
+        name:job.customer.name,email:job.customer.email,phone:job.customer.phone,
+        date:job.date,time:job.time,location:job.customer.location,
+        witnessCount:job.witnessCount,totalPrice:job.totalPrice,deposit:job.deposit,
+        travelPostcode:job.addOns.travelPostcode,travelCost:job.addOns.travelCost,
+        dressCode:`DOCUMENT: ${s.label}`,
+        notes:`${job.documentBooking.signatoryName ? "Signatory: "+job.documentBooking.signatoryName+". " : ""}${job.customer.notes}`
+      });
+    }catch(emailErr){ console.error("Email notification failed:",emailErr); }
+
+    $("bookingContent").style.display="none";
+    $("successPanel").classList.add("show");
+    window.scrollTo({top:$("successPanel").offsetTop-100,behavior:"smooth"});
+  }catch(e){
+    console.error(e); $("submitBtn").disabled=false; $("loading").style.display="none";
+    if(e.message==="SLOT_TAKEN"){
+      fail("Sorry — that appointment has just become unavailable. Please choose another time.");
+      loadSlots(selectedDate);
+    }else{
+      fail("Something went wrong while saving your booking. Please try again or contact us for help.");
+    }
+  }
+}
+$("submitBtn").addEventListener("click",submitBooking);
+
+const today=new Date();
+const minDate=new Date(today.getTime()+25*60*60*1000);
+$("datePicker").min=minDate.toISOString().slice(0,10);
+
+applyService();
+updateTotal();
+</script>
+</body>
+</html>
