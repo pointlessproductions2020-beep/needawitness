@@ -408,7 +408,14 @@ th {
 
         <div id="message" class="message" role="status"></div>
 
-        <section class="panel" id="editorPanel">
+        <section class="panel" id="bulkPanel">
+<h2>Bulk Venue Import &amp; Export</h2>
+<div class="notice">Upload a CSV, preview the records, then confirm import. Existing venues are skipped. New venues are inactive by default unless the CSV explicitly sets active to true.</div>
+<label for="csvFile">Venue CSV file</label><input type="file" id="csvFile" accept=".csv,text/csv">
+<div class="actions"><button id="previewCsv" class="btn-grey">Preview CSV</button><button id="importCsv" class="btn-gold" disabled>Import new venues</button><button id="templateCsv" class="btn-grey">Download template</button><button id="exportCsv" class="btn-grey">Export all venues &amp; private notes</button></div>
+<p id="csvStatus" role="status" style="white-space:pre-wrap"></p><div class="table-wrap"><table><thead><tr><th>Venue</th><th>Postcode</th><th>One</th><th>Two</th><th>Active</th><th>Result</th></tr></thead><tbody id="csvPreview"></tbody></table></div>
+</section>
+<section class="panel" id="editorPanel">
 
             <h2 id="formTitle">Add New Venue</h2>
 
@@ -804,6 +811,7 @@ function setBusy(value) {
         });
 
     renderVenues();
+    refreshImport();
 
 }
 
@@ -859,6 +867,7 @@ function loadVenues() {
         );
 
         loaded = true;
+        refreshImport();
 
         $("saveBtn").disabled = busy;
 
@@ -1458,6 +1467,78 @@ $("search").addEventListener("input", renderVenues);
 $("countyFilter").addEventListener("change", renderVenues);
 
 $("statusFilter").addEventListener("change", renderVenues);
+
+
+// Bulk CSV tools
+const csvFields = ['name','address','postcode','town','county','type','priceOne','priceTwo','active','notes'];
+let importRows = [];
+function venueKey(v) { return String(v.name || '').trim().toLowerCase().replace(/\s+/g,' ') + '|' + String(v.postcode || '').replace(/\s/g,'').toUpperCase(); }
+function parseCSV(text) {
+    text = text.replace(/^\uFEFF/, '');
+    const rows=[]; let row=[], field='', quoted=false, closed=false;
+    for(let i=0;i<text.length;i++) {
+        const c=text[i];
+        if(quoted) { if(c==='"') { if(text[i+1]==='"'){field+='"';i++;} else {quoted=false;closed=true;} } else field+=c; continue; }
+        if(c===',' || c==='\n' || c==='\r') { row.push(field);field='';closed=false; if(c!==','){if(c==='\r'&&text[i+1]==='\n')i++;rows.push(row);row=[];} }
+        else if(c==='"' && !field && !closed) quoted=true;
+        else { if(closed || c==='"') throw Error('Malformed CSV quoting'); field+=c; }
+    }
+    if(quoted) throw Error('Unclosed CSV quote');
+    if(row.length || field || closed){row.push(field);rows.push(row);}
+    return rows.filter(r=>r.some(v=>v.trim()));
+}
+function downloadCSV(name, records) {
+    const quote=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
+    const content=[csvFields,...records.map(r=>csvFields.map(k=>r[k]??''))].map(r=>r.map(quote).join(',')).join('\r\n');
+    const url=URL.createObjectURL(new Blob(['\uFEFF',content],{type:'text/csv;charset=utf-8'}));
+    const a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+function csvStatus(t){$('csvStatus').textContent=t;}
+function refreshImport(){ $('importCsv').disabled=busy||!loaded||!isAdministrator||!importRows.length; }
+$('csvFile').addEventListener('change',()=>{importRows=[];$('csvPreview').replaceChildren();csvStatus('');refreshImport();});
+$('templateCsv').onclick=()=>downloadCSV('venue-template.csv',[]);
+$('previewCsv').onclick=async()=>{
+    if(!isAdministrator||!loaded||busy)return;
+    importRows=[];$('csvPreview').replaceChildren();refreshImport();
+    try {
+        const file=$('csvFile').files[0];if(!file)throw Error('Choose a CSV file first.');if(file.size>5000000)throw Error('CSV exceeds 5 MB.');
+        const rows=parseCSV(await file.text());const header=rows.shift()?.map(x=>x.trim())||[];
+        if(new Set(header).size!==header.length||csvFields.slice(0,8).some(k=>!header.includes(k)))throw Error('Missing or duplicate CSV headers. Use the template.');
+        const seen=new Set(venues.map(venueKey));let skipped=0,invalid=0;
+        for(const [i,row] of rows.entries()){
+            const v=Object.fromEntries(csvFields.map(k=>[k,(row[header.indexOf(k)]||'').trim()]));
+            v.postcode=normalisePostcode(v.postcode)||'';const active=v.active.toLowerCase();v.active=active==='true';
+            const prices=[v.priceOne,v.priceTwo];v.priceOne=Number(v.priceOne);v.priceTwo=Number(v.priceTwo);
+            let reason='Ready';
+            if(row.length!==header.length||!v.name||v.name.length>200||!v.address||v.address.length>500||!v.postcode||!v.town||v.town.length>100||v.notes.length>3000||!Array.from($('venueCounty').options).some(o=>o.value===v.county)||!Array.from($('venueType').options).some(o=>o.value===v.type)||!prices.every(x=>/^\d+(\.\d{1,2})?$/.test(x)&&Number.isFinite(Number(x)))||v.priceOne<300||v.priceTwo<350||v.priceTwo<v.priceOne||!['','true','false'].includes(active)){reason='Invalid row '+(i+2);invalid++;}
+            else if(seen.has(venueKey(v))){reason='Duplicate — skipped';skipped++;}
+            else {seen.add(venueKey(v));importRows.push(v);}
+            const tr=document.createElement('tr');for(const value of [v.name,v.postcode,v.priceOne,v.priceTwo,v.active?'Yes':'No',reason]){const td=document.createElement('td');td.textContent=value;tr.appendChild(td);}$('csvPreview').appendChild(tr);
+        }
+        csvStatus(`${importRows.length} ready, ${skipped} duplicates, ${invalid} invalid. Invalid rows will not be imported.`);refreshImport();
+    }catch(e){importRows=[];csvStatus(e.message);refreshImport();}
+};
+$('importCsv').onclick=async()=>{
+    if(!isAdministrator||!loaded||busy||!importRows.length)return;
+    if(!confirm(`Import ${importRows.length} new venues? Existing prices will not be changed.`))return;
+    const pending=importRows.slice();setBusy(true);refreshImport();let count=0,skipped=0;
+    try {
+        const fresh=await venuesRef.get({source:'server'});const seen=new Set(fresh.docs.map(d=>venueKey(d.data())));
+        for(const v of pending){
+            const key=venueKey(v);if(seen.has(key)){skipped++;continue;}
+            const hash=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(key));const id='csv_'+Array.from(new Uint8Array(hash),b=>b.toString(16).padStart(2,'0')).join('');
+            const ref=venuesRef.doc(id);const {notes,...data}=v;
+            const added=await db.runTransaction(async tx=>{const existing=await tx.get(ref);if(existing.exists)return false;const timestamp=firebase.firestore.FieldValue.serverTimestamp();tx.set(ref,{...data,createdAt:timestamp,updatedAt:timestamp});tx.set(notesRef.doc(id),{notes,updatedAt:timestamp});return true;});
+            seen.add(key);if(added)count++;else skipped++;csvStatus(`Imported ${count}; skipped ${skipped}.`);
+        }
+        importRows=[];csvStatus(`Finished: ${count} imported, ${skipped} skipped. Preview again before another import.`);
+    }catch(e){importRows=[];csvStatus(`Stopped after ${count} imports and ${skipped} skips: ${e.message}. Preview again to resume safely.`);}
+    finally{setBusy(false);refreshImport();}
+};
+$('exportCsv').onclick=async()=>{
+    if(!isAdministrator||!loaded||busy)return;setBusy(true);refreshImport();
+    try{const [pub,priv]=await Promise.all([venuesRef.get({source:'server'}),notesRef.get({source:'server'})]);const notes=new Map(priv.docs.map(d=>[d.id,d.data().notes||'']));downloadCSV('venues-private-backup.csv',pub.docs.map(d=>({...d.data(),notes:notes.get(d.id)||''})));csvStatus('Export prepared. Keep this file private: it contains admin notes.');}catch(e){csvStatus(e.message);}finally{setBusy(false);refreshImport();}
+};
 
 </script>
 
