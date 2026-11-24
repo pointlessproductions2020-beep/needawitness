@@ -60,7 +60,7 @@
                 <div class="snap"><div class="snap-label">Document ready</div><div class="snap-value" id="documentReadyText">—</div></div>
               </div>
             </div>
-            <div class="row2"><div><label>Travel postcode</label><input id="travelPostcode" placeholder="Appointment postcode"></div><div><label>Travel charge (£)</label><input id="travelCost" type="number" step="0.01" min="0"></div></div>
+            <div class="row2"><div><label>Travel postcode</label><input id="travelPostcode" placeholder="Appointment postcode"></div><div><label>Historical travel charge (£)</label><input id="travelCost" type="number" step="0.01" min="0"></div></div>
             <label>Notes for Witnesses</label><textarea id="jobNotes"></textarea>
             <label>Internal Admin Notes</label><textarea id="adminNotes" placeholder="Private notes only admins can see."></textarea>
             <div class="badges"><span id="statusBadge" class="badge status-pending">Pending</span><span id="paymentBadge" class="badge pay-unpaid">Unpaid</span></div>
@@ -90,9 +90,9 @@
         <aside>
           <div class="card">
             <h2>Payments</h2><div class="sub">Deposit now, remaining balance due 24 hours before the appointment.</div>
-            <div class="row2"><div><label>Total Price (£)</label><input id="totalPrice" type="number" step="0.01"></div><div><label>Deposit (£)</label><input id="depositAmount" type="number" step="0.01"></div></div>
-            <div class="row2"><div><label>Amount Paid (£)</label><input id="amountPaid" type="number" step="0.01"></div><div><label>Amount Due (£)</label><input id="amountDue" type="number" step="0.01"></div></div>
-            <label>Payment Status</label><select id="paymentStatus"><option value="unpaid">Unpaid</option><option value="deposit">Deposit paid</option><option value="full">Paid in full</option><option value="late-cancel">Late / cancelled</option></select>
+            <div class="row2"><div><label>Agreed total price (£) — admin override</label><input id="totalPrice" type="number" min="0" step="0.01"></div><div><label>Deposit (£)</label><input id="depositAmount" type="number" min="0" step="0.01"></div></div>
+            <div class="row2"><div><label>Amount Paid (£)</label><input id="amountPaid" type="number" min="0" step="0.01"></div><div><label>Amount Due (£)</label><input id="amountDue" type="number" step="0.01" readonly></div></div>
+            <div id="pricingNote" class="sub"></div><label>Payment Status</label><select id="paymentStatus"><option value="unpaid">Unpaid</option><option value="deposit">Deposit paid</option><option value="full">Paid in full</option><option value="late-cancel">Late / cancelled</option></select>
             <label>Payment Deadline (24h before appointment)</label><input id="paymentDeadline" type="datetime-local">
             <div class="action-strip"><button class="btn" onclick="setDeadline24h()">Set 24h deadline</button></div>
             <label>Monzo Payment Link – Deposit</label><input id="paymentLinkDeposit" placeholder="Paste Monzo link for deposit">
@@ -253,6 +253,7 @@ function populate(){
     $("dressCode").value=dressCodeOf(j);
     $("travelPostcode").value=travelPostcodeOf(j);
     $("travelCost").value=travelCostOf(j);
+    $("travelCost").readOnly=!!j.venueId || j.pricingModel==="fixed";
     $("ceremonyType").value=j.ceremonyType||"civil";
     $("witnessCount").value=String(countOf(j));
     $("documentWitnessCount").value=String(countOf(j));
@@ -268,6 +269,7 @@ function populate(){
     $("amountPaid").value=money(j.amountPaid);
     $("amountDue").value=money(j.amountDue);
     $("paymentStatus").value=p;
+    previewPricing();
     $("paymentLinkDeposit").value=j.paymentLinkDeposit||"";
     $("paymentLinkRemaining").value=j.paymentLinkRemaining||"";
     const deadline=parseAnyDate(j.paymentDeadline);
@@ -303,7 +305,7 @@ function renderStatusActions(){
     }[s]||"";
     help.textContent=text;
 }
-async function approveJob(){if(!confirm("Approve this booking and make the deposit due?"))return;const deposit=money(jobData.deposit)||20;const total=money(jobData.totalPrice);const paid=money(jobData.amountPaid);const updates={status:"approved",approvedAt:firebase.firestore.FieldValue.serverTimestamp(),paymentStatus:paid>=total&&total>0?"full":paid>0?"deposit":"unpaid",amountDue:paid>0?Math.max(total-paid,0):deposit};if(!jobData.paymentDeadline){const d=deadline24hDate();if(d)updates.paymentDeadline=toInput(d)}await updateJob(updates,"Booking approved.")}
+async function approveJob(){if(!confirm("Approve this booking and make the deposit due?"))return;const deposit=money(jobData.deposit??20);const total=money(jobData.totalPrice);const paid=money(jobData.amountPaid);const updates={status:"approved",approvedAt:firebase.firestore.FieldValue.serverTimestamp(),paymentStatus:paid>=total&&total>0?"full":paid>0?"deposit":"unpaid",amountDue:paid>0?Math.max(total-paid,0):deposit};if(!jobData.paymentDeadline){const d=deadline24hDate();if(d)updates.paymentDeadline=toInput(d)}await updateJob(updates,"Booking approved.")}
 async function saveStatus(status){
     const prompt=status==="cancelled"?"Cancel this booking?":status==="completed"?`Mark this ${isDocumentJob(jobData)?"appointment":"ceremony"} as completed?`:`Change status to ${status}?`;
     if(!confirm(prompt))return;
@@ -315,6 +317,24 @@ async function saveStatus(status){
 }
 function deadline24hDate(){const appointment=localDate($("jobDate").value,$("jobTime").value||"00:00");if(!appointment)return null;return new Date(appointment.getTime()-24*60*60*1000)}
 function setDeadline24h(){const d=deadline24hDate();if(!d){alert("Set the appointment date and time first.");return}$("paymentDeadline").value=toInput(d)}
+function pricingState(total,deposit,paid,status,selected){
+    const remaining=Math.max(0,Math.round((total-paid)*100)/100);
+    const paymentStatus=status==="cancelled" && selected==="late-cancel" ? "late-cancel" : paid>=total ? "full" : paid>0 ? "deposit" : "unpaid";
+    const amountDue=paymentStatus==="late-cancel" ? remaining : paid>=total ? 0 : paid>0 ? remaining : status==="pending" ? 0 : Math.min(deposit,total);
+    return {paymentStatus,amountDue,remaining};
+}
+function previewPricing(){
+    if(!jobData)return;
+    const entered=Number($("totalPrice").value);
+    const old=money(jobData.totalPrice);
+    const total=Math.abs(entered-old)>0.005?entered:Math.max(0,old-travelCostOf(jobData)+Number($("travelCost").value));
+    const paid=Number($("amountPaid").value), deposit=Number($("depositAmount").value);
+    if(![total,paid,deposit].every(v=>Number.isFinite(v)&&v>=0))return;
+    const p=pricingState(total,deposit,paid,$("jobStatus").value,$("paymentStatus").value);
+    $("amountDue").value=p.amountDue.toFixed(2);
+    $("pricingNote").textContent="Remaining balance: £"+p.remaining.toFixed(2)+(paid>total?" · Overpayment: £"+(paid-total).toFixed(2)+" (refund not automatic)":"")+(deposit>total?" · Reduce the deposit before saving.":"");
+}
+["totalPrice","depositAmount","amountPaid","travelCost","jobStatus","paymentStatus"].forEach(id=>$(id).addEventListener("input",previewPricing));
 async function saveJobDetails(){
     const c={
         ...(jobData.customer||{}),
@@ -330,7 +350,7 @@ async function saveJobDetails(){
     const travelCost=Math.max(0,money($("travelCost").value));
     const oldTravel=travelCostOf(jobData);
     const oldTotal=money(jobData.totalPrice);
-    const enteredTotal=Math.max(0,money($("totalPrice").value));
+    const enteredTotal=Number($("totalPrice").value);
 
     // If the admin only changes the travel charge, automatically move the
     // customer total by the same difference. If Total Price was deliberately
@@ -340,26 +360,15 @@ async function saveJobDetails(){
         ? enteredTotal
         : Math.max(0,oldTotal-oldTravel+travelCost);
 
-    const deposit=Math.max(0,money($("depositAmount").value));
-    const amountPaid=Math.max(0,money($("amountPaid").value));
-    let paymentStatus=$("paymentStatus").value;
+    const deposit=Number($("depositAmount").value);
+    const amountPaid=Number($("amountPaid").value);
     const status=$("jobStatus").value;
-    let amountDue=money($("amountDue").value);
-
-    // Keep the existing payment lifecycle, but make the money figures agree
-    // with the newly calculated total after a travel override.
-    if(paymentStatus==="full" || (totalPrice>0 && amountPaid>=totalPrice)){
-        paymentStatus="full";
-        amountDue=0;
-    }else if(amountPaid>0){
-        paymentStatus="deposit";
-        amountDue=Math.max(totalPrice-amountPaid,0);
-    }else if(status==="pending"){
-        amountDue=0;
-    }else{
-        paymentStatus="unpaid";
-        amountDue=Math.min(deposit,totalPrice);
+    if (![enteredTotal,totalPrice,deposit,amountPaid,travelCost].every(v=>Number.isFinite(v)&&v>=0) || deposit>totalPrice) {
+        alert("Enter valid non-negative amounts. Deposit cannot exceed the total."); return;
     }
+    if(amountPaid!==money(jobData.amountPaid) && !confirm("Change the recorded amount actually received? Only do this for a real payment or refund."))return;
+    const payment=pricingState(totalPrice,deposit,amountPaid,status,$("paymentStatus").value);
+    const {paymentStatus,amountDue}=payment;
 
     const addOns={...(jobData.addOns||{}),travelPostcode,travelCost};
     const updates={
@@ -371,6 +380,7 @@ async function saveJobDetails(){
         adminNotes:$("adminNotes").value.trim(),
         status,
         totalPrice,
+        ...(totalManuallyChanged ? {adminPriceOverride:true,priceOverrideAt:firebase.firestore.FieldValue.serverTimestamp()} : {}),
         deposit,
         amountPaid,
         amountDue,
@@ -406,8 +416,8 @@ async function confirmAddWitness(){const id=$("addWitnessSelect").value;if(!id)r
 async function removeWitness(id){if(!confirm("Remove this witness from the job?"))return;const updated=(jobData.assignedWitnesses||[]).filter(x=>x!==id);await updateJob({assignedWitnesses:updated,status:updated.length?"assigned":"approved"},"Witness removed.")}
 function goToWitness(id){location.href="admin-witness-detail.html?id="+encodeURIComponent(id)}
 
-async function markDepositPaid(){if(!confirm("Mark the deposit as paid?"))return;const total=money(jobData.totalPrice),deposit=money(jobData.deposit),existing=money(jobData.amountPaid);const paid=Math.min(total,Math.max(existing,deposit));const due=Math.max(total-paid,0);const updates={paymentStatus:due>0?"deposit":"full",amountPaid:paid,amountDue:due,depositPaidAt:firebase.firestore.FieldValue.serverTimestamp()};if((jobData.status||"pending")==="pending")updates.status="approved";if(!jobData.paymentDeadline){const d=deadline24hDate();if(d)updates.paymentDeadline=toInput(d)}await updateJob(updates,"Deposit marked paid.")}
-async function markRemainingPaid(){if(!confirm("Mark the remaining balance as paid?"))return;const total=money(jobData.totalPrice);await updateJob({paymentStatus:"full",amountPaid:total,amountDue:0,remainingPaidAt:firebase.firestore.FieldValue.serverTimestamp()},"Balance marked paid.")}
+async function markDepositPaid(){if(!confirm("Mark the deposit as paid?"))return;const total=money(jobData.totalPrice),deposit=money(jobData.deposit),existing=money(jobData.amountPaid);const paid=Math.max(existing,Math.min(total,deposit));const due=Math.max(total-paid,0);const updates={paymentStatus:due>0?"deposit":"full",amountPaid:paid,amountDue:due,depositPaidAt:firebase.firestore.FieldValue.serverTimestamp()};if((jobData.status||"pending")==="pending")updates.status="approved";if(!jobData.paymentDeadline){const d=deadline24hDate();if(d)updates.paymentDeadline=toInput(d)}await updateJob(updates,"Deposit marked paid.")}
+async function markRemainingPaid(){if(!confirm("Mark the remaining balance as paid?"))return;const total=money(jobData.totalPrice);await updateJob({paymentStatus:"full",amountPaid:Math.max(total,money(jobData.amountPaid)),amountDue:0,remainingPaidAt:firebase.firestore.FieldValue.serverTimestamp()},"Balance marked paid.")}
 async function cancelForNonPayment(){
     if(!confirm("Cancel this job for non-payment? Assigned witnesses will be released."))return;
     await saveJobWithAvailability({paymentStatus:"late-cancel",status:"cancelled",assignedWitnesses:[],cancelledAt:firebase.firestore.FieldValue.serverTimestamp()},"Booking cancelled.");
