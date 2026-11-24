@@ -334,14 +334,15 @@ footer {
         <section class="hero">
             <div class="success-icon" aria-hidden="true">✓</div>
             <div class="eyebrow">Booking request received</div>
-            <h1 id="thankYouHeading">Thank you for your booking!</h1>
+            <h1 id="thankYouHeading">Thank you for your booking request!</h1>
             <p>
-                We’ve safely received your ceremony details. Your request is now awaiting review, and we’ll contact you shortly with the next steps.
+                Your ceremony details have been submitted for review. We’ll contact you directly to confirm availability and arrange payment. Your booking is not yet secured.
             </p>
         </section>
 
         <section class="section" id="summarySection">
-            <h2 class="section-title">Your Ceremony</h2>
+            <h2 class="section-title">Submitted Ceremony Summary</h2>
+            <p>For reference only. Our team will confirm your details and agreed price directly.</p>
             <div class="summary-card">
                 <div class="summary-row">
                     <span class="summary-label">Ceremony date</span>
@@ -377,17 +378,17 @@ footer {
                 <div class="timeline-step">
                     <div class="step-number">2</div>
                     <h3>Deposit link sent</h3>
-                    <p>Once your request has been reviewed, we’ll contact you directly with the secure payment details for your deposit.</p>
+                    <p>Once your request has been reviewed, we’ll send you secure payment details for your standard £50 deposit.</p>
                 </div>
                 <div class="timeline-step">
                     <div class="step-number">3</div>
                     <h3>Witnesses assigned</h3>
-                    <p>Your booking is secured once the deposit has been paid.</p>
+                    <p>Once we confirm availability and receive your deposit, your booking is secured.</p>
                 </div>
                 <div class="timeline-step">
                     <div class="step-number">4</div>
                     <h3>Final balance</h3>
-                    <p>The remaining balance is due no later than 24 hours before the ceremony.</p>
+                    <p>The remaining balance is due at least 24 hours before the ceremony. For short-notice bookings, we’ll arrange payment directly.</p>
                 </div>
             </div>
         </section>
@@ -395,11 +396,11 @@ footer {
         <section class="section info-grid">
             <div class="info-card">
                 <h3>Your deposit</h3>
-                <p>A secure payment link will be sent after we have reviewed your booking. Your witness assignment becomes official once the deposit is received.</p>
+                <p>Your standard wedding booking deposit is £50 and forms part of your total booking price. We’ll send payment details after reviewing your request.</p>
             </div>
             <div class="info-card">
                 <h3>Remaining balance</h3>
-                <p>You may pay the remaining balance early or in instalments, but it must be fully paid at least 24 hours before your ceremony.</p>
+                <p>Your fixed venue price includes travel and parking. The remaining balance must be paid at least 24 hours before your ceremony. For bookings made within 24 hours, we’ll contact you to arrange immediate payment.</p>
             </div>
         </section>
 
@@ -413,7 +414,7 @@ footer {
         </section>
 
         <div class="reassurance">
-            <strong>Your request has been received.</strong><br>
+            <strong>Your booking is awaiting confirmation.</strong><br>
             We personally review every booking request and will contact you directly using the details you provided. If you need us sooner, you can message us on WhatsApp.
         </div>
     </article>
@@ -447,17 +448,17 @@ function formatTime(value) {
     return `${displayHour}:${minute} ${suffix}`;
 }
 
-const name = params.get("name") || "";
+const customerName = params.get("name") || "";
 const date = params.get("date") || "";
 const time = params.get("time") || "";
 const witnesses = params.get("witnesses") || "";
 const venue = params.get("venue") || "";
 const postcode = params.get("postcode") || "";
 const total = Number(params.get("total"));
-const deposit = Number(params.get("deposit"));
 
-if (name) {
-    const firstName = name.trim().split(/\s+/)[0];
+
+if (customerName.trim()) {
+    const firstName = customerName.trim().split(/\s+/)[0];
     document.getElementById("thankYouHeading").textContent = `Thank you, ${firstName}!`;
 }
 
@@ -466,7 +467,7 @@ const summaryValues = {
     summaryTime: formatTime(time),
     summaryWitnesses: witnesses ? `${witnesses} ${Number(witnesses) === 1 ? "witness" : "witnesses"}` : "",
     summaryVenue: [venue, postcode].filter(Boolean).join(", "),
-    summaryTotal: Number.isFinite(total) && total > 0 ? `£${total}` : ""
+    summaryTotal: Number.isFinite(total) && total > 0 ? `£${total.toFixed(2)}` : ""
 };
 
 let visibleSummaryRows = 0;
