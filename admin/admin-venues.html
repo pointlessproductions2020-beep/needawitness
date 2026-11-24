@@ -1,0 +1,1465 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Venue & Pricing Manager | Need A Witness</title>
+
+<style>
+:root {
+    --gold: #C19A2B;
+    --bg: #f7f6f2;
+    --ink: #252525;
+    --muted: #777;
+    --border: #e4e0d5;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+}
+
+.sidebar {
+    position: fixed;
+    width: 240px;
+    height: 100vh;
+    padding: 25px;
+    background: white;
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+}
+
+.sidebar h2 {
+    color: var(--gold);
+    margin-top: 0;
+}
+
+.sidebar a {
+    display: block;
+    padding: 12px 0;
+    color: #333;
+    text-decoration: none;
+    font-size: 15px;
+}
+
+.sidebar a:hover,
+.sidebar a.active {
+    color: var(--gold);
+    font-weight: bold;
+}
+
+.main {
+    margin-left: 240px;
+    padding: 30px;
+}
+
+h1 {
+    color: var(--gold);
+    margin-top: 0;
+}
+
+.subtitle {
+    color: var(--muted);
+    line-height: 1.6;
+}
+
+.panel {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+}
+
+.panel h2 {
+    color: var(--gold);
+    margin-top: 0;
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.stat {
+    background: white;
+    border: 1px solid var(--border);
+    padding: 22px;
+    border-radius: 12px;
+}
+
+.stat strong {
+    display: block;
+    color: var(--gold);
+    font-size: 30px;
+    margin-bottom: 6px;
+}
+
+.stat span {
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+}
+
+.full {
+    grid-column: 1 / -1;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    font-size: 14px;
+    margin-bottom: 7px;
+}
+
+input,
+select,
+textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #d8d5cb;
+    border-radius: 7px;
+    background: white;
+    color: #333;
+    font: inherit;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    outline: 2px solid #e8d8a0;
+    border-color: var(--gold);
+}
+
+textarea {
+    resize: vertical;
+}
+
+button {
+    border: none;
+    border-radius: 7px;
+    padding: 11px 17px;
+    font: inherit;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+}
+
+.btn-gold {
+    background: var(--gold);
+    color: white;
+}
+
+.btn-grey {
+    background: #eee;
+    color: #333;
+}
+
+.btn-red {
+    background: #fce7e7;
+    color: #a32222;
+}
+
+.btn-green {
+    background: #e0f4e5;
+    color: #246b35;
+}
+
+.btn-small {
+    padding: 8px 11px;
+    font-size: 13px;
+}
+
+.actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+.notice {
+    padding: 15px;
+    background: #fffaf0;
+    border: 1px solid #e9d9a3;
+    border-radius: 8px;
+    color: #79601b;
+    line-height: 1.6;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+.message {
+    padding: 14px;
+    border-radius: 7px;
+    margin-bottom: 18px;
+    display: none;
+    white-space: pre-wrap;
+}
+
+.message.success {
+    display: block;
+    background: #e4f6e8;
+    color: #216b35;
+}
+
+.message.error {
+    display: block;
+    background: #ffe9e9;
+    color: #a32222;
+}
+
+.filters {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.table-wrap {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 800px;
+}
+
+th,
+td {
+    padding: 14px 10px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
+    vertical-align: middle;
+}
+
+th {
+    background: #faf9f5;
+    color: #777;
+}
+
+.venue-name {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.venue-address {
+    color: #777;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.price {
+    font-weight: bold;
+    color: #8b6c13;
+    white-space: nowrap;
+}
+
+.badge {
+    display: inline-block;
+    padding: 5px 9px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.badge-active {
+    background: #e2f6e7;
+    color: #216b35;
+}
+
+.badge-inactive {
+    background: #eee;
+    color: #666;
+}
+
+.empty {
+    padding: 35px;
+    text-align: center;
+    color: #777;
+}
+
+#adminContent {
+    display: none;
+}
+
+#authStatus {
+    padding: 30px;
+    text-align: center;
+}
+
+@media (max-width: 850px) {
+    .sidebar {
+        position: relative;
+        width: 100%;
+        height: auto;
+        padding: 20px;
+    }
+
+    .sidebar a {
+        display: inline-block;
+        margin-right: 15px;
+        padding: 8px 0;
+    }
+
+    .main {
+        margin-left: 0;
+        padding: 18px;
+    }
+
+    .form-grid,
+    .filters {
+        grid-template-columns: 1fr;
+    }
+
+    .stats {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+    }
+
+    .stat {
+        padding: 14px;
+    }
+
+    .panel {
+        padding: 18px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div id="authStatus">
+    Checking administrator permissions...
+</div>
+
+<div id="adminContent">
+
+    <aside class="sidebar">
+        <h2>Need A Witness</h2>
+
+        <a href="admin-dashboard.html">Dashboard</a>
+        <a href="admin-calendar.html">Calendar</a>
+        <a href="admin-availability.html">Availability</a>
+        <a href="admin-jobs.html">Bookings</a>
+        <a href="admin-create-job.html">Create Booking</a>
+        <a href="admin-venues.html" class="active">
+            Venues & Pricing
+        </a>
+        <a href="admin-witnesses.html">Witnesses</a>
+        <a href="admin-payments.html">Payments</a>
+
+        <hr>
+
+        <a href="../index.html">View Website</a>
+
+        <button class="btn-gold" id="logoutBtn">
+            Logout
+        </button>
+    </aside>
+
+    <main class="main">
+
+        <h1>Venue & Pricing Manager</h1>
+
+        <p class="subtitle">
+            Manage ceremony venues and fixed wedding witness
+            prices across Kent, Sussex, London and beyond.
+        </p>
+
+        <div class="stats">
+
+            <div class="stat">
+                <strong id="totalVenues">0</strong>
+                <span>Total venues</span>
+            </div>
+
+            <div class="stat">
+                <strong id="activeVenues">0</strong>
+                <span>Active venues</span>
+            </div>
+
+            <div class="stat">
+                <strong id="inactiveVenues">0</strong>
+                <span>Inactive venues</span>
+            </div>
+
+        </div>
+
+        <div id="message" class="message" role="status"></div>
+
+        <section class="panel" id="editorPanel">
+
+            <h2 id="formTitle">Add New Venue</h2>
+
+            <div class="notice">
+                Public wedding bookings start at £300 for
+                one witness and £350 for two witnesses.
+                Prices include travel and parking.
+                Individual customer discounts will be managed
+                separately through manual bookings.
+            </div>
+
+            <form id="venueForm">
+
+                <input type="hidden" id="venueId">
+
+                <div class="form-grid">
+
+                    <div class="full">
+                        <label for="venueName">Venue name</label>
+                        <input
+                            id="venueName"
+                            maxlength="200"
+                            placeholder="e.g. Crowborough Register Office"
+                            required
+                        >
+                    </div>
+
+                    <div class="full">
+                        <label for="venueAddress">Full address</label>
+                        <textarea
+                            id="venueAddress"
+                            rows="3"
+                            maxlength="500"
+                            placeholder="Street address and town"
+                            required
+                        ></textarea>
+                    </div>
+
+                    <div>
+                        <label for="venuePostcode">Postcode</label>
+                        <input
+                            id="venuePostcode"
+                            maxlength="8"
+                            placeholder="TN6 1RH"
+                            required
+                        >
+                    </div>
+
+                    <div>
+                        <label for="venueTown">Town / Borough</label>
+                        <input
+                            id="venueTown"
+                            maxlength="100"
+                            placeholder="Crowborough"
+                            required
+                        >
+                    </div>
+
+                    <div>
+                        <label for="venueCounty">County / Region</label>
+
+                        <select id="venueCounty" required>
+                            <option value="Kent">Kent</option>
+                            <option value="East Sussex">East Sussex</option>
+                            <option value="West Sussex">West Sussex</option>
+                            <option value="Greater London">Greater London</option>
+                            <option value="Central London">Central London</option>
+                            <option value="Surrey">Surrey</option>
+                            <option value="Essex">Essex</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="venueType">Venue type</label>
+
+                        <select id="venueType">
+                            <option value="Register Office">
+                                Register Office
+                            </option>
+                            <option value="Town Hall">
+                                Town Hall
+                            </option>
+                            <option value="Approved Wedding Venue">
+                                Approved Wedding Venue
+                            </option>
+                            <option value="Other">
+                                Other
+                            </option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="priceOne">One witness (£)</label>
+                        <input
+                            type="number"
+                            id="priceOne"
+                            min="300"
+                            step="0.01"
+                            value="300"
+                            required
+                        >
+                    </div>
+
+                    <div>
+                        <label for="priceTwo">Two witnesses (£)</label>
+                        <input
+                            type="number"
+                            id="priceTwo"
+                            min="350"
+                            step="0.01"
+                            value="350"
+                            required
+                        >
+                    </div>
+
+                    <div class="full">
+                        <label for="pricePreset">
+                            Quick pricing preset
+                        </label>
+
+                        <select id="pricePreset">
+                            <option value="">Select a preset</option>
+                            <option value="300,350">
+                                Local — £300 / £350
+                            </option>
+                            <option value="325,375">
+                                Mid-distance — £325 / £375
+                            </option>
+                            <option value="350,400">
+                                Further distance — £350 / £400
+                            </option>
+                            <option value="350,400">
+                                Outer London — £350 / £400
+                            </option>
+                            <option value="400,450">
+                                Central London — £400 / £450
+                            </option>
+                            <option value="450,500">
+                                Difficult venue — £450 / £500
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="full">
+                        <label for="venueActive">
+                            Public booking availability
+                        </label>
+
+                        <select id="venueActive">
+                            <option value="true">
+                                Active — customers can book
+                            </option>
+                            <option value="false">
+                                Inactive — hidden from customers
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="full">
+                        <label for="venueNotes">
+                            Private admin notes
+                        </label>
+
+                        <textarea
+                            id="venueNotes"
+                            rows="3"
+                            maxlength="3000"
+                            placeholder="Parking arrangements, access instructions, travel difficulties, etc."
+                        ></textarea>
+                    </div>
+
+                </div>
+
+                <div class="actions">
+
+                    <button
+                        type="submit"
+                        id="saveBtn"
+                        class="btn-gold"
+                        disabled
+                    >
+                        Save Venue
+                    </button>
+
+                    <button
+                        type="button"
+                        id="resetBtn"
+                        class="btn-grey"
+                    >
+                        Clear Form
+                    </button>
+
+                </div>
+
+            </form>
+
+        </section>
+
+        <section class="panel">
+
+            <h2>Saved Venues</h2>
+
+            <div class="filters">
+
+                <input
+                    id="search"
+                    placeholder="Search name, town or postcode..."
+                >
+
+                <select id="countyFilter">
+                    <option value="">All regions</option>
+                    <option value="Kent">Kent</option>
+                    <option value="East Sussex">East Sussex</option>
+                    <option value="West Sussex">West Sussex</option>
+                    <option value="Greater London">Greater London</option>
+                    <option value="Central London">Central London</option>
+                    <option value="Surrey">Surrey</option>
+                    <option value="Essex">Essex</option>
+                    <option value="Other">Other</option>
+                </select>
+
+                <select id="statusFilter">
+                    <option value="">All statuses</option>
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                </select>
+
+            </div>
+
+            <div class="table-wrap">
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>Venue</th>
+                            <th>Region</th>
+                            <th>One Witness</th>
+                            <th>Two Witnesses</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="venueList"></tbody>
+
+                </table>
+
+            </div>
+
+            <div class="empty" id="emptyState">
+                Loading venues...
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+<script src="../hub/firebase.js"></script>
+
+<script>
+
+const $ = id => document.getElementById(id);
+
+const venuesRef = db.collection("venues");
+const notesRef = db.collection("venuePrivate");
+
+let venues = [];
+let isAdministrator = false;
+let unsubscribe = null;
+let busy = false;
+let loaded = false;
+
+// ========================================
+// Administrator authentication
+// ========================================
+
+auth.onAuthStateChanged(async user => {
+
+    isAdministrator = false;
+    loaded = false;
+
+    $("adminContent").style.display = "none";
+    $("authStatus").style.display = "block";
+    $("saveBtn").disabled = true;
+
+    if (unsubscribe) {
+        unsubscribe();
+        unsubscribe = null;
+    }
+
+    if (!user) {
+        window.location.href = "admin-login.html";
+        return;
+    }
+
+    try {
+
+        const token = await user.getIdTokenResult();
+
+        let allowed = token.claims.admin === true;
+
+        if (!allowed && user.email) {
+
+            const adminDoc = await db
+                .collection("admins")
+                .doc(user.email)
+                .get();
+
+            allowed = adminDoc.exists;
+        }
+
+        if (auth.currentUser?.uid !== user.uid) {
+            return;
+        }
+
+        if (!allowed) {
+            $("authStatus").textContent =
+                "Access denied. Administrator account required.";
+            return;
+        }
+
+        isAdministrator = true;
+
+        $("authStatus").style.display = "none";
+        $("adminContent").style.display = "block";
+
+        loadVenues();
+
+    } catch (error) {
+
+        console.error(error);
+
+        $("authStatus").textContent =
+            "Unable to verify administrator permissions.";
+    }
+
+});
+
+// ========================================
+// Logout
+// ========================================
+
+$("logoutBtn").addEventListener("click", async () => {
+
+    try {
+        await auth.signOut();
+        window.location.href = "admin-login.html";
+    } catch (error) {
+        showMessage(error.message, "error");
+    }
+
+});
+
+// ========================================
+// Messages
+// ========================================
+
+function showMessage(text, type = "success") {
+
+    $("message").textContent = text;
+    $("message").className = "message " + type;
+
+}
+
+function clearMessage() {
+
+    $("message").textContent = "";
+    $("message").className = "message";
+
+}
+
+function setBusy(value) {
+
+    busy = value;
+
+    $("saveBtn").disabled =
+        value || !loaded || !isAdministrator;
+
+    $("resetBtn").disabled = value;
+
+    $("venueForm")
+        .querySelectorAll("input, select, textarea")
+        .forEach(field => {
+            field.disabled = value;
+        });
+
+    renderVenues();
+
+}
+
+// ========================================
+// Pricing presets
+// ========================================
+
+$("pricePreset").addEventListener("change", event => {
+
+    if (!event.target.value) return;
+
+    const [one, two] = event.target.value.split(",");
+
+    $("priceOne").value = one;
+    $("priceTwo").value = two;
+
+});
+
+// ========================================
+// Currency formatting
+// ========================================
+
+function money(value) {
+
+    return Number(value).toLocaleString("en-GB", {
+        style: "currency",
+        currency: "GBP"
+    });
+
+}
+
+// ========================================
+// Load venue database
+// ========================================
+
+function loadVenues() {
+
+    if (!isAdministrator) return;
+
+    if (unsubscribe) unsubscribe();
+
+    unsubscribe = venuesRef.onSnapshot(snapshot => {
+
+        venues = snapshot.docs.map(doc => ({
+            ...doc.data(),
+            id: doc.id
+        }));
+
+        venues.sort((a, b) =>
+            String(a.name || "").localeCompare(
+                String(b.name || "")
+            )
+        );
+
+        loaded = true;
+
+        $("saveBtn").disabled = busy;
+
+        updateStats();
+        renderVenues();
+
+    }, error => {
+
+        console.error(error);
+
+        loaded = false;
+        $("saveBtn").disabled = true;
+
+        showMessage(
+            "Unable to load venues: " + error.message,
+            "error"
+        );
+
+        $("emptyState").textContent =
+            "Venue database unavailable.";
+
+    });
+
+}
+
+// ========================================
+// Statistics
+// ========================================
+
+function updateStats() {
+
+    $("totalVenues").textContent = venues.length;
+
+    $("activeVenues").textContent =
+        venues.filter(v => v.active === true).length;
+
+    $("inactiveVenues").textContent =
+        venues.filter(v => v.active !== true).length;
+
+}
+
+// ========================================
+// Normalise UK postcode
+// ========================================
+
+function normalisePostcode(value) {
+
+    const clean = value
+        .toUpperCase()
+        .replace(/\s+/g, "");
+
+    if (clean.length < 5 || clean.length > 7) {
+        return null;
+    }
+
+    const formatted =
+        clean.slice(0, -3) + " " + clean.slice(-3);
+
+    const pattern =
+        /^(GIR 0AA|[A-Z]{1,2}\d[A-Z\d]? \d[A-Z]{2})$/;
+
+    return pattern.test(formatted)
+        ? formatted
+        : null;
+
+}
+
+// ========================================
+// Save venue
+// ========================================
+
+$("venueForm").addEventListener("submit", async event => {
+
+    event.preventDefault();
+
+    if (!isAdministrator || busy || !loaded) return;
+
+    clearMessage();
+
+    const id = $("venueId").value;
+
+    const name = $("venueName").value.trim();
+
+    const address = $("venueAddress").value.trim();
+
+    const postcode = normalisePostcode(
+        $("venuePostcode").value
+    );
+
+    const town = $("venueTown").value.trim();
+
+    const county = $("venueCounty").value;
+
+    const type = $("venueType").value;
+
+    const priceOne = Number($("priceOne").value);
+
+    const priceTwo = Number($("priceTwo").value);
+
+    const active = $("venueActive").value === "true";
+
+    const notes = $("venueNotes").value.trim();
+
+    if (!name || !address || !town) {
+
+        showMessage(
+            "Please complete the venue details.",
+            "error"
+        );
+
+        return;
+    }
+
+    if (!postcode) {
+
+        showMessage(
+            "Please enter a valid UK postcode.",
+            "error"
+        );
+
+        return;
+    }
+
+    if (
+        !Number.isFinite(priceOne) ||
+        !Number.isFinite(priceTwo) ||
+        priceOne < 300 ||
+        priceTwo < 350 ||
+        priceTwo < priceOne
+    ) {
+
+        showMessage(
+            "One witness must cost at least £300. " +
+            "Two witnesses must cost at least £350 " +
+            "and cannot cost less than one witness.",
+            "error"
+        );
+
+        return;
+    }
+
+    const duplicate = venues.find(v =>
+
+        v.id !== id &&
+
+        String(v.name || "").trim().toLowerCase() ===
+            name.toLowerCase() &&
+
+        String(v.postcode || "").replace(/\s/g, "")
+            .toUpperCase() === postcode.replace(/\s/g, "")
+
+    );
+
+    if (duplicate) {
+
+        showMessage(
+            "This venue already exists in your database.",
+            "error"
+        );
+
+        return;
+    }
+
+    setBusy(true);
+
+    try {
+
+        const ref = id
+            ? venuesRef.doc(id)
+            : venuesRef.doc();
+
+        const privateRef = notesRef.doc(ref.id);
+
+        const timestamp =
+            firebase.firestore.FieldValue.serverTimestamp();
+
+        const venueData = {
+            name,
+            address,
+            postcode,
+            town,
+            county,
+            type,
+            priceOne,
+            priceTwo,
+            active,
+            updatedAt: timestamp
+        };
+
+        if (!id) {
+            venueData.createdAt = timestamp;
+        }
+
+        const batch = db.batch();
+
+        if (id) {
+            batch.update(ref, venueData);
+        } else {
+            batch.set(ref, venueData);
+        }
+
+        // Private notes are stored separately.
+        // They must never be publicly readable.
+
+        batch.set(privateRef, {
+            notes,
+            updatedAt: timestamp
+        }, {
+            merge: true
+        });
+
+        await batch.commit();
+
+        resetForm();
+
+        showMessage(
+            id
+                ? "Venue successfully updated."
+                : "New venue successfully added."
+        );
+
+    } catch (error) {
+
+        console.error(error);
+
+        showMessage(
+            "Unable to save venue: " + error.message,
+            "error"
+        );
+
+    } finally {
+
+        setBusy(false);
+
+    }
+
+});
+
+// ========================================
+// Edit venue
+// ========================================
+
+async function editVenue(id) {
+
+    if (!isAdministrator || busy) return;
+
+    const venue = venues.find(v => v.id === id);
+
+    if (!venue) return;
+
+    clearMessage();
+    setBusy(true);
+
+    try {
+
+        const privateDoc = await notesRef.doc(id).get();
+
+        $("venueId").value = venue.id;
+
+        $("venueName").value = venue.name || "";
+
+        $("venueAddress").value = venue.address || "";
+
+        $("venuePostcode").value = venue.postcode || "";
+
+        $("venueTown").value = venue.town || "";
+
+        $("venueCounty").value = venue.county || "Other";
+
+        $("venueType").value =
+            venue.type || "Register Office";
+
+        $("priceOne").value = venue.priceOne ?? 300;
+
+        $("priceTwo").value = venue.priceTwo ?? 350;
+
+        $("venueActive").value =
+            venue.active === true ? "true" : "false";
+
+        $("venueNotes").value = privateDoc.exists
+            ? privateDoc.data().notes || ""
+            : "";
+
+        $("pricePreset").value = "";
+
+        $("formTitle").textContent = "Edit Venue";
+
+        $("saveBtn").textContent = "Update Venue";
+
+        $("editorPanel").scrollIntoView({
+            behavior: "smooth"
+        });
+
+    } catch (error) {
+
+        showMessage(
+            "Unable to open venue: " + error.message,
+            "error"
+        );
+
+    } finally {
+
+        setBusy(false);
+
+    }
+
+}
+
+// ========================================
+// Activate / deactivate venue
+// ========================================
+
+async function toggleVenue(id) {
+
+    if (!isAdministrator || busy) return;
+
+    const venue = venues.find(v => v.id === id);
+
+    if (!venue) return;
+
+    const newStatus = venue.active !== true;
+
+    const action = newStatus
+        ? "activate"
+        : "deactivate";
+
+    if (!confirm(
+        "Are you sure you want to " +
+        action + " " + venue.name + "?"
+    )) return;
+
+    setBusy(true);
+
+    try {
+
+        await venuesRef.doc(id).update({
+
+            active: newStatus,
+
+            updatedAt:
+                firebase.firestore.FieldValue.serverTimestamp()
+
+        });
+
+        showMessage(
+            venue.name +
+            (newStatus
+                ? " is now active."
+                : " is now inactive.")
+        );
+
+        if ($("venueId").value === id) {
+
+            $("venueActive").value =
+                newStatus ? "true" : "false";
+
+        }
+
+    } catch (error) {
+
+        showMessage(error.message, "error");
+
+    } finally {
+
+        setBusy(false);
+
+    }
+
+}
+
+// ========================================
+// Reset form
+// ========================================
+
+function resetForm() {
+
+    $("venueForm").reset();
+
+    $("venueId").value = "";
+
+    $("priceOne").value = 300;
+
+    $("priceTwo").value = 350;
+
+    $("venueActive").value = "true";
+
+    $("formTitle").textContent = "Add New Venue";
+
+    $("saveBtn").textContent = "Save Venue";
+
+}
+
+$("resetBtn").addEventListener("click", () => {
+
+    if (busy) return;
+
+    resetForm();
+    clearMessage();
+
+});
+
+// ========================================
+// Render venue table safely
+// ========================================
+
+function renderVenues() {
+
+    const search = $("search").value
+        .trim()
+        .toLowerCase();
+
+    const county = $("countyFilter").value;
+
+    const status = $("statusFilter").value;
+
+    const filtered = venues.filter(venue => {
+
+        const text = [
+
+            venue.name,
+            venue.address,
+            venue.postcode,
+            venue.town,
+            venue.county
+
+        ].join(" ").toLowerCase();
+
+        if (search && !text.includes(search)) {
+            return false;
+        }
+
+        if (county && venue.county !== county) {
+            return false;
+        }
+
+        if (status === "active" && venue.active !== true) {
+            return false;
+        }
+
+        if (status === "inactive" && venue.active === true) {
+            return false;
+        }
+
+        return true;
+
+    });
+
+    const tbody = $("venueList");
+
+    tbody.replaceChildren();
+
+    $("emptyState").style.display =
+        filtered.length ? "none" : "block";
+
+    $("emptyState").textContent = !loaded
+
+        ? "Loading venues..."
+
+        : venues.length
+
+            ? "No venues match your search."
+
+            : "No venues added yet. Add your first venue above.";
+
+    filtered.forEach(venue => {
+
+        const row = document.createElement("tr");
+
+        // Venue details
+
+        const details = document.createElement("td");
+
+        const name = document.createElement("div");
+
+        name.className = "venue-name";
+        name.textContent = venue.name || "";
+
+        const address = document.createElement("div");
+
+        address.className = "venue-address";
+
+        address.textContent = [
+            venue.address,
+            venue.postcode
+        ].filter(Boolean).join(", ");
+
+        details.append(name, address);
+
+        row.appendChild(details);
+
+        // Region
+
+        const region = document.createElement("td");
+
+        region.textContent = venue.county || "";
+
+        row.appendChild(region);
+
+        // Single witness price
+
+        const one = document.createElement("td");
+
+        one.className = "price";
+        one.textContent = money(venue.priceOne);
+
+        row.appendChild(one);
+
+        // Two witness price
+
+        const two = document.createElement("td");
+
+        two.className = "price";
+        two.textContent = money(venue.priceTwo);
+
+        row.appendChild(two);
+
+        // Status
+
+        const statusCell = document.createElement("td");
+
+        const badge = document.createElement("span");
+
+        badge.className = venue.active === true
+
+            ? "badge badge-active"
+
+            : "badge badge-inactive";
+
+        badge.textContent = venue.active === true
+
+            ? "Active"
+
+            : "Inactive";
+
+        statusCell.appendChild(badge);
+
+        row.appendChild(statusCell);
+
+        // Actions
+
+        const actions = document.createElement("td");
+
+        const editBtn = document.createElement("button");
+
+        editBtn.className = "btn-gold btn-small";
+
+        editBtn.textContent = "Edit";
+
+        editBtn.disabled = busy;
+
+        editBtn.style.marginRight = "6px";
+
+        editBtn.addEventListener("click", () => {
+
+            editVenue(venue.id);
+
+        });
+
+        const toggleBtn = document.createElement("button");
+
+        toggleBtn.className = venue.active === true
+
+            ? "btn-red btn-small"
+
+            : "btn-green btn-small";
+
+        toggleBtn.textContent = venue.active === true
+
+            ? "Disable"
+
+            : "Enable";
+
+        toggleBtn.disabled = busy;
+
+        toggleBtn.addEventListener("click", () => {
+
+            toggleVenue(venue.id);
+
+        });
+
+        actions.append(editBtn, toggleBtn);
+
+        row.appendChild(actions);
+
+        tbody.appendChild(row);
+
+    });
+
+}
+
+// ========================================
+// Search and filters
+// ========================================
+
+$("search").addEventListener("input", renderVenues);
+
+$("countyFilter").addEventListener("change", renderVenues);
+
+$("statusFilter").addEventListener("change", renderVenues);
+
+</script>
+
+</body>
+</html>
