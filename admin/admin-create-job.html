@@ -108,9 +108,9 @@ textarea{resize:vertical;min-height:88px}
         <div class="grid">
           <div><label for="jobDate">Date *</label><input id="jobDate" type="date"></div>
           <div><label for="jobTime">Time *</label><input id="jobTime" type="time"></div>
-          <div class="full"><label for="jobLocation">Location *</label><input id="jobLocation" placeholder="Registered / approved ceremony venue and full address"></div>
+          <div class="full"><label for="venueSelect">Saved venue (optional)</label><select id="venueSelect"><option value="">Custom / unlisted venue</option></select><div class="helper" id="venueHint">Select a venue to load its standard price, then override it if needed.</div></div><div class="full"><label for="jobLocation">Location *</label><input id="jobLocation" placeholder="Registered / approved ceremony venue and full address"></div>
           <div><label for="ceremonyType">Ceremony Type</label><select id="ceremonyType"><option value="civil">Civil Ceremony</option><option value="religious">Religious Ceremony</option><option value="elopement">Elopement</option><option value="other">Other</option></select></div>
-          <div><label for="travelPostcode">Travel Postcode</label><input id="travelPostcode" placeholder="e.g. ME16 8AE"><div class="helper">Travel is £1 per mile for the full return journey from CT14 7QE.</div></div>
+          <div><label for="travelPostcode">Venue Postcode</label><input id="travelPostcode" placeholder="e.g. ME16 8AE"><div class="helper">Venue postcode for reference only. Travel and parking are included.</div></div>
           <div><label for="dressCode">Dress Code</label><select id="dressCode"><option value="No preference" selected>No preference</option><option value="Smart">Smart</option><option value="Smart casual">Smart casual</option><option value="Casual">Casual</option><option value="Other / see notes">Other / specific request — see notes</option></select></div>
           <div class="full"><label for="jobNotes">Notes for Witnesses</label><textarea id="jobNotes" placeholder="Parking, arrival instructions, dress code, access notes, etc."></textarea></div>
         </div>
@@ -127,11 +127,11 @@ textarea{resize:vertical;min-height:88px}
           </div>
           <div>
             <label for="basePrice">Base Service Price (£) *</label>
-            <input id="basePrice" type="number" min="0" step="1" value="200">
-            <div class="helper">Defaults to £200 for two witnesses or £150 for one witness. Change manually only where needed.</div>
+            <input id="basePrice" type="number" min="0" step="0.01" value="350">
+            <div class="helper">Standard venue price or any privately agreed amount, including £0.</div>
           </div>
-          <div><label for="travelCost">Travel Cost (£)</label><input id="travelCost" type="number" min="0" step="1" value="0"></div>
-          <div><label for="deposit">Deposit (£)</label><input id="deposit" type="number" min="0" step="1" value="20"></div>
+          <input id="travelCost" type="hidden" value="0"><div><label for="lastMinute">Short-notice surcharge</label><select id="lastMinute"><option value="0">Waived / not applicable</option><option value="50">£50</option></select></div>
+          <div><label for="deposit">Deposit (£)</label><input id="deposit" type="number" min="0" step="0.01" value="50"></div>
           <div><label for="sundayFee">Sunday Fee (£)</label><input id="sundayFee" type="number" min="0" step="1" value="0"></div>
           <div><label for="bankHolidayMultiplier">Bank Holiday Multiplier</label><input id="bankHolidayMultiplier" type="number" min="1" step="0.1" value="1"></div>
           <div class="full">
@@ -143,14 +143,14 @@ textarea{resize:vertical;min-height:88px}
 
         <div class="money-box">
           <div class="money-grid">
-            <div class="money-item"><span>Base</span><strong id="calcBase">£200.00</strong></div>
-            <div class="money-item"><span>Travel</span><strong id="calcTravel">£0.00</strong></div>
+            <div class="money-item"><span>Base</span><strong id="calcBase">£350.00</strong></div>
+            <div class="money-item"><span>Travel (included)</span><strong id="calcTravel">£0.00</strong></div>
             <div class="money-item"><span>Extras</span><strong id="calcExtras">£0.00</strong></div>
-            <div class="money-item"><span>Total Price</span><strong id="calcTotal">£200.00</strong></div>
+            <div class="money-item"><span>Total Price</span><strong id="calcTotal">£350.00</strong></div>
           </div>
         </div>
 
-        <div class="buttons-row"><button class="btn btn-outline" onclick="goToStep(2)">← Back</button><button class="btn btn-gold" onclick="goToStep(4)">Next: Review →</button></div>
+        <div class="error" id="step3Error"></div><div class="buttons-row"><button class="btn btn-outline" onclick="goToStep(2)">← Back</button><button class="btn btn-gold" onclick="goToStep(4)">Next: Review →</button></div>
       </section>
 
       <section class="card" id="step4" style="display:none">
@@ -166,6 +166,32 @@ textarea{resize:vertical;min-height:88px}
 <script>
 let allWitnesses=[];
 let currentAdmin=null;
+let venueMap=new Map();
+async function loadVenues(){
+  try {
+    const snap=await db.collection("venues").get();
+    const select=document.getElementById("venueSelect");
+    snap.docs.sort((a,b)=>String(a.data().name).localeCompare(String(b.data().name))).forEach(doc=>{
+      const v=doc.data(); venueMap.set(doc.id,v);
+      const option=document.createElement("option"); option.value=doc.id;
+      option.textContent=v.name+" — "+v.postcode+(v.active===true?"":" (inactive)"); select.appendChild(option);
+    });
+  } catch(e){document.getElementById("venueHint").textContent="Venue list unavailable. You can still enter a custom venue and price.";console.error(e);}
+}
+function applyVenuePrice(){
+  const v=venueMap.get(val("venueSelect"));
+  const two=val("witnessCount")==="2";
+  document.getElementById("basePrice").value=v?(two?v.priceTwo:v.priceOne):(two?350:300);
+  refreshPrice();
+}
+document.getElementById("venueSelect").addEventListener("change",()=>{
+  const v=venueMap.get(val("venueSelect"));
+  if(v){document.getElementById("jobLocation").value=[v.name,v.address,v.postcode].join(", ");document.getElementById("travelPostcode").value=v.postcode;}
+  applyVenuePrice();
+});
+function validPricing(){
+  return ["basePrice","deposit","sundayFee","bankHolidayMultiplier"].every(id=>document.getElementById(id).checkValidity() && val(id)!=="" && Number.isFinite(Number(val(id)))) && num("deposit")<=calculatedPrice().total;
+}
 
 function money(v){return "£"+(Number(v)||0).toFixed(2);}
 function esc(v){return String(v??"").replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));}
@@ -198,7 +224,7 @@ function goToStep(step){
       return;
     }
   }
-  if(step===4)buildReview();
+  if(step===4){if(!validPricing()){document.getElementById("step3Error").textContent="Enter valid prices and a deposit no greater than the total.";return;}buildReview();}
   showStep(step);
 }
 
@@ -239,22 +265,19 @@ function getSelectedWitnessIds(){
 function calculatedPrice(){
   const base=num("basePrice"),travel=num("travelCost"),sunday=num("sundayFee"),mult=Math.max(Number(document.getElementById("bankHolidayMultiplier").value)||1,1);
   const serviceSubtotal=base+sunday;
-  const total=(serviceSubtotal*mult)+travel;
-  return {base,travel,sunday,mult,total};
+  const lastMinute=val("lastMinute")==="50";
+  const total=Math.round(((serviceSubtotal*mult)+travel+(lastMinute?50:0))*100)/100;
+  return {base,travel,sunday,mult,total,lastMinute};
 }
 function refreshPrice(){
   const p=calculatedPrice();
   document.getElementById("calcBase").textContent=money(p.base);
   document.getElementById("calcTravel").textContent=money(p.travel);
-  document.getElementById("calcExtras").textContent=money(((p.base+p.sunday)*(p.mult-1))+p.sunday);
+  document.getElementById("calcExtras").textContent=money(p.total-p.base-p.travel);
   document.getElementById("calcTotal").textContent=money(p.total);
 }
-["basePrice","travelCost","sundayFee","bankHolidayMultiplier"].forEach(id=>document.getElementById(id).addEventListener("input",refreshPrice));
-document.getElementById("witnessCount").addEventListener("change",e=>{
-  if(e.target.value==="1")document.getElementById("basePrice").value=150;
-  if(e.target.value==="2")document.getElementById("basePrice").value=200;
-  refreshPrice();
-});
+["basePrice","travelCost","sundayFee","bankHolidayMultiplier","lastMinute"].forEach(id=>document.getElementById(id).addEventListener("input",refreshPrice));
+document.getElementById("witnessCount").addEventListener("change",applyVenuePrice);
 
 function buildReview(){
   const ids=getSelectedWitnessIds(),selected=allWitnesses.filter(w=>ids.includes(w.id)),p=calculatedPrice();
@@ -268,8 +291,8 @@ function buildReview(){
     <div class="summary-row"><span class="summary-label">Witnesses Required:</span>${esc(document.getElementById("witnessCount").value)}</div>
     <div class="summary-row"><span class="summary-label">Pre-assigned:</span>${esc(names)}</div>
     <div class="summary-row"><span class="summary-label">Initial Status:</span><b>${status}</b></div>
-    <div class="summary-row"><span class="summary-label">Pricing:</span>Base ${money(p.base)} + Travel ${money(p.travel)} + Sunday ${money(p.sunday)}${p.mult>1?` × ${p.mult} bank-holiday multiplier`:""} = <b>${money(p.total)}</b></div>
-    <div class="summary-row"><span class="summary-label">Deposit:</span>${money(num("deposit"))}</div>
+    <div class="summary-row"><span class="summary-label">Pricing:</span>Base ${money(p.base)} + Sunday ${money(p.sunday)}${p.mult>1?` × ${p.mult} bank-holiday multiplier`:""}${p.lastMinute?" + £50 short notice":""} = <b>${money(p.total)}</b></div>
+    <div class="summary-row"><span class="summary-label">Deposit:</span>${money(num("deposit"))} · Remaining after deposit: ${money(p.total-num("deposit"))}</div>
     <div class="summary-row"><span class="summary-label">Notes:</span>${esc(val("customerNotes")||"None")}</div>
     <div class="summary-row"><span class="summary-label">Witness Notes:</span>${esc(val("jobNotes")||"None")}</div>`;
 }
@@ -282,6 +305,7 @@ async function createJob(){
     error.textContent="Required fields are missing. Please go back and check the booking.";
     return;
   }
+  if(!currentAdmin || !validPricing()){error.textContent="Invalid pricing or administrator session.";return;}
   if(ids.length>count){
     error.textContent=`You selected ${ids.length} witnesses but the booking only requires ${count}.`;
     return;
@@ -315,7 +339,7 @@ async function createJob(){
 
     addOns:{
       confetti:false,
-      lastMinute:false,
+      lastMinute:p.lastMinute,
       photoVideo:false,
       travelPostcode:val("travelPostcode"),
       travelCost:p.travel
@@ -331,6 +355,7 @@ async function createJob(){
     requestAt:null,
 
     source:"admin",
+    ...(val("venueSelect")?{venueId:val("venueSelect")} : {}),
     createdBy:currentAdmin?.uid||null,
     createdAt:firebase.firestore.FieldValue.serverTimestamp(),
     updatedAt:firebase.firestore.FieldValue.serverTimestamp()
@@ -354,13 +379,14 @@ firebase.auth().onAuthStateChanged(async user=>{
   if(!user){location.replace("admin-login.html");return;}
   try{
     const token=await user.getIdTokenResult(true);
-    if(token.claims.admin!==true){
+    if(token.claims.admin!==true && !(user.email && (await db.collection("admins").doc(user.email).get()).exists)){
       await firebase.auth().signOut();
       location.replace("admin-login.html");
       return;
     }
     currentAdmin=user;
     loadWitnesses();
+    loadVenues();
   }catch(e){
     console.error(e);
     location.replace("admin-login.html");
