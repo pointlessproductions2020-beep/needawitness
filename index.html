@@ -968,7 +968,7 @@
                 <div class="eyebrow">Live availability</div>
                 <h2>Find a date that works for your ceremony</h2>
                 <p>
-                    Select your wedding date to view available time slots. Choosing a slot will take you to the secure booking form with your date, time and price already added.
+                    Select your wedding date to view available time slots. Choosing a slot will take you to the secure booking form with your date and time already added. Your venue and witness package determine your fixed price.
                 </p>
 
                 <div class="reassurance-list">
@@ -978,7 +978,7 @@
                     </div>
                     <div class="reassurance-item">
                         <div class="reassurance-icon">✓</div>
-                        <div><strong>Clear pricing</strong><br>Your selected slot shows the service price and deposit before you continue.</div>
+                        <div><strong>Clear pricing</strong><br>Choose your venue and witness package on the booking form to see your price before submitting.</div>
                     </div>
                     <div class="reassurance-item">
                         <div class="reassurance-icon">✓</div>
@@ -992,7 +992,7 @@
                 <input type="date" id="date-picker">
 
                 <div class="availability-note">
-                    Hourly slots are available from 9am to 5pm. Standard rates apply Monday–Saturday. Sundays, Bank Holidays and short-notice bookings may carry an additional charge. Travel is charged at £1 per mile for the full return journey from CT14 7QE for every booking, including ceremonies within Kent.
+                    Hourly slots are available from 9am to 5pm. Standard rates apply Monday–Saturday. Sundays, Bank Holidays and short-notice bookings may carry an additional charge. Travel and parking are included in your fixed venue price.
                 </div>
 
                 <div class="available-title">Available times</div>
@@ -1008,22 +1008,30 @@
         <div class="container">
             <div class="section-heading">
                 <div class="eyebrow">Straightforward pricing</div>
-                <h2>Simple options without unnecessary packages</h2>
-                <p>Choose the witness support you need. Any additional costs are confirmed clearly before payment.</p>
+                <h2>Fixed venue pricing. Professional service.</h2>
+                <p>Choose the witness support you need. Our prices include travel and parking, with any applicable special-date surcharges clearly disclosed before booking.</p>
             </div>
 
             <div class="pricing-grid">
-                <article class="price-card featured">
+                <article class="price-card">
                     <h3>One professional witness</h3>
-                    <div class="price">£150</div>
+                    <div class="price"><small>From</small> £300</div>
                     <p>Ideal when you already have one suitable witness and need one reliable professional witness for your ceremony.</p>
                 </article>
 
-                <article class="price-card">
+                <article class="price-card featured">
                     <h3>Two professional witnesses</h3>
-                    <div class="price">£200</div>
+                    <div class="price"><small>From</small> £350</div>
                     <p>Our best-value option when you need us to provide both required witnesses for your ceremony.</p>
                 </article>
+            </div>
+
+            <div class="section-heading" style="margin-top:40px;margin-bottom:24px;">
+                <div class="eyebrow">Our updated pricing</div>
+                <h2>Why we have changed the way we price bookings</h2>
+                <p>Our previous mileage-based system could make the final cost difficult to predict. We have removed the mileage calculator and introduced fixed venue prices that include travel and parking.</p>
+                <p>Our updated rates reflect the full commitment involved in a professional booking: reserving time for your ceremony, coordinating dependable witnesses, planning travel and allowing time for early arrival. Even a single-witness booking requires careful preparation and a dedicated commitment to your day.</p>
+                <p>Choose your venue to see the price for your ceremony. For an unlisted venue or a personalised quotation, <a href="contact.html">contact us directly</a>. Any agreed existing booking prices remain unchanged.</p>
             </div>
 
             <div class="section-heading" style="margin-top:48px;margin-bottom:24px;">
@@ -1053,8 +1061,8 @@
 
             <div class="detail-grid">
                 <article class="detail-card">
-                    <h3>Travel</h3>
-                    <p>£1 per mile for the full return journey from CT14 7QE, including ceremonies within Kent.</p>
+                    <h3>Travel and parking included</h3>
+                    <p>Your venue price includes the cost of getting your witnesses to your ceremony. No separate mileage or parking charges.</p>
                 </article>
                 <article class="detail-card">
                     <h3>No unnecessary extras</h3>
@@ -1128,12 +1136,12 @@
 
                 <details>
                     <summary>Can you provide one witness or two?</summary>
-                    <div class="faq-answer">Yes. One professional witness costs £150 and two professional witnesses cost £200, plus travel where applicable.</div>
+                    <div class="faq-answer">Yes. One professional witness starts at £300 and two start at £350. Your exact price depends on the venue and any applicable surcharges.</div>
                 </details>
 
                 <details>
-                    <summary>How is travel calculated?</summary>
-                    <div class="faq-answer">Travel is charged at £1 per mile for the full return journey from CT14 7QE. This applies to all bookings, including ceremonies within Kent.</div>
+                    <summary>Why have you removed mileage charges?</summary>
+                    <div class="faq-answer">We have replaced distance-based charges with fixed venue prices to make costs easier to understand. Travel and parking are included, so there is no separate mileage calculation.</div>
                 </details>
 
                 <details>
@@ -1158,15 +1166,16 @@
         <div class="container areas-wrap">
             <div>
                 <div class="eyebrow">Areas we cover</div>
-                <h2>Registered ceremony venues across Kent and beyond</h2>
-                <p>We can consider bookings outside Kent too. Travel is calculated at £1 per mile for the full return journey from CT14 7QE.</p>
+                <h2>Registered ceremony venues across Kent, Sussex and London</h2>
+                <p>We cover Kent, Sussex and London, and consider other locations by arrangement. If your venue is not listed, <a href="contact.html">contact us for a personalised quotation</a>.</p>
             </div>
 
-            <div class="area-list" aria-label="Kent areas covered">
+            <div class="area-list" aria-label="Examples of areas covered">
                 <span>Dover</span><span>Deal</span><span>Canterbury</span><span>Ashford</span>
                 <span>Folkestone</span><span>Margate</span><span>Ramsgate</span><span>Maidstone</span>
                 <span>Tunbridge Wells</span><span>Sittingbourne</span><span>Sevenoaks</span>
                 <span>Tonbridge</span><span>Dartford</span><span>Gravesend</span>
+                <span>Crowborough</span><span>Hastings</span><span>Eastbourne</span><span>Greater London</span><span>Central London</span>
             </div>
         </div>
     </section>
@@ -1264,15 +1273,13 @@
             slotsContainer.innerHTML = "";
 
             Object.keys(availability).forEach(time => {
-                const price = window.availability.calculatePrice("single", dateString);
-                const deposit = window.availability.calculateDeposit(dateString);
 
                 const btn = document.createElement("button");
                 btn.type = "button";
                 btn.className = "slot-button";
                 btn.innerHTML = `
                     <div>${time}</div>
-                    <div class="slot-price">£${price} • Deposit £${deposit}</div>
+                    <div class="slot-price">${availability[time] ? "Select venue for price" : "Unavailable"}</div>
                 `;
 
                 if (!availability[time]) {
@@ -1291,8 +1298,6 @@
                         const url = `booking.html
                             ?date=${encodeURIComponent(dateString)}
                             &time=${encodeURIComponent(time)}
-                            &price=${price}
-                            &deposit=${deposit}
                         `.replace(/\s+/g, "");
 
                         window.location.href = url;
