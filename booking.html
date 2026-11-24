@@ -14,7 +14,7 @@
 </script>
 
 <!-- ⭐ LOAD AVAILABILITY.JS (MATCH VERSION WITH INDEX.HTML) ⭐ -->
-<script src="/hub/availability.js?v=13"></script>
+<script src="/hub/availability.js?v=14"></script>
 
 <style>
     :root {
@@ -827,8 +827,16 @@
     <div class="booking-layout" id="bookingLayout">
         <div class="main-column">
             <section class="card">
+                <div class="card-header"><span class="section-kicker">Step 1</span><h2>Choose Your Ceremony Venue</h2><p>Fixed venue prices include travel and parking. No mileage calculations or separate travel charges.</p></div>
+                <div class="card-body">
+                    <div class="field-group"><label class="field-label" for="venueSearch">Search by venue, town or postcode</label><input id="venueSearch" type="search" placeholder="Search venues" autocomplete="off"></div>
+                    <div class="field-group"><label class="field-label" for="venueSelect">Ceremony venue *</label><select id="venueSelect" required disabled><option value="">Loading venues…</option></select><p id="venueAddress" class="field-help" aria-live="polite"></p><p id="venueStatus" class="field-help" role="status"></p><small class="field-help">Venue not listed? <a href="contact.html">Contact us for a personalised quotation.</a></small></div>
+                </div>
+            </section>
+
+            <section class="card">
                 <div class="card-header">
-                    <span class="section-kicker">Step 1</span>
+                    <span class="section-kicker">Service</span>
                     <h2>Choose Your Witness Service</h2>
                     <p>Select one witness, or add a second witness if your ceremony requires two.</p>
                 </div>
@@ -840,7 +848,7 @@
                                 <strong>One professional witness</strong>
                                 <small>A friendly, reliable witness attending your ceremony.</small>
                             </span>
-                            <span class="choice-price">£150</span>
+                            <span class="choice-price"><span id="onePrice">From £300</span></span>
                         </label>
 
                         <label class="choice-card">
@@ -849,7 +857,7 @@
                                 <strong>Two professional witnesses</strong>
                                 <small>Choose this when you need both required witnesses supplied.</small>
                             </span>
-                            <span class="choice-price">£200</span>
+                            <span class="choice-price"><span id="twoPrice">From £350</span></span>
                         </label>
                     </div>
                 </div>
@@ -883,26 +891,6 @@
 
             <section class="card">
                 <div class="card-header">
-                    <span class="section-kicker">Travel</span>
-                    <h2>Ceremony Postcode</h2>
-                    <p>Travel is charged for every booking at £1 per mile for the full return journey from CT14 7QE.</p>
-                </div>
-                <div class="card-body">
-                    <div class="field-group">
-                        <label class="field-label" for="travelPostcode">Ceremony postcode <span class="required">*</span></label>
-                        <input type="text" id="travelPostcode" placeholder="e.g. CT1 2DB" autocomplete="off" required>
-                        <small class="field-help">£1 per mile for the return journey from CT14 7QE. This applies to all venues, including Kent and Medway.</small>
-                        <div id="postcodeStatus" class="status-message" role="status" aria-live="polite"></div>
-                    </div>
-                    <div class="travel-result">
-                        <span id="travelLabel">Return travel</span>
-                        <strong>£<span id="travelCost">0</span></strong>
-                    </div>
-                </div>
-            </section>
-
-            <section class="card">
-                <div class="card-header">
                     <span class="section-kicker">Step 2</span>
                     <h2>Your Details</h2>
                     <p>We'll use these details to review your request and send your confirmation.</p>
@@ -924,19 +912,10 @@
                             <input id="cust-email" type="email" autocomplete="email" placeholder="you@example.com">
                         </div>
 
-                        <div class="field-group full">
-                            <label class="field-label" for="cust-location">Ceremony venue name and address <span class="required">*</span></label>
-                            <input id="cust-location" type="text" autocomplete="off" placeholder="e.g. Canterbury Register Office, 16 Station Road West" required>
-                            <small class="field-help">Please enter the registered ceremony venue rather than your home or correspondence address.</small>
-                            <div id="venueWarning" class="status-message warning" role="alert">
-                                This looks like it may be a residential address. Please check that you have entered the register office, registered religious building or council-approved ceremony venue.
-                            </div>
-                        </div>
-
                         <div class="field-group full confirmation-box">
                             <label class="confirmation-label" for="venue-confirmation">
                                 <input id="venue-confirmation" type="checkbox" required>
-                                <span>I confirm that the address above is the registered or approved venue where the legal ceremony will take place. <span class="required">*</span></span>
+                                <span>I confirm that the selected venue is the registered or approved venue where the legal ceremony will take place. <span class="required">*</span></span>
                             </label>
                             <small>We may contact you to verify the venue before accepting the booking.</small>
                         </div>
@@ -965,11 +944,11 @@
 
                     <div class="summary-list">
                         <div class="summary-row">
-                            <span>Base price</span>
+                            <span>Fixed venue price</span>
                             <strong>£<span id="sum-price"></span></strong>
                         </div>
                         <div class="summary-row">
-                            <span>Deposit</span>
+                            <span>Deposit (part of total)</span>
                             <strong>£<span id="sum-deposit"></span></strong>
                         </div>
                         <div class="summary-row">
@@ -980,6 +959,9 @@
                             <span>Bank holiday adjustment</span>
                             <strong id="sum-bankholiday">None</strong>
                         </div>
+                        <div class="summary-row"><span>Short-notice surcharge</span><strong>£<span id="sum-short">0</span></strong></div>
+                        <div class="summary-row"><span>Travel and parking</span><strong>Included</strong></div>
+                        <div class="summary-row"><span>Remaining after deposit</span><strong>£<span id="sum-balance">—</span></strong></div>
                     </div>
 
                     <div class="total-box">
@@ -988,7 +970,7 @@
                         <p class="deposit-note">Your request will be personally reviewed before final confirmation.</p>
                     </div>
 
-                    <button id="submitBtn" onclick="submitBooking()">Secure My Booking</button>
+                    <button id="submitBtn" disabled onclick="submitBooking()">Secure My Booking</button>
                     <div id="formError" class="form-error" role="alert"></div>
                     <div id="loading" class="loading">Processing your booking… please wait</div>
 
@@ -1019,11 +1001,10 @@
 const params = new URLSearchParams(window.location.search);
 const date = params.get("date") || params.get("selectedDate");
 const time = params.get("time") || params.get("selectedTime");
-const requestedPrice = Number(params.get("price"));
-const hasSelectedSlot = Boolean(date && time);
+const hasSelectedSlot = Boolean(date && /^\d{4}-\d{2}-\d{2}$/.test(date) && /^(09|1[0-7]):00$/.test(time || "") && Number.isFinite(new Date(`${date}T${time}`).getTime()));
 const deposit = hasSelectedSlot
-    ? window.availability.calculateDeposit(date)
-    : 20;
+    ? window.availability.calculateWeddingDeposit()
+    : 50;
 
 function formatCeremonyDate(value) {
     if (!value) return "Not selected";
@@ -1059,143 +1040,68 @@ let bankHolidayMultiplier = isBankHolidayBooking ? 2 : 1;
 document.getElementById("sum-bankholiday").textContent =
     bankHolidayMultiplier === 2 ? "Double Price" : "None";
 
-/* ---------------- LAST MINUTE ---------------- */
-if (hasSelectedSlot) {
-    const ceremonyDate = new Date(`${date}T${time}`);
-    const now = new Date();
-    const hoursDiff = (ceremonyDate - now) / (1000 * 60 * 60);
-    if (Number.isFinite(hoursDiff) && hoursDiff >= 0 && hoursDiff < 24) {
-        document.getElementById("lastMinute").checked = true;
-    }
+/* ---------------- FIXED VENUE PRICING ---------------- */
+const $ = id => document.getElementById(id);
+let venues = [];
+let selectedVenue = null;
+let submitting = false;
+const money = n => Number(n).toFixed(2);
+function validVenue(v) {
+    return v.active === true && typeof v.name === "string" && typeof v.address === "string" && typeof v.postcode === "string" && Number.isFinite(v.priceOne) && Number.isFinite(v.priceTwo) && v.priceOne >= 300 && v.priceTwo >= 350 && v.priceTwo >= v.priceOne;
 }
-
-/* ---------------- TRAVEL CALCULATION ---------------- */
-let postcodeIsValid = false;
-
-function setPostcodeStatus(message, type = "") {
-    const box = document.getElementById("postcodeStatus");
-    box.textContent = message;
-    box.className = "status-message" + (message ? ` show ${type}` : "");
+function venueLocation(v) { return [v.name, v.address, v.postcode].join(", "); }
+function refreshOptions() {
+    const q = $("venueSearch").value.trim().toLowerCase();
+    const previous = $("venueSelect").value;
+    $("venueSelect").replaceChildren(new Option("Select your ceremony venue", ""));
+    venues.filter(v => [v.name,v.address,v.postcode,v.town,v.county].join(" ").toLowerCase().includes(q)).forEach(v => {
+        $("venueSelect").add(new Option(`${v.name} — ${v.town || ""} ${v.postcode}`, v.id));
+    });
+    $("venueSelect").value = previous;
+    selectVenue();
 }
-
-async function calculateTravel() {
-    const postcodeInput = document.getElementById("travelPostcode");
-    const postcode = postcodeInput.value.trim();
-    const travelCostEl = document.getElementById("travelCost");
-    const travelLabelEl = document.getElementById("travelLabel");
-
-    postcodeIsValid = false;
-    travelCostEl.textContent = 0;
-    travelLabelEl.textContent = "Travel cost";
-
-    if (!postcode) {
-        setPostcodeStatus("");
-        updateTotal();
-        return;
-    }
-
-    setPostcodeStatus("Checking postcode…", "warning");
-    const originPostcode = "CT14 7QE";
-
-    try {
-        const [originCoords, destCoords] = await Promise.all([
-            fetch(`https://api.postcodes.io/postcodes/${originPostcode.replace(/\s+/g, "")}`).then(r => r.json()),
-            fetch(`https://api.postcodes.io/postcodes/${postcode.replace(/\s+/g, "")}`).then(r => r.json())
-        ]);
-
-        if (originCoords.status !== 200 || destCoords.status !== 200 || !destCoords.result) {
-            setPostcodeStatus("We couldn't recognise that postcode. Please check it and try again.", "error");
-            updateTotal();
-            return;
-        }
-
-        postcodeIsValid = true;
-        postcodeInput.value = destCoords.result.postcode || postcode.toUpperCase();
-        const origin = `${originCoords.result.longitude},${originCoords.result.latitude}`;
-        const dest = `${destCoords.result.longitude},${destCoords.result.latitude}`;
-        const orsKey = "eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6IjBiYjMxNzAwMGRlNDQ5M2NhNTYwYjljYTIwY2NlZDk0IiwiaCI6Im11cm11cjY0In0=";
-
-        const routeRes = await fetch(
-            `https://api.openrouteservice.org/v2/directions/driving-car?api_key=${orsKey}&start=${origin}&end=${dest}`
-        );
-
-        if (!routeRes.ok) throw new Error("Route lookup failed");
-        const routeData = await routeRes.json();
-        const meters = routeData?.features?.[0]?.properties?.summary?.distance;
-        if (!Number.isFinite(meters)) throw new Error("Route distance missing");
-
-        const oneWayMiles = meters / 1609.34;
-        const returnMiles = oneWayMiles * 2;
-        const travelCost = Math.round(returnMiles);
-
-        travelCostEl.textContent = travelCost;
-        travelLabelEl.textContent = "Return travel";
-        setPostcodeStatus(
-            `The calculated return journey from CT14 7QE is approximately ${Math.round(returnMiles)} miles at £1 per mile.`,
-            "success"
-        );
-    } catch (err) {
-        console.error(err);
-        postcodeIsValid = false;
-        travelCostEl.textContent = 0;
-        setPostcodeStatus("We couldn't calculate travel for that postcode. Please try again or contact us before booking.", "error");
-    }
-
+function selectVenue() {
+    selectedVenue = venues.find(v => v.id === $("venueSelect").value) || null;
+    $("venueAddress").textContent = selectedVenue ? venueLocation(selectedVenue) : "";
+    $("venue-confirmation").checked = false;
     updateTotal();
 }
-
-const travelPostcodeInput = document.getElementById("travelPostcode");
-travelPostcodeInput.addEventListener("change", calculateTravel);
-travelPostcodeInput.addEventListener("blur", calculateTravel);
-
-/* ---------------- VENUE CHECK ---------------- */
-const venueInput = document.getElementById("cust-location");
-const venueWarning = document.getElementById("venueWarning");
-
-function checkVenueAddress() {
-    const value = venueInput.value.trim().toLowerCase();
-    if (!value) {
-        venueWarning.classList.remove("show");
+function updateTotal() {
+    const hours = (new Date(`${date}T${time}`) - Date.now()) / 3600000;
+    const lastMinute = hours >= 0 && hours < 24;
+    $("lastMinute").checked = lastMinute;
+    $("sum-short").textContent = lastMinute ? "50" : "0";
+    $("onePrice").textContent = selectedVenue ? "£" + money(selectedVenue.priceOne) : "From £300";
+    $("twoPrice").textContent = selectedVenue ? "£" + money(selectedVenue.priceTwo) : "From £350";
+    $("submitBtn").disabled = submitting || !selectedVenue || !hasSelectedSlot || !(hours > 0);
+    if (!selectedVenue) {
+        ["sum-price","totalPrice","sum-balance"].forEach(id => $(id).textContent = "—");
         return;
     }
-
-    const approvedVenueWords = /register office|registry office|town hall|civic centre|civic center|church|chapel|synagogue|mosque|temple|hotel|manor|barn|castle|hall|estate|venue|restaurant|museum|licensed|approved/i;
-    const residentialWords = /\b(flat|apartment|house|home|bungalow|residence)\b|\b\d+[a-z]?\s+(road|street|avenue|lane|close|drive|gardens|crescent|way|terrace|court)\b/i;
-
-    const looksResidential = residentialWords.test(value) && !approvedVenueWords.test(value);
-    venueWarning.classList.toggle("show", looksResidential);
+    const count = Number(document.querySelector('input[name="witnessCount"]:checked').value);
+    const base = count === 2 ? selectedVenue.priceTwo : selectedVenue.priceOne;
+    const total = window.availability.calculatePrice(count === 2 ? "couple" : "single", date, base, lastMinute);
+    $("sum-price").textContent = money(base);
+    $("totalPrice").textContent = money(total);
+    $("sum-balance").textContent = money(total - deposit);
 }
-
-venueInput.addEventListener("input", checkVenueAddress);
-venueInput.addEventListener("blur", checkVenueAddress);
-
-/* ---------------- TOTAL PRICE ---------------- */
-function updateTotal() {
-    const witnessCount = document.querySelector('input[name="witnessCount"]:checked').value;
-    const witnessFee = (witnessCount === "2") ? 200 : 150;
-    document.getElementById("sum-price").textContent = witnessFee;
-
-    let total = witnessFee;
-
-    total += sundayFee;
-    total *= bankHolidayMultiplier;
-
-    if (document.getElementById("lastMinute").checked) total += 50;
-
-    total += Number(document.getElementById("travelCost").textContent);
-
-    document.getElementById("totalPrice").textContent = total;
+$("venueSearch").addEventListener("input", refreshOptions);
+$("venueSelect").addEventListener("change", selectVenue);
+document.querySelectorAll('input[name="witnessCount"]').forEach(r => r.addEventListener("change", updateTotal));
+async function loadVenues() {
+    try {
+        const snap = await db.collection("venues").where("active", "==", true).get();
+        venues = snap.docs.map(d => ({...d.data(), id:d.id})).filter(validVenue).sort((a,b) => a.name.localeCompare(b.name));
+        $("venueSelect").disabled = false;
+        $("venueStatus").textContent = venues.length ? "" : "No venues available online yet. Please contact us for a quotation.";
+        refreshOptions();
+    } catch (err) {
+        console.error(err);
+        $("venueStatus").textContent = "Unable to load venues. Please contact us for help.";
+    }
 }
-
-document.querySelectorAll("input[type=checkbox]").forEach(cb =>
-    cb.addEventListener("change", updateTotal)
-);
-
-document.querySelectorAll('input[name="witnessCount"]').forEach(r =>
-    r.addEventListener("change", updateTotal)
-);
-
 updateTotal();
+if (hasSelectedSlot) loadVenues();
 
 /* ---------------- SUBMIT BOOKING ---------------- */
 async function submitBooking() {
@@ -1205,15 +1111,14 @@ async function submitBooking() {
     const requiredFields = [
         document.getElementById("cust-name"),
         document.getElementById("cust-email"),
-        document.getElementById("cust-phone"),
-        document.getElementById("cust-location"),
-        document.getElementById("travelPostcode")
+        document.getElementById("cust-phone")
     ];
 
     formError.classList.remove("show");
     formError.textContent = "";
 
-    if (!hasSelectedSlot) {
+    if (submitting) return;
+    if (!hasSelectedSlot || !(new Date(`${date}T${time}`) > new Date())) {
         formError.textContent = "Please return to the availability page and choose a ceremony date and time first.";
         formError.classList.add("show");
         return;
@@ -1234,16 +1139,17 @@ async function submitBooking() {
         return;
     }
 
-    if (!postcodeIsValid) {
-        await calculateTravel();
-        if (!postcodeIsValid) {
-            formError.textContent = "Please enter a valid ceremony postcode so we can calculate the return travel charge.";
-            formError.classList.add("show");
-            document.getElementById("travelPostcode").focus();
-            return;
-        }
+    if (!selectedVenue) {
+        formError.textContent = "Please select a listed venue or contact us for a quotation.";
+        formError.classList.add("show");
+        return;
     }
-
+    if ($("cust-name").value.trim().length > 150 || $("cust-email").value.trim().length > 254 || $("cust-phone").value.trim().length > 50 || $("cust-notes").value.trim().length > 3000) {
+        formError.textContent = "Please shorten your contact details or notes.";
+        formError.classList.add("show");
+        return;
+    }
+    updateTotal();
     if (!document.getElementById("venue-confirmation").checked) {
         formError.textContent = "Please confirm that the address entered is the registered or approved ceremony venue.";
         formError.classList.add("show");
@@ -1251,16 +1157,19 @@ async function submitBooking() {
         return;
     }
 
+    submitting = true;
     btn.disabled = true;
     loading.style.display = "block";
 
     const witnessCount = Number(document.querySelector('input[name="witnessCount"]:checked').value);
-    const basePrice = witnessCount === 2 ? 200 : 150;
+    const venue = selectedVenue;
+    const basePrice = witnessCount === 2 ? venue.priceTwo : venue.priceOne;
 
     const job = {
         date,
         time,
         witnessCount,
+        venueId: venue.id,
         basePrice,
         deposit,
         sundayFee,
@@ -1269,15 +1178,15 @@ async function submitBooking() {
             confetti: false,
             photoVideo: false,
             lastMinute: document.getElementById("lastMinute").checked,
-            travelPostcode: document.getElementById("travelPostcode").value.trim(),
-            travelCost: Number(document.getElementById("travelCost").textContent)
+            travelPostcode: venue.postcode,
+            travelCost: 0
         },
-        totalPrice: Number(document.getElementById("totalPrice").textContent),
+        totalPrice: window.availability.calculatePrice(witnessCount === 2 ? "couple" : "single", date, basePrice, $("lastMinute").checked),
         customer: {
             name: document.getElementById("cust-name").value.trim(),
             email: document.getElementById("cust-email").value.trim(),
             phone: document.getElementById("cust-phone").value.trim(),
-            location: document.getElementById("cust-location").value.trim(),
+            location: venueLocation(venue),
             dressCode: document.getElementById("dressCode").value,
             notes: document.getElementById("cust-notes").value.trim()
         },
@@ -1301,7 +1210,6 @@ async function submitBooking() {
         batch.set(slotRef, {
             booked: true,
             jobId: jobRef.id,
-            customerName: job.customer.name,
             bookingStatus: job.status
         }, { merge: true });
         await batch.commit();
@@ -1331,7 +1239,8 @@ async function submitBooking() {
         window.location.href = "booking-confirmed.html";
     } catch (err) {
         console.error(err);
-        btn.disabled = false;
+        submitting = false;
+        updateTotal();
         loading.style.display = "none";
         formError.textContent = "Something went wrong while saving your booking. Please try again or contact us for help.";
         formError.classList.add("show");
