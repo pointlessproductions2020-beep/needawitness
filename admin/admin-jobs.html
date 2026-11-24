@@ -32,6 +32,7 @@ body{margin:0;font-family:Inter,sans-serif;background:var(--bg);color:var(--ink)
     <a href="admin-calendar.html">Calendar</a>
     <a href="admin-payments.html">Payments</a>
     <a href="admin-availability.html">Availability</a>
+    <a href="admin-venues.html">Venues &amp; Pricing</a>
     <div class="logout-btn" onclick="logout()">Logout</div>
     <div class="sidebar-footer">© Need A Witness UK<br>Admin Panel</div>
   </aside>
@@ -93,13 +94,28 @@ function jobLocation(j){return j.customer?.location||j.location||"—";}
 function jobDate(j){return j.date||j.customer?.date||"";}
 function jobTime(j){return j.time||j.customer?.time||"";}
 function witnessCount(j){return Number(j.witnessCount||j.witnessesRequired||j.requiredWitnesses||0);}
-function totalPrice(j){return Number(j.totalPrice||j.price||0);}
+function totalPrice(j){return Number(j.totalPrice??j.price??0);}
 function localDate(dateStr,timeStr="00:00"){if(!dateStr)return null;const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(dateStr);if(!m)return new Date(dateStr);const [hh,mm]=(timeStr||"00:00").split(":").map(Number);return new Date(Number(m[1]),Number(m[2])-1,Number(m[3]),hh||0,mm||0,0,0);}
 function formatDate(dateStr){const d=localDate(dateStr);return d&&!isNaN(d)?d.toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"}):"—";}
 function createdMillis(j){const c=j.createdAt;if(!c)return 0;if(c.toDate)return c.toDate().getTime();const d=new Date(c);return isNaN(d)?0:d.getTime();}
 function statusLabel(s){return ({pending:"Pending",approved:"Approved",assigned:"Assigned",completed:"Completed",cancelled:"Cancelled"})[s]||s||"Pending";}
 function statusBadge(s){const safe=["pending","approved","assigned","completed","cancelled"].includes(s)?s:"other";return `<span class="status-badge status-${safe}">${escapeHtml(statusLabel(s))}</span>`;}
-function paymentStatus(j){return j.paymentStatus||((Number(j.amountPaid||0)>=totalPrice(j)&&totalPrice(j)>0)?"full":(Number(j.amountPaid||0)>0?"deposit":"unpaid"));}
+function paymentStatus(j){
+  if(j.paymentStatus==="late-cancel")return "late-cancel";
+  const paid=Number(j.amountPaid??0), total=totalPrice(j);
+  if(j.totalPrice!=null || j.price!=null){
+    if(paid>=total)return "full";
+    if(paid>0)return "deposit";
+  }
+  return j.amountPaid==null && j.paymentStatus ? j.paymentStatus : "unpaid";
+}
+function moneyText(n){return Number(n).toFixed(2);}
+function outstanding(j){return Math.max(0,totalPrice(j)-Number(j.amountPaid??0));}
+function paymentSummary(j){
+  const paid=Number(j.amountPaid??0);
+  if(j.status==="cancelled")return `£${moneyText(paid)} paid · Review cancellation`;
+  return `£${moneyText(paid)} paid · £${moneyText(outstanding(j))} remaining`;
+}
 function paymentBadge(j){const p=paymentStatus(j);const safe=["unpaid","deposit","full"].includes(p)?p:"other";const label=({unpaid:"Unpaid",deposit:"Deposit",full:"Paid in full","late-cancel":"Late cancel"})[p]||p;return `<span class="pay-badge pay-${safe}">${escapeHtml(label)}</span>`;}
 function witnessNames(j){const ids=j.assignedWitnesses||[];if(!ids.length)return "—";return ids.map(x=>`<span class="witness-pill">${escapeHtml(x)}</span>`).join("");}
 function jobCategory(j){return j.serviceCategory==="document"?"document":"wedding";}
@@ -116,21 +132,50 @@ function jobHaystack(j){return [jobName(j),jobEmail(j),jobPhone(j),jobLocation(j
 function counts(){const c={all:allJobs.length,pending:0,approved:0,assigned:0,completed:0};allJobs.forEach(j=>{if(c[j.status]!==undefined)c[j.status]++;});$("countAll").textContent=c.all;$("countPending").textContent=c.pending;$("countApproved").textContent=c.approved;$("countAssigned").textContent=c.assigned;$("countCompleted").textContent=c.completed;}
 function filteredJobs(){const q=$("searchInput").value.trim().toLowerCase();const category=$("categoryFilter").value;const status=$("statusFilter").value;const pay=$("paymentFilter").value;const sort=$("sortFilter").value;let list=allJobs.filter(j=>(category==="all"||jobCategory(j)===category)&&(status==="all"||j.status===status)&&(pay==="all"||paymentStatus(j)===pay)&&(!q||jobHaystack(j).includes(q)));
  list.sort((a,b)=>{if(sort==="newest")return createdMillis(b)-createdMillis(a);if(sort==="price-desc")return totalPrice(b)-totalPrice(a);const da=localDate(jobDate(a),jobTime(a))?.getTime()||0,db=localDate(jobDate(b),jobTime(b))?.getTime()||0;return sort==="date-desc"?db-da:da-db;});return list;}
-function actionButtons(j){let extra="";if(j.status==="pending")extra=`<button class="btn btn-gold" onclick="setStatus('${j.id}','approved')">Approve</button><button class="btn btn-danger" onclick="setStatus('${j.id}','cancelled')">Cancel</button>`;else if(j.status==="approved"||j.status==="assigned")extra=`<button class="btn" onclick="assignJob('${j.id}')">Assign</button>`;return `<div class="actions"><button class="btn" onclick="viewJob('${j.id}')">View</button>${extra}</div>`;}
+function actionButtons(j){
+  const id=escapeHtml(j.id);
+  let extra="";
+  if(j.status==="pending")extra=`<button class="btn btn-gold" data-job="${id}" data-action="view">Review / approve</button>`;
+  else if(j.status==="approved"||j.status==="assigned")extra=`<button class="btn" data-job="${id}" data-action="assign">Assign</button>`;
+  return `<div class="actions"><button class="btn" data-job="${id}" data-action="view">View</button>${extra}</div>`;
+}
 function renderFiltered(){const list=filteredJobs();$("resultsNote").textContent=`Showing ${list.length} of ${allJobs.length} job${allJobs.length===1?"":"s"}.`;
  if(!list.length){$("jobsTableBody").innerHTML='<tr><td colspan="9" class="empty">No jobs match these filters.</td></tr>';$("mobileJobList").innerHTML='<div class="empty">No jobs match these filters.</div>';return;}
  $("jobsTableBody").innerHTML=list.map(j=>`<tr>
  <td><div class="job-name">${escapeHtml(jobName(j))}</div><div class="job-sub">${escapeHtml(jobEmail(j))}${jobPhone(j)?`<br>${escapeHtml(jobPhone(j))}`:""}</div></td>
  <td class="nowrap"><b>${escapeHtml(formatDate(jobDate(j)))}</b><div class="job-sub">${escapeHtml(jobTime(j)||"—")}</div></td>
- <td>${escapeHtml(jobLocation(j))}</td><td class="nowrap">${escapeHtml(serviceLabel(j))}</td><td>${paymentBadge(j)}<div class="job-sub">£${Number(j.amountPaid||0)} paid · £${Number(j.amountDue||0)} due</div></td>
- <td>${statusBadge(j.status||"pending")}</td><td>${witnessNames(j)}</td><td class="money nowrap">£${totalPrice(j)}</td><td>${actionButtons(j)}</td></tr>`).join("");
- $("mobileJobList").innerHTML=list.map(j=>`<div class="mobile-card"><div class="mobile-top"><div><div class="job-name">${escapeHtml(jobName(j))}</div><div class="job-sub">${escapeHtml(formatDate(jobDate(j)))} · ${escapeHtml(jobTime(j)||"—")}</div></div><div class="money">£${totalPrice(j)}</div></div><div class="mobile-meta">${escapeHtml(jobLocation(j))}<br>${escapeHtml(serviceLabel(j))} · ${statusBadge(j.status||"pending")} ${paymentBadge(j)}</div>${actionButtons(j)}</div>`).join("");}
-function setStatus(id,status){const verb=status==="approved"?"approve":"cancel";if(!confirm(`Are you sure you want to ${verb} this job?`))return;db.collection("jobs").doc(id).update({status}).catch(err=>alert("Could not update job: "+err.message));}
+ <td>${escapeHtml(jobLocation(j))}</td><td class="nowrap">${escapeHtml(serviceLabel(j))}</td><td>${paymentBadge(j)}<div class="job-sub">${escapeHtml(paymentSummary(j))}</div></td>
+ <td>${statusBadge(j.status||"pending")}</td><td>${witnessNames(j)}</td><td class="money nowrap">£${moneyText(totalPrice(j))}</td><td>${actionButtons(j)}</td></tr>`).join("");
+ $("mobileJobList").innerHTML=list.map(j=>`<div class="mobile-card"><div class="mobile-top"><div><div class="job-name">${escapeHtml(jobName(j))}</div><div class="job-sub">${escapeHtml(formatDate(jobDate(j)))} · ${escapeHtml(jobTime(j)||"—")}</div></div><div class="money">£${moneyText(totalPrice(j))}</div></div><div class="mobile-meta">${escapeHtml(jobLocation(j))}<br>${escapeHtml(serviceLabel(j))} · ${statusBadge(j.status||"pending")} ${paymentBadge(j)}<br>${escapeHtml(paymentSummary(j))}</div>${actionButtons(j)}</div>`).join("");}
 function viewJob(id){location.href="admin-job-detail.html?id="+encodeURIComponent(id);}function assignJob(id){location.href="admin-job-detail.html?id="+encodeURIComponent(id)+"&assign=true";}
 function logout(){auth.signOut().then(()=>location.href="../hub/login.html");}
 function wireFilters(){["searchInput","categoryFilter","statusFilter","paymentFilter","sortFilter"].forEach(id=>$(id).addEventListener(id==="searchInput"?"input":"change",renderFiltered));document.querySelectorAll(".stat").forEach(el=>el.addEventListener("click",()=>{document.querySelectorAll(".stat").forEach(x=>x.classList.remove("active"));el.classList.add("active");$("statusFilter").value=el.dataset.status;renderFiltered();}));$("statusFilter").addEventListener("change",()=>{document.querySelectorAll(".stat").forEach(x=>x.classList.toggle("active",x.dataset.status===$("statusFilter").value));});}
 wireFilters();
-auth.onAuthStateChanged(user=>{if(!user){location.href="../hub/login.html";return;}db.collection("jobs").onSnapshot(s=>{allJobs=s.docs.map(d=>({id:d.id,...d.data()}));counts();renderFiltered();},err=>{$("jobsTableBody").innerHTML=`<tr><td colspan="9" class="empty">Could not load jobs: ${escapeHtml(err.message)}</td></tr>`;});});
+document.addEventListener("click",event=>{
+  const button=event.target.closest("button[data-job][data-action]");
+  if(!button)return;
+  if(button.dataset.action==="assign")assignJob(button.dataset.job);
+  else viewJob(button.dataset.job);
+});
+let stopJobs=null;
+auth.onAuthStateChanged(async user=>{
+  if(stopJobs){stopJobs();stopJobs=null;}
+  allJobs=[];counts();renderFiltered();
+  if(!user){location.href="../hub/login.html";return;}
+  try{
+    const token=await user.getIdTokenResult();
+    const allowed=token.claims.admin===true || (!!user.email && (await db.collection("admins").doc(user.email).get()).exists);
+    if(auth.currentUser?.uid!==user.uid)return;
+    if(!allowed)throw new Error("Administrator access required.");
+    stopJobs=db.collection("jobs").onSnapshot(s=>{allJobs=s.docs.map(d=>({...d.data(),id:d.id}));counts();renderFiltered();},showLoadError);
+  }catch(err){showLoadError(err);}
+});
+function showLoadError(err){
+  allJobs=[];counts();
+  $("resultsNote").textContent="Could not load jobs: "+err.message;
+  $("jobsTableBody").innerHTML='<tr><td colspan="9" class="empty">Unable to load bookings.</td></tr>';
+  $("mobileJobList").textContent="Unable to load bookings.";
+}
 </script>
 </body>
 </html>
