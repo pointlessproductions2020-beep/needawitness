@@ -69,8 +69,8 @@ const UK_BANK_HOLIDAYS = [
 // 4. Detect Sunday / Bank Holiday
 // ========================================
 function isSunday(dateStr) {
-    const d = new Date(dateStr);
-    return d.getDay() === 0;
+    const d = new Date(dateStr + "T00:00:00Z");
+    return d.getUTCDay() === 0;
 }
 
 function isBankHoliday(dateStr) {
@@ -78,33 +78,72 @@ function isBankHoliday(dateStr) {
 }
 
 // ========================================
-// 5. Pricing Engine
+// 5. Wedding Pricing Engine
 // ========================================
-function calculatePrice(witnessType, dateStr) {
-    const sunday = isSunday(dateStr);
+// Public wedding pricing only.
+// Venue prices must come from the venue database.
+// Starting prices are for display, not a fallback
+// for unlisted venues.
+
+const WEDDING_MINIMUM_PRICES = Object.freeze({
+    single: 300,
+    couple: 350,
+    twosingles: 350
+});
+
+const WEDDING_DEPOSIT = 50;
+const WEDDING_SUNDAY_FEE = 50;
+const WEDDING_SHORT_NOTICE_FEE = 50;
+
+function calculatePrice(
+    witnessType,
+    dateStr,
+    venueBasePrice,
+    lastMinute = false
+) {
+    const minimum = WEDDING_MINIMUM_PRICES[witnessType];
+
+    if (
+        typeof minimum !== "number" ||
+        !Number.isFinite(venueBasePrice) ||
+        venueBasePrice < minimum
+    ) {
+        throw new Error(
+            "A valid fixed venue price is required."
+        );
+    }
+
     const bank = isBankHoliday(dateStr);
 
-    const base = {
-        single: 150,
-        couple: 200,
-        twosingles: 300
-    };
+    const sundayFee =
+        !bank && isSunday(dateStr)
+            ? WEDDING_SUNDAY_FEE
+            : 0;
 
-    let price = base[witnessType];
-
-    if (bank) price *= 2;
-    else if (sunday) price += 50;
-
-    return price;
+    return (
+        (venueBasePrice + sundayFee) *
+        (bank ? 2 : 1) +
+        (lastMinute ? WEDDING_SHORT_NOTICE_FEE : 0)
+    );
 }
 
 // ========================================
-// 6. Deposit Engine
+// 6. Deposit Calculations
 // ========================================
+
+// Preserve legacy deposit behaviour for
+// legal witnessing and existing callers.
+
 function calculateDeposit(dateStr) {
     if (isBankHoliday(dateStr)) return 50;
     if (isSunday(dateStr)) return 40;
     return 20;
+}
+
+// New standard wedding booking deposit.
+
+function calculateWeddingDeposit() {
+    return WEDDING_DEPOSIT;
 }
 
 // ========================================
@@ -112,11 +151,19 @@ function calculateDeposit(dateStr) {
 // ========================================
 async function getAvailableWitnesses(db, dateStr, timeStr) {
     const date = new Date(dateStr);
-    const dayName = date.toLocaleDateString("en-GB", { weekday: "long" });
 
-    const { start: blockStart, end: blockEnd } = getBlockedWindow(timeStr);
+    const dayName = date.toLocaleDateString(
+        "en-GB",
+        { weekday: "long" }
+    );
+
+    const {
+        start: blockStart,
+        end: blockEnd
+    } = getBlockedWindow(timeStr);
 
     const usersSnap = await db.collection("users").get();
+
     const jobsSnap = await db.collection("jobs")
         .where("date", "==", dateStr)
         .get();
@@ -129,24 +176,41 @@ async function getAvailableWitnesses(db, dateStr, timeStr) {
         const id = doc.id;
 
         if (w.status === "suspended") return;
-        if (!w.availability || !w.availability[dayName]) return;
+
+        if (
+            !w.availability ||
+            !w.availability[dayName]
+        ) return;
 
         const a = w.availability[dayName];
+
         if (!a.enabled) return;
 
-        if (timeStr < a.start || timeStr >= a.end) return;
+        if (
+            timeStr < a.start ||
+            timeStr >= a.end
+        ) return;
 
         let conflict = false;
+
         jobs.forEach(job => {
-            if (!job.assignedWitnesses?.includes(id)) return;
+            if (!job.assignedWitnesses?.includes(id)) {
+                return;
+            }
 
             const jobBlock = getBlockedWindow(job.time);
-            if (blockStart < jobBlock.end && blockEnd > jobBlock.start) {
+
+            if (
+                blockStart < jobBlock.end &&
+                blockEnd > jobBlock.start
+            ) {
                 conflict = true;
             }
         });
 
-        if (!conflict) available.push({ id, ...w });
+        if (!conflict) {
+            available.push({ id, ...w });
+        }
     });
 
     return available;
@@ -192,7 +256,7 @@ async function checkAvailability(db, dateStr) {
 }
 
 // ========================================
-// ⭐ MAKE EVERYTHING AVAILABLE GLOBALLY ⭐
+// 9. MAKE EVERYTHING AVAILABLE GLOBALLY
 // ========================================
 window.availability = {
     generateSlots,
@@ -202,6 +266,10 @@ window.availability = {
     isBankHoliday,
     calculatePrice,
     calculateDeposit,
+    calculateWeddingDeposit,
+    WEDDING_MINIMUM_PRICES,
+    WEDDING_SUNDAY_FEE,
+    WEDDING_SHORT_NOTICE_FEE,
     getAvailableWitnesses,
     checkAvailability
 };
