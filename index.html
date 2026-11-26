@@ -893,6 +893,9 @@
                 margin: -22px 14px 0;
             }
         }
+        .booking-pause { margin: 0 0 26px; padding: 22px; border: 1px solid #b98a45; border-radius: 18px; background: #f8f5ef; color: #25231f; }
+        .booking-pause strong { display:block; font-family:Georgia,serif; font-size:1.45rem; color:#946d34; margin-bottom:10px; }
+        .booking-pause p { margin-bottom:12px; }
     </style>
 </head>
 
@@ -924,8 +927,17 @@
                     Discreet, friendly and dependable witnesses for couples who want their ceremony kept simple, relaxed and stress-free — with every booking personally reviewed by a real person.
                 </p>
 
+                <div class="booking-pause" role="note">
+                    <strong>Important availability notice</strong>
+                    <p>Our standard booking availability is currently closed for ceremonies before 1 February 2027. If you require witnesses before this date, please contact us directly. We may be able to arrange alternative professional witnesses, subject to availability and confirmation.</p>
+                    <p>All existing confirmed bookings remain unaffected.</p>
+                    <div class="hero-actions" style="margin-bottom:0">
+                        <a class="button button-primary" href="mailto:bookings@needawitness.uk">Email us</a>
+                        <a class="button" style="background:#237b4b;color:white" href="https://wa.me/447538803084" target="_blank" rel="noopener noreferrer">Contact us on WhatsApp</a>
+                    </div>
+                </div>
                 <div class="hero-actions">
-                    <a class="button button-primary" href="#availability">Check availability</a>
+                    <a class="button button-primary" href="#availability">Check February onwards</a>
                     <a class="button button-secondary" href="#how-it-works">See how it works</a>
                 </div>
 
@@ -944,7 +956,7 @@
                 <article class="intro-item">
                     <div class="step-number">1</div>
                     <h3 id="how-title">Choose your date</h3>
-                    <p>Use our live calendar to view available ceremony times.</p>
+                    <p>Use our live calendar for ceremonies from 1 February 2027. For earlier dates, contact us directly.</p>
                 </article>
 
                 <article class="intro-item">
@@ -982,17 +994,17 @@
                     </div>
                     <div class="reassurance-item">
                         <div class="reassurance-icon">✓</div>
-                        <div><strong>Having trouble making a booking?</strong><br>If the online booking isn't working, message us on WhatsApp and we'll be happy to help you personally.<br><a href="https://wa.me/447538803084?text=Hi%2C%20I%27m%20trying%20to%20make%20a%20booking%20through%20Need%20A%20Witness%20UK%2C%20but%20I%27m%20having%20trouble.%20Could%20you%20please%20help%3F" target="_blank" rel="noopener noreferrer" style="display:inline-block;margin-top:12px;padding:11px 17px;border-radius:12px;background:#237b4b;color:#fff;font-weight:700;text-decoration:none;">Message us on WhatsApp</a><br><span style="display:inline-block;margin-top:9px;">Or email <a href="mailto:bookings@needawitness.uk">bookings@needawitness.uk</a>.</span></div>
+                        <div><strong>Having trouble making a booking?</strong><br>For ceremonies before February or help with online bookings, message us on WhatsApp. Earlier ceremonies are subject to alternative witness availability.<br><a href="https://wa.me/447538803084?text=Hi%2C%20I%27d%20like%20to%20enquire%20about%20wedding%20witness%20availability." target="_blank" rel="noopener noreferrer" style="display:inline-block;margin-top:12px;padding:11px 17px;border-radius:12px;background:#237b4b;color:#fff;font-weight:700;text-decoration:none;">Message us on WhatsApp</a><br><span style="display:inline-block;margin-top:9px;">Or email <a href="mailto:bookings@needawitness.uk">bookings@needawitness.uk</a>.</span></div>
                     </div>
                 </div>
             </div>
 
             <div class="availability-box">
                 <label for="date-picker">Choose your wedding date</label>
-                <input type="date" id="date-picker">
+                <input type="date" id="date-picker" min="2027-02-01">
 
                 <div class="availability-note">
-                    Hourly slots are available from 9am to 5pm. Standard rates apply Monday–Saturday. Sundays, Bank Holidays and short-notice bookings may carry an additional charge. Travel and parking are included in your fixed venue price.
+                    Standard availability resumes for ceremonies from 1 February 2027. For earlier dates, please contact us directly. Hourly slots are available from 9am to 5pm. Standard rates apply Monday–Saturday. Sundays, Bank Holidays and short-notice bookings may carry an additional charge. Travel and parking are included in your fixed venue price.
                 </div>
 
                 <div class="available-title">Available times</div>
@@ -1184,9 +1196,9 @@
         <div class="container final-cta-inner">
             <div>
                 <h2>Let us take one worry off your wedding list</h2>
-                <p>Check the calendar, choose a suitable time and send us your ceremony details.</p>
+                <p>Check the calendar for February onwards, or contact us directly to enquire about an earlier ceremony.</p>
             </div>
-            <a class="button button-primary" href="#availability">Check availability</a>
+            <a class="button button-primary" href="#availability">Check February onwards</a>
         </div>
     </section>
 </main>
@@ -1255,6 +1267,12 @@
         selectedTimeInput.value = "";
 
         if (!dateString) return;
+
+        if (dateString < "2027-02-01") {
+            errorEl.textContent = "Standard availability resumes on 1 February 2027. Please contact us directly for earlier ceremonies.";
+            errorEl.style.display = "block";
+            return;
+        }
 
         const date = new Date(dateString + "T00:00:00");
 
